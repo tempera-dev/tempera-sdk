@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tempera AIP + SDK Contract"
+  short_description: "Google AIP route shape and exact-SHA SDK sync"
+  default_prompt: "Use $tempera-aip-sdk-contract to check this repository's HTTP contract against the Google AIP rules and the tempera-sdk sync procedure."

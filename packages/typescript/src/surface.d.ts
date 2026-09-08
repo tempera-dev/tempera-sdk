@@ -2,10 +2,10 @@
 // Type declarations for the generated surface tables plus the typed
 // product-client interfaces used by createTemperaClient().
 
-export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code" | "tempera-llm" | "tempera-workflows" | "tempera-gym" | "tempera-bio" | "tempera-document" | "tempera-risk" | "tempera-investigations" | "tempera-payments" | "tempera-dropshipping" | "tempera-voice" | "tempera-clearing" | "tempera-business";
-export type TemperaScope = "mcp:invoke" | "memory:read" | "memory:write" | "memory:manage" | "trace:read" | "trace:write" | "scenario:read" | "scenario:write" | "dataset:read" | "dataset:write" | "connector:read" | "connector:run" | "connector:manage" | "eval:run" | "training:publish" | "review:gold:manage" | "review:resolve" | "workflow:read" | "workflow:write" | "workflow:run" | "bio:source:read" | "bio:proposal:write" | "bio:measurement:verify" | "bio:decision:write" | "bio:experiment:approve" | "bio:experiment:submit" | "bio:signer:manage" | "model:read" | "model:invoke" | "usage:reserve" | "document:read" | "document:write" | "risk:read" | "risk:write" | "risk:review" | "investigation:read" | "investigation:write" | "investigation:run" | "investigation:review" | "pii:unmask" | "payments:intents:read" | "payments:intents:write" | "payments:receipts:read" | "payments:webhooks:write" | "payments:refunds:write" | "payments:admin" | "payments:merchants:read" | "payments:merchants:write" | "orders:read" | "orders:commerce:write" | "voice:read" | "voice:write" | "voice:stream" | "clearing:actions:read" | "clearing:actions:propose" | "clearing:actions:commit" | "clearing:actions:reconcile" | "clearing:receipts:read" | "clearing:actions:approve" | "admin";
+export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code" | "tempera-llm" | "tempera-connectors" | "tempera-workflows" | "tempera-gym" | "tempera-bio" | "tempera-document" | "tempera-risk" | "tempera-investigations" | "tempera-payments" | "tempera-dropshipping" | "tempera-voice" | "tempera-clearing" | "tempera-business";
+export type TemperaScope = "mcp:invoke" | "memory:read" | "memory:write" | "memory:manage" | "trace:read" | "trace:write" | "scenario:read" | "scenario:write" | "dataset:read" | "dataset:write" | "connector:read" | "connector:run" | "connector:manage" | "eval:run" | "training:publish" | "review:gold:manage" | "review:resolve" | "workflow:read" | "workflow:write" | "workflow:run" | "bio:source:read" | "bio:proposal:write" | "bio:measurement:verify" | "bio:decision:write" | "bio:experiment:approve" | "bio:experiment:submit" | "bio:signer:manage" | "model:read" | "model:invoke" | "usage:reserve" | "document:read" | "document:write" | "risk:read" | "risk:write" | "risk:review" | "investigation:read" | "investigation:write" | "investigation:run" | "investigation:review" | "pii:unmask" | "payments:intents:read" | "payments:intents:write" | "payments:receipts:read" | "payments:webhooks:write" | "payments:refunds:write" | "payments:admin" | "payments:merchants:read" | "payments:merchants:write" | "orders:read" | "orders:commerce:write" | "voice:read" | "voice:write" | "voice:stream" | "clearing:actions:read" | "clearing:actions:propose" | "clearing:actions:commit" | "clearing:actions:reconcile" | "clearing:receipts:read" | "clearing:actions:approve" | "connection:invoke" | "connection:write" | "connection:read" | "admin" | "business:read" | "business:write" | "business:review" | "orders:write" | "orders:approve" | "offline_access";
 export type TemperaEnvironment = "local" | "preview" | "staging" | "production";
-export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaLlm" | "temperaVoice" | "temperaRisk" | "temperaWorkflows" | "temperaGym" | "temperaBio" | "temperaDocument" | "temperaPayments" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha" | "temperaDropshipping" | "temperaBusiness";
+export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaLlm" | "temperaVoice" | "temperaRisk" | "temperaWorkflows" | "temperaGym" | "temperaBio" | "temperaDocument" | "temperaPayments" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha" | "temperaDropshipping" | "temperaBusiness" | "temperaConnectors";
 
 export declare const TEMPERA_SURFACE_VERSION: number;
 export declare const TEMPERA_AUDIENCES: readonly TemperaAudience[];
@@ -143,6 +143,8 @@ export interface ControlPlaneClient extends TemperaProductClientBase {
   listApiKeys(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Mint a workspace API key (tp_...); the secret is returned exactly once. The workspace ids must match the token's workspace. */
   createApiKey(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List the resource audiences this caller may mint an API key for, the scopes issuable at each, and why the remaining scopes are refused. */
+  listApiKeyAudiences(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Revoke an API key (idempotent). */
   revokeApiKey(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Rotate an API key's secret; the new secret is returned exactly once. */
@@ -509,8 +511,6 @@ export interface TemperaLlmClient extends TemperaProductClientBase {
 export interface TemperaRiskClient extends TemperaProductClientBase {
   /** Call GET /healthz. */
   health(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Call GET /openapi.yaml. */
-  getOpenApi(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Execute one principal-bound, signed, bounded graph read. */
   executeGraphRead(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Call POST /v1/projects/{project}/subjects. */
@@ -593,6 +593,10 @@ export interface TemperaRiskClient extends TemperaProductClientBase {
   settleRiskClearingExposure(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Call GET /v1/projects/{project}/audit:export. */
   exportAudit(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Call GET /openapi.json. */
+  getOpenApi(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Ingest one provider-owned payment observation as a trusted event. */
+  ingestPaymentObservation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export interface TemperaWorkflowsClient extends TemperaProductClientBase {
@@ -715,7 +719,7 @@ export interface TemperaBioClient extends TemperaProductClientBase {
 }
 
 export interface TemperaPaymentsClient extends TemperaProductClientBase {
-  /** Call GET /v1/health. */
+  /** Report that the process is reachable. */
   getPaymentsHealth(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Create a canonical payment intent. */
   createPaymentIntent(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
@@ -750,6 +754,8 @@ export interface TemperaDocumentClient extends TemperaProductClientBase {
   documentsCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Get a document. */
   documentsGet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Export validated extraction from a completed stored source for Data admission. */
+  documentsExportEvidence(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Extract one caller-schema object with exact source evidence. */
   documentsExtract(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Return the latest successful canonical document graph. */
@@ -983,148 +989,167 @@ export interface TemperaVoiceClient extends TemperaProductClientBase {
   voiceLiveness(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Readiness. */
   voiceReadiness(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Resolve Action. */
-  resolveVoiceAction(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List Agents. */
-  listVoiceAgents(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Create Agent. */
-  createVoiceAgent(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Get Agent. */
-  getVoiceAgent(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Upsert Agent. */
-  upsertVoiceAgent(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Get Default Agent. */
-  getDefaultVoiceAgent(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Download Artifact. */
-  downloadVoiceArtifact(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Upload Artifact. */
-  uploadVoiceArtifact(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Capabilities. */
   getVoiceCapabilities(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create Agent. */
+  createVoiceAgent(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List Agents. */
+  listVoiceAgents(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Update Agent. */
+  updateVoiceAgent(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get Agent. */
+  getVoiceAgent(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create Session. */
+  createVoiceSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List Sessions. */
+  listVoiceSessions(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get Default Agent. */
+  getDefaultVoiceAgent(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get Session. */
+  getVoiceSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List Events. */
+  listVoiceSessionEvents(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List Actions. */
+  listVoiceSessionActions(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Resolve Action. */
+  resolveVoiceAction(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** End Session. */
+  endVoiceSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Export Sessions. */
+  exportVoiceSessions(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Upload Artifact. */
+  uploadVoiceArtifact(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Download Artifact. */
+  downloadVoiceArtifact(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List Eval Profiles. */
   listVoiceEvalProfiles(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Seal Eval Result. */
+  sealVoiceEvalResult(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Import Eval Result. */
+  importVoiceEvalResult(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Build Eval Bundle. */
   buildVoiceEvalBundle(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Create Palette Handoff. */
   createVoicePaletteHandoff(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Publish Palette Handoff. */
   publishVoicePaletteHandoff(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Import Eval Result. */
-  importVoiceEvalResult(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Seal Eval Result. */
-  sealVoiceEvalResult(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List Sessions. */
-  listVoiceSessions(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Create Session. */
-  createVoiceSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Get Session. */
-  getVoiceSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List Actions. */
-  listVoiceSessionActions(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List Events. */
-  listVoiceSessionEvents(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** End Session. */
-  endVoiceSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Export Sessions. */
-  exportVoiceSessions(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export interface TemperaDropshippingClient extends TemperaProductClientBase {
-  /** Put Workspace. */
-  updateBusinessWorkspace(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Get Workspace. */
-  getBusinessWorkspace(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Record Task Receipt. */
-  recordBusinessTaskReceipt(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Prepare Task. */
-  prepareBusinessTask(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Browser Task. */
-  prepareBusinessBrowserTask(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Review Task. */
-  reviewBusinessTask(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List Catalog Offers. */
-  listCatalogOffers(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create Store. */
+  createStore(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List Stores. */
+  listStores(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get Store. */
+  getStore(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Create Catalog Offer. */
   createCatalogOffer(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List Catalog Offers. */
+  listCatalogOffers(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Get Catalog Offer. */
   getCatalogOffer(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List Event Projections. */
-  listOrderEventProjections(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create Sale Order. */
+  createSaleOrder(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List Sale Orders. */
+  listSaleOrders(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get Sale Order. */
+  getSaleOrder(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List Events. */
   listEvents(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Inbox. */
-  listInbox(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Operating Summary. */
-  getBusinessSummary(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List Event Projections. */
+  listOrderEventProjections(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List Orders. */
   listOrders(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Create Order. */
   createOrder(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Inbox. */
+  listInbox(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Operating Summary. */
+  getBusinessSummary(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Get Order. */
   getOrder(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Update Order. */
   updateOrder(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Audit. */
-  listOrderAuditEvents(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Prepare. */
-  prepareProposal(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Evaluate Order. */
   evaluateOrder(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Reconcile. */
-  reconcileOrder(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Prepare. */
+  prepareProposal(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Get Proposal. */
   getProposal(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Outcome. */
-  recordManualOutcome(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Approve. */
   approveProposal(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Execute. */
   executeProposal(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List Sale Orders. */
-  listSaleOrders(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Create Sale Order. */
-  createSaleOrder(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Get Sale Order. */
-  getSaleOrder(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** List Stores. */
-  listStores(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Create Store. */
-  createStore(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Get Store. */
-  getStore(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Outcome. */
+  recordManualOutcome(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Reconcile. */
+  reconcileOrder(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Audit. */
+  listOrderAuditEvents(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Put Workspace. */
+  updateBusinessWorkspace(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Prepare Task. */
+  prepareBusinessTask(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Review Task. */
+  reviewBusinessTask(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Record Task Receipt. */
+  recordBusinessTaskReceipt(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get Workspace. */
+  getBusinessWorkspace(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Browser Task. */
+  prepareBusinessBrowserTask(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export interface TemperaBusinessClient extends TemperaProductClientBase {
-  /** Profile. */
-  businessProfileGet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Profile History. */
-  businessProfileHistory(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Clear. */
-  businessProfileClear(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Initialize. */
-  businessProfileInitialize(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Patch. */
-  businessProfilePatch(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Capabilities. */
   businessCapabilities(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Listing. */
-  businessCasesList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Create. */
   businessCasesCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Listing. */
+  businessCasesList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Get Case. */
   businessCasesGet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Audit. */
-  businessCasesAudit(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Receipt. */
-  businessCasesRecordDeclaredReceipt(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Update. */
+  businessCasesUpdateIntake(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Prepare. */
   businessCasesPrepareDraft(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Review. */
   businessCasesReviewDraft(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
-  /** Update. */
-  businessCasesUpdateIntake(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Receipt. */
+  businessCasesRecordDeclaredReceipt(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Audit. */
+  businessCasesAudit(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Profile. */
+  businessProfileGet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Initialize. */
+  businessProfileInitialize(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Patch. */
+  businessProfilePatch(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Profile History. */
+  businessProfileHistoryList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Clear. */
+  businessProfileClear(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Operating State. */
   businessOperatingState(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+}
+
+export interface TemperaConnectorsClient extends TemperaProductClientBase {
+  /** Read-only service liveness endpoint. */
+  healthCheck(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List the authenticated workspace's redacted connector connections. */
+  connectionsList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create a draft tenant-scoped connection from the catalog or a manual manifest. */
+  connectionsCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get one tenant-scoped connection without exposing secret material. */
+  connectionsGet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Execute an active declared operation with a revision-pinned receipt. */
+  connectionsInvoke(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Safely test one declared read-only operation and activate/degrade the connection. */
+  connectionsTest(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Normalize a caller-supplied OpenAPI 3 document into a draft connection. */
+  connectionsImportOpenApi(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List the reviewed, read-only connector catalog. */
+  connectorsList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export type PassthroughClient = TemperaProductClientBase;

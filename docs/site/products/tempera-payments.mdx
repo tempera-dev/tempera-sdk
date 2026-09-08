@@ -31,9 +31,9 @@ Anything this page does not cover is reachable through the raw passthrough:
 
 ### getPaymentsHealth
 
-`GET /v1/health`
+`GET /healthz`
 
-Call GET /v1/health.
+Report that the process is reachable.
 
 - **Producer operationId:** `getPaymentsHealth`
 - **Auth:** None (public endpoint).
@@ -59,12 +59,12 @@ let spec = client.build_request("tempera_payments", "get_payments_health", &[])?
 
 ### createPaymentIntent
 
-`POST /v1/payment_intents`
+`POST /v1/paymentIntents`
 
 Create a canonical payment intent.
 
 - **Producer operationId:** `createPaymentIntent`
-- **Auth:** OAuth access token for audience `tempera-payments`. Central `tp_` API keys cannot carry the required `payments:intents:write` scope.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
 - **Scope:** `payments:intents:write`
 - **Call as:** TypeScript `client.temperaPayments.createPaymentIntent()` · Python `client.tempera_payments.create_payment_intent()` · Rust `build_request("tempera_payments", "create_payment_intent", params)`
 
@@ -72,49 +72,49 @@ Create a canonical payment intent.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | — |
-| `merchant_id` | yes | — |
-| `risk_subject_id` | yes | — |
+| `tenantId` | yes | — |
+| `merchantId` | yes | — |
+| `riskSubjectId` | yes | — |
 | `recipient` | yes | — |
 | `asset` | yes | — |
 | `amount` | yes | — |
-| `expires_in_seconds` | yes | — |
+| `expiresInSeconds` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaPayments.createPaymentIntent({
-  tenant_id: "<tenant_id>",
-  merchant_id: "<merchant_id>",
-  risk_subject_id: "<risk_subject_id>",
+  tenantId: "<tenantId>",
+  merchantId: "<merchantId>",
+  riskSubjectId: "<riskSubjectId>",
   recipient: "<recipient>",
   asset: "<asset>",
   amount: "<amount>",
-  expires_in_seconds: "<expires_in_seconds>",
+  expiresInSeconds: "<expiresInSeconds>",
 });
 ```
 
 ```python Python
 result = client.tempera_payments.create_payment_intent({
-    "tenant_id": "<tenant_id>",
-    "merchant_id": "<merchant_id>",
-    "risk_subject_id": "<risk_subject_id>",
+    "tenantId": "<tenantId>",
+    "merchantId": "<merchantId>",
+    "riskSubjectId": "<riskSubjectId>",
     "recipient": "<recipient>",
     "asset": "<asset>",
     "amount": "<amount>",
-    "expires_in_seconds": "<expires_in_seconds>",
+    "expiresInSeconds": "<expiresInSeconds>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_payments", "create_payment_intent", &[
-    ("tenant_id", "<tenant_id>".into()),
-    ("merchant_id", "<merchant_id>".into()),
-    ("risk_subject_id", "<risk_subject_id>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("merchantId", "<merchantId>".into()),
+    ("riskSubjectId", "<riskSubjectId>".into()),
     ("recipient", "<recipient>".into()),
     ("asset", "<asset>".into()),
     ("amount", "<amount>".into()),
-    ("expires_in_seconds", "<expires_in_seconds>".into()),
+    ("expiresInSeconds", "<expiresInSeconds>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -124,12 +124,12 @@ let spec = client.build_request("tempera_payments", "create_payment_intent", &[
 
 ### getPaymentIntent
 
-`GET /v1/payment_intents/{payment_intent_id}`
+`GET /v1/paymentIntents/{paymentIntentId}`
 
 Read the canonical payment-intent projection.
 
 - **Producer operationId:** `getPaymentIntent`
-- **Auth:** OAuth access token for audience `tempera-payments`. Central `tp_` API keys cannot carry the required `payments:intents:read` scope.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
 - **Scope:** `payments:intents:read`
 - **Call as:** TypeScript `client.temperaPayments.getPaymentIntent()` · Python `client.tempera_payments.get_payment_intent()` · Rust `build_request("tempera_payments", "get_payment_intent", params)`
 
@@ -137,34 +137,34 @@ Read the canonical payment-intent projection.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `payment_intent_id` | yes | Substituted into the URL path (percent-encoded). |
+| `paymentIntentId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Query parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | — |
+| `tenantId` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaPayments.getPaymentIntent({
-  payment_intent_id: "<payment_intent_id>",
-  tenant_id: "<tenant_id>",
+  paymentIntentId: "<paymentIntentId>",
+  tenantId: "<tenantId>",
 });
 ```
 
 ```python Python
 result = client.tempera_payments.get_payment_intent({
-    "payment_intent_id": "<payment_intent_id>",
-    "tenant_id": "<tenant_id>",
+    "paymentIntentId": "<paymentIntentId>",
+    "tenantId": "<tenantId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_payments", "get_payment_intent", &[
-    ("payment_intent_id", "<payment_intent_id>".into()),
-    ("tenant_id", "<tenant_id>".into()),
+    ("paymentIntentId", "<paymentIntentId>".into()),
+    ("tenantId", "<tenantId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -174,12 +174,12 @@ let spec = client.build_request("tempera_payments", "get_payment_intent", &[
 
 ### getPaymentSettlementReceipt
 
-`GET /v1/payment_intents/{payment_intent_id}/receipt`
+`GET /v1/paymentIntents/{paymentIntentId}/receipt`
 
 Read and cryptographically re-verify the canonical settlement receipt.
 
 - **Producer operationId:** `getPaymentSettlementReceipt`
-- **Auth:** OAuth access token for audience `tempera-payments`. Central `tp_` API keys cannot carry the required `payments:receipts:read` scope.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
 - **Scope:** `payments:receipts:read`
 - **Call as:** TypeScript `client.temperaPayments.getPaymentSettlementReceipt()` · Python `client.tempera_payments.get_payment_settlement_receipt()` · Rust `build_request("tempera_payments", "get_payment_settlement_receipt", params)`
 
@@ -187,34 +187,34 @@ Read and cryptographically re-verify the canonical settlement receipt.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `payment_intent_id` | yes | Substituted into the URL path (percent-encoded). |
+| `paymentIntentId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Query parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | — |
+| `tenantId` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaPayments.getPaymentSettlementReceipt({
-  payment_intent_id: "<payment_intent_id>",
-  tenant_id: "<tenant_id>",
+  paymentIntentId: "<paymentIntentId>",
+  tenantId: "<tenantId>",
 });
 ```
 
 ```python Python
 result = client.tempera_payments.get_payment_settlement_receipt({
-    "payment_intent_id": "<payment_intent_id>",
-    "tenant_id": "<tenant_id>",
+    "paymentIntentId": "<paymentIntentId>",
+    "tenantId": "<tenantId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_payments", "get_payment_settlement_receipt", &[
-    ("payment_intent_id", "<payment_intent_id>".into()),
-    ("tenant_id", "<tenant_id>".into()),
+    ("paymentIntentId", "<paymentIntentId>".into()),
+    ("tenantId", "<tenantId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -224,12 +224,13 @@ let spec = client.build_request("tempera_payments", "get_payment_settlement_rece
 
 ### createStripeCheckout
 
-`POST /v1/payment_intents/{payment_intent_id}/stripe_checkout`
+`POST /v1/paymentIntents/{paymentIntentId}/stripeCheckout`
 
 Create an idempotent hosted Stripe Checkout session for a fiat payment intent.
 
 - **Producer operationId:** `createStripeCheckout`
-- **Auth:** OAuth access token for audience `tempera-payments`. Central `tp_` API keys cannot carry the required `payments:intents:write` scope.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
+- **Physical action:** Yes. This operation may cause an external real-world action.
 - **Scope:** `payments:intents:write`
 - **Call as:** TypeScript `client.temperaPayments.createStripeCheckout()` · Python `client.tempera_payments.create_stripe_checkout()` · Rust `build_request("tempera_payments", "create_stripe_checkout", params)`
 
@@ -237,50 +238,50 @@ Create an idempotent hosted Stripe Checkout session for a fiat payment intent.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `payment_intent_id` | yes | Substituted into the URL path (percent-encoded). |
+| `paymentIntentId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | — |
+| `tenantId` | yes | — |
 | `currency` | yes | — |
-| `product_name` | yes | — |
-| `success_url` | yes | — |
-| `cancel_url` | yes | — |
+| `productName` | yes | — |
+| `successUrl` | yes | — |
+| `cancelUrl` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaPayments.createStripeCheckout({
-  payment_intent_id: "<payment_intent_id>",
-  tenant_id: "<tenant_id>",
+  paymentIntentId: "<paymentIntentId>",
+  tenantId: "<tenantId>",
   currency: "<currency>",
-  product_name: "<product_name>",
-  success_url: "<success_url>",
-  cancel_url: "<cancel_url>",
+  productName: "<productName>",
+  successUrl: "<successUrl>",
+  cancelUrl: "<cancelUrl>",
 });
 ```
 
 ```python Python
 result = client.tempera_payments.create_stripe_checkout({
-    "payment_intent_id": "<payment_intent_id>",
-    "tenant_id": "<tenant_id>",
+    "paymentIntentId": "<paymentIntentId>",
+    "tenantId": "<tenantId>",
     "currency": "<currency>",
-    "product_name": "<product_name>",
-    "success_url": "<success_url>",
-    "cancel_url": "<cancel_url>",
+    "productName": "<productName>",
+    "successUrl": "<successUrl>",
+    "cancelUrl": "<cancelUrl>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_payments", "create_stripe_checkout", &[
-    ("payment_intent_id", "<payment_intent_id>".into()),
-    ("tenant_id", "<tenant_id>".into()),
+    ("paymentIntentId", "<paymentIntentId>".into()),
+    ("tenantId", "<tenantId>".into()),
     ("currency", "<currency>".into()),
-    ("product_name", "<product_name>".into()),
-    ("success_url", "<success_url>".into()),
-    ("cancel_url", "<cancel_url>".into()),
+    ("productName", "<productName>".into()),
+    ("successUrl", "<successUrl>".into()),
+    ("cancelUrl", "<cancelUrl>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -290,12 +291,13 @@ let spec = client.build_request("tempera_payments", "create_stripe_checkout", &[
 
 ### createCardSession
 
-`POST /v1/payment_intents/{payment_intent_id}/card_session`
+`POST /v1/paymentIntents/{paymentIntentId}/cardSession`
 
 Create a hosted/tokenizing card session with the selected configured acquirer.
 
 - **Producer operationId:** `createCardSession`
-- **Auth:** OAuth access token for audience `tempera-payments`. Central `tp_` API keys cannot carry the required `payments:intents:write` scope.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
+- **Physical action:** Yes. This operation may cause an external real-world action.
 - **Scope:** `payments:intents:write`
 - **Call as:** TypeScript `client.temperaPayments.createCardSession()` · Python `client.tempera_payments.create_card_session()` · Rust `build_request("tempera_payments", "create_card_session", params)`
 
@@ -303,49 +305,49 @@ Create a hosted/tokenizing card session with the selected configured acquirer.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `payment_intent_id` | yes | Substituted into the URL path (percent-encoded). |
+| `paymentIntentId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | — |
+| `tenantId` | yes | — |
 | `acquirer` | yes | — |
-| `success_url` | yes | — |
-| `failure_url` | yes | — |
+| `successUrl` | yes | — |
+| `failureUrl` | yes | — |
 | `billing` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaPayments.createCardSession({
-  payment_intent_id: "<payment_intent_id>",
-  tenant_id: "<tenant_id>",
+  paymentIntentId: "<paymentIntentId>",
+  tenantId: "<tenantId>",
   acquirer: "<acquirer>",
-  success_url: "<success_url>",
-  failure_url: "<failure_url>",
+  successUrl: "<successUrl>",
+  failureUrl: "<failureUrl>",
   billing: "<billing>",
 });
 ```
 
 ```python Python
 result = client.tempera_payments.create_card_session({
-    "payment_intent_id": "<payment_intent_id>",
-    "tenant_id": "<tenant_id>",
+    "paymentIntentId": "<paymentIntentId>",
+    "tenantId": "<tenantId>",
     "acquirer": "<acquirer>",
-    "success_url": "<success_url>",
-    "failure_url": "<failure_url>",
+    "successUrl": "<successUrl>",
+    "failureUrl": "<failureUrl>",
     "billing": "<billing>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_payments", "create_card_session", &[
-    ("payment_intent_id", "<payment_intent_id>".into()),
-    ("tenant_id", "<tenant_id>".into()),
+    ("paymentIntentId", "<paymentIntentId>".into()),
+    ("tenantId", "<tenantId>".into()),
     ("acquirer", "<acquirer>".into()),
-    ("success_url", "<success_url>".into()),
-    ("failure_url", "<failure_url>".into()),
+    ("successUrl", "<successUrl>".into()),
+    ("failureUrl", "<failureUrl>".into()),
     ("billing", "<billing>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
@@ -398,25 +400,25 @@ Read the merchant onboarding projection for one workspace.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | — |
+| `tenantId` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaPayments.getWorkspaceMerchant({
-  tenant_id: "<tenant_id>",
+  tenantId: "<tenantId>",
 });
 ```
 
 ```python Python
 result = client.tempera_payments.get_workspace_merchant({
-    "tenant_id": "<tenant_id>",
+    "tenantId": "<tenantId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_payments", "get_workspace_merchant", &[
-    ("tenant_id", "<tenant_id>".into()),
+    ("tenantId", "<tenantId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -440,7 +442,7 @@ Create the single US/USD merchant record for a workspace.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | — |
+| `tenantId` | yes | — |
 | `country` | yes | — |
 | `currency` | yes | — |
 | `category` | yes | — |
@@ -449,7 +451,7 @@ Create the single US/USD merchant record for a workspace.
 
 ```typescript TypeScript
 const result = await client.temperaPayments.createMerchant({
-  tenant_id: "<tenant_id>",
+  tenantId: "<tenantId>",
   country: "<country>",
   currency: "<currency>",
   category: "<category>",
@@ -458,7 +460,7 @@ const result = await client.temperaPayments.createMerchant({
 
 ```python Python
 result = client.tempera_payments.create_merchant({
-    "tenant_id": "<tenant_id>",
+    "tenantId": "<tenantId>",
     "country": "<country>",
     "currency": "<currency>",
     "category": "<category>",
@@ -467,7 +469,7 @@ result = client.tempera_payments.create_merchant({
 
 ```rust Rust
 let mut spec = client.build_request("tempera_payments", "create_merchant", &[
-    ("tenant_id", "<tenant_id>".into()),
+    ("tenantId", "<tenantId>".into()),
     ("country", "<country>".into()),
     ("currency", "<currency>".into()),
     ("category", "<category>".into()),
@@ -481,7 +483,7 @@ spec.headers.push(("Idempotency-Key".into(), persisted_key.into()));
 
 ### getMerchant
 
-`GET /v1/merchants/{merchant_id}`
+`GET /v1/merchants/{merchantId}`
 
 Read a merchant onboarding projection.
 
@@ -494,34 +496,34 @@ Read a merchant onboarding projection.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `merchant_id` | yes | Substituted into the URL path (percent-encoded). |
+| `merchantId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Query parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | — |
+| `tenantId` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaPayments.getMerchant({
-  merchant_id: "<merchant_id>",
-  tenant_id: "<tenant_id>",
+  merchantId: "<merchantId>",
+  tenantId: "<tenantId>",
 });
 ```
 
 ```python Python
 result = client.tempera_payments.get_merchant({
-    "merchant_id": "<merchant_id>",
-    "tenant_id": "<tenant_id>",
+    "merchantId": "<merchantId>",
+    "tenantId": "<tenantId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_payments", "get_merchant", &[
-    ("merchant_id", "<merchant_id>".into()),
-    ("tenant_id", "<tenant_id>".into()),
+    ("merchantId", "<merchantId>".into()),
+    ("tenantId", "<tenantId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -531,7 +533,7 @@ let spec = client.build_request("tempera_payments", "get_merchant", &[
 
 ### refreshMerchantEligibility
 
-`POST /v1/merchants/{merchant_id}/refresh`
+`POST /v1/merchants/{merchantId}/refresh`
 
 Retrieve and store a fresh merchant eligibility observation.
 
@@ -544,34 +546,34 @@ Retrieve and store a fresh merchant eligibility observation.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `merchant_id` | yes | Substituted into the URL path (percent-encoded). |
+| `merchantId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | — |
+| `tenantId` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaPayments.refreshMerchantEligibility({
-  merchant_id: "<merchant_id>",
-  tenant_id: "<tenant_id>",
+  merchantId: "<merchantId>",
+  tenantId: "<tenantId>",
 });
 ```
 
 ```python Python
 result = client.tempera_payments.refresh_merchant_eligibility({
-    "merchant_id": "<merchant_id>",
-    "tenant_id": "<tenant_id>",
+    "merchantId": "<merchantId>",
+    "tenantId": "<tenantId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_payments", "refresh_merchant_eligibility", &[
-    ("merchant_id", "<merchant_id>".into()),
-    ("tenant_id", "<tenant_id>".into()),
+    ("merchantId", "<merchantId>".into()),
+    ("tenantId", "<tenantId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -581,12 +583,13 @@ let spec = client.build_request("tempera_payments", "refresh_merchant_eligibilit
 
 ### createMerchantOnboardingLink
 
-`POST /v1/merchants/{merchant_id}/onboarding`
+`POST /v1/merchants/{merchantId}/onboarding`
 
 Create a short-lived Stripe-hosted merchant onboarding link.
 
 - **Producer operationId:** `createMerchantOnboardingLink`
 - **Auth:** Human OAuth bearer for audience `tempera-payments`; `payments:merchants:write` requires an owner or admin. Central `tp_` API keys cannot use this operation.
+- **Physical action:** Yes. This operation may cause an external real-world action.
 - **Scope:** `payments:merchants:write`
 - **Idempotency:** Required. Persist and send an `Idempotency-Key` for the same request on recovery; do not generate a replacement while the outcome is unknown.
 - **Call as:** TypeScript `client.temperaPayments.createMerchantOnboardingLink()` · Python `client.tempera_payments.create_merchant_onboarding_link()` · Rust `build_request("tempera_payments", "create_merchant_onboarding_link", params)`
@@ -595,34 +598,34 @@ Create a short-lived Stripe-hosted merchant onboarding link.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `merchant_id` | yes | Substituted into the URL path (percent-encoded). |
+| `merchantId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `tenant_id` | yes | — |
+| `tenantId` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaPayments.createMerchantOnboardingLink({
-  merchant_id: "<merchant_id>",
-  tenant_id: "<tenant_id>",
+  merchantId: "<merchantId>",
+  tenantId: "<tenantId>",
 }, { headers: { "Idempotency-Key": persistedKey } });
 ```
 
 ```python Python
 result = client.tempera_payments.create_merchant_onboarding_link({
-    "merchant_id": "<merchant_id>",
-    "tenant_id": "<tenant_id>",
+    "merchantId": "<merchantId>",
+    "tenantId": "<tenantId>",
 }, headers={"Idempotency-Key": persisted_key})
 ```
 
 ```rust Rust
 let mut spec = client.build_request("tempera_payments", "create_merchant_onboarding_link", &[
-    ("merchant_id", "<merchant_id>".into()),
-    ("tenant_id", "<tenant_id>".into()),
+    ("merchantId", "<merchantId>".into()),
+    ("tenantId", "<tenantId>".into()),
 ])?;
 spec.headers.push(("Idempotency-Key".into(), persisted_key.into()));
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
@@ -633,7 +636,7 @@ spec.headers.push(("Idempotency-Key".into(), persisted_key.into()));
 
 ### receiveStripeWebhook
 
-`POST /v1/webhooks/stripe`
+`POST /v1/webhooks/stripe/callback`
 
 Verify and durably deduplicate a Stripe webhook using its raw body.
 

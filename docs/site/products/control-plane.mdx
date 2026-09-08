@@ -18,7 +18,7 @@ Tempera control plane: unified accounts, OAuth issuance, workspaces, teams, API 
 | Audience | — (no OAuth audience) |
 | Auth | account bearer token from createHostedSession (control-plane session); introspectToken requires the introspection secret |
 | Client | TypeScript `client.controlPlane` · Python `client.control_plane` · Rust `build_request("control_plane", ...)` |
-| Typed operations | 105 |
+| Typed operations | 106 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.controlPlane.request(path, options)` (TypeScript) /
@@ -939,6 +939,50 @@ let spec = client.build_request("control_plane", "create_api_key", &[
     ("projectId", "<projectId>".into()),
     ("environmentId", "<environmentId>".into()),
     ("scopes", "<scopes>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listApiKeyAudiences
+
+`GET /v1/api-keys/audiences`
+
+List the resource audiences this caller may mint an API key for, the scopes issuable at each, and why the remaining scopes are refused.
+
+- **Producer operationId:** `listApiKeyAudiences`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.listApiKeyAudiences()` · Python `client.control_plane.list_api_key_audiences()` · Rust `build_request("control_plane", "list_api_key_audiences", params)`
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.listApiKeyAudiences({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
+```
+
+```python Python
+result = client.control_plane.list_api_key_audiences({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "list_api_key_audiences", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.

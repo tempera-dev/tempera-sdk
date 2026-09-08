@@ -48,6 +48,7 @@ SPECS = {
     "remi": "remi-http-contract.json",
     "temperaBio": "tempera-bio-api.json",
     "temperaBusiness": "tempera-business-api.json",
+    "temperaConnectors": "tempera-connectors-api.json",
     "temperaDocument": "tempera-document-api.json",
     "temperaDropshipping": "tempera-dropshipping-api.json",
     "temperaGym": "tempera-gym-api.json",

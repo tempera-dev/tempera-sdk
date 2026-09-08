@@ -21,7 +21,7 @@ Governed, non-decisional cross-domain investigation service. The trusted SDK sur
 | Audience | `tempera-risk` |
 | Auth | bearer minted for audience tempera-risk; Risk additionally enforces tenant, project, actor, case, access-grant, permissible-purpose, source-rights, and human-review boundaries. |
 | Client | TypeScript `client.temperaRisk` · Python `client.tempera_risk` · Rust `build_request("tempera_risk", ...)` |
-| Typed operations | 43 |
+| Typed operations | 44 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.temperaRisk.request(path, options)` (TypeScript) /
@@ -57,34 +57,6 @@ let spec = client.build_request("tempera_risk", "health", &[])?;
 
 </CodeGroup>
 
-### getOpenApi
-
-`GET /openapi.yaml`
-
-Call GET /openapi.yaml.
-
-- **Producer operationId:** `getOpenApi`
-- **Auth:** None (public endpoint).
-- **Call as:** TypeScript `client.temperaRisk.getOpenApi()` · Python `client.tempera_risk.get_open_api()` · Rust `build_request("tempera_risk", "get_open_api", params)`
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaRisk.getOpenApi();
-```
-
-```python Python
-result = client.tempera_risk.get_open_api()
-```
-
-```rust Rust
-let spec = client.build_request("tempera_risk", "get_open_api", &[])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
 ### executeGraphRead
 
 `POST /v1/projects/{project}/graphReads/execute`
@@ -92,7 +64,8 @@ let spec = client.build_request("tempera_risk", "get_open_api", &[])?;
 Execute one principal-bound, signed, bounded graph read.
 
 - **Producer operationId:** `executeGraphRead`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:write`
 - **Call as:** TypeScript `client.temperaRisk.executeGraphRead()` · Python `client.tempera_risk.execute_graph_read()` · Rust `build_request("tempera_risk", "execute_graph_read", params)`
 
 **Path parameters**
@@ -106,7 +79,7 @@ Execute one principal-bound, signed, bounded graph read.
 | Parameter | Required | Notes |
 |---|---|---|
 | `request` | yes | — |
-| `people_binding` | no | — |
+| `peopleBinding` | no | — |
 
 <CodeGroup>
 
@@ -114,7 +87,7 @@ Execute one principal-bound, signed, bounded graph read.
 const result = await client.temperaRisk.executeGraphRead({
   project: "<project>",
   request: "<request>",
-  people_binding: "<people_binding>",
+  peopleBinding: "<peopleBinding>",
 });
 ```
 
@@ -122,7 +95,7 @@ const result = await client.temperaRisk.executeGraphRead({
 result = client.tempera_risk.execute_graph_read({
     "project": "<project>",
     "request": "<request>",
-    "people_binding": "<people_binding>",
+    "peopleBinding": "<peopleBinding>",
 })
 ```
 
@@ -130,7 +103,7 @@ result = client.tempera_risk.execute_graph_read({
 let spec = client.build_request("tempera_risk", "execute_graph_read", &[
     ("project", "<project>".into()),
     ("request", "<request>".into()),
-    ("people_binding", "<people_binding>".into()),
+    ("peopleBinding", "<peopleBinding>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -145,7 +118,8 @@ let spec = client.build_request("tempera_risk", "execute_graph_read", &[
 Call POST /v1/projects/\{project\}/subjects.
 
 - **Producer operationId:** `createSubject`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:write`
 - **Call as:** TypeScript `client.temperaRisk.createSubject()` · Python `client.tempera_risk.create_subject()` · Rust `build_request("tempera_risk", "create_subject", params)`
 
 **Path parameters**
@@ -159,11 +133,11 @@ Call POST /v1/projects/\{project\}/subjects.
 | Parameter | Required | Notes |
 |---|---|---|
 | `schema` | yes | — |
-| `subject_id` | yes | — |
-| `subject_type` | yes | — |
+| `subjectId` | yes | — |
+| `subjectType` | yes | — |
 | `state` | no | — |
 | `attributes` | no | — |
-| `external_refs` | no | — |
+| `externalRefs` | no | — |
 
 <CodeGroup>
 
@@ -171,8 +145,8 @@ Call POST /v1/projects/\{project\}/subjects.
 const result = await client.temperaRisk.createSubject({
   project: "<project>",
   schema: "<schema>",
-  subject_id: "<subject_id>",
-  subject_type: "<subject_type>",
+  subjectId: "<subjectId>",
+  subjectType: "<subjectType>",
 });
 ```
 
@@ -180,8 +154,8 @@ const result = await client.temperaRisk.createSubject({
 result = client.tempera_risk.create_subject({
     "project": "<project>",
     "schema": "<schema>",
-    "subject_id": "<subject_id>",
-    "subject_type": "<subject_type>",
+    "subjectId": "<subjectId>",
+    "subjectType": "<subjectType>",
 })
 ```
 
@@ -189,8 +163,8 @@ result = client.tempera_risk.create_subject({
 let spec = client.build_request("tempera_risk", "create_subject", &[
     ("project", "<project>".into()),
     ("schema", "<schema>".into()),
-    ("subject_id", "<subject_id>".into()),
-    ("subject_type", "<subject_type>".into()),
+    ("subjectId", "<subjectId>".into()),
+    ("subjectType", "<subjectType>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -205,7 +179,8 @@ let spec = client.build_request("tempera_risk", "create_subject", &[
 Call GET /v1/projects/\{project\}/subjects.
 
 - **Producer operationId:** `listSubjects`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:read`
 - **Call as:** TypeScript `client.temperaRisk.listSubjects()` · Python `client.tempera_risk.list_subjects()` · Rust `build_request("tempera_risk", "list_subjects", params)`
 
 **Path parameters**
@@ -214,23 +189,36 @@ Call GET /v1/projects/\{project\}/subjects.
 |---|---|---|
 | `project` | yes | Substituted into the URL path (percent-encoded). |
 
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaRisk.listSubjects({
   project: "<project>",
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
 });
 ```
 
 ```python Python
 result = client.tempera_risk.list_subjects({
     "project": "<project>",
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_risk", "list_subjects", &[
     ("project", "<project>".into()),
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -245,7 +233,8 @@ let spec = client.build_request("tempera_risk", "list_subjects", &[
 Call GET /v1/projects/\{project\}/subjects/\{subjectId\}.
 
 - **Producer operationId:** `getSubject`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:read`
 - **Call as:** TypeScript `client.temperaRisk.getSubject()` · Python `client.tempera_risk.get_subject()` · Rust `build_request("tempera_risk", "get_subject", params)`
 
 **Path parameters**
@@ -289,7 +278,8 @@ let spec = client.build_request("tempera_risk", "get_subject", &[
 Call POST /v1/projects/\{project\}/events:ingest.
 
 - **Producer operationId:** `ingestEvent`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:write`
 - **Call as:** TypeScript `client.temperaRisk.ingestEvent()` · Python `client.tempera_risk.ingest_event()` · Rust `build_request("tempera_risk", "ingest_event", params)`
 
 **Path parameters**
@@ -303,16 +293,16 @@ Call POST /v1/projects/\{project\}/events:ingest.
 | Parameter | Required | Notes |
 |---|---|---|
 | `schema` | yes | — |
-| `event_id` | yes | — |
-| `event_type` | yes | — |
-| `subject_id` | yes | — |
-| `counterparty_id` | no | — |
-| `device_id` | no | — |
+| `eventId` | yes | — |
+| `eventType` | yes | — |
+| `subjectId` | yes | — |
+| `counterpartyId` | no | — |
+| `deviceId` | no | — |
 | `amount` | no | — |
-| `event_time` | yes | — |
-| `received_at` | yes | — |
+| `eventTime` | yes | — |
+| `receivedAt` | yes | — |
 | `attributes` | no | — |
-| `evidence_refs` | no | — |
+| `evidenceRefs` | no | — |
 
 <CodeGroup>
 
@@ -320,11 +310,11 @@ Call POST /v1/projects/\{project\}/events:ingest.
 const result = await client.temperaRisk.ingestEvent({
   project: "<project>",
   schema: "<schema>",
-  event_id: "<event_id>",
-  event_type: "<event_type>",
-  subject_id: "<subject_id>",
-  event_time: "<event_time>",
-  received_at: "<received_at>",
+  eventId: "<eventId>",
+  eventType: "<eventType>",
+  subjectId: "<subjectId>",
+  eventTime: "<eventTime>",
+  receivedAt: "<receivedAt>",
 });
 ```
 
@@ -332,11 +322,11 @@ const result = await client.temperaRisk.ingestEvent({
 result = client.tempera_risk.ingest_event({
     "project": "<project>",
     "schema": "<schema>",
-    "event_id": "<event_id>",
-    "event_type": "<event_type>",
-    "subject_id": "<subject_id>",
-    "event_time": "<event_time>",
-    "received_at": "<received_at>",
+    "eventId": "<eventId>",
+    "eventType": "<eventType>",
+    "subjectId": "<subjectId>",
+    "eventTime": "<eventTime>",
+    "receivedAt": "<receivedAt>",
 })
 ```
 
@@ -344,11 +334,11 @@ result = client.tempera_risk.ingest_event({
 let spec = client.build_request("tempera_risk", "ingest_event", &[
     ("project", "<project>".into()),
     ("schema", "<schema>".into()),
-    ("event_id", "<event_id>".into()),
-    ("event_type", "<event_type>".into()),
-    ("subject_id", "<subject_id>".into()),
-    ("event_time", "<event_time>".into()),
-    ("received_at", "<received_at>".into()),
+    ("eventId", "<eventId>".into()),
+    ("eventType", "<eventType>".into()),
+    ("subjectId", "<subjectId>".into()),
+    ("eventTime", "<eventTime>".into()),
+    ("receivedAt", "<receivedAt>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -363,7 +353,8 @@ let spec = client.build_request("tempera_risk", "ingest_event", &[
 Call POST /v1/projects/\{project\}/policies.
 
 - **Producer operationId:** `registerPolicy`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:write`
 - **Call as:** TypeScript `client.temperaRisk.registerPolicy()` · Python `client.tempera_risk.register_policy()` · Rust `build_request("tempera_risk", "register_policy", params)`
 
 **Path parameters**
@@ -377,20 +368,20 @@ Call POST /v1/projects/\{project\}/policies.
 | Parameter | Required | Notes |
 |---|---|---|
 | `schema` | yes | — |
-| `policy_id` | yes | — |
+| `policyId` | yes | — |
 | `version` | yes | — |
-| `use_case` | yes | — |
+| `useCase` | yes | — |
 | `segment` | no | — |
 | `description` | no | — |
-| `default_action` | yes | — |
-| `default_reason_code` | yes | — |
-| `missing_data_action` | yes | — |
-| `missing_data_reason_code` | yes | — |
-| `conflict_strategy` | yes | — |
+| `defaultAction` | yes | — |
+| `defaultReasonCode` | yes | — |
+| `missingDataAction` | yes | — |
+| `missingDataReasonCode` | yes | — |
+| `conflictStrategy` | yes | — |
 | `rules` | yes | — |
-| `model_dependencies` | no | — |
-| `change_ticket` | yes | — |
-| `created_by` | yes | — |
+| `modelDependencies` | no | — |
+| `changeTicket` | yes | — |
+| `createdBy` | yes | — |
 
 <CodeGroup>
 
@@ -398,17 +389,17 @@ Call POST /v1/projects/\{project\}/policies.
 const result = await client.temperaRisk.registerPolicy({
   project: "<project>",
   schema: "<schema>",
-  policy_id: "<policy_id>",
+  policyId: "<policyId>",
   version: "<version>",
-  use_case: "<use_case>",
-  default_action: "<default_action>",
-  default_reason_code: "<default_reason_code>",
-  missing_data_action: "<missing_data_action>",
-  missing_data_reason_code: "<missing_data_reason_code>",
-  conflict_strategy: "<conflict_strategy>",
+  useCase: "<useCase>",
+  defaultAction: "<defaultAction>",
+  defaultReasonCode: "<defaultReasonCode>",
+  missingDataAction: "<missingDataAction>",
+  missingDataReasonCode: "<missingDataReasonCode>",
+  conflictStrategy: "<conflictStrategy>",
   rules: "<rules>",
-  change_ticket: "<change_ticket>",
-  created_by: "<created_by>",
+  changeTicket: "<changeTicket>",
+  createdBy: "<createdBy>",
 });
 ```
 
@@ -416,17 +407,17 @@ const result = await client.temperaRisk.registerPolicy({
 result = client.tempera_risk.register_policy({
     "project": "<project>",
     "schema": "<schema>",
-    "policy_id": "<policy_id>",
+    "policyId": "<policyId>",
     "version": "<version>",
-    "use_case": "<use_case>",
-    "default_action": "<default_action>",
-    "default_reason_code": "<default_reason_code>",
-    "missing_data_action": "<missing_data_action>",
-    "missing_data_reason_code": "<missing_data_reason_code>",
-    "conflict_strategy": "<conflict_strategy>",
+    "useCase": "<useCase>",
+    "defaultAction": "<defaultAction>",
+    "defaultReasonCode": "<defaultReasonCode>",
+    "missingDataAction": "<missingDataAction>",
+    "missingDataReasonCode": "<missingDataReasonCode>",
+    "conflictStrategy": "<conflictStrategy>",
     "rules": "<rules>",
-    "change_ticket": "<change_ticket>",
-    "created_by": "<created_by>",
+    "changeTicket": "<changeTicket>",
+    "createdBy": "<createdBy>",
 })
 ```
 
@@ -434,17 +425,17 @@ result = client.tempera_risk.register_policy({
 let spec = client.build_request("tempera_risk", "register_policy", &[
     ("project", "<project>".into()),
     ("schema", "<schema>".into()),
-    ("policy_id", "<policy_id>".into()),
+    ("policyId", "<policyId>".into()),
     ("version", "<version>".into()),
-    ("use_case", "<use_case>".into()),
-    ("default_action", "<default_action>".into()),
-    ("default_reason_code", "<default_reason_code>".into()),
-    ("missing_data_action", "<missing_data_action>".into()),
-    ("missing_data_reason_code", "<missing_data_reason_code>".into()),
-    ("conflict_strategy", "<conflict_strategy>".into()),
+    ("useCase", "<useCase>".into()),
+    ("defaultAction", "<defaultAction>".into()),
+    ("defaultReasonCode", "<defaultReasonCode>".into()),
+    ("missingDataAction", "<missingDataAction>".into()),
+    ("missingDataReasonCode", "<missingDataReasonCode>".into()),
+    ("conflictStrategy", "<conflictStrategy>".into()),
     ("rules", "<rules>".into()),
-    ("change_ticket", "<change_ticket>".into()),
-    ("created_by", "<created_by>".into()),
+    ("changeTicket", "<changeTicket>".into()),
+    ("createdBy", "<createdBy>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -459,7 +450,8 @@ let spec = client.build_request("tempera_risk", "register_policy", &[
 Register an immutable model artifact after dual human approval.
 
 - **Producer operationId:** `registerModel`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:write`
 - **Call as:** TypeScript `client.temperaRisk.registerModel()` · Python `client.tempera_risk.register_model()` · Rust `build_request("tempera_risk", "register_model", params)`
 
 **Path parameters**
@@ -473,19 +465,19 @@ Register an immutable model artifact after dual human approval.
 | Parameter | Required | Notes |
 |---|---|---|
 | `schema` | yes | — |
-| `model_id` | yes | — |
+| `modelId` | yes | — |
 | `version` | yes | — |
 | `state` | yes | — |
-| `artifact_sha256` | yes | — |
+| `artifactSha256` | yes | — |
 | `runtime` | yes | — |
-| `input_features` | yes | — |
-| `output_feature` | yes | — |
-| `training_data_refs` | yes | — |
-| `validation_report_ref` | yes | — |
+| `inputFeatures` | yes | — |
+| `outputFeature` | yes | — |
+| `trainingDataRefs` | yes | — |
+| `validationReportRef` | yes | — |
 | `calibration` | yes | — |
 | `limitations` | yes | — |
-| `created_at` | yes | — |
-| `approval_ids` | yes | — |
+| `createdAt` | yes | — |
+| `approvalIds` | yes | — |
 
 <CodeGroup>
 
@@ -493,19 +485,19 @@ Register an immutable model artifact after dual human approval.
 const result = await client.temperaRisk.registerModel({
   project: "<project>",
   schema: "<schema>",
-  model_id: "<model_id>",
+  modelId: "<modelId>",
   version: "<version>",
   state: "<state>",
-  artifact_sha256: "<artifact_sha256>",
+  artifactSha256: "<artifactSha256>",
   runtime: "<runtime>",
-  input_features: "<input_features>",
-  output_feature: "<output_feature>",
-  training_data_refs: "<training_data_refs>",
-  validation_report_ref: "<validation_report_ref>",
+  inputFeatures: "<inputFeatures>",
+  outputFeature: "<outputFeature>",
+  trainingDataRefs: "<trainingDataRefs>",
+  validationReportRef: "<validationReportRef>",
   calibration: "<calibration>",
   limitations: "<limitations>",
-  created_at: "<created_at>",
-  approval_ids: "<approval_ids>",
+  createdAt: "<createdAt>",
+  approvalIds: "<approvalIds>",
 });
 ```
 
@@ -513,19 +505,19 @@ const result = await client.temperaRisk.registerModel({
 result = client.tempera_risk.register_model({
     "project": "<project>",
     "schema": "<schema>",
-    "model_id": "<model_id>",
+    "modelId": "<modelId>",
     "version": "<version>",
     "state": "<state>",
-    "artifact_sha256": "<artifact_sha256>",
+    "artifactSha256": "<artifactSha256>",
     "runtime": "<runtime>",
-    "input_features": "<input_features>",
-    "output_feature": "<output_feature>",
-    "training_data_refs": "<training_data_refs>",
-    "validation_report_ref": "<validation_report_ref>",
+    "inputFeatures": "<inputFeatures>",
+    "outputFeature": "<outputFeature>",
+    "trainingDataRefs": "<trainingDataRefs>",
+    "validationReportRef": "<validationReportRef>",
     "calibration": "<calibration>",
     "limitations": "<limitations>",
-    "created_at": "<created_at>",
-    "approval_ids": "<approval_ids>",
+    "createdAt": "<createdAt>",
+    "approvalIds": "<approvalIds>",
 })
 ```
 
@@ -533,19 +525,19 @@ result = client.tempera_risk.register_model({
 let spec = client.build_request("tempera_risk", "register_model", &[
     ("project", "<project>".into()),
     ("schema", "<schema>".into()),
-    ("model_id", "<model_id>".into()),
+    ("modelId", "<modelId>".into()),
     ("version", "<version>".into()),
     ("state", "<state>".into()),
-    ("artifact_sha256", "<artifact_sha256>".into()),
+    ("artifactSha256", "<artifactSha256>".into()),
     ("runtime", "<runtime>".into()),
-    ("input_features", "<input_features>".into()),
-    ("output_feature", "<output_feature>".into()),
-    ("training_data_refs", "<training_data_refs>".into()),
-    ("validation_report_ref", "<validation_report_ref>".into()),
+    ("inputFeatures", "<inputFeatures>".into()),
+    ("outputFeature", "<outputFeature>".into()),
+    ("trainingDataRefs", "<trainingDataRefs>".into()),
+    ("validationReportRef", "<validationReportRef>".into()),
     ("calibration", "<calibration>".into()),
     ("limitations", "<limitations>".into()),
-    ("created_at", "<created_at>".into()),
-    ("approval_ids", "<approval_ids>".into()),
+    ("createdAt", "<createdAt>".into()),
+    ("approvalIds", "<approvalIds>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -560,7 +552,8 @@ let spec = client.build_request("tempera_risk", "register_model", &[
 Ingest a signed non-decisional score from an authenticated scorer workload.
 
 - **Producer operationId:** `ingestModelScore`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:write`
 - **Call as:** TypeScript `client.temperaRisk.ingestModelScore()` · Python `client.tempera_risk.ingest_model_score()` · Rust `build_request("tempera_risk", "ingest_model_score", params)`
 
 **Path parameters**
@@ -575,7 +568,7 @@ Ingest a signed non-decisional score from an authenticated scorer workload.
 |---|---|---|
 | `schema` | yes | — |
 | `algorithm` | yes | — |
-| `key_id` | yes | — |
+| `keyId` | yes | — |
 | `score` | yes | — |
 | `signature` | yes | — |
 
@@ -586,7 +579,7 @@ const result = await client.temperaRisk.ingestModelScore({
   project: "<project>",
   schema: "<schema>",
   algorithm: "<algorithm>",
-  key_id: "<key_id>",
+  keyId: "<keyId>",
   score: "<score>",
   signature: "<signature>",
 });
@@ -597,7 +590,7 @@ result = client.tempera_risk.ingest_model_score({
     "project": "<project>",
     "schema": "<schema>",
     "algorithm": "<algorithm>",
-    "key_id": "<key_id>",
+    "keyId": "<keyId>",
     "score": "<score>",
     "signature": "<signature>",
 })
@@ -608,7 +601,7 @@ let spec = client.build_request("tempera_risk", "ingest_model_score", &[
     ("project", "<project>".into()),
     ("schema", "<schema>".into()),
     ("algorithm", "<algorithm>".into()),
-    ("key_id", "<key_id>".into()),
+    ("keyId", "<keyId>".into()),
     ("score", "<score>".into()),
     ("signature", "<signature>".into()),
 ])?;
@@ -625,7 +618,8 @@ let spec = client.build_request("tempera_risk", "ingest_model_score", &[
 Call POST /v1/projects/\{project\}/approvals.
 
 - **Producer operationId:** `createApproval`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:review`
 - **Call as:** TypeScript `client.temperaRisk.createApproval()` · Python `client.tempera_risk.create_approval()` · Rust `build_request("tempera_risk", "create_approval", params)`
 
 **Path parameters**
@@ -678,7 +672,8 @@ let spec = client.build_request("tempera_risk", "create_approval", &[
 Call POST /v1/projects/\{project\}/policyDeployments.
 
 - **Producer operationId:** `deployPolicy`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:write`
 - **Call as:** TypeScript `client.temperaRisk.deployPolicy()` · Python `client.tempera_risk.deploy_policy()` · Rust `build_request("tempera_risk", "deploy_policy", params)`
 
 **Path parameters**
@@ -691,52 +686,52 @@ Call POST /v1/projects/\{project\}/policyDeployments.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `deployment_id` | yes | — |
-| `policy_id` | yes | — |
-| `policy_version` | yes | — |
+| `deploymentId` | yes | — |
+| `policyId` | yes | — |
+| `policyVersion` | yes | — |
 | `mode` | yes | — |
-| `traffic_percent` | yes | — |
-| `effective_at` | yes | — |
-| `approval_ids` | yes | — |
+| `trafficPercent` | yes | — |
+| `effectiveAt` | yes | — |
+| `approvalIds` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaRisk.deployPolicy({
   project: "<project>",
-  deployment_id: "<deployment_id>",
-  policy_id: "<policy_id>",
-  policy_version: "<policy_version>",
+  deploymentId: "<deploymentId>",
+  policyId: "<policyId>",
+  policyVersion: "<policyVersion>",
   mode: "<mode>",
-  traffic_percent: "<traffic_percent>",
-  effective_at: "<effective_at>",
-  approval_ids: "<approval_ids>",
+  trafficPercent: "<trafficPercent>",
+  effectiveAt: "<effectiveAt>",
+  approvalIds: "<approvalIds>",
 });
 ```
 
 ```python Python
 result = client.tempera_risk.deploy_policy({
     "project": "<project>",
-    "deployment_id": "<deployment_id>",
-    "policy_id": "<policy_id>",
-    "policy_version": "<policy_version>",
+    "deploymentId": "<deploymentId>",
+    "policyId": "<policyId>",
+    "policyVersion": "<policyVersion>",
     "mode": "<mode>",
-    "traffic_percent": "<traffic_percent>",
-    "effective_at": "<effective_at>",
-    "approval_ids": "<approval_ids>",
+    "trafficPercent": "<trafficPercent>",
+    "effectiveAt": "<effectiveAt>",
+    "approvalIds": "<approvalIds>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_risk", "deploy_policy", &[
     ("project", "<project>".into()),
-    ("deployment_id", "<deployment_id>".into()),
-    ("policy_id", "<policy_id>".into()),
-    ("policy_version", "<policy_version>".into()),
+    ("deploymentId", "<deploymentId>".into()),
+    ("policyId", "<policyId>".into()),
+    ("policyVersion", "<policyVersion>".into()),
     ("mode", "<mode>".into()),
-    ("traffic_percent", "<traffic_percent>".into()),
-    ("effective_at", "<effective_at>".into()),
-    ("approval_ids", "<approval_ids>".into()),
+    ("trafficPercent", "<trafficPercent>".into()),
+    ("effectiveAt", "<effectiveAt>".into()),
+    ("approvalIds", "<approvalIds>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -751,7 +746,8 @@ let spec = client.build_request("tempera_risk", "deploy_policy", &[
 Call POST /v1/projects/\{project\}/decisions.
 
 - **Producer operationId:** `createDecision`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:write`
 - **Call as:** TypeScript `client.temperaRisk.createDecision()` · Python `client.tempera_risk.create_decision()` · Rust `build_request("tempera_risk", "create_decision", params)`
 
 **Path parameters**
@@ -765,17 +761,17 @@ Call POST /v1/projects/\{project\}/decisions.
 | Parameter | Required | Notes |
 |---|---|---|
 | `schema` | yes | — |
-| `request_id` | yes | — |
-| `subject_id` | yes | — |
-| `event_id` | no | — |
-| `use_case` | yes | — |
+| `requestId` | yes | — |
+| `subjectId` | yes | — |
+| `eventId` | no | — |
+| `useCase` | yes | — |
 | `segment` | no | — |
 | `features` | no | — |
-| `model_versions` | no | — |
-| `evidence_refs` | no | — |
-| `as_of` | yes | — |
-| `available_as_of` | no | — |
-| `execution_mode` | no | — |
+| `modelVersions` | no | — |
+| `evidenceRefs` | no | — |
+| `asOf` | yes | — |
+| `availableAsOf` | no | — |
+| `executionMode` | no | — |
 
 <CodeGroup>
 
@@ -783,10 +779,10 @@ Call POST /v1/projects/\{project\}/decisions.
 const result = await client.temperaRisk.createDecision({
   project: "<project>",
   schema: "<schema>",
-  request_id: "<request_id>",
-  subject_id: "<subject_id>",
-  use_case: "<use_case>",
-  as_of: "<as_of>",
+  requestId: "<requestId>",
+  subjectId: "<subjectId>",
+  useCase: "<useCase>",
+  asOf: "<asOf>",
 });
 ```
 
@@ -794,10 +790,10 @@ const result = await client.temperaRisk.createDecision({
 result = client.tempera_risk.create_decision({
     "project": "<project>",
     "schema": "<schema>",
-    "request_id": "<request_id>",
-    "subject_id": "<subject_id>",
-    "use_case": "<use_case>",
-    "as_of": "<as_of>",
+    "requestId": "<requestId>",
+    "subjectId": "<subjectId>",
+    "useCase": "<useCase>",
+    "asOf": "<asOf>",
 })
 ```
 
@@ -805,10 +801,10 @@ result = client.tempera_risk.create_decision({
 let spec = client.build_request("tempera_risk", "create_decision", &[
     ("project", "<project>".into()),
     ("schema", "<schema>".into()),
-    ("request_id", "<request_id>".into()),
-    ("subject_id", "<subject_id>".into()),
-    ("use_case", "<use_case>".into()),
-    ("as_of", "<as_of>".into()),
+    ("requestId", "<requestId>".into()),
+    ("subjectId", "<subjectId>".into()),
+    ("useCase", "<useCase>".into()),
+    ("asOf", "<asOf>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -823,7 +819,8 @@ let spec = client.build_request("tempera_risk", "create_decision", &[
 Call GET /v1/projects/\{project\}/decisions/\{decisionId\}.
 
 - **Producer operationId:** `getDecision`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:read`
 - **Call as:** TypeScript `client.temperaRisk.getDecision()` · Python `client.tempera_risk.get_decision()` · Rust `build_request("tempera_risk", "get_decision", params)`
 
 **Path parameters**
@@ -867,7 +864,8 @@ let spec = client.build_request("tempera_risk", "get_decision", &[
 Call POST /v1/projects/\{project\}/outcomes.
 
 - **Producer operationId:** `recordOutcome`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:write`
 - **Call as:** TypeScript `client.temperaRisk.recordOutcome()` · Python `client.tempera_risk.record_outcome()` · Rust `build_request("tempera_risk", "record_outcome", params)`
 
 **Path parameters**
@@ -907,7 +905,8 @@ let spec = client.build_request("tempera_risk", "record_outcome", &[
 Call POST /v1/projects/\{project\}/screenings.
 
 - **Producer operationId:** `createScreening`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:write`
 - **Call as:** TypeScript `client.temperaRisk.createScreening()` · Python `client.tempera_risk.create_screening()` · Rust `build_request("tempera_risk", "create_screening", params)`
 
 **Path parameters**
@@ -920,42 +919,42 @@ Call POST /v1/projects/\{project\}/screenings.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `index_name` | yes | — |
+| `indexName` | yes | — |
 | `subject` | yes | — |
-| `permissible_purpose` | yes | — |
-| `case_id` | yes | — |
+| `permissiblePurpose` | yes | — |
+| `caseId` | yes | — |
 | `threshold` | no | — |
-| `max_candidates` | no | — |
+| `maxCandidates` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaRisk.createScreening({
   project: "<project>",
-  index_name: "<index_name>",
+  indexName: "<indexName>",
   subject: "<subject>",
-  permissible_purpose: "<permissible_purpose>",
-  case_id: "<case_id>",
+  permissiblePurpose: "<permissiblePurpose>",
+  caseId: "<caseId>",
 });
 ```
 
 ```python Python
 result = client.tempera_risk.create_screening({
     "project": "<project>",
-    "index_name": "<index_name>",
+    "indexName": "<indexName>",
     "subject": "<subject>",
-    "permissible_purpose": "<permissible_purpose>",
-    "case_id": "<case_id>",
+    "permissiblePurpose": "<permissiblePurpose>",
+    "caseId": "<caseId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_risk", "create_screening", &[
     ("project", "<project>".into()),
-    ("index_name", "<index_name>".into()),
+    ("indexName", "<indexName>".into()),
     ("subject", "<subject>".into()),
-    ("permissible_purpose", "<permissible_purpose>".into()),
-    ("case_id", "<case_id>".into()),
+    ("permissiblePurpose", "<permissiblePurpose>".into()),
+    ("caseId", "<caseId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -970,7 +969,8 @@ let spec = client.build_request("tempera_risk", "create_screening", &[
 Call GET /v1/projects/\{project\}/cases.
 
 - **Producer operationId:** `listCases`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:read`
 - **Call as:** TypeScript `client.temperaRisk.listCases()` · Python `client.tempera_risk.list_cases()` · Rust `build_request("tempera_risk", "list_cases", params)`
 
 **Path parameters**
@@ -979,23 +979,36 @@ Call GET /v1/projects/\{project\}/cases.
 |---|---|---|
 | `project` | yes | Substituted into the URL path (percent-encoded). |
 
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaRisk.listCases({
   project: "<project>",
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
 });
 ```
 
 ```python Python
 result = client.tempera_risk.list_cases({
     "project": "<project>",
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_risk", "list_cases", &[
     ("project", "<project>".into()),
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1010,7 +1023,8 @@ let spec = client.build_request("tempera_risk", "list_cases", &[
 Open a governed multi-domain investigation case.
 
 - **Producer operationId:** `createCase`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:write`
 - **Call as:** TypeScript `client.temperaRisk.createCase()` · Python `client.tempera_risk.create_case()` · Rust `build_request("tempera_risk", "create_case", params)`
 
 **Path parameters**
@@ -1024,14 +1038,14 @@ Open a governed multi-domain investigation case.
 | Parameter | Required | Notes |
 |---|---|---|
 | `schema` | yes | — |
-| `case_id` | yes | — |
-| `case_type` | yes | — |
+| `caseId` | yes | — |
+| `caseType` | yes | — |
 | `state` | yes | — |
-| `subject_ids` | yes | — |
-| `alert_ids` | yes | — |
-| `assigned_to` | yes | — |
+| `subjectIds` | yes | — |
+| `alertIds` | yes | — |
+| `assignedTo` | yes | — |
 | `disposition` | yes | — |
-| `evidence_refs` | yes | — |
+| `evidenceRefs` | yes | — |
 | `attributes` | yes | — |
 
 <CodeGroup>
@@ -1040,14 +1054,14 @@ Open a governed multi-domain investigation case.
 const result = await client.temperaRisk.createCase({
   project: "<project>",
   schema: "<schema>",
-  case_id: "<case_id>",
-  case_type: "<case_type>",
+  caseId: "<caseId>",
+  caseType: "<caseType>",
   state: "<state>",
-  subject_ids: "<subject_ids>",
-  alert_ids: "<alert_ids>",
-  assigned_to: "<assigned_to>",
+  subjectIds: "<subjectIds>",
+  alertIds: "<alertIds>",
+  assignedTo: "<assignedTo>",
   disposition: "<disposition>",
-  evidence_refs: "<evidence_refs>",
+  evidenceRefs: "<evidenceRefs>",
   attributes: "<attributes>",
 });
 ```
@@ -1056,14 +1070,14 @@ const result = await client.temperaRisk.createCase({
 result = client.tempera_risk.create_case({
     "project": "<project>",
     "schema": "<schema>",
-    "case_id": "<case_id>",
-    "case_type": "<case_type>",
+    "caseId": "<caseId>",
+    "caseType": "<caseType>",
     "state": "<state>",
-    "subject_ids": "<subject_ids>",
-    "alert_ids": "<alert_ids>",
-    "assigned_to": "<assigned_to>",
+    "subjectIds": "<subjectIds>",
+    "alertIds": "<alertIds>",
+    "assignedTo": "<assignedTo>",
     "disposition": "<disposition>",
-    "evidence_refs": "<evidence_refs>",
+    "evidenceRefs": "<evidenceRefs>",
     "attributes": "<attributes>",
 })
 ```
@@ -1072,14 +1086,14 @@ result = client.tempera_risk.create_case({
 let spec = client.build_request("tempera_risk", "create_case", &[
     ("project", "<project>".into()),
     ("schema", "<schema>".into()),
-    ("case_id", "<case_id>".into()),
-    ("case_type", "<case_type>".into()),
+    ("caseId", "<caseId>".into()),
+    ("caseType", "<caseType>".into()),
     ("state", "<state>".into()),
-    ("subject_ids", "<subject_ids>".into()),
-    ("alert_ids", "<alert_ids>".into()),
-    ("assigned_to", "<assigned_to>".into()),
+    ("subjectIds", "<subjectIds>".into()),
+    ("alertIds", "<alertIds>".into()),
+    ("assignedTo", "<assignedTo>".into()),
     ("disposition", "<disposition>".into()),
-    ("evidence_refs", "<evidence_refs>".into()),
+    ("evidenceRefs", "<evidenceRefs>".into()),
     ("attributes", "<attributes>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
@@ -1095,7 +1109,8 @@ let spec = client.build_request("tempera_risk", "create_case", &[
 Call GET /v1/projects/\{project\}/cases/\{caseId\}.
 
 - **Producer operationId:** `getCase`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:read`
 - **Call as:** TypeScript `client.temperaRisk.getCase()` · Python `client.tempera_risk.get_case()` · Rust `build_request("tempera_risk", "get_case", params)`
 
 **Path parameters**
@@ -1139,7 +1154,8 @@ let spec = client.build_request("tempera_risk", "get_case", &[
 Read all completed non-decisional investigation dossiers for a case.
 
 - **Producer operationId:** `getCaseDossier`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:read`
 - **Call as:** TypeScript `client.temperaRisk.getCaseDossier()` · Python `client.tempera_risk.get_case_dossier()` · Rust `build_request("tempera_risk", "get_case_dossier", params)`
 
 **Path parameters**
@@ -1183,7 +1199,8 @@ let spec = client.build_request("tempera_risk", "get_case_dossier", &[
 Grant purpose-, case-, subject-, actor-, field-, provider-, and time-bounded access.
 
 - **Producer operationId:** `createAccessGrant`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:write`
 - **Call as:** TypeScript `client.temperaRisk.createAccessGrant()` · Python `client.tempera_risk.create_access_grant()` · Rust `build_request("tempera_risk", "create_access_grant", params)`
 
 **Path parameters**
@@ -1197,19 +1214,19 @@ Grant purpose-, case-, subject-, actor-, field-, provider-, and time-bounded acc
 | Parameter | Required | Notes |
 |---|---|---|
 | `schema` | yes | — |
-| `grant_id` | yes | — |
-| `case_id` | yes | — |
-| `subject_ids` | yes | — |
-| `actor_ids` | yes | — |
-| `permissible_purpose` | yes | — |
-| `allowed_fields` | yes | — |
-| `allowed_providers` | yes | — |
-| `third_party_disclosure_allowed` | yes | — |
-| `valid_from` | yes | — |
-| `expires_at` | yes | — |
-| `created_by` | yes | — |
-| `approval_ids` | yes | — |
-| `change_ticket` | yes | — |
+| `grantId` | yes | — |
+| `caseId` | yes | — |
+| `subjectIds` | yes | — |
+| `actorIds` | yes | — |
+| `permissiblePurpose` | yes | — |
+| `allowedFields` | yes | — |
+| `allowedProviders` | yes | — |
+| `thirdPartyDisclosureAllowed` | yes | — |
+| `validFrom` | yes | — |
+| `expiresAt` | yes | — |
+| `createdBy` | yes | — |
+| `approvalIds` | yes | — |
+| `changeTicket` | yes | — |
 
 <CodeGroup>
 
@@ -1217,19 +1234,19 @@ Grant purpose-, case-, subject-, actor-, field-, provider-, and time-bounded acc
 const result = await client.temperaRisk.createAccessGrant({
   project: "<project>",
   schema: "<schema>",
-  grant_id: "<grant_id>",
-  case_id: "<case_id>",
-  subject_ids: "<subject_ids>",
-  actor_ids: "<actor_ids>",
-  permissible_purpose: "<permissible_purpose>",
-  allowed_fields: "<allowed_fields>",
-  allowed_providers: "<allowed_providers>",
-  third_party_disclosure_allowed: "<third_party_disclosure_allowed>",
-  valid_from: "<valid_from>",
-  expires_at: "<expires_at>",
-  created_by: "<created_by>",
-  approval_ids: "<approval_ids>",
-  change_ticket: "<change_ticket>",
+  grantId: "<grantId>",
+  caseId: "<caseId>",
+  subjectIds: "<subjectIds>",
+  actorIds: "<actorIds>",
+  permissiblePurpose: "<permissiblePurpose>",
+  allowedFields: "<allowedFields>",
+  allowedProviders: "<allowedProviders>",
+  thirdPartyDisclosureAllowed: "<thirdPartyDisclosureAllowed>",
+  validFrom: "<validFrom>",
+  expiresAt: "<expiresAt>",
+  createdBy: "<createdBy>",
+  approvalIds: "<approvalIds>",
+  changeTicket: "<changeTicket>",
 });
 ```
 
@@ -1237,19 +1254,19 @@ const result = await client.temperaRisk.createAccessGrant({
 result = client.tempera_risk.create_access_grant({
     "project": "<project>",
     "schema": "<schema>",
-    "grant_id": "<grant_id>",
-    "case_id": "<case_id>",
-    "subject_ids": "<subject_ids>",
-    "actor_ids": "<actor_ids>",
-    "permissible_purpose": "<permissible_purpose>",
-    "allowed_fields": "<allowed_fields>",
-    "allowed_providers": "<allowed_providers>",
-    "third_party_disclosure_allowed": "<third_party_disclosure_allowed>",
-    "valid_from": "<valid_from>",
-    "expires_at": "<expires_at>",
-    "created_by": "<created_by>",
-    "approval_ids": "<approval_ids>",
-    "change_ticket": "<change_ticket>",
+    "grantId": "<grantId>",
+    "caseId": "<caseId>",
+    "subjectIds": "<subjectIds>",
+    "actorIds": "<actorIds>",
+    "permissiblePurpose": "<permissiblePurpose>",
+    "allowedFields": "<allowedFields>",
+    "allowedProviders": "<allowedProviders>",
+    "thirdPartyDisclosureAllowed": "<thirdPartyDisclosureAllowed>",
+    "validFrom": "<validFrom>",
+    "expiresAt": "<expiresAt>",
+    "createdBy": "<createdBy>",
+    "approvalIds": "<approvalIds>",
+    "changeTicket": "<changeTicket>",
 })
 ```
 
@@ -1257,19 +1274,19 @@ result = client.tempera_risk.create_access_grant({
 let spec = client.build_request("tempera_risk", "create_access_grant", &[
     ("project", "<project>".into()),
     ("schema", "<schema>".into()),
-    ("grant_id", "<grant_id>".into()),
-    ("case_id", "<case_id>".into()),
-    ("subject_ids", "<subject_ids>".into()),
-    ("actor_ids", "<actor_ids>".into()),
-    ("permissible_purpose", "<permissible_purpose>".into()),
-    ("allowed_fields", "<allowed_fields>".into()),
-    ("allowed_providers", "<allowed_providers>".into()),
-    ("third_party_disclosure_allowed", "<third_party_disclosure_allowed>".into()),
-    ("valid_from", "<valid_from>".into()),
-    ("expires_at", "<expires_at>".into()),
-    ("created_by", "<created_by>".into()),
-    ("approval_ids", "<approval_ids>".into()),
-    ("change_ticket", "<change_ticket>".into()),
+    ("grantId", "<grantId>".into()),
+    ("caseId", "<caseId>".into()),
+    ("subjectIds", "<subjectIds>".into()),
+    ("actorIds", "<actorIds>".into()),
+    ("permissiblePurpose", "<permissiblePurpose>".into()),
+    ("allowedFields", "<allowedFields>".into()),
+    ("allowedProviders", "<allowedProviders>".into()),
+    ("thirdPartyDisclosureAllowed", "<thirdPartyDisclosureAllowed>".into()),
+    ("validFrom", "<validFrom>".into()),
+    ("expiresAt", "<expiresAt>".into()),
+    ("createdBy", "<createdBy>".into()),
+    ("approvalIds", "<approvalIds>".into()),
+    ("changeTicket", "<changeTicket>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1284,7 +1301,8 @@ let spec = client.build_request("tempera_risk", "create_access_grant", &[
 Revoke a sensitive investigation-data access grant.
 
 - **Producer operationId:** `revokeAccessGrant`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:write`
 - **Call as:** TypeScript `client.temperaRisk.revokeAccessGrant()` · Python `client.tempera_risk.revoke_access_grant()` · Rust `build_request("tempera_risk", "revoke_access_grant", params)`
 
 **Path parameters**
@@ -1337,7 +1355,8 @@ let spec = client.build_request("tempera_risk", "revoke_access_grant", &[
 Ingest an evidence-backed bitemporal person or company profile.
 
 - **Producer operationId:** `createPeopleDirectoryProfile`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:write`
 - **Call as:** TypeScript `client.temperaRisk.createPeopleDirectoryProfile()` · Python `client.tempera_risk.create_people_directory_profile()` · Rust `build_request("tempera_risk", "create_people_directory_profile", params)`
 
 **Path parameters**
@@ -1351,18 +1370,18 @@ Ingest an evidence-backed bitemporal person or company profile.
 | Parameter | Required | Notes |
 |---|---|---|
 | `schema` | yes | — |
-| `profile_id` | yes | — |
-| `subject_id` | yes | — |
-| `entity_kind` | yes | — |
+| `profileId` | yes | — |
+| `subjectId` | yes | — |
+| `entityKind` | yes | — |
 | `anchors` | yes | — |
 | `attributes` | yes | — |
-| `source_ids` | yes | — |
-| `evidence_refs` | yes | — |
-| `valid_from` | yes | — |
-| `valid_to` | yes | — |
-| `recorded_at` | yes | — |
-| `retention_expires_at` | yes | — |
-| `non_decisional` | no | — |
+| `sourceIds` | yes | — |
+| `evidenceRefs` | yes | — |
+| `validFrom` | yes | — |
+| `validTo` | yes | — |
+| `recordedAt` | yes | — |
+| `retentionExpiresAt` | yes | — |
+| `nonDecisional` | no | — |
 
 <CodeGroup>
 
@@ -1370,17 +1389,17 @@ Ingest an evidence-backed bitemporal person or company profile.
 const result = await client.temperaRisk.createPeopleDirectoryProfile({
   project: "<project>",
   schema: "<schema>",
-  profile_id: "<profile_id>",
-  subject_id: "<subject_id>",
-  entity_kind: "<entity_kind>",
+  profileId: "<profileId>",
+  subjectId: "<subjectId>",
+  entityKind: "<entityKind>",
   anchors: "<anchors>",
   attributes: "<attributes>",
-  source_ids: "<source_ids>",
-  evidence_refs: "<evidence_refs>",
-  valid_from: "<valid_from>",
-  valid_to: "<valid_to>",
-  recorded_at: "<recorded_at>",
-  retention_expires_at: "<retention_expires_at>",
+  sourceIds: "<sourceIds>",
+  evidenceRefs: "<evidenceRefs>",
+  validFrom: "<validFrom>",
+  validTo: "<validTo>",
+  recordedAt: "<recordedAt>",
+  retentionExpiresAt: "<retentionExpiresAt>",
 });
 ```
 
@@ -1388,17 +1407,17 @@ const result = await client.temperaRisk.createPeopleDirectoryProfile({
 result = client.tempera_risk.create_people_directory_profile({
     "project": "<project>",
     "schema": "<schema>",
-    "profile_id": "<profile_id>",
-    "subject_id": "<subject_id>",
-    "entity_kind": "<entity_kind>",
+    "profileId": "<profileId>",
+    "subjectId": "<subjectId>",
+    "entityKind": "<entityKind>",
     "anchors": "<anchors>",
     "attributes": "<attributes>",
-    "source_ids": "<source_ids>",
-    "evidence_refs": "<evidence_refs>",
-    "valid_from": "<valid_from>",
-    "valid_to": "<valid_to>",
-    "recorded_at": "<recorded_at>",
-    "retention_expires_at": "<retention_expires_at>",
+    "sourceIds": "<sourceIds>",
+    "evidenceRefs": "<evidenceRefs>",
+    "validFrom": "<validFrom>",
+    "validTo": "<validTo>",
+    "recordedAt": "<recordedAt>",
+    "retentionExpiresAt": "<retentionExpiresAt>",
 })
 ```
 
@@ -1406,17 +1425,17 @@ result = client.tempera_risk.create_people_directory_profile({
 let spec = client.build_request("tempera_risk", "create_people_directory_profile", &[
     ("project", "<project>".into()),
     ("schema", "<schema>".into()),
-    ("profile_id", "<profile_id>".into()),
-    ("subject_id", "<subject_id>".into()),
-    ("entity_kind", "<entity_kind>".into()),
+    ("profileId", "<profileId>".into()),
+    ("subjectId", "<subjectId>".into()),
+    ("entityKind", "<entityKind>".into()),
     ("anchors", "<anchors>".into()),
     ("attributes", "<attributes>".into()),
-    ("source_ids", "<source_ids>".into()),
-    ("evidence_refs", "<evidence_refs>".into()),
-    ("valid_from", "<valid_from>".into()),
-    ("valid_to", "<valid_to>".into()),
-    ("recorded_at", "<recorded_at>".into()),
-    ("retention_expires_at", "<retention_expires_at>".into()),
+    ("sourceIds", "<sourceIds>".into()),
+    ("evidenceRefs", "<evidenceRefs>".into()),
+    ("validFrom", "<validFrom>".into()),
+    ("validTo", "<validTo>".into()),
+    ("recordedAt", "<recordedAt>".into()),
+    ("retentionExpiresAt", "<retentionExpiresAt>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1431,7 +1450,8 @@ let spec = client.build_request("tempera_risk", "create_people_directory_profile
 Find non-decisional identity-resolution candidates under an active case grant.
 
 - **Producer operationId:** `searchPeople`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:write`
 - **Call as:** TypeScript `client.temperaRisk.searchPeople()` · Python `client.tempera_risk.search_people()` · Rust `build_request("tempera_risk", "search_people", params)`
 
 **Path parameters**
@@ -1445,17 +1465,17 @@ Find non-decisional identity-resolution candidates under an active case grant.
 | Parameter | Required | Notes |
 |---|---|---|
 | `schema` | yes | — |
-| `query_id` | yes | — |
-| `subject_id` | yes | — |
-| `access_grant_id` | yes | — |
-| `case_id` | yes | — |
-| `permissible_purpose` | yes | — |
-| `entity_kind` | yes | — |
+| `queryId` | yes | — |
+| `subjectId` | yes | — |
+| `accessGrantId` | yes | — |
+| `caseId` | yes | — |
+| `permissiblePurpose` | yes | — |
+| `entityKind` | yes | — |
 | `anchors` | yes | — |
 | `attributes` | yes | — |
-| `max_candidates` | yes | — |
-| `as_of` | yes | — |
-| `known_at` | yes | — |
+| `maxCandidates` | yes | — |
+| `asOf` | yes | — |
+| `knownAt` | yes | — |
 
 <CodeGroup>
 
@@ -1463,17 +1483,17 @@ Find non-decisional identity-resolution candidates under an active case grant.
 const result = await client.temperaRisk.searchPeople({
   project: "<project>",
   schema: "<schema>",
-  query_id: "<query_id>",
-  subject_id: "<subject_id>",
-  access_grant_id: "<access_grant_id>",
-  case_id: "<case_id>",
-  permissible_purpose: "<permissible_purpose>",
-  entity_kind: "<entity_kind>",
+  queryId: "<queryId>",
+  subjectId: "<subjectId>",
+  accessGrantId: "<accessGrantId>",
+  caseId: "<caseId>",
+  permissiblePurpose: "<permissiblePurpose>",
+  entityKind: "<entityKind>",
   anchors: "<anchors>",
   attributes: "<attributes>",
-  max_candidates: "<max_candidates>",
-  as_of: "<as_of>",
-  known_at: "<known_at>",
+  maxCandidates: "<maxCandidates>",
+  asOf: "<asOf>",
+  knownAt: "<knownAt>",
 });
 ```
 
@@ -1481,17 +1501,17 @@ const result = await client.temperaRisk.searchPeople({
 result = client.tempera_risk.search_people({
     "project": "<project>",
     "schema": "<schema>",
-    "query_id": "<query_id>",
-    "subject_id": "<subject_id>",
-    "access_grant_id": "<access_grant_id>",
-    "case_id": "<case_id>",
-    "permissible_purpose": "<permissible_purpose>",
-    "entity_kind": "<entity_kind>",
+    "queryId": "<queryId>",
+    "subjectId": "<subjectId>",
+    "accessGrantId": "<accessGrantId>",
+    "caseId": "<caseId>",
+    "permissiblePurpose": "<permissiblePurpose>",
+    "entityKind": "<entityKind>",
     "anchors": "<anchors>",
     "attributes": "<attributes>",
-    "max_candidates": "<max_candidates>",
-    "as_of": "<as_of>",
-    "known_at": "<known_at>",
+    "maxCandidates": "<maxCandidates>",
+    "asOf": "<asOf>",
+    "knownAt": "<knownAt>",
 })
 ```
 
@@ -1499,17 +1519,17 @@ result = client.tempera_risk.search_people({
 let spec = client.build_request("tempera_risk", "search_people", &[
     ("project", "<project>".into()),
     ("schema", "<schema>".into()),
-    ("query_id", "<query_id>".into()),
-    ("subject_id", "<subject_id>".into()),
-    ("access_grant_id", "<access_grant_id>".into()),
-    ("case_id", "<case_id>".into()),
-    ("permissible_purpose", "<permissible_purpose>".into()),
-    ("entity_kind", "<entity_kind>".into()),
+    ("queryId", "<queryId>".into()),
+    ("subjectId", "<subjectId>".into()),
+    ("accessGrantId", "<accessGrantId>".into()),
+    ("caseId", "<caseId>".into()),
+    ("permissiblePurpose", "<permissiblePurpose>".into()),
+    ("entityKind", "<entityKind>".into()),
     ("anchors", "<anchors>".into()),
     ("attributes", "<attributes>".into()),
-    ("max_candidates", "<max_candidates>".into()),
-    ("as_of", "<as_of>".into()),
-    ("known_at", "<known_at>".into()),
+    ("maxCandidates", "<maxCandidates>".into()),
+    ("asOf", "<asOf>".into()),
+    ("knownAt", "<knownAt>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1524,7 +1544,8 @@ let spec = client.build_request("tempera_risk", "search_people", &[
 List declared non-runnable investigation source packs.
 
 - **Producer operationId:** `listSourcePacks`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:read`
 - **Call as:** TypeScript `client.temperaRisk.listSourcePacks()` · Python `client.tempera_risk.list_source_packs()` · Rust `build_request("tempera_risk", "list_source_packs", params)`
 
 **Path parameters**
@@ -1533,23 +1554,36 @@ List declared non-runnable investigation source packs.
 |---|---|---|
 | `project` | yes | Substituted into the URL path (percent-encoded). |
 
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaRisk.listSourcePacks({
   project: "<project>",
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
 });
 ```
 
 ```python Python
 result = client.tempera_risk.list_source_packs({
     "project": "<project>",
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_risk", "list_source_packs", &[
     ("project", "<project>".into()),
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1564,7 +1598,8 @@ let spec = client.build_request("tempera_risk", "list_source_packs", &[
 Read one declared non-runnable investigation source pack.
 
 - **Producer operationId:** `getSourcePack`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:read`
 - **Call as:** TypeScript `client.temperaRisk.getSourcePack()` · Python `client.tempera_risk.get_source_pack()` · Rust `build_request("tempera_risk", "get_source_pack", params)`
 
 **Path parameters**
@@ -1608,7 +1643,8 @@ let spec = client.build_request("tempera_risk", "get_source_pack", &[
 Read truthful admitted coverage for one source pack.
 
 - **Producer operationId:** `getSourceCoverage`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:read`
 - **Call as:** TypeScript `client.temperaRisk.getSourceCoverage()` · Python `client.tempera_risk.get_source_coverage()` · Rust `build_request("tempera_risk", "get_source_coverage", params)`
 
 **Path parameters**
@@ -1652,7 +1688,8 @@ let spec = client.build_request("tempera_risk", "get_source_coverage", &[
 Call POST /v1/projects/\{project\}/researchJobs.
 
 - **Producer operationId:** `createResearchJob`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:write`
 - **Call as:** TypeScript `client.temperaRisk.createResearchJob()` · Python `client.tempera_risk.create_research_job()` · Rust `build_request("tempera_risk", "create_research_job", params)`
 
 **Path parameters**
@@ -1668,20 +1705,20 @@ Call POST /v1/projects/\{project\}/researchJobs.
 | `subject` | yes | — |
 | `question` | yes | — |
 | `purpose` | yes | — |
-| `permissible_purpose` | yes | — |
-| `output_schema` | yes | — |
+| `permissiblePurpose` | yes | — |
+| `outputSchema` | yes | — |
 | `budgets` | yes | — |
-| `source_policy` | yes | — |
-| `case_id` | yes | — |
-| `access_grant_id` | no | — |
-| `actor_id` | yes | — |
-| `retention_policy_id` | yes | — |
-| `human_review_required` | yes | — |
-| `candidate_binding` | no | — |
-| `provider_plan` | no | — |
-| `investigation_profile` | no | — |
-| `source_pack_ids` | no | — |
-| `continuation_of_job_id` | no | — |
+| `sourcePolicy` | yes | — |
+| `caseId` | yes | — |
+| `accessGrantId` | no | — |
+| `actorId` | yes | — |
+| `retentionPolicyId` | yes | — |
+| `humanReviewRequired` | yes | — |
+| `candidateBinding` | no | — |
+| `providerPlan` | no | — |
+| `investigationProfile` | no | — |
+| `sourcePackIds` | no | — |
+| `continuationOfJobId` | no | — |
 
 <CodeGroup>
 
@@ -1691,14 +1728,14 @@ const result = await client.temperaRisk.createResearchJob({
   subject: "<subject>",
   question: "<question>",
   purpose: "<purpose>",
-  permissible_purpose: "<permissible_purpose>",
-  output_schema: "<output_schema>",
+  permissiblePurpose: "<permissiblePurpose>",
+  outputSchema: "<outputSchema>",
   budgets: "<budgets>",
-  source_policy: "<source_policy>",
-  case_id: "<case_id>",
-  actor_id: "<actor_id>",
-  retention_policy_id: "<retention_policy_id>",
-  human_review_required: "<human_review_required>",
+  sourcePolicy: "<sourcePolicy>",
+  caseId: "<caseId>",
+  actorId: "<actorId>",
+  retentionPolicyId: "<retentionPolicyId>",
+  humanReviewRequired: "<humanReviewRequired>",
 });
 ```
 
@@ -1708,14 +1745,14 @@ result = client.tempera_risk.create_research_job({
     "subject": "<subject>",
     "question": "<question>",
     "purpose": "<purpose>",
-    "permissible_purpose": "<permissible_purpose>",
-    "output_schema": "<output_schema>",
+    "permissiblePurpose": "<permissiblePurpose>",
+    "outputSchema": "<outputSchema>",
     "budgets": "<budgets>",
-    "source_policy": "<source_policy>",
-    "case_id": "<case_id>",
-    "actor_id": "<actor_id>",
-    "retention_policy_id": "<retention_policy_id>",
-    "human_review_required": "<human_review_required>",
+    "sourcePolicy": "<sourcePolicy>",
+    "caseId": "<caseId>",
+    "actorId": "<actorId>",
+    "retentionPolicyId": "<retentionPolicyId>",
+    "humanReviewRequired": "<humanReviewRequired>",
 })
 ```
 
@@ -1725,14 +1762,14 @@ let spec = client.build_request("tempera_risk", "create_research_job", &[
     ("subject", "<subject>".into()),
     ("question", "<question>".into()),
     ("purpose", "<purpose>".into()),
-    ("permissible_purpose", "<permissible_purpose>".into()),
-    ("output_schema", "<output_schema>".into()),
+    ("permissiblePurpose", "<permissiblePurpose>".into()),
+    ("outputSchema", "<outputSchema>".into()),
     ("budgets", "<budgets>".into()),
-    ("source_policy", "<source_policy>".into()),
-    ("case_id", "<case_id>".into()),
-    ("actor_id", "<actor_id>".into()),
-    ("retention_policy_id", "<retention_policy_id>".into()),
-    ("human_review_required", "<human_review_required>".into()),
+    ("sourcePolicy", "<sourcePolicy>".into()),
+    ("caseId", "<caseId>".into()),
+    ("actorId", "<actorId>".into()),
+    ("retentionPolicyId", "<retentionPolicyId>".into()),
+    ("humanReviewRequired", "<humanReviewRequired>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1747,7 +1784,8 @@ let spec = client.build_request("tempera_risk", "create_research_job", &[
 Call GET /v1/projects/\{project\}/researchJobs/\{jobId\}.
 
 - **Producer operationId:** `getResearchJob`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:read`
 - **Call as:** TypeScript `client.temperaRisk.getResearchJob()` · Python `client.tempera_risk.get_research_job()` · Rust `build_request("tempera_risk", "get_research_job", params)`
 
 **Path parameters**
@@ -1791,7 +1829,8 @@ let spec = client.build_request("tempera_risk", "get_research_job", &[
 Replay bounded authorized job events as SSE; reconnect with afterSequence.
 
 - **Producer operationId:** `streamResearchJobEvents`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:read`
 - **Call as:** TypeScript `client.temperaRisk.streamResearchJobEvents()` · Python `client.tempera_risk.stream_research_job_events()` · Rust `build_request("tempera_risk", "stream_research_job_events", params)`
 
 **Path parameters**
@@ -1848,7 +1887,8 @@ let spec = client.build_request("tempera_risk", "stream_research_job_events", &[
 Read the cited, non-decisional result under the job's original access grant.
 
 - **Producer operationId:** `getResearchJobResult`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:read`
 - **Call as:** TypeScript `client.temperaRisk.getResearchJobResult()` · Python `client.tempera_risk.get_research_job_result()` · Rust `build_request("tempera_risk", "get_research_job_result", params)`
 
 **Path parameters**
@@ -1892,7 +1932,8 @@ let spec = client.build_request("tempera_risk", "get_research_job_result", &[
 Read ordered non-decisional job events under the job's original access grant.
 
 - **Producer operationId:** `listResearchJobEvents`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:read`
 - **Call as:** TypeScript `client.temperaRisk.listResearchJobEvents()` · Python `client.tempera_risk.list_research_job_events()` · Rust `build_request("tempera_risk", "list_research_job_events", params)`
 
 **Path parameters**
@@ -1908,6 +1949,7 @@ Read ordered non-decisional job events under the job's original access grant.
 |---|---|---|
 | `afterSequence` | no | — |
 | `pageSize` | no | — |
+| `pageToken` | no | — |
 
 <CodeGroup>
 
@@ -1949,7 +1991,8 @@ let spec = client.build_request("tempera_risk", "list_research_job_events", &[
 Call POST /v1/projects/\{project\}/researchJobs/\{jobId\}:cancel.
 
 - **Producer operationId:** `cancelResearchJob`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:write`
 - **Call as:** TypeScript `client.temperaRisk.cancelResearchJob()` · Python `client.tempera_risk.cancel_research_job()` · Rust `build_request("tempera_risk", "cancel_research_job", params)`
 
 **Path parameters**
@@ -2002,7 +2045,8 @@ let spec = client.build_request("tempera_risk", "cancel_research_job", &[
 Call POST /v1/projects/\{project\}/researchJobs/\{jobId\}:review.
 
 - **Producer operationId:** `reviewResearchJob`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:review`
 - **Call as:** TypeScript `client.temperaRisk.reviewResearchJob()` · Python `client.tempera_risk.review_research_job()` · Rust `build_request("tempera_risk", "review_research_job", params)`
 
 **Path parameters**
@@ -2059,7 +2103,8 @@ let spec = client.build_request("tempera_risk", "review_research_job", &[
 Verify one signed Risk Clearing evidence envelope against live Risk state.
 
 - **Producer operationId:** `verifyRiskClearingEvidenceLive`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:write`
 - **Call as:** TypeScript `client.temperaRisk.verifyRiskClearingEvidenceLive()` · Python `client.tempera_risk.verify_risk_clearing_evidence_live()` · Rust `build_request("tempera_risk", "verify_risk_clearing_evidence_live", params)`
 
 **Path parameters**
@@ -2108,7 +2153,8 @@ let spec = client.build_request("tempera_risk", "verify_risk_clearing_evidence_l
 Release a reservation only when Clearing proved no external dispatch occurred.
 
 - **Producer operationId:** `abortRiskClearingReservation`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:write`
 - **Call as:** TypeScript `client.temperaRisk.abortRiskClearingReservation()` · Python `client.tempera_risk.abort_risk_clearing_reservation()` · Rust `build_request("tempera_risk", "abort_risk_clearing_reservation", params)`
 
 **Path parameters**
@@ -2165,7 +2211,8 @@ let spec = client.build_request("tempera_risk", "abort_risk_clearing_reservation
 Hold budget capacity after an ambiguous provider dispatch.
 
 - **Producer operationId:** `markRiskClearingOutcomeUnknown`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:write`
 - **Call as:** TypeScript `client.temperaRisk.markRiskClearingOutcomeUnknown()` · Python `client.tempera_risk.mark_risk_clearing_outcome_unknown()` · Rust `build_request("tempera_risk", "mark_risk_clearing_outcome_unknown", params)`
 
 **Path parameters**
@@ -2222,7 +2269,8 @@ let spec = client.build_request("tempera_risk", "mark_risk_clearing_outcome_unkn
 Record an independently observed provider effect while retaining capacity.
 
 - **Producer operationId:** `openRiskClearingExposure`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:write`
 - **Call as:** TypeScript `client.temperaRisk.openRiskClearingExposure()` · Python `client.tempera_risk.open_risk_clearing_exposure()` · Rust `build_request("tempera_risk", "open_risk_clearing_exposure", params)`
 
 **Path parameters**
@@ -2279,7 +2327,8 @@ let spec = client.build_request("tempera_risk", "open_risk_clearing_exposure", &
 Record a non-final observed outcome without releasing capacity.
 
 - **Producer operationId:** `recordRiskClearingProvisionalOutcome`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:write`
 - **Call as:** TypeScript `client.temperaRisk.recordRiskClearingProvisionalOutcome()` · Python `client.tempera_risk.record_risk_clearing_provisional_outcome()` · Rust `build_request("tempera_risk", "record_risk_clearing_provisional_outcome", params)`
 
 **Path parameters**
@@ -2336,7 +2385,8 @@ let spec = client.build_request("tempera_risk", "record_risk_clearing_provisiona
 Record compensation as a forward action without releasing capacity.
 
 - **Producer operationId:** `recordRiskClearingCompensation`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:write`
 - **Call as:** TypeScript `client.temperaRisk.recordRiskClearingCompensation()` · Python `client.tempera_risk.record_risk_clearing_compensation()` · Rust `build_request("tempera_risk", "record_risk_clearing_compensation", params)`
 
 **Path parameters**
@@ -2393,7 +2443,8 @@ let spec = client.build_request("tempera_risk", "record_risk_clearing_compensati
 Keep capacity held when authoritative evidence conflicts.
 
 - **Producer operationId:** `disputeRiskClearingExposure`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:write`
 - **Call as:** TypeScript `client.temperaRisk.disputeRiskClearingExposure()` · Python `client.tempera_risk.dispute_risk_clearing_exposure()` · Rust `build_request("tempera_risk", "dispute_risk_clearing_exposure", params)`
 
 **Path parameters**
@@ -2450,7 +2501,8 @@ let spec = client.build_request("tempera_risk", "dispute_risk_clearing_exposure"
 Settle a mature reconciled outcome and release held capacity.
 
 - **Producer operationId:** `settleRiskClearingExposure`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:write`
 - **Call as:** TypeScript `client.temperaRisk.settleRiskClearingExposure()` · Python `client.tempera_risk.settle_risk_clearing_exposure()` · Rust `build_request("tempera_risk", "settle_risk_clearing_exposure", params)`
 
 **Path parameters**
@@ -2511,7 +2563,8 @@ let spec = client.build_request("tempera_risk", "settle_risk_clearing_exposure",
 Call GET /v1/projects/\{project\}/audit:export.
 
 - **Producer operationId:** `exportAudit`
-- **Auth:** Product bearer — an access token minted for audience `tempera-risk`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:read`
 - **Call as:** TypeScript `client.temperaRisk.exportAudit()` · Python `client.tempera_risk.export_audit()` · Rust `build_request("tempera_risk", "export_audit", params)`
 
 **Path parameters**
@@ -2536,6 +2589,75 @@ result = client.tempera_risk.export_audit({
 
 ```rust Rust
 let spec = client.build_request("tempera_risk", "export_audit", &[
+    ("project", "<project>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getOpenApi
+
+`GET /openapi.json`
+
+Call GET /openapi.json.
+
+- **Producer operationId:** `getOpenApi`
+- **Auth:** None (public endpoint).
+- **Call as:** TypeScript `client.temperaRisk.getOpenApi()` · Python `client.tempera_risk.get_open_api()` · Rust `build_request("tempera_risk", "get_open_api", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaRisk.getOpenApi();
+```
+
+```python Python
+result = client.tempera_risk.get_open_api()
+```
+
+```rust Rust
+let spec = client.build_request("tempera_risk", "get_open_api", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### ingestPaymentObservation
+
+`POST /v1/projects/{project}/paymentObservations:ingest`
+
+Ingest one provider-owned payment observation as a trusted event.
+
+- **Producer operationId:** `ingestPaymentObservation`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-risk`.
+- **Scope:** `risk:write`
+- **Call as:** TypeScript `client.temperaRisk.ingestPaymentObservation()` · Python `client.tempera_risk.ingest_payment_observation()` · Rust `build_request("tempera_risk", "ingest_payment_observation", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `project` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaRisk.ingestPaymentObservation({
+  project: "<project>",
+});
+```
+
+```python Python
+result = client.tempera_risk.ingest_payment_observation({
+    "project": "<project>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_risk", "ingest_payment_observation", &[
     ("project", "<project>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json

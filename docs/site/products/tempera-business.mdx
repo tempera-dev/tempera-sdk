@@ -29,235 +29,6 @@ Anything this page does not cover is reachable through the raw passthrough:
 
 ## Operations
 
-### businessProfileGet
-
-`GET /v1/business-profile`
-
-Profile.
-
-- **Producer operationId:** `business.profile.get`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-business`.
-- **Scope:** `business:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
-- **Call as:** TypeScript `client.temperaBusiness.businessProfileGet()` · Python `client.tempera_business.business_profile_get()` · Rust `build_request("tempera_business", "business_profile_get", params)`
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaBusiness.businessProfileGet();
-```
-
-```python Python
-result = client.tempera_business.business_profile_get()
-```
-
-```rust Rust
-let spec = client.build_request("tempera_business", "business_profile_get", &[])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### businessProfileHistory
-
-`GET /v1/business-profile/history`
-
-Profile History.
-
-- **Producer operationId:** `business.profile.history`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-business`.
-- **Scope:** `business:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
-- **Call as:** TypeScript `client.temperaBusiness.businessProfileHistory()` · Python `client.tempera_business.business_profile_history()` · Rust `build_request("tempera_business", "business_profile_history", params)`
-
-**Query parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `after` | no | — |
-| `limit` | no | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaBusiness.businessProfileHistory({
-  after: "<after>",
-  limit: "<limit>",
-});
-```
-
-```python Python
-result = client.tempera_business.business_profile_history({
-    "after": "<after>",
-    "limit": "<limit>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_business", "business_profile_history", &[
-    ("after", "<after>".into()),
-    ("limit", "<limit>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### businessProfileClear
-
-`POST /v1/business-profile:clear`
-
-Clear.
-
-- **Producer operationId:** `business.profile.clear`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-business`.
-- **Scope:** `business:review`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
-- **Call as:** TypeScript `client.temperaBusiness.businessProfileClear()` · Python `client.tempera_business.business_profile_clear()` · Rust `build_request("tempera_business", "business_profile_clear", params)`
-
-**Body parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `expected_revision` | yes | — |
-| `idempotency_key` | yes | — |
-| `reason` | no | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaBusiness.businessProfileClear({
-  expected_revision: "<expected_revision>",
-  idempotency_key: "<idempotency_key>",
-  reason: "<reason>",
-});
-```
-
-```python Python
-result = client.tempera_business.business_profile_clear({
-    "expected_revision": "<expected_revision>",
-    "idempotency_key": "<idempotency_key>",
-    "reason": "<reason>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_business", "business_profile_clear", &[
-    ("expected_revision", "<expected_revision>".into()),
-    ("idempotency_key", "<idempotency_key>".into()),
-    ("reason", "<reason>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### businessProfileInitialize
-
-`POST /v1/business-profile:initialize`
-
-Initialize.
-
-- **Producer operationId:** `business.profile.initialize`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-business`.
-- **Scope:** `business:write`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
-- **Call as:** TypeScript `client.temperaBusiness.businessProfileInitialize()` · Python `client.tempera_business.business_profile_initialize()` · Rust `build_request("tempera_business", "business_profile_initialize", params)`
-
-**Body parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `available_services` | no | — |
-| `facts` | no | — |
-| `idempotency_key` | yes | — |
-| `references` | no | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaBusiness.businessProfileInitialize({
-  idempotency_key: "<idempotency_key>",
-  available_services: "<available_services>",
-  facts: "<facts>",
-});
-```
-
-```python Python
-result = client.tempera_business.business_profile_initialize({
-    "idempotency_key": "<idempotency_key>",
-    "available_services": "<available_services>",
-    "facts": "<facts>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_business", "business_profile_initialize", &[
-    ("idempotency_key", "<idempotency_key>".into()),
-    ("available_services", "<available_services>".into()),
-    ("facts", "<facts>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### businessProfilePatch
-
-`POST /v1/business-profile:patch`
-
-Patch.
-
-- **Producer operationId:** `business.profile.patch`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-business`.
-- **Scope:** `business:write`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
-- **Call as:** TypeScript `client.temperaBusiness.businessProfilePatch()` · Python `client.tempera_business.business_profile_patch()` · Rust `build_request("tempera_business", "business_profile_patch", params)`
-
-**Body parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `available_services` | no | — |
-| `expected_revision` | yes | — |
-| `facts` | no | — |
-| `idempotency_key` | yes | — |
-| `references` | no | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaBusiness.businessProfilePatch({
-  expected_revision: "<expected_revision>",
-  idempotency_key: "<idempotency_key>",
-  available_services: "<available_services>",
-});
-```
-
-```python Python
-result = client.tempera_business.business_profile_patch({
-    "expected_revision": "<expected_revision>",
-    "idempotency_key": "<idempotency_key>",
-    "available_services": "<available_services>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_business", "business_profile_patch", &[
-    ("expected_revision", "<expected_revision>".into()),
-    ("idempotency_key", "<idempotency_key>".into()),
-    ("available_services", "<available_services>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
 ### businessCapabilities
 
 `GET /v1/capabilities`
@@ -265,9 +36,8 @@ let spec = client.build_request("tempera_business", "business_profile_patch", &[
 Capabilities.
 
 - **Producer operationId:** `business.capabilities`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-business`.
+- **Auth:** Product bearer — an access token minted for audience `tempera-business`, or a central `tp_` API key.
 - **Scope:** `business:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaBusiness.businessCapabilities()` · Python `client.tempera_business.business_capabilities()` · Rust `build_request("tempera_business", "business_capabilities", params)`
 
 <CodeGroup>
@@ -288,52 +58,6 @@ let spec = client.build_request("tempera_business", "business_capabilities", &[]
 
 </CodeGroup>
 
-### businessCasesList
-
-`GET /v1/cases`
-
-Listing.
-
-- **Producer operationId:** `business.cases.list`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-business`.
-- **Scope:** `business:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
-- **Call as:** TypeScript `client.temperaBusiness.businessCasesList()` · Python `client.tempera_business.business_cases_list()` · Rust `build_request("tempera_business", "business_cases_list", params)`
-
-**Query parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `after` | no | — |
-| `limit` | no | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaBusiness.businessCasesList({
-  after: "<after>",
-  limit: "<limit>",
-});
-```
-
-```python Python
-result = client.tempera_business.business_cases_list({
-    "after": "<after>",
-    "limit": "<limit>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_business", "business_cases_list", &[
-    ("after", "<after>".into()),
-    ("limit", "<limit>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
 ### businessCasesCreate
 
 `POST /v1/cases`
@@ -341,42 +65,86 @@ let spec = client.build_request("tempera_business", "business_cases_list", &[
 Create.
 
 - **Producer operationId:** `business.cases.create`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-business`.
+- **Auth:** Product bearer — an access token minted for audience `tempera-business`, or a central `tp_` API key.
 - **Scope:** `business:write`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaBusiness.businessCasesCreate()` · Python `client.tempera_business.business_cases_create()` · Rust `build_request("tempera_business", "business_cases_create", params)`
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `idempotency_key` | yes | — |
+| `idempotencyKey` | yes | — |
 | `intake` | yes | — |
-| `profile_ref` | no | — |
+| `profileRef` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaBusiness.businessCasesCreate({
-  idempotency_key: "<idempotency_key>",
+  idempotencyKey: "<idempotencyKey>",
   intake: "<intake>",
-  profile_ref: "<profile_ref>",
+  profileRef: "<profileRef>",
 });
 ```
 
 ```python Python
 result = client.tempera_business.business_cases_create({
-    "idempotency_key": "<idempotency_key>",
+    "idempotencyKey": "<idempotencyKey>",
     "intake": "<intake>",
-    "profile_ref": "<profile_ref>",
+    "profileRef": "<profileRef>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_business", "business_cases_create", &[
-    ("idempotency_key", "<idempotency_key>".into()),
+    ("idempotencyKey", "<idempotencyKey>".into()),
     ("intake", "<intake>".into()),
-    ("profile_ref", "<profile_ref>".into()),
+    ("profileRef", "<profileRef>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### businessCasesList
+
+`GET /v1/cases`
+
+Listing.
+
+- **Producer operationId:** `business.cases.list`
+- **Auth:** Product bearer — an access token minted for audience `tempera-business`, or a central `tp_` API key.
+- **Scope:** `business:read`
+- **Call as:** TypeScript `client.temperaBusiness.businessCasesList()` · Python `client.tempera_business.business_cases_list()` · Rust `build_request("tempera_business", "business_cases_list", params)`
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageToken` | no | — |
+| `pageSize` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaBusiness.businessCasesList({
+  pageToken: "<pageToken>",
+  pageSize: "<pageSize>",
+});
+```
+
+```python Python
+result = client.tempera_business.business_cases_list({
+    "pageToken": "<pageToken>",
+    "pageSize": "<pageSize>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_business", "business_cases_list", &[
+    ("pageToken", "<pageToken>".into()),
+    ("pageSize", "<pageSize>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -386,287 +154,38 @@ let spec = client.build_request("tempera_business", "business_cases_create", &[
 
 ### businessCasesGet
 
-`GET /v1/cases/{case_id}`
+`GET /v1/cases/{caseId}`
 
 Get Case.
 
 - **Producer operationId:** `business.cases.get`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-business`.
+- **Auth:** Product bearer — an access token minted for audience `tempera-business`, or a central `tp_` API key.
 - **Scope:** `business:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaBusiness.businessCasesGet()` · Python `client.tempera_business.business_cases_get()` · Rust `build_request("tempera_business", "business_cases_get", params)`
 
 **Path parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `case_id` | yes | Substituted into the URL path (percent-encoded). |
+| `caseId` | yes | Substituted into the URL path (percent-encoded). |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaBusiness.businessCasesGet({
-  case_id: "<case_id>",
+  caseId: "<caseId>",
 });
 ```
 
 ```python Python
 result = client.tempera_business.business_cases_get({
-    "case_id": "<case_id>",
+    "caseId": "<caseId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_business", "business_cases_get", &[
-    ("case_id", "<case_id>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### businessCasesAudit
-
-`GET /v1/cases/{case_id}/audit`
-
-Audit.
-
-- **Producer operationId:** `business.cases.audit`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-business`.
-- **Scope:** `business:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
-- **Call as:** TypeScript `client.temperaBusiness.businessCasesAudit()` · Python `client.tempera_business.business_cases_audit()` · Rust `build_request("tempera_business", "business_cases_audit", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `case_id` | yes | Substituted into the URL path (percent-encoded). |
-
-**Query parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `after` | no | — |
-| `limit` | no | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaBusiness.businessCasesAudit({
-  case_id: "<case_id>",
-  after: "<after>",
-  limit: "<limit>",
-});
-```
-
-```python Python
-result = client.tempera_business.business_cases_audit({
-    "case_id": "<case_id>",
-    "after": "<after>",
-    "limit": "<limit>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_business", "business_cases_audit", &[
-    ("case_id", "<case_id>".into()),
-    ("after", "<after>".into()),
-    ("limit", "<limit>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### businessCasesRecordDeclaredReceipt
-
-`POST /v1/cases/{case_id}/declared-receipts`
-
-Receipt.
-
-- **Producer operationId:** `business.cases.recordDeclaredReceipt`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-business`.
-- **Scope:** `business:write`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
-- **Call as:** TypeScript `client.temperaBusiness.businessCasesRecordDeclaredReceipt()` · Python `client.tempera_business.business_cases_record_declared_receipt()` · Rust `build_request("tempera_business", "business_cases_record_declared_receipt", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `case_id` | yes | Substituted into the URL path (percent-encoded). |
-
-**Body parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `expected_revision` | yes | — |
-| `idempotency_key` | yes | — |
-| `owner` | yes | — |
-| `preparation_digest` | yes | — |
-| `receipt_ref` | yes | — |
-| `reported_outcome` | yes | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaBusiness.businessCasesRecordDeclaredReceipt({
-  case_id: "<case_id>",
-  expected_revision: "<expected_revision>",
-  idempotency_key: "<idempotency_key>",
-  owner: "<owner>",
-  preparation_digest: "<preparation_digest>",
-  receipt_ref: "<receipt_ref>",
-  reported_outcome: "<reported_outcome>",
-});
-```
-
-```python Python
-result = client.tempera_business.business_cases_record_declared_receipt({
-    "case_id": "<case_id>",
-    "expected_revision": "<expected_revision>",
-    "idempotency_key": "<idempotency_key>",
-    "owner": "<owner>",
-    "preparation_digest": "<preparation_digest>",
-    "receipt_ref": "<receipt_ref>",
-    "reported_outcome": "<reported_outcome>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_business", "business_cases_record_declared_receipt", &[
-    ("case_id", "<case_id>".into()),
-    ("expected_revision", "<expected_revision>".into()),
-    ("idempotency_key", "<idempotency_key>".into()),
-    ("owner", "<owner>".into()),
-    ("preparation_digest", "<preparation_digest>".into()),
-    ("receipt_ref", "<receipt_ref>".into()),
-    ("reported_outcome", "<reported_outcome>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### businessCasesPrepareDraft
-
-`POST /v1/cases/{case_id}:prepareDraft`
-
-Prepare.
-
-- **Producer operationId:** `business.cases.prepareDraft`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-business`.
-- **Scope:** `business:write`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
-- **Call as:** TypeScript `client.temperaBusiness.businessCasesPrepareDraft()` · Python `client.tempera_business.business_cases_prepare_draft()` · Rust `build_request("tempera_business", "business_cases_prepare_draft", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `case_id` | yes | Substituted into the URL path (percent-encoded). |
-
-**Body parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `draft` | yes | — |
-| `expected_revision` | yes | — |
-| `idempotency_key` | yes | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaBusiness.businessCasesPrepareDraft({
-  case_id: "<case_id>",
-  draft: "<draft>",
-  expected_revision: "<expected_revision>",
-  idempotency_key: "<idempotency_key>",
-});
-```
-
-```python Python
-result = client.tempera_business.business_cases_prepare_draft({
-    "case_id": "<case_id>",
-    "draft": "<draft>",
-    "expected_revision": "<expected_revision>",
-    "idempotency_key": "<idempotency_key>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_business", "business_cases_prepare_draft", &[
-    ("case_id", "<case_id>".into()),
-    ("draft", "<draft>".into()),
-    ("expected_revision", "<expected_revision>".into()),
-    ("idempotency_key", "<idempotency_key>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### businessCasesReviewDraft
-
-`POST /v1/cases/{case_id}:reviewDraft`
-
-Review.
-
-- **Producer operationId:** `business.cases.reviewDraft`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-business`.
-- **Scope:** `business:review`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
-- **Call as:** TypeScript `client.temperaBusiness.businessCasesReviewDraft()` · Python `client.tempera_business.business_cases_review_draft()` · Rust `build_request("tempera_business", "business_cases_review_draft", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `case_id` | yes | Substituted into the URL path (percent-encoded). |
-
-**Body parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `decision` | yes | — |
-| `expected_revision` | yes | — |
-| `idempotency_key` | yes | — |
-| `preparation_digest` | yes | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaBusiness.businessCasesReviewDraft({
-  case_id: "<case_id>",
-  decision: "<decision>",
-  expected_revision: "<expected_revision>",
-  idempotency_key: "<idempotency_key>",
-  preparation_digest: "<preparation_digest>",
-});
-```
-
-```python Python
-result = client.tempera_business.business_cases_review_draft({
-    "case_id": "<case_id>",
-    "decision": "<decision>",
-    "expected_revision": "<expected_revision>",
-    "idempotency_key": "<idempotency_key>",
-    "preparation_digest": "<preparation_digest>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_business", "business_cases_review_draft", &[
-    ("case_id", "<case_id>".into()),
-    ("decision", "<decision>".into()),
-    ("expected_revision", "<expected_revision>".into()),
-    ("idempotency_key", "<idempotency_key>".into()),
-    ("preparation_digest", "<preparation_digest>".into()),
+    ("caseId", "<caseId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -676,56 +195,523 @@ let spec = client.build_request("tempera_business", "business_cases_review_draft
 
 ### businessCasesUpdateIntake
 
-`POST /v1/cases/{case_id}:updateIntake`
+`POST /v1/cases/{caseId}:updateIntake`
 
 Update.
 
 - **Producer operationId:** `business.cases.updateIntake`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-business`.
+- **Auth:** Product bearer — an access token minted for audience `tempera-business`, or a central `tp_` API key.
 - **Scope:** `business:write`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaBusiness.businessCasesUpdateIntake()` · Python `client.tempera_business.business_cases_update_intake()` · Rust `build_request("tempera_business", "business_cases_update_intake", params)`
 
 **Path parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `case_id` | yes | Substituted into the URL path (percent-encoded). |
+| `caseId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `expected_revision` | yes | — |
-| `idempotency_key` | yes | — |
+| `idempotencyKey` | yes | — |
+| `expectedRevision` | yes | — |
 | `intake` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaBusiness.businessCasesUpdateIntake({
-  case_id: "<case_id>",
-  expected_revision: "<expected_revision>",
-  idempotency_key: "<idempotency_key>",
+  caseId: "<caseId>",
+  idempotencyKey: "<idempotencyKey>",
+  expectedRevision: "<expectedRevision>",
   intake: "<intake>",
 });
 ```
 
 ```python Python
 result = client.tempera_business.business_cases_update_intake({
-    "case_id": "<case_id>",
-    "expected_revision": "<expected_revision>",
-    "idempotency_key": "<idempotency_key>",
+    "caseId": "<caseId>",
+    "idempotencyKey": "<idempotencyKey>",
+    "expectedRevision": "<expectedRevision>",
     "intake": "<intake>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_business", "business_cases_update_intake", &[
-    ("case_id", "<case_id>".into()),
-    ("expected_revision", "<expected_revision>".into()),
-    ("idempotency_key", "<idempotency_key>".into()),
+    ("caseId", "<caseId>".into()),
+    ("idempotencyKey", "<idempotencyKey>".into()),
+    ("expectedRevision", "<expectedRevision>".into()),
     ("intake", "<intake>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### businessCasesPrepareDraft
+
+`POST /v1/cases/{caseId}:prepareDraft`
+
+Prepare.
+
+- **Producer operationId:** `business.cases.prepareDraft`
+- **Auth:** Product bearer — an access token minted for audience `tempera-business`, or a central `tp_` API key.
+- **Scope:** `business:write`
+- **Call as:** TypeScript `client.temperaBusiness.businessCasesPrepareDraft()` · Python `client.tempera_business.business_cases_prepare_draft()` · Rust `build_request("tempera_business", "business_cases_prepare_draft", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `caseId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `idempotencyKey` | yes | — |
+| `expectedRevision` | yes | — |
+| `draft` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaBusiness.businessCasesPrepareDraft({
+  caseId: "<caseId>",
+  idempotencyKey: "<idempotencyKey>",
+  expectedRevision: "<expectedRevision>",
+  draft: "<draft>",
+});
+```
+
+```python Python
+result = client.tempera_business.business_cases_prepare_draft({
+    "caseId": "<caseId>",
+    "idempotencyKey": "<idempotencyKey>",
+    "expectedRevision": "<expectedRevision>",
+    "draft": "<draft>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_business", "business_cases_prepare_draft", &[
+    ("caseId", "<caseId>".into()),
+    ("idempotencyKey", "<idempotencyKey>".into()),
+    ("expectedRevision", "<expectedRevision>".into()),
+    ("draft", "<draft>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### businessCasesReviewDraft
+
+`POST /v1/cases/{caseId}:reviewDraft`
+
+Review.
+
+- **Producer operationId:** `business.cases.reviewDraft`
+- **Auth:** Product bearer — an access token minted for audience `tempera-business`, or a central `tp_` API key.
+- **Scope:** `business:review`
+- **Call as:** TypeScript `client.temperaBusiness.businessCasesReviewDraft()` · Python `client.tempera_business.business_cases_review_draft()` · Rust `build_request("tempera_business", "business_cases_review_draft", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `caseId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `idempotencyKey` | yes | — |
+| `expectedRevision` | yes | — |
+| `preparationDigest` | yes | — |
+| `decision` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaBusiness.businessCasesReviewDraft({
+  caseId: "<caseId>",
+  idempotencyKey: "<idempotencyKey>",
+  expectedRevision: "<expectedRevision>",
+  preparationDigest: "<preparationDigest>",
+  decision: "<decision>",
+});
+```
+
+```python Python
+result = client.tempera_business.business_cases_review_draft({
+    "caseId": "<caseId>",
+    "idempotencyKey": "<idempotencyKey>",
+    "expectedRevision": "<expectedRevision>",
+    "preparationDigest": "<preparationDigest>",
+    "decision": "<decision>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_business", "business_cases_review_draft", &[
+    ("caseId", "<caseId>".into()),
+    ("idempotencyKey", "<idempotencyKey>".into()),
+    ("expectedRevision", "<expectedRevision>".into()),
+    ("preparationDigest", "<preparationDigest>".into()),
+    ("decision", "<decision>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### businessCasesRecordDeclaredReceipt
+
+`POST /v1/cases/{caseId}/declaredReceipts`
+
+Receipt.
+
+- **Producer operationId:** `business.cases.recordDeclaredReceipt`
+- **Auth:** Product bearer — an access token minted for audience `tempera-business`, or a central `tp_` API key.
+- **Scope:** `business:write`
+- **Call as:** TypeScript `client.temperaBusiness.businessCasesRecordDeclaredReceipt()` · Python `client.tempera_business.business_cases_record_declared_receipt()` · Rust `build_request("tempera_business", "business_cases_record_declared_receipt", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `caseId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `idempotencyKey` | yes | — |
+| `expectedRevision` | yes | — |
+| `preparationDigest` | yes | — |
+| `receiptRef` | yes | — |
+| `owner` | yes | — |
+| `reportedOutcome` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaBusiness.businessCasesRecordDeclaredReceipt({
+  caseId: "<caseId>",
+  idempotencyKey: "<idempotencyKey>",
+  expectedRevision: "<expectedRevision>",
+  preparationDigest: "<preparationDigest>",
+  receiptRef: "<receiptRef>",
+  owner: "<owner>",
+  reportedOutcome: "<reportedOutcome>",
+});
+```
+
+```python Python
+result = client.tempera_business.business_cases_record_declared_receipt({
+    "caseId": "<caseId>",
+    "idempotencyKey": "<idempotencyKey>",
+    "expectedRevision": "<expectedRevision>",
+    "preparationDigest": "<preparationDigest>",
+    "receiptRef": "<receiptRef>",
+    "owner": "<owner>",
+    "reportedOutcome": "<reportedOutcome>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_business", "business_cases_record_declared_receipt", &[
+    ("caseId", "<caseId>".into()),
+    ("idempotencyKey", "<idempotencyKey>".into()),
+    ("expectedRevision", "<expectedRevision>".into()),
+    ("preparationDigest", "<preparationDigest>".into()),
+    ("receiptRef", "<receiptRef>".into()),
+    ("owner", "<owner>".into()),
+    ("reportedOutcome", "<reportedOutcome>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### businessCasesAudit
+
+`GET /v1/cases/{caseId}/audit`
+
+Audit.
+
+- **Producer operationId:** `business.cases.auditEvents.list`
+- **Auth:** Product bearer — an access token minted for audience `tempera-business`, or a central `tp_` API key.
+- **Scope:** `business:read`
+- **Call as:** TypeScript `client.temperaBusiness.businessCasesAudit()` · Python `client.tempera_business.business_cases_audit()` · Rust `build_request("tempera_business", "business_cases_audit", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `caseId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageToken` | no | — |
+| `pageSize` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaBusiness.businessCasesAudit({
+  caseId: "<caseId>",
+  pageToken: "<pageToken>",
+  pageSize: "<pageSize>",
+});
+```
+
+```python Python
+result = client.tempera_business.business_cases_audit({
+    "caseId": "<caseId>",
+    "pageToken": "<pageToken>",
+    "pageSize": "<pageSize>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_business", "business_cases_audit", &[
+    ("caseId", "<caseId>".into()),
+    ("pageToken", "<pageToken>".into()),
+    ("pageSize", "<pageSize>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### businessProfileGet
+
+`GET /v1/businessProfile`
+
+Profile.
+
+- **Producer operationId:** `business.profile.get`
+- **Auth:** Product bearer — an access token minted for audience `tempera-business`, or a central `tp_` API key.
+- **Scope:** `business:read`
+- **Call as:** TypeScript `client.temperaBusiness.businessProfileGet()` · Python `client.tempera_business.business_profile_get()` · Rust `build_request("tempera_business", "business_profile_get", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaBusiness.businessProfileGet();
+```
+
+```python Python
+result = client.tempera_business.business_profile_get()
+```
+
+```rust Rust
+let spec = client.build_request("tempera_business", "business_profile_get", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### businessProfileInitialize
+
+`POST /v1/businessProfile:initialize`
+
+Initialize.
+
+- **Producer operationId:** `business.profile.initialize`
+- **Auth:** Product bearer — an access token minted for audience `tempera-business`, or a central `tp_` API key.
+- **Scope:** `business:write`
+- **Call as:** TypeScript `client.temperaBusiness.businessProfileInitialize()` · Python `client.tempera_business.business_profile_initialize()` · Rust `build_request("tempera_business", "business_profile_initialize", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `idempotencyKey` | yes | — |
+| `facts` | no | — |
+| `references` | no | — |
+| `availableServices` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaBusiness.businessProfileInitialize({
+  idempotencyKey: "<idempotencyKey>",
+  facts: "<facts>",
+  references: "<references>",
+});
+```
+
+```python Python
+result = client.tempera_business.business_profile_initialize({
+    "idempotencyKey": "<idempotencyKey>",
+    "facts": "<facts>",
+    "references": "<references>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_business", "business_profile_initialize", &[
+    ("idempotencyKey", "<idempotencyKey>".into()),
+    ("facts", "<facts>".into()),
+    ("references", "<references>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### businessProfilePatch
+
+`POST /v1/businessProfile:patch`
+
+Patch.
+
+- **Producer operationId:** `business.profile.patch`
+- **Auth:** Product bearer — an access token minted for audience `tempera-business`, or a central `tp_` API key.
+- **Scope:** `business:write`
+- **Call as:** TypeScript `client.temperaBusiness.businessProfilePatch()` · Python `client.tempera_business.business_profile_patch()` · Rust `build_request("tempera_business", "business_profile_patch", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `idempotencyKey` | yes | — |
+| `expectedRevision` | yes | — |
+| `facts` | no | — |
+| `references` | no | — |
+| `availableServices` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaBusiness.businessProfilePatch({
+  idempotencyKey: "<idempotencyKey>",
+  expectedRevision: "<expectedRevision>",
+  facts: "<facts>",
+});
+```
+
+```python Python
+result = client.tempera_business.business_profile_patch({
+    "idempotencyKey": "<idempotencyKey>",
+    "expectedRevision": "<expectedRevision>",
+    "facts": "<facts>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_business", "business_profile_patch", &[
+    ("idempotencyKey", "<idempotencyKey>".into()),
+    ("expectedRevision", "<expectedRevision>".into()),
+    ("facts", "<facts>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### businessProfileHistoryList
+
+`GET /v1/businessProfile/history`
+
+Profile History.
+
+- **Producer operationId:** `business.profile.history.list`
+- **Auth:** Product bearer — an access token minted for audience `tempera-business`, or a central `tp_` API key.
+- **Scope:** `business:read`
+- **Call as:** TypeScript `client.temperaBusiness.businessProfileHistoryList()` · Python `client.tempera_business.business_profile_history_list()` · Rust `build_request("tempera_business", "business_profile_history_list", params)`
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageToken` | no | — |
+| `pageSize` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaBusiness.businessProfileHistoryList({
+  pageToken: "<pageToken>",
+  pageSize: "<pageSize>",
+});
+```
+
+```python Python
+result = client.tempera_business.business_profile_history_list({
+    "pageToken": "<pageToken>",
+    "pageSize": "<pageSize>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_business", "business_profile_history_list", &[
+    ("pageToken", "<pageToken>".into()),
+    ("pageSize", "<pageSize>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### businessProfileClear
+
+`POST /v1/businessProfile:clear`
+
+Clear.
+
+- **Producer operationId:** `business.profile.clear`
+- **Auth:** Product bearer — an access token minted for audience `tempera-business`, or a central `tp_` API key.
+- **Scope:** `business:review`
+- **Call as:** TypeScript `client.temperaBusiness.businessProfileClear()` · Python `client.tempera_business.business_profile_clear()` · Rust `build_request("tempera_business", "business_profile_clear", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `idempotencyKey` | yes | — |
+| `expectedRevision` | yes | — |
+| `reason` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaBusiness.businessProfileClear({
+  idempotencyKey: "<idempotencyKey>",
+  expectedRevision: "<expectedRevision>",
+  reason: "<reason>",
+});
+```
+
+```python Python
+result = client.tempera_business.business_profile_clear({
+    "idempotencyKey": "<idempotencyKey>",
+    "expectedRevision": "<expectedRevision>",
+    "reason": "<reason>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_business", "business_profile_clear", &[
+    ("idempotencyKey", "<idempotencyKey>".into()),
+    ("expectedRevision", "<expectedRevision>".into()),
+    ("reason", "<reason>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -735,14 +721,13 @@ let spec = client.build_request("tempera_business", "business_cases_update_intak
 
 ### businessOperatingState
 
-`GET /v1/operating-state`
+`GET /v1/operatingState`
 
 Operating State.
 
 - **Producer operationId:** `business.operatingState`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-business`.
+- **Auth:** Product bearer — an access token minted for audience `tempera-business`, or a central `tp_` API key.
 - **Scope:** `business:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaBusiness.businessOperatingState()` · Python `client.tempera_business.business_operating_state()` · Rust `build_request("tempera_business", "business_operating_state", params)`
 
 <CodeGroup>

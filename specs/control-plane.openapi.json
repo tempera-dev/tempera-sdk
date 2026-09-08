@@ -1267,6 +1267,54 @@
         }
       }
     },
+    "/v1/api-keys/audiences": {
+      "get": {
+        "operationId": "listApiKeyAudiences",
+        "summary": "List the resource audiences this caller may mint an API key for, the scopes issuable at each, and why the remaining scopes are refused.",
+        "responses": {
+          "200": {
+            "description": "API key audiences",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "entitlements",
+                    "audiences",
+                    "nextPageToken"
+                  ],
+                  "properties": {
+                    "entitlements": {
+                      "$ref": "#/components/schemas/ApiKeyEntitlements"
+                    },
+                    "audiences": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ApiKeyAudienceOffer"
+                      }
+                    },
+                    "nextPageToken": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ]
+      }
+    },
     "/v1/api-keys/{id}": {
       "delete": {
         "operationId": "revokeApiKey",
@@ -3443,6 +3491,15 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "site_id",
+            "in": "query",
+            "description": "Optional site (sub-workspace tenant) to bind the grant and its tokens to. Omitted means the grant is not site-scoped.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,62}$"
+            }
           }
         ],
         "responses": {
@@ -4881,11 +4938,56 @@
               }
             }
           },
-          "400": {"description": "Invalid admission", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
-          "401": {"description": "Wrong audience or invalid credential", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
-          "403": {"description": "Human approval scope or role missing", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
-          "409": {"description": "Admission identity is already bound differently", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
-          "503": {"description": "PostgreSQL admission authority unavailable", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}}
+          "400": {
+            "description": "Invalid admission",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Wrong audience or invalid credential",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Human approval scope or role missing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Admission identity is already bound differently",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "PostgreSQL admission authority unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -4896,13 +4998,68 @@
         "x-tempera-auth-kind": "oauthResource",
         "x-tempera-auth-audience": "tempera-clearing",
         "x-tempera-required-scope": "clearing:actions:read",
-        "parameters": [{"name": "admissionId", "in": "path", "required": true, "schema": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"}}],
+        "parameters": [
+          {
+            "name": "admissionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+            }
+          }
+        ],
         "responses": {
-          "200": {"description": "Current admission state", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ClearingAdmissionRecord"}}}},
-          "401": {"description": "Wrong audience or invalid credential", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
-          "403": {"description": "Read scope missing", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
-          "404": {"description": "Admission not found in the exact workspace", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
-          "503": {"description": "PostgreSQL admission authority unavailable", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}}
+          "200": {
+            "description": "Current admission state",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClearingAdmissionRecord"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Wrong audience or invalid credential",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Read scope missing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Admission not found in the exact workspace",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "PostgreSQL admission authority unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -4913,15 +5070,88 @@
         "x-tempera-auth-kind": "oauthResource",
         "x-tempera-auth-audience": "tempera-clearing",
         "x-tempera-required-scope": "clearing:actions:commit",
-        "parameters": [{"name": "admissionId", "in": "path", "required": true, "schema": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"}}],
-        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ClearingAdmissionClaimRequest"}}}},
+        "parameters": [
+          {
+            "name": "admissionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClearingAdmissionClaimRequest"
+              }
+            }
+          }
+        },
         "responses": {
-          "200": {"description": "Admission leased exactly once", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ClearingAdmissionLease"}}}},
-          "400": {"description": "Invalid claim", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
-          "401": {"description": "Wrong audience or invalid credential", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
-          "403": {"description": "Commit scope missing", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
-          "409": {"description": "Admission is not READY, is expired, or does not match", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
-          "503": {"description": "PostgreSQL admission authority unavailable", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}}
+          "200": {
+            "description": "Admission leased exactly once",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClearingAdmissionLease"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid claim",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Wrong audience or invalid credential",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Commit scope missing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Admission is not READY, is expired, or does not match",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "PostgreSQL admission authority unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -4932,16 +5162,98 @@
         "x-tempera-auth-kind": "oauthResource",
         "x-tempera-auth-audience": "tempera-clearing",
         "x-tempera-required-scope": "clearing:actions:commit",
-        "parameters": [{"name": "admissionId", "in": "path", "required": true, "schema": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"}}],
-        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ClearingAdmissionFinalizeRequest"}}}},
+        "parameters": [
+          {
+            "name": "admissionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClearingAdmissionFinalizeRequest"
+              }
+            }
+          }
+        },
         "responses": {
-          "200": {"description": "Admission consumed or exact finalize replay accepted", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ClearingAdmissionFinalizeResponse"}}}},
-          "400": {"description": "Invalid finalize request", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
-          "401": {"description": "Wrong audience or invalid credential", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
-          "403": {"description": "Commit scope missing", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
-          "404": {"description": "Admission not found in the exact workspace", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
-          "409": {"description": "Lease, fence, digest, or commit identity conflicts", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
-          "503": {"description": "PostgreSQL admission authority unavailable", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}}
+          "200": {
+            "description": "Admission consumed or exact finalize replay accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClearingAdmissionFinalizeResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid finalize request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Wrong audience or invalid credential",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Commit scope missing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Admission not found in the exact workspace",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Lease, fence, digest, or commit identity conflicts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "PostgreSQL admission authority unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -4952,13 +5264,68 @@
         "x-tempera-auth-kind": "oauthResource",
         "x-tempera-auth-audience": "tempera-clearing",
         "x-tempera-required-scope": "clearing:actions:reconcile",
-        "parameters": [{"name": "admissionId", "in": "path", "required": true, "schema": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"}}],
+        "parameters": [
+          {
+            "name": "admissionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+            }
+          }
+        ],
         "responses": {
-          "200": {"description": "Admission is RECOVERY_REQUIRED", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ClearingAdmissionRecoveryResponse"}}}},
-          "401": {"description": "Wrong audience or invalid credential", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
-          "403": {"description": "Reconcile scope missing", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
-          "409": {"description": "Admission has no expired active lease", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}},
-          "503": {"description": "PostgreSQL admission authority unavailable", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/GoogleJsonError"}}}}
+          "200": {
+            "description": "Admission is RECOVERY_REQUIRED",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClearingAdmissionRecoveryResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Wrong audience or invalid credential",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Reconcile scope missing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Admission has no expired active lease",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "PostgreSQL admission authority unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleJsonError"
+                }
+              }
+            }
+          }
         }
       }
     }
@@ -5142,6 +5509,16 @@
             }
           }
         }
+      },
+      "Error": {
+        "description": "A google.rpc.Status error envelope.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Status"
+            }
+          }
+        }
       }
     },
     "schemas": {
@@ -5295,12 +5672,21 @@
           "clearing:actions:reconcile",
           "clearing:receipts:read",
           "clearing:actions:approve",
-          "admin"
+          "connection:invoke",
+          "connection:write",
+          "connection:read",
+          "admin",
+          "business:read",
+          "business:write",
+          "business:review",
+          "orders:write",
+          "orders:approve",
+          "offline_access"
         ]
       },
       "ApiKeyScope": {
         "type": "string",
-        "description": "A service-principal scope. OAuth-only orders:read and human-only orders:commerce:write, review:resolve, review:gold:manage, training:publish, bio:experiment:approve, bio:signer:manage, payments:merchants:write, and clearing:actions:approve are intentionally excluded.",
+        "description": "A service-principal scope. Human-only review:resolve, review:gold:manage, training:publish, bio:experiment:approve, bio:signer:manage, clearing:actions:approve, payments:merchants:write and orders:commerce:write are intentionally excluded, as are the remaining orders:* scopes, which are reachable only through an expiring OAuth token. GET /v1/api-keys/audiences reports, per audience, which of these are issuable now and why the rest are refused.",
         "enum": [
           "mcp:invoke",
           "memory:read",
@@ -5346,6 +5732,18 @@
           "clearing:actions:commit",
           "clearing:actions:reconcile",
           "clearing:receipts:read",
+          "connection:read",
+          "connection:write",
+          "connection:invoke",
+          "payments:intents:read",
+          "payments:intents:write",
+          "payments:receipts:read",
+          "payments:webhooks:write",
+          "payments:refunds:write",
+          "payments:admin",
+          "business:read",
+          "business:write",
+          "business:review",
           "admin"
         ]
       },
@@ -5362,6 +5760,7 @@
           "tempera-mcp",
           "tempera-code",
           "tempera-llm",
+          "tempera-connectors",
           "tempera-workflows",
           "tempera-gym",
           "tempera-bio",
@@ -5371,7 +5770,8 @@
           "tempera-payments",
           "tempera-dropshipping",
           "tempera-voice",
-          "tempera-clearing"
+          "tempera-clearing",
+          "tempera-business"
         ]
       },
       "TokenClaims": {
@@ -5407,6 +5807,22 @@
           },
           "environment_id": {
             "type": "string"
+          },
+          "site_id": {
+            "type": "string",
+            "description": "Site the credential is bound to. Absent means the credential is not site-scoped; a resource server must never read an absent value as a wildcard."
+          },
+          "act": {
+            "type": "object",
+            "description": "RFC 8693 acting party for an exchanged token. Its presence means the credential is delegated and cannot be exchanged again.",
+            "properties": {
+              "client_id": {
+                "type": "string"
+              },
+              "sub": {
+                "type": "string"
+              }
+            }
           },
           "scope": {
             "type": "string"
@@ -5939,6 +6355,91 @@
               "null"
             ],
             "format": "date-time"
+          }
+        }
+      },
+      "ApiKeyEntitlements": {
+        "type": "object",
+        "description": "The plan entitlements that gate API-key issuance for the caller's workspace.",
+        "required": [
+          "apiKeys",
+          "piiUnmask"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "apiKeys": {
+            "type": "boolean",
+            "description": "False when the plan cannot mint API keys at all; every create is refused with plan_limit_exceeded regardless of audience."
+          },
+          "piiUnmask": {
+            "type": "boolean",
+            "description": "False when pii:unmask cannot be baked into a key for this workspace."
+          }
+        }
+      },
+      "ApiKeyScopeRefusal": {
+        "type": "object",
+        "description": "A scope the audience advertises that this caller still cannot bake into an API key, with the reason POST /v1/api-keys would give.",
+        "required": [
+          "scope",
+          "reason",
+          "message"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "scope": {
+            "$ref": "#/components/schemas/Scope"
+          },
+          "reason": {
+            "type": "string",
+            "description": "human_only: the scope requires an attributed human OAuth principal. oauth_only: the scope is reachable only through an expiring OAuth token. plan_entitlement_required: the workspace plan lacks the named entitlement.",
+            "enum": [
+              "human_only",
+              "oauth_only",
+              "plan_entitlement_required"
+            ]
+          },
+          "entitlement": {
+            "type": "string",
+            "description": "Present only for plan_entitlement_required: the missing entitlement, keyed as in ApiKeyEntitlements and BillingStatus."
+          },
+          "message": {
+            "type": "string",
+            "description": "The refusal wording POST /v1/api-keys returns for this scope."
+          }
+        }
+      },
+      "ApiKeyAudienceOffer": {
+        "type": "object",
+        "description": "One registered resource audience the caller may mint an API key for.",
+        "required": [
+          "audience",
+          "isDefault",
+          "issuableScopes",
+          "unavailableScopes"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "audience": {
+            "$ref": "#/components/schemas/ResourceAudience"
+          },
+          "isDefault": {
+            "type": "boolean",
+            "description": "True for the audience POST /v1/api-keys uses when the request omits one."
+          },
+          "issuableScopes": {
+            "type": "array",
+            "description": "Scopes POST /v1/api-keys would accept for this audience from this caller right now.",
+            "items": {
+              "$ref": "#/components/schemas/ApiKeyScope"
+            }
+          },
+          "unavailableScopes": {
+            "type": "array",
+            "description": "Scopes the audience advertises that would be refused, each with its reason.",
+            "items": {
+              "$ref": "#/components/schemas/ApiKeyScopeRefusal"
+            }
           }
         }
       },
@@ -8381,11 +8882,27 @@
       "ClearingWorkspace": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["tenantId", "projectId", "environmentId"],
+        "required": [
+          "tenantId",
+          "projectId",
+          "environmentId"
+        ],
         "properties": {
-          "tenantId": {"type": "string", "minLength": 1, "maxLength": 128},
-          "projectId": {"type": "string", "minLength": 1, "maxLength": 128},
-          "environmentId": {"type": "string", "minLength": 1, "maxLength": 128}
+          "tenantId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "projectId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "environmentId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
         }
       },
       "ClearingDigest": {
@@ -8419,31 +8936,100 @@
           "consumptionKey"
         ],
         "properties": {
-          "admissionId": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
-          "workspace": {"$ref": "#/components/schemas/ClearingWorkspace"},
-          "principalId": {"type": "string", "minLength": 1, "maxLength": 256},
-          "canonicalActionId": {"type": "string", "minLength": 1, "maxLength": 256},
-          "canonicalRequestDigest": {"$ref": "#/components/schemas/ClearingDigest"},
-          "preparedEffectId": {"type": "string", "minLength": 1, "maxLength": 256},
-          "preparedEffectDigest": {"$ref": "#/components/schemas/ClearingDigest"},
-          "operation": {"type": "string", "minLength": 1, "maxLength": 128},
-          "resourceSelectors": {"type": "array", "minItems": 1, "maxItems": 64, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 512}},
+          "admissionId": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+          },
+          "workspace": {
+            "$ref": "#/components/schemas/ClearingWorkspace"
+          },
+          "principalId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "canonicalActionId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "canonicalRequestDigest": {
+            "$ref": "#/components/schemas/ClearingDigest"
+          },
+          "preparedEffectId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "preparedEffectDigest": {
+            "$ref": "#/components/schemas/ClearingDigest"
+          },
+          "operation": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "resourceSelectors": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 64,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            }
+          },
           "economicAuthority": {
             "type": "object",
             "minProperties": 1,
             "maxProperties": 32,
-            "propertyNames": {"pattern": "^[a-z][a-z0-9_.-]{0,63}$"},
-            "additionalProperties": {"type": "string", "pattern": "^(0|[1-9][0-9]*)$"}
+            "propertyNames": {
+              "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+            },
+            "additionalProperties": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$"
+            }
           },
-          "mandateId": {"type": "string", "minLength": 1, "maxLength": 256},
-          "mandateDigest": {"$ref": "#/components/schemas/ClearingDigest"},
-          "riskAssessmentId": {"type": "string", "minLength": 1, "maxLength": 256},
-          "riskAssessmentDigest": {"$ref": "#/components/schemas/ClearingDigest"},
-          "riskReservationId": {"type": "string", "minLength": 1, "maxLength": 256},
-          "riskReservationDigest": {"$ref": "#/components/schemas/ClearingDigest"},
-          "authorizationContextDigest": {"$ref": "#/components/schemas/ClearingDigest"},
-          "consumptionKey": {"type": "string", "minLength": 16, "maxLength": 256},
-          "ttlSeconds": {"type": "integer", "minimum": 30, "maximum": 300, "default": 300}
+          "mandateId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "mandateDigest": {
+            "$ref": "#/components/schemas/ClearingDigest"
+          },
+          "riskAssessmentId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "riskAssessmentDigest": {
+            "$ref": "#/components/schemas/ClearingDigest"
+          },
+          "riskReservationId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "riskReservationDigest": {
+            "$ref": "#/components/schemas/ClearingDigest"
+          },
+          "authorizationContextDigest": {
+            "$ref": "#/components/schemas/ClearingDigest"
+          },
+          "consumptionKey": {
+            "type": "string",
+            "minLength": 16,
+            "maxLength": 256
+          },
+          "ttlSeconds": {
+            "type": "integer",
+            "minimum": 30,
+            "maximum": 300,
+            "default": 300
+          }
         }
       },
       "ClearingAdmissionRecord": {
@@ -8459,70 +9045,161 @@
           "replay"
         ],
         "properties": {
-          "admission": {"$ref": "#/components/schemas/ClearingFinalAdmission"},
-          "admissionDigest": {"$ref": "#/components/schemas/ClearingDigest"},
-          "state": {"type": "string", "enum": ["READY", "LEASED", "RECOVERY_REQUIRED", "CONSUMED", "REVOKED", "CANCELLED"]},
-          "leaseFence": {"type": "integer", "minimum": 0},
-          "leaseExpiresAt": {"type": ["string", "null"], "format": "date-time"},
-          "consumedClearingCommitDigest": {
-            "oneOf": [
-              {"$ref": "#/components/schemas/ClearingDigest"},
-              {"type": "null"}
+          "admission": {
+            "$ref": "#/components/schemas/ClearingFinalAdmission"
+          },
+          "admissionDigest": {
+            "$ref": "#/components/schemas/ClearingDigest"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "READY",
+              "LEASED",
+              "RECOVERY_REQUIRED",
+              "CONSUMED",
+              "REVOKED",
+              "CANCELLED"
             ]
           },
-          "replay": {"type": "boolean"}
+          "leaseFence": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "leaseExpiresAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "consumedClearingCommitDigest": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ClearingDigest"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "replay": {
+            "type": "boolean"
+          }
         }
       },
       "ClearingAdmissionClaimRequest": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["admissionDigest", "leaseTokenDigest"],
+        "required": [
+          "admissionDigest",
+          "leaseTokenDigest"
+        ],
         "properties": {
-          "admissionDigest": {"$ref": "#/components/schemas/ClearingDigest"},
-          "leaseTokenDigest": {"$ref": "#/components/schemas/ClearingDigest"},
-          "leaseSeconds": {"type": "integer", "minimum": 5, "maximum": 120, "default": 30}
+          "admissionDigest": {
+            "$ref": "#/components/schemas/ClearingDigest"
+          },
+          "leaseTokenDigest": {
+            "$ref": "#/components/schemas/ClearingDigest"
+          },
+          "leaseSeconds": {
+            "type": "integer",
+            "minimum": 5,
+            "maximum": 120,
+            "default": 30
+          }
         }
       },
       "ClearingAdmissionLease": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["admissionId", "admissionDigest", "state", "leaseFence", "leaseExpiresAt"],
+        "required": [
+          "admissionId",
+          "admissionDigest",
+          "state",
+          "leaseFence",
+          "leaseExpiresAt"
+        ],
         "properties": {
-          "admissionId": {"type": "string"},
-          "admissionDigest": {"$ref": "#/components/schemas/ClearingDigest"},
-          "state": {"const": "LEASED"},
-          "leaseFence": {"type": "integer", "minimum": 1},
-          "leaseExpiresAt": {"type": "string", "format": "date-time"}
+          "admissionId": {
+            "type": "string"
+          },
+          "admissionDigest": {
+            "$ref": "#/components/schemas/ClearingDigest"
+          },
+          "state": {
+            "const": "LEASED"
+          },
+          "leaseFence": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "leaseExpiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
         }
       },
       "ClearingAdmissionFinalizeRequest": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["admissionDigest", "leaseTokenDigest", "leaseFence", "clearingCommitDigest"],
+        "required": [
+          "admissionDigest",
+          "leaseTokenDigest",
+          "leaseFence",
+          "clearingCommitDigest"
+        ],
         "properties": {
-          "admissionDigest": {"$ref": "#/components/schemas/ClearingDigest"},
-          "leaseTokenDigest": {"$ref": "#/components/schemas/ClearingDigest"},
-          "leaseFence": {"type": "integer", "minimum": 1},
-          "clearingCommitDigest": {"$ref": "#/components/schemas/ClearingDigest"}
+          "admissionDigest": {
+            "$ref": "#/components/schemas/ClearingDigest"
+          },
+          "leaseTokenDigest": {
+            "$ref": "#/components/schemas/ClearingDigest"
+          },
+          "leaseFence": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "clearingCommitDigest": {
+            "$ref": "#/components/schemas/ClearingDigest"
+          }
         }
       },
       "ClearingAdmissionFinalizeResponse": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["replay", "state"],
+        "required": [
+          "replay",
+          "state"
+        ],
         "properties": {
-          "replay": {"type": "boolean"},
-          "state": {"const": "CONSUMED"}
+          "replay": {
+            "type": "boolean"
+          },
+          "state": {
+            "const": "CONSUMED"
+          }
         }
       },
       "ClearingAdmissionRecoveryResponse": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["admissionId", "state", "leaseFence"],
+        "required": [
+          "admissionId",
+          "state",
+          "leaseFence"
+        ],
         "properties": {
-          "admissionId": {"type": "string"},
-          "state": {"const": "RECOVERY_REQUIRED"},
-          "leaseFence": {"type": "integer", "minimum": 1}
+          "admissionId": {
+            "type": "string"
+          },
+          "state": {
+            "const": "RECOVERY_REQUIRED"
+          },
+          "leaseFence": {
+            "type": "integer",
+            "minimum": 1
+          }
         }
       },
       "WorkspaceBinding": {
@@ -9417,6 +10094,19 @@
           },
           "state": {
             "type": "string"
+          },
+          "resource": {
+            "type": "string",
+            "description": "Registered resource audience or resource URL."
+          },
+          "audience": {
+            "type": "string",
+            "description": "Alias for resource accepted by SDK clients."
+          },
+          "site_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,62}$",
+            "description": "Optional site (sub-workspace tenant) to bind the grant and its tokens to. Omitted means the grant is not site-scoped."
           }
         }
       },
@@ -9457,6 +10147,13 @@
           "environmentId": {
             "type": "string"
           },
+          "siteId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Site the grant is bound to, or null when it is not site-scoped."
+          },
           "scopes": {
             "type": "array",
             "items": {
@@ -9494,7 +10191,8 @@
             "type": "string",
             "enum": [
               "authorization_code",
-              "refresh_token"
+              "refresh_token",
+              "urn:ietf:params:oauth:grant-type:token-exchange"
             ]
           },
           "code": {
@@ -9521,6 +10219,19 @@
           "audience": {
             "type": "string",
             "description": "Alias for resource accepted by SDK clients."
+          },
+          "subject_token": {
+            "type": "string",
+            "description": "RFC 8693 subject token. Required for the token-exchange grant and only accepted from the harness client; it must be a live access token for the tempera-mcp audience that is not itself an exchanged token."
+          },
+          "subject_token_type": {
+            "type": "string",
+            "const": "urn:ietf:params:oauth:token-type:access_token",
+            "description": "RFC 8693 subject token type. Only access tokens may be exchanged."
+          },
+          "scope": {
+            "type": "string",
+            "description": "Token exchange only. Space-separated requested scopes; the issued scopes are the intersection of these with the subject grant, never a superset."
           }
         }
       },
@@ -9545,10 +10256,16 @@
             "maximum": 3600
           },
           "refresh_token": {
-            "type": "string"
+            "type": "string",
+            "description": "Absent on a token-exchange response: an exchanged token is short-lived and never refreshable."
           },
           "scope": {
             "type": "string"
+          },
+          "issued_token_type": {
+            "type": "string",
+            "const": "urn:ietf:params:oauth:token-type:access_token",
+            "description": "RFC 8693 issued token type. Present only on a token-exchange response."
           }
         }
       },
@@ -9759,9 +10476,11 @@
           },
           "audiences": {
             "type": "array",
+            "maxItems": 16,
             "items": {
               "$ref": "#/components/schemas/TemperaMobileAudience"
-            }
+            },
+            "description": "Present only when the platform is available."
           }
         }
       },
@@ -9773,10 +10492,17 @@
           "service_endpoint_url",
           "scopes"
         ],
+        "description": "One further audience the platform may request: where the service is and exactly the scopes a device may hold there. Nothing here is a grant; Auth Hub decides every authorization against the same table at /oauth/authorize. A build ignores audiences it does not recognise.",
         "properties": {
           "oauth_resource_audience": {
             "type": "string",
-            "const": "tempera-payments"
+            "enum": [
+              "tempera-voice",
+              "tempera-business",
+              "tempera-dropshipping",
+              "tempera-connectors",
+              "tempera-payments"
+            ]
           },
           "service_endpoint_url": {
             "type": "string",
@@ -9784,15 +10510,25 @@
           },
           "scopes": {
             "type": "array",
-            "minItems": 2,
-            "maxItems": 2,
+            "minItems": 1,
             "items": {
               "type": "string",
               "enum": [
+                "voice:read",
+                "voice:write",
+                "voice:stream",
+                "business:read",
+                "orders:read",
+                "connection:read",
                 "payments:merchants:read",
                 "payments:merchants:write"
               ]
             }
+          },
+          "workspace_scope": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}(/[A-Za-z0-9][A-Za-z0-9_.-]{0,63}){3}$",
+            "description": "For tempera-dropshipping only: the canonical site as organization/project/environment/site the Orders grant is bound to."
           }
         }
       },
@@ -10211,6 +10947,7 @@
           "wrong_organization",
           "wrong_project",
           "wrong_environment",
+          "wrong_site",
           "plan_limit_exceeded",
           "insufficient_credits",
           "rate_limited",
@@ -10853,6 +11590,69 @@
           }
         },
         "additionalProperties": false
+      },
+      "Status": {
+        "type": "object",
+        "description": "The google.rpc.Status error envelope required of every Tempera API (AIP-193).",
+        "required": [
+          "error"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": [
+              "code",
+              "status",
+              "message"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "code": {
+                "type": "integer",
+                "description": "The HTTP status code, repeated in the body so the envelope is self-describing."
+              },
+              "status": {
+                "type": "string",
+                "description": "The canonical google.rpc.Code name, for example INVALID_ARGUMENT.",
+                "enum": [
+                  "CANCELLED",
+                  "UNKNOWN",
+                  "INVALID_ARGUMENT",
+                  "DEADLINE_EXCEEDED",
+                  "NOT_FOUND",
+                  "ALREADY_EXISTS",
+                  "PERMISSION_DENIED",
+                  "UNAUTHENTICATED",
+                  "RESOURCE_EXHAUSTED",
+                  "FAILED_PRECONDITION",
+                  "ABORTED",
+                  "OUT_OF_RANGE",
+                  "UNIMPLEMENTED",
+                  "INTERNAL",
+                  "UNAVAILABLE",
+                  "DATA_LOSS"
+                ]
+              },
+              "message": {
+                "type": "string",
+                "description": "A developer-facing description that is safe to log and safe to show."
+              },
+              "details": {
+                "type": "array",
+                "description": "Structured error details. Present but empty when there are none.",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "requestId": {
+                "type": "string",
+                "description": "The server-assigned request identifier, mirrored from the x-request-id response header."
+              }
+            }
+          }
+        }
       },
       "Passkey": {
         "type": "object",

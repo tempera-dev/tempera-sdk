@@ -15,8 +15,8 @@ Browser-agent human review: reviewers inspect provisioned browser-session eviden
 |---|---|
 | Repository | [human-data](https://github.com/tempera-dev/human-data) |
 | Base URL env var | `TEMPERA_HUMAN_DATA_URL` (see [Environments](/environments)) |
-| Audience | `human-data` |
-| Auth | bearer minted for audience human-data or central tp_ API key |
+| Audience | `data-engine` |
+| Auth | bearer minted for audience data-engine; Human Data validates nothing itself and forwards the caller's bearer verbatim to Data Engine, which requires scopes dataset:read and training:publish |
 | Client | TypeScript `client.humanData` · Python `client.human_data` · Rust `build_request("human_data", ...)` |
 | Typed operations | 1 |
 
@@ -33,7 +33,7 @@ Anything this page does not cover is reachable through the raw passthrough:
 Compute live qualification evidence.
 
 - **Producer operationId:** `computeQualification`
-- **Auth:** Product bearer — an access token minted for audience `human-data`, or a central `tp_` API key.
+- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
 - **Call as:** TypeScript `client.humanData.computeQualification()` · Python `client.human_data.compute_qualification()` · Rust `build_request("human_data", "compute_qualification", params)`
 
 **Query parameters**

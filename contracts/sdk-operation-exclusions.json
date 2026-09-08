@@ -304,9 +304,9 @@
       "migration": "Add a reviewed provider-ingress primitive that verifies the Shopify HMAC header and preserves the raw request body before exposing this route as a product operation.",
       "operation_id": "receiveShopifyWebhook",
       "owner": "tempera-dropshipping",
-      "path": "/webhooks/shopify/{installation}",
+      "path": "/v1/webhooks/shopify/{installation}",
       "product": "temperaDropshipping",
-      "rationale": "The route is an unversioned provider webhook authenticated by a Shopify HMAC over the raw body, not a bearer-authorized aggregate SDK operation.",
+      "rationale": "Shopify invokes this route, authenticated by an HMAC over the raw request body rather than a Tempera bearer, so it has no audience and no scope to declare. It now lives under /v1/ and is declared a protocol route by the producer.",
       "review_after": "2026-10-01"
     }
   ]

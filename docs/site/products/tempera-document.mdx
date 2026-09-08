@@ -21,7 +21,7 @@ Document processing service with immutable uploads, globally anchored graph prov
 | Audience | `tempera-document` |
 | Auth | bearer minted for audience tempera-document with document:read/document:write, or a central tp_ API key |
 | Client | TypeScript `client.temperaDocument` · Python `client.tempera_document` · Rust `build_request("tempera_document", ...)` |
-| Typed operations | 14 |
+| Typed operations | 15 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.temperaDocument.request(path, options)` (TypeScript) /
@@ -31,12 +31,12 @@ Anything this page does not cover is reachable through the raw passthrough:
 
 ### healthGet
 
-`GET /v1/health`
+`GET /healthz`
 
 Health check.
 
 - **Producer operationId:** `health.get`
-- **Auth:** Product bearer — an access token minted for audience `tempera-document`, or a central `tp_` API key.
+- **Auth:** None (public endpoint).
 - **Call as:** TypeScript `client.temperaDocument.healthGet()` · Python `client.tempera_document.health_get()` · Rust `build_request("tempera_document", "health_get", params)`
 
 <CodeGroup>
@@ -59,7 +59,7 @@ let spec = client.build_request("tempera_document", "health_get", &[])?;
 
 ### documentsCreate
 
-`POST /v1/projects/{project_id}/documents`
+`POST /v1/projects/{projectId}/documents`
 
 Create an immutable document version from a completed upload.
 
@@ -72,7 +72,7 @@ Create an immutable document version from a completed upload.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
@@ -84,21 +84,21 @@ Create an immutable document version from a completed upload.
 
 ```typescript TypeScript
 const result = await client.temperaDocument.documentsCreate({
-  project_id: "<project_id>",
+  projectId: "<projectId>",
   upload: "<upload>",
 });
 ```
 
 ```python Python
 result = client.tempera_document.documents_create({
-    "project_id": "<project_id>",
+    "projectId": "<projectId>",
     "upload": "<upload>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_document", "documents_create", &[
-    ("project_id", "<project_id>".into()),
+    ("projectId", "<projectId>".into()),
     ("upload", "<upload>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
@@ -109,7 +109,7 @@ let spec = client.build_request("tempera_document", "documents_create", &[
 
 ### documentsGet
 
-`GET /v1/projects/{project_id}/documents/{document_id}`
+`GET /v1/projects/{projectId}/documents/{documentId}`
 
 Get a document.
 
@@ -122,29 +122,87 @@ Get a document.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `document_id` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `documentId` | yes | Substituted into the URL path (percent-encoded). |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaDocument.documentsGet({
-  project_id: "<project_id>",
-  document_id: "<document_id>",
+  projectId: "<projectId>",
+  documentId: "<documentId>",
 });
 ```
 
 ```python Python
 result = client.tempera_document.documents_get({
-    "project_id": "<project_id>",
-    "document_id": "<document_id>",
+    "projectId": "<projectId>",
+    "documentId": "<documentId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_document", "documents_get", &[
-    ("project_id", "<project_id>".into()),
-    ("document_id", "<document_id>".into()),
+    ("projectId", "<projectId>".into()),
+    ("documentId", "<documentId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### documentsExportEvidence
+
+`POST /v1/projects/{projectId}/documents/{documentId}/evidenceExports`
+
+Export validated extraction from a completed stored source for Data admission.
+
+- **Producer operationId:** `documents.exportEvidence`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-document`.
+- **Scope:** `document:write`
+- **Call as:** TypeScript `client.temperaDocument.documentsExportEvidence()` · Python `client.tempera_document.documents_export_evidence()` · Rust `build_request("tempera_document", "documents_export_evidence", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `documentId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `extraction` | yes | — |
+| `metadata` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaDocument.documentsExportEvidence({
+  projectId: "<projectId>",
+  documentId: "<documentId>",
+  extraction: "<extraction>",
+  metadata: "<metadata>",
+});
+```
+
+```python Python
+result = client.tempera_document.documents_export_evidence({
+    "projectId": "<projectId>",
+    "documentId": "<documentId>",
+    "extraction": "<extraction>",
+    "metadata": "<metadata>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_document", "documents_export_evidence", &[
+    ("projectId", "<projectId>".into()),
+    ("documentId", "<documentId>".into()),
+    ("extraction", "<extraction>".into()),
+    ("metadata", "<metadata>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -154,7 +212,7 @@ let spec = client.build_request("tempera_document", "documents_get", &[
 
 ### documentsExtract
 
-`POST /v1/projects/{project_id}/documents/{document_id}/extractions`
+`POST /v1/projects/{projectId}/documents/{documentId}/extractions`
 
 Extract one caller-schema object with exact source evidence.
 
@@ -167,48 +225,48 @@ Extract one caller-schema object with exact source evidence.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `document_id` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `documentId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
 | `instructions` | yes | — |
-| `max_output_tokens` | no | — |
+| `maxOutputTokens` | no | — |
 | `schema` | yes | — |
-| `schema_name` | yes | — |
-| `unit_indexes` | no | — |
+| `schemaName` | yes | — |
+| `unitIndexes` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaDocument.documentsExtract({
-  project_id: "<project_id>",
-  document_id: "<document_id>",
+  projectId: "<projectId>",
+  documentId: "<documentId>",
   instructions: "<instructions>",
   schema: "<schema>",
-  schema_name: "<schema_name>",
+  schemaName: "<schemaName>",
 });
 ```
 
 ```python Python
 result = client.tempera_document.documents_extract({
-    "project_id": "<project_id>",
-    "document_id": "<document_id>",
+    "projectId": "<projectId>",
+    "documentId": "<documentId>",
     "instructions": "<instructions>",
     "schema": "<schema>",
-    "schema_name": "<schema_name>",
+    "schemaName": "<schemaName>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_document", "documents_extract", &[
-    ("project_id", "<project_id>".into()),
-    ("document_id", "<document_id>".into()),
+    ("projectId", "<projectId>".into()),
+    ("documentId", "<documentId>".into()),
     ("instructions", "<instructions>".into()),
     ("schema", "<schema>".into()),
-    ("schema_name", "<schema_name>".into()),
+    ("schemaName", "<schemaName>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -218,7 +276,7 @@ let spec = client.build_request("tempera_document", "documents_extract", &[
 
 ### documentsGetGraph
 
-`GET /v1/projects/{project_id}/documents/{document_id}/graph`
+`GET /v1/projects/{projectId}/documents/{documentId}/graph`
 
 Return the latest successful canonical document graph.
 
@@ -231,29 +289,29 @@ Return the latest successful canonical document graph.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `document_id` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `documentId` | yes | Substituted into the URL path (percent-encoded). |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaDocument.documentsGetGraph({
-  project_id: "<project_id>",
-  document_id: "<document_id>",
+  projectId: "<projectId>",
+  documentId: "<documentId>",
 });
 ```
 
 ```python Python
 result = client.tempera_document.documents_get_graph({
-    "project_id": "<project_id>",
-    "document_id": "<document_id>",
+    "projectId": "<projectId>",
+    "documentId": "<documentId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_document", "documents_get_graph", &[
-    ("project_id", "<project_id>".into()),
-    ("document_id", "<document_id>".into()),
+    ("projectId", "<projectId>".into()),
+    ("documentId", "<documentId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -263,7 +321,7 @@ let spec = client.build_request("tempera_document", "documents_get_graph", &[
 
 ### documentsPrepareRetrieval
 
-`POST /v1/projects/{project_id}/documents/{document_id}/retrievalIndexes`
+`POST /v1/projects/{projectId}/documents/{documentId}/retrievalIndexes`
 
 Build or reuse a qualified immutable hybrid-retrieval index.
 
@@ -276,8 +334,8 @@ Build or reuse a qualified immutable hybrid-retrieval index.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `document_id` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `documentId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
@@ -289,24 +347,24 @@ Build or reuse a qualified immutable hybrid-retrieval index.
 
 ```typescript TypeScript
 const result = await client.temperaDocument.documentsPrepareRetrieval({
-  project_id: "<project_id>",
-  document_id: "<document_id>",
+  projectId: "<projectId>",
+  documentId: "<documentId>",
   kind: "<kind>",
 });
 ```
 
 ```python Python
 result = client.tempera_document.documents_prepare_retrieval({
-    "project_id": "<project_id>",
-    "document_id": "<document_id>",
+    "projectId": "<projectId>",
+    "documentId": "<documentId>",
     "kind": "<kind>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_document", "documents_prepare_retrieval", &[
-    ("project_id", "<project_id>".into()),
-    ("document_id", "<document_id>".into()),
+    ("projectId", "<projectId>".into()),
+    ("documentId", "<documentId>".into()),
     ("kind", "<kind>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
@@ -317,7 +375,7 @@ let spec = client.build_request("tempera_document", "documents_prepare_retrieval
 
 ### documentsSearch
 
-`POST /v1/projects/{project_id}/documents/{document_id}/searches`
+`POST /v1/projects/{projectId}/documents/{documentId}/searches`
 
 Search the latest immutable graph and return grounded source excerpts.
 
@@ -330,8 +388,8 @@ Search the latest immutable graph and return grounded source excerpts.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `document_id` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `documentId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
@@ -339,37 +397,37 @@ Search the latest immutable graph and return grounded source excerpts.
 |---|---|---|
 | `query` | yes | — |
 | `strategy` | no | — |
-| `top_k` | no | — |
+| `topK` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaDocument.documentsSearch({
-  project_id: "<project_id>",
-  document_id: "<document_id>",
+  projectId: "<projectId>",
+  documentId: "<documentId>",
   query: "<query>",
   strategy: "<strategy>",
-  top_k: "<top_k>",
+  topK: "<topK>",
 });
 ```
 
 ```python Python
 result = client.tempera_document.documents_search({
-    "project_id": "<project_id>",
-    "document_id": "<document_id>",
+    "projectId": "<projectId>",
+    "documentId": "<documentId>",
     "query": "<query>",
     "strategy": "<strategy>",
-    "top_k": "<top_k>",
+    "topK": "<topK>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_document", "documents_search", &[
-    ("project_id", "<project_id>".into()),
-    ("document_id", "<document_id>".into()),
+    ("projectId", "<projectId>".into()),
+    ("documentId", "<documentId>".into()),
     ("query", "<query>".into()),
     ("strategy", "<strategy>".into()),
-    ("top_k", "<top_k>".into()),
+    ("topK", "<topK>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -379,7 +437,7 @@ let spec = client.build_request("tempera_document", "documents_search", &[
 
 ### documentUnitsList
 
-`GET /v1/projects/{project_id}/documents/{document_id}/units`
+`GET /v1/projects/{projectId}/documents/{documentId}/units`
 
 List logical units without materializing the complete document graph.
 
@@ -392,42 +450,42 @@ List logical units without materializing the complete document graph.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `document_id` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `documentId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Query parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `page_size` | no | — |
-| `page_token` | no | — |
+| `pageSize` | no | — |
+| `pageToken` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaDocument.documentUnitsList({
-  project_id: "<project_id>",
-  document_id: "<document_id>",
-  page_size: "<page_size>",
-  page_token: "<page_token>",
+  projectId: "<projectId>",
+  documentId: "<documentId>",
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
 });
 ```
 
 ```python Python
 result = client.tempera_document.document_units_list({
-    "project_id": "<project_id>",
-    "document_id": "<document_id>",
-    "page_size": "<page_size>",
-    "page_token": "<page_token>",
+    "projectId": "<projectId>",
+    "documentId": "<documentId>",
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_document", "document_units_list", &[
-    ("project_id", "<project_id>".into()),
-    ("document_id", "<document_id>".into()),
-    ("page_size", "<page_size>".into()),
-    ("page_token", "<page_token>".into()),
+    ("projectId", "<projectId>".into()),
+    ("documentId", "<documentId>".into()),
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -437,7 +495,7 @@ let spec = client.build_request("tempera_document", "document_units_list", &[
 
 ### documentsProcess
 
-`POST /v1/projects/{project_id}/documents/{document_id}:process`
+`POST /v1/projects/{projectId}/documents/{documentId}:process`
 
 Start an idempotent long-running processing operation.
 
@@ -450,8 +508,8 @@ Start an idempotent long-running processing operation.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `document_id` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `documentId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
@@ -463,24 +521,24 @@ Start an idempotent long-running processing operation.
 
 ```typescript TypeScript
 const result = await client.temperaDocument.documentsProcess({
-  project_id: "<project_id>",
-  document_id: "<document_id>",
+  projectId: "<projectId>",
+  documentId: "<documentId>",
   profile: "<profile>",
 });
 ```
 
 ```python Python
 result = client.tempera_document.documents_process({
-    "project_id": "<project_id>",
-    "document_id": "<document_id>",
+    "projectId": "<projectId>",
+    "documentId": "<documentId>",
     "profile": "<profile>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_document", "documents_process", &[
-    ("project_id", "<project_id>".into()),
-    ("document_id", "<document_id>".into()),
+    ("projectId", "<projectId>".into()),
+    ("documentId", "<documentId>".into()),
     ("profile", "<profile>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
@@ -491,7 +549,7 @@ let spec = client.build_request("tempera_document", "documents_process", &[
 
 ### operationsGet
 
-`GET /v1/projects/{project_id}/operations/{operation_id}`
+`GET /v1/projects/{projectId}/operations/{operationId}`
 
 Get a long-running operation.
 
@@ -504,29 +562,29 @@ Get a long-running operation.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `operation_id` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `operationId` | yes | Substituted into the URL path (percent-encoded). |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaDocument.operationsGet({
-  project_id: "<project_id>",
-  operation_id: "<operation_id>",
+  projectId: "<projectId>",
+  operationId: "<operationId>",
 });
 ```
 
 ```python Python
 result = client.tempera_document.operations_get({
-    "project_id": "<project_id>",
-    "operation_id": "<operation_id>",
+    "projectId": "<projectId>",
+    "operationId": "<operationId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_document", "operations_get", &[
-    ("project_id", "<project_id>".into()),
-    ("operation_id", "<operation_id>".into()),
+    ("projectId", "<projectId>".into()),
+    ("operationId", "<operationId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -536,7 +594,7 @@ let spec = client.build_request("tempera_document", "operations_get", &[
 
 ### uploadsCreate
 
-`POST /v1/projects/{project_id}/uploads`
+`POST /v1/projects/{projectId}/uploads`
 
 Create a resumable upload resource.
 
@@ -549,42 +607,42 @@ Create a resumable upload resource.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `expected_byte_length` | no | — |
-| `expected_sha256` | no | — |
-| `media_type` | yes | — |
+| `expectedByteLength` | no | — |
+| `expectedSha256` | no | — |
+| `mediaType` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaDocument.uploadsCreate({
-  project_id: "<project_id>",
-  media_type: "<media_type>",
-  expected_byte_length: "<expected_byte_length>",
-  expected_sha256: "<expected_sha256>",
+  projectId: "<projectId>",
+  mediaType: "<mediaType>",
+  expectedByteLength: "<expectedByteLength>",
+  expectedSha256: "<expectedSha256>",
 });
 ```
 
 ```python Python
 result = client.tempera_document.uploads_create({
-    "project_id": "<project_id>",
-    "media_type": "<media_type>",
-    "expected_byte_length": "<expected_byte_length>",
-    "expected_sha256": "<expected_sha256>",
+    "projectId": "<projectId>",
+    "mediaType": "<mediaType>",
+    "expectedByteLength": "<expectedByteLength>",
+    "expectedSha256": "<expectedSha256>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_document", "uploads_create", &[
-    ("project_id", "<project_id>".into()),
-    ("media_type", "<media_type>".into()),
-    ("expected_byte_length", "<expected_byte_length>".into()),
-    ("expected_sha256", "<expected_sha256>".into()),
+    ("projectId", "<projectId>".into()),
+    ("mediaType", "<mediaType>".into()),
+    ("expectedByteLength", "<expectedByteLength>".into()),
+    ("expectedSha256", "<expectedSha256>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -594,7 +652,7 @@ let spec = client.build_request("tempera_document", "uploads_create", &[
 
 ### uploadsGet
 
-`GET /v1/projects/{project_id}/uploads/{upload_id}`
+`GET /v1/projects/{projectId}/uploads/{uploadId}`
 
 Get an upload.
 
@@ -607,29 +665,29 @@ Get an upload.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `upload_id` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `uploadId` | yes | Substituted into the URL path (percent-encoded). |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaDocument.uploadsGet({
-  project_id: "<project_id>",
-  upload_id: "<upload_id>",
+  projectId: "<projectId>",
+  uploadId: "<uploadId>",
 });
 ```
 
 ```python Python
 result = client.tempera_document.uploads_get({
-    "project_id": "<project_id>",
-    "upload_id": "<upload_id>",
+    "projectId": "<projectId>",
+    "uploadId": "<uploadId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_document", "uploads_get", &[
-    ("project_id", "<project_id>".into()),
-    ("upload_id", "<upload_id>".into()),
+    ("projectId", "<projectId>".into()),
+    ("uploadId", "<uploadId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -639,7 +697,7 @@ let spec = client.build_request("tempera_document", "uploads_get", &[
 
 ### uploadsWrite
 
-`PUT /v1/projects/{project_id}/uploads/{upload_id}/content`
+`PATCH /v1/projects/{projectId}/uploads/{uploadId}/content`
 
 Stream source bytes to content-addressed storage.
 
@@ -652,29 +710,35 @@ Stream source bytes to content-addressed storage.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `upload_id` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `uploadId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `updateMask` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaDocument.uploadsWrite({
-  project_id: "<project_id>",
-  upload_id: "<upload_id>",
+  projectId: "<projectId>",
+  uploadId: "<uploadId>",
 });
 ```
 
 ```python Python
 result = client.tempera_document.uploads_write({
-    "project_id": "<project_id>",
-    "upload_id": "<upload_id>",
+    "projectId": "<projectId>",
+    "uploadId": "<uploadId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_document", "uploads_write", &[
-    ("project_id", "<project_id>".into()),
-    ("upload_id", "<upload_id>".into()),
+    ("projectId", "<projectId>".into()),
+    ("uploadId", "<uploadId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -684,7 +748,7 @@ let spec = client.build_request("tempera_document", "uploads_write", &[
 
 ### uploadsComplete
 
-`POST /v1/projects/{project_id}/uploads/{upload_id}:complete`
+`POST /v1/projects/{projectId}/uploads/{uploadId}:complete`
 
 Complete a streamed upload after digest assertions.
 
@@ -697,41 +761,41 @@ Complete a streamed upload after digest assertions.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `project_id` | yes | Substituted into the URL path (percent-encoded). |
-| `upload_id` | yes | Substituted into the URL path (percent-encoded). |
+| `projectId` | yes | Substituted into the URL path (percent-encoded). |
+| `uploadId` | yes | Substituted into the URL path (percent-encoded). |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `byte_length` | no | — |
+| `byteLength` | no | — |
 | `sha256` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaDocument.uploadsComplete({
-  project_id: "<project_id>",
-  upload_id: "<upload_id>",
-  byte_length: "<byte_length>",
+  projectId: "<projectId>",
+  uploadId: "<uploadId>",
+  byteLength: "<byteLength>",
   sha256: "<sha256>",
 });
 ```
 
 ```python Python
 result = client.tempera_document.uploads_complete({
-    "project_id": "<project_id>",
-    "upload_id": "<upload_id>",
-    "byte_length": "<byte_length>",
+    "projectId": "<projectId>",
+    "uploadId": "<uploadId>",
+    "byteLength": "<byteLength>",
     "sha256": "<sha256>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_document", "uploads_complete", &[
-    ("project_id", "<project_id>".into()),
-    ("upload_id", "<upload_id>".into()),
-    ("byte_length", "<byte_length>".into()),
+    ("projectId", "<projectId>".into()),
+    ("uploadId", "<uploadId>".into()),
+    ("byteLength", "<byteLength>".into()),
     ("sha256", "<sha256>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json

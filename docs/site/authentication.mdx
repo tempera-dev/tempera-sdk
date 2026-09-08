@@ -183,11 +183,12 @@ is the default when none is specified.
 | `tempo` | tempo |
 | `cradle` | cradle |
 | `remi` | remi |
-| `human-data` | human-data |
-| `data-engine` | data-engine |
+| `human-data` | — |
+| `data-engine` | data-engine, human-data |
 | `tempera-mcp` | the unified [MCP gateway](/mcp-gateway) |
 | `tempera-code` | — |
 | `tempera-llm` | tempera-llm |
+| `tempera-connectors` | tempera-connectors |
 | `tempera-workflows` | tempera-workflows |
 | `tempera-gym` | tempera-gym |
 | `tempera-bio` | tempera-bio |
@@ -235,10 +236,10 @@ is the default when none is specified.
 | `model:invoke` | tempera-llm: `createChatCompletion`, `createResponse` |
 | `usage:reserve` | No typed SDK operation declares it yet; enforced server-side. |
 | `document:read` | tempera-document: `documentUnitsList`, `documentsGet`, `documentsGetGraph`, `documentsSearch`, `operationsGet`, `uploadsGet` |
-| `document:write` | tempera-document: `documentsCreate`, `documentsExtract`, `documentsPrepareRetrieval`, `documentsProcess`, `uploadsComplete`, `uploadsCreate`, `uploadsWrite` |
-| `risk:read` | No typed SDK operation declares it yet; enforced server-side. |
-| `risk:write` | No typed SDK operation declares it yet; enforced server-side. |
-| `risk:review` | No typed SDK operation declares it yet; enforced server-side. |
+| `document:write` | tempera-document: `documentsCreate`, `documentsExportEvidence`, `documentsExtract`, `documentsPrepareRetrieval`, `documentsProcess`, `uploadsComplete`, `uploadsCreate`, `uploadsWrite` |
+| `risk:read` | tempera-risk: `exportAudit`, `getCase`, `getCaseDossier`, `getDecision`, `getResearchJob`, `getResearchJobResult`, `getSourceCoverage`, `getSourcePack`, `getSubject`, `listCases`, `listResearchJobEvents`, `listSourcePacks`, `listSubjects`, `streamResearchJobEvents` |
+| `risk:write` | tempera-risk: `abortRiskClearingReservation`, `cancelResearchJob`, `createAccessGrant`, `createCase`, `createDecision`, `createPeopleDirectoryProfile`, `createResearchJob`, `createScreening`, `createSubject`, `deployPolicy`, `disputeRiskClearingExposure`, `executeGraphRead`, `ingestEvent`, `ingestModelScore`, `ingestPaymentObservation`, `markRiskClearingOutcomeUnknown`, `openRiskClearingExposure`, `recordOutcome`, `recordRiskClearingCompensation`, `recordRiskClearingProvisionalOutcome`, `registerModel`, `registerPolicy`, `revokeAccessGrant`, `searchPeople`, `settleRiskClearingExposure`, `verifyRiskClearingEvidenceLive` |
+| `risk:review` | tempera-risk: `createApproval`, `reviewResearchJob` |
 | `investigation:read` | No typed SDK operation declares it yet; enforced server-side. |
 | `investigation:write` | No typed SDK operation declares it yet; enforced server-side. |
 | `investigation:run` | No typed SDK operation declares it yet; enforced server-side. |
@@ -255,7 +256,7 @@ is the default when none is specified.
 | `orders:read` | tempera-dropshipping: `evaluateOrder`, `getBusinessSummary`, `getBusinessWorkspace`, `getCatalogOffer`, `getOrder`, `getProposal`, `getSaleOrder`, `getStore`, `listCatalogOffers`, `listEvents`, `listInbox`, `listOrderAuditEvents`, `listOrderEventProjections`, `listOrders`, `listSaleOrders`, `listStores` |
 | `orders:commerce:write` | tempera-dropshipping: `createCatalogOffer`, `createSaleOrder` |
 | `voice:read` | tempera-voice: `downloadVoiceArtifact`, `getDefaultVoiceAgent`, `getVoiceAgent`, `getVoiceCapabilities`, `getVoiceSession`, `listVoiceAgents`, `listVoiceSessionActions`, `listVoiceSessionEvents`, `listVoiceSessions` |
-| `voice:write` | tempera-voice: `createVoiceAgent`, `createVoiceSession`, `endVoiceSession`, `resolveVoiceAction`, `uploadVoiceArtifact`, `upsertVoiceAgent` |
+| `voice:write` | tempera-voice: `createVoiceAgent`, `createVoiceSession`, `endVoiceSession`, `resolveVoiceAction`, `updateVoiceAgent`, `uploadVoiceArtifact` |
 | `voice:stream` | No typed SDK operation declares it yet; enforced server-side. |
 | `clearing:actions:read` | auth-hub: `clearingAdmissionsGet` |
 | `clearing:actions:propose` | No typed SDK operation declares it yet; enforced server-side. |
@@ -263,45 +264,16 @@ is the default when none is specified.
 | `clearing:actions:reconcile` | auth-hub: `clearingAdmissionsMarkRecoveryRequired` |
 | `clearing:receipts:read` | No typed SDK operation declares it yet; enforced server-side. |
 | `clearing:actions:approve` | auth-hub: `clearingAdmissionsCreate` |
+| `connection:invoke` | tempera-connectors: `connectionsInvoke` |
+| `connection:write` | tempera-connectors: `connectionsCreate`, `connectionsImportOpenApi`, `connectionsTest` |
+| `connection:read` | tempera-connectors: `connectionsGet`, `connectionsList`, `connectorsList` |
 | `admin` | palette: `createApiKey`, `getUsageSummary`, `revokeApiKey` |
-
-## Known scope gaps
-
-### `business:read`
-
-- **Status:** staged.
-- **Owner:** tempera-business.
-- **Reported:** 2026-09-07.
-- **Migration:** Register business:read in the Auth Hub control-plane Scope enum, then drop this gap and re-vendor the enum.
-
-### `business:review`
-
-- **Status:** staged.
-- **Owner:** tempera-business.
-- **Reported:** 2026-09-07.
-- **Migration:** Register business:review in the Auth Hub control-plane Scope enum, then drop this gap and re-vendor the enum.
-
-### `business:write`
-
-- **Status:** staged.
-- **Owner:** tempera-business.
-- **Reported:** 2026-09-07.
-- **Migration:** Register business:write in the Auth Hub control-plane Scope enum, then drop this gap and re-vendor the enum.
-
-### `orders:approve`
-
-- **Status:** staged.
-- **Owner:** tempera-dropshipping.
-- **Reported:** 2026-09-07.
-- **Migration:** Register orders:approve in the Auth Hub control-plane Scope enum, then drop this gap and re-vendor the enum.
-
-### `orders:write`
-
-- **Status:** staged.
-- **Owner:** tempera-dropshipping.
-- **Reported:** 2026-09-07.
-- **Migration:** Register orders:write in the Auth Hub control-plane Scope enum, then drop this gap and re-vendor the enum.
-
+| `business:read` | tempera-business: `businessCapabilities`, `businessCasesAudit`, `businessCasesGet`, `businessCasesList`, `businessOperatingState`, `businessProfileGet`, `businessProfileHistoryList` |
+| `business:write` | tempera-business: `businessCasesCreate`, `businessCasesPrepareDraft`, `businessCasesRecordDeclaredReceipt`, `businessCasesUpdateIntake`, `businessProfileInitialize`, `businessProfilePatch` |
+| `business:review` | tempera-business: `businessCasesReviewDraft`, `businessProfileClear` |
+| `orders:write` | tempera-dropshipping: `createOrder`, `createStore`, `prepareBusinessBrowserTask`, `prepareBusinessTask`, `prepareProposal`, `recordBusinessTaskReceipt`, `recordManualOutcome`, `updateBusinessWorkspace`, `updateOrder` |
+| `orders:approve` | tempera-dropshipping: `approveProposal`, `executeProposal`, `reconcileOrder`, `reviewBusinessTask` |
+| `offline_access` | No typed SDK operation declares it yet; enforced server-side. |
 
 ## Issuer endpoints
 
