@@ -9,6 +9,7 @@ public enum OrdersCommerceError: Error, LocalizedError, Sendable, Equatable {
     case invalidResponse
     case authorizationRequired
     case notFound
+    case conflict
     case server(Int)
 
     public var errorDescription: String? {
@@ -21,12 +22,14 @@ public enum OrdersCommerceError: Error, LocalizedError, Sendable, Equatable {
             "The Orders response could not be verified. Try loading again."
         case .authorizationRequired: "Reconnect Orders to view this workspace."
         case .notFound: "This record was not found in the selected workspace."
+        case .conflict:
+            "The saved request or offer conflicts with this request. Review the offer; keep the original request when recovering an interrupted result."
         case .server: "Orders is temporarily unavailable. Try loading again."
         }
     }
 }
 
-/// Reads declared commerce records. These records do not establish payment or payout status.
+/// Reads and creates declared commerce records. These records do not establish payment or payout status.
 public final class OrdersCommerceClient: Sendable {
     private let origin: URL
     private let scope: OrdersWorkspaceScope
@@ -76,14 +79,16 @@ public final class OrdersCommerceClient: Sendable {
 
     deinit { session.invalidateAndCancel() }
 
-    public func offers(pageToken: String? = nil, pageSize: Int = 50) async throws -> CatalogOfferPage {
+    public func offers(pageToken: String? = nil, pageSize: Int = 50) async throws
+        -> CatalogOfferPage
+    {
         let organization = segment(scope.organizationID)
         let project = segment(scope.projectID)
         let environment = segment(scope.environment.rawValue)
         let site = segment(scope.siteID)
         let page: CatalogOfferPage = try await read(
             path:
-            // tempera-transport: temperaDropshipping.listCatalogOffers GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/catalog/offers
+                // tempera-transport: temperaDropshipping.listCatalogOffers GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/catalog/offers
                 "/v1/organizations/\(organization)/projects/\(project)/environments/\(environment)/sites/\(site)/catalog/offers",
             query: try pageQuery(pageToken: pageToken, pageSize: pageSize))
         guard page.items.count <= pageSize,
@@ -102,7 +107,7 @@ public final class OrdersCommerceClient: Sendable {
         let offerID = segment(id)
         let offer: CatalogOffer = try await read(
             path:
-            // tempera-transport: temperaDropshipping.getCatalogOffer GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/catalog/offers/{offerId}
+                // tempera-transport: temperaDropshipping.getCatalogOffer GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/catalog/offers/{offerId}
                 "/v1/organizations/\(organization)/projects/\(project)/environments/\(environment)/sites/\(site)/catalog/offers/\(offerID)",
             query: [])
         guard offer.scope == scope, offer.merchantID == merchantID, offer.id == id else {
@@ -111,14 +116,16 @@ public final class OrdersCommerceClient: Sendable {
         return offer
     }
 
-    public func saleOrders(pageToken: String? = nil, pageSize: Int = 50) async throws -> SaleOrderPage {
+    public func saleOrders(pageToken: String? = nil, pageSize: Int = 50) async throws
+        -> SaleOrderPage
+    {
         let organization = segment(scope.organizationID)
         let project = segment(scope.projectID)
         let environment = segment(scope.environment.rawValue)
         let site = segment(scope.siteID)
         let page: SaleOrderPage = try await read(
             path:
-            // tempera-transport: temperaDropshipping.listSaleOrders GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders
+                // tempera-transport: temperaDropshipping.listSaleOrders GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders
                 "/v1/organizations/\(organization)/projects/\(project)/environments/\(environment)/sites/\(site)/sale-orders",
             query: try pageQuery(pageToken: pageToken, pageSize: pageSize))
         guard page.items.count <= pageSize,
@@ -137,13 +144,71 @@ public final class OrdersCommerceClient: Sendable {
         let orderID = segment(id)
         let order: SaleOrder = try await read(
             path:
-            // tempera-transport: temperaDropshipping.getSaleOrder GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders/{orderId}
+                // tempera-transport: temperaDropshipping.getSaleOrder GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders/{orderId}
                 "/v1/organizations/\(organization)/projects/\(project)/environments/\(environment)/sites/\(site)/sale-orders/\(orderID)",
             query: [])
         guard order.scope == scope, order.merchantID == merchantID, order.id == id else {
             throw OrdersCommerceError.invalidResponse
         }
         return order
+    }
+
+    /// Creates an immutable offer for this client's merchant. Retain both the input
+    /// and key after any interrupted request; this method never retries automatically.
+    public func createOffer(_ input: CreateCatalogOfferInput, idempotencyKey: String) async throws
+        -> CatalogOffer
+    {
+        try requestKey(idempotencyKey)
+        let organization = segment(scope.organizationID)
+        let project = segment(scope.projectID)
+        let environment = segment(scope.environment.rawValue)
+        let site = segment(scope.siteID)
+        let body = try input.encoded(merchantID: merchantID)
+        let offer: CatalogOffer = try await exchange(
+            path:
+                // tempera-transport: temperaDropshipping.createCatalogOffer POST /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/catalog/offers
+                "/v1/organizations/\(organization)/projects/\(project)/environments/\(environment)/sites/\(site)/catalog/offers",
+            query: [], body: body, idempotencyKey: idempotencyKey)
+        guard offer.scope == scope, offer.merchantID == merchantID,
+            offer.productClassification == input.productClassification,
+            offer.name == input.name, offer.description == input.description,
+            offer.photoURL == input.photoURL, offer.currency == "USD",
+            offer.unitAmountMinor == input.unitAmountMinor, offer.expiresAt == input.expiresAt
+        else {
+            throw OrdersCommerceError.invalidResponse
+        }
+        return offer
+    }
+
+    /// Orders resolves the price, currency, classification and merchant from the
+    /// scoped offer. No amount or recipient can be supplied in this request.
+    public func createSaleOrder(_ input: CreateSaleOrderInput, idempotencyKey: String) async throws
+        -> SaleOrder
+    {
+        try requestKey(idempotencyKey)
+        let organization = segment(scope.organizationID)
+        let project = segment(scope.projectID)
+        let environment = segment(scope.environment.rawValue)
+        let site = segment(scope.siteID)
+        let order: SaleOrder = try await exchange(
+            path:
+                // tempera-transport: temperaDropshipping.createSaleOrder POST /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders
+                "/v1/organizations/\(organization)/projects/\(project)/environments/\(environment)/sites/\(site)/sale-orders",
+            query: [], body: try input.encoded(), idempotencyKey: idempotencyKey)
+        guard order.scope == scope, order.merchantID == merchantID,
+            order.offerID == input.offerID, order.offerRevision == input.offerRevision,
+            order.quantity == input.quantity
+        else { throw OrdersCommerceError.invalidResponse }
+        return order
+    }
+
+    private func requestKey(_ value: String) throws {
+        guard (16...128).contains(value.utf8.count),
+            value.utf8.allSatisfy({
+                (65...90).contains($0) || (97...122).contains($0) || (48...57).contains($0)
+                    || $0 == 95 || $0 == 45
+            })
+        else { throw OrdersCommerceError.invalidRequest }
     }
 
     private func pageQuery(pageToken: String?, pageSize: Int) throws -> [URLQueryItem] {
@@ -157,6 +222,12 @@ public final class OrdersCommerceClient: Sendable {
     }
 
     private func read<T: Decodable>(path: String, query: [URLQueryItem]) async throws -> T {
+        try await exchange(path: path, query: query, body: nil, idempotencyKey: nil)
+    }
+
+    private func exchange<T: Decodable>(
+        path: String, query: [URLQueryItem], body: Data?, idempotencyKey: String?
+    ) async throws -> T {
         do {
             try Task.checkCancellation()
             guard var parts = URLComponents(url: origin, resolvingAgainstBaseURL: false) else {
@@ -173,7 +244,12 @@ public final class OrdersCommerceClient: Sendable {
                 throw OrdersCommerceError.authorizationRequired
             }
             var request = URLRequest(url: url)
-            request.httpMethod = "GET"
+            request.httpMethod = body == nil ? "GET" : "POST"
+            request.httpBody = body
+            if let idempotencyKey {
+                request.setValue(idempotencyKey, forHTTPHeaderField: "Idempotency-Key")
+                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            }
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             request.setValue("application/json", forHTTPHeaderField: "Accept")
             request.timeoutInterval = 15
@@ -189,7 +265,11 @@ public final class OrdersCommerceClient: Sendable {
                 throw OrdersCommerceError.authorizationRequired
             }
             if http.statusCode == 404 { throw OrdersCommerceError.notFound }
-            guard http.statusCode == 200 else { throw OrdersCommerceError.server(http.statusCode) }
+            if body != nil && http.statusCode == 409 { throw OrdersCommerceError.conflict }
+            if body != nil && http.statusCode == 422 { throw OrdersCommerceError.invalidRequest }
+            guard http.statusCode == 200 || (body != nil && http.statusCode == 201) else {
+                throw OrdersCommerceError.server(http.statusCode)
+            }
             guard
                 http.value(forHTTPHeaderField: "Content-Type")?.split(separator: ";").first?
                     .lowercased()

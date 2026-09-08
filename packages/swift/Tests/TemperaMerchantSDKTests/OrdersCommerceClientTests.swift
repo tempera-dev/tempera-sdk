@@ -204,4 +204,148 @@ final class OrdersCommerceClientTests: XCTestCase {
         } catch { XCTAssertEqual(error as? OrdersCommerceError, .cancelled) }
         XCTAssertTrue(MockURLProtocol.requests.isEmpty)
     }
+    private func offerInput() throws -> CreateCatalogOfferInput {
+        try CreateCatalogOfferInput(
+            productClassification: .offlineServices, name: "Fixture service",
+            description: "An actual local declaration", unitAmountMinor: 1200)
+    }
+
+    private func requestBody(_ request: URLRequest) throws -> Data {
+        if let body = request.httpBody { return body }
+        let stream = try XCTUnwrap(request.httpBodyStream)
+        stream.open()
+        defer { stream.close() }
+        var bytes = Data()
+        var buffer = [UInt8](repeating: 0, count: 4096)
+        while stream.hasBytesAvailable {
+            let count = stream.read(&buffer, maxLength: buffer.count)
+            guard count >= 0 else { throw OrdersCommerceError.invalidRequest }
+            if count == 0 { break }
+            bytes.append(contentsOf: buffer.prefix(count))
+        }
+        return bytes
+    }
+
+    func testCreationWireBindingsAndBothSuccessStatuses() async throws {
+        let client = try client()
+        let input = try offerInput()
+        let key = "create-offer-request-0001"
+        for status in [201, 200] {
+            try respond(fixture("offer"), status: status)
+            let offer = try await client.createOffer(input, idempotencyKey: key)
+            XCTAssertEqual(offer.id, offerID)
+            let request = try XCTUnwrap(MockURLProtocol.requests.last)
+            XCTAssertEqual(request.httpMethod, "POST")
+            XCTAssertEqual(
+                request.url?.path,
+                "/v1/organizations/fixture-org/projects/fixture-project/environments/test/sites/fixture-site/catalog/offers"
+            )
+            XCTAssertEqual(
+                request.value(forHTTPHeaderField: "Authorization"), "Bearer process-only-test-token"
+            )
+            XCTAssertEqual(request.value(forHTTPHeaderField: "Content-Type"), "application/json")
+            XCTAssertEqual(request.value(forHTTPHeaderField: "Idempotency-Key"), key)
+            let body = try XCTUnwrap(
+                JSONSerialization.jsonObject(with: requestBody(request)) as? [String: Any])
+            XCTAssertEqual(body["merchantId"] as? String, merchant.uuidString.lowercased())
+            XCTAssertEqual(body["unitAmountMinor"] as? Int, 1200)
+            XCTAssertEqual(body["currency"] as? String, "USD")
+        }
+        try respond(fixture("order"), status: 201)
+        let order = try await client.createSaleOrder(
+            CreateSaleOrderInput(offerID: offerID, quantity: 3),
+            idempotencyKey: "create-order-request-0001")
+        XCTAssertEqual(order.amountMinor, 3600)
+        let request = try XCTUnwrap(MockURLProtocol.requests.last)
+        let body = try XCTUnwrap(
+            JSONSerialization.jsonObject(with: requestBody(request)) as? [String: Any])
+        XCTAssertEqual(Set(body.keys), ["offerId", "offerRevision", "quantity"])
+        XCTAssertEqual(body["offerId"] as? String, offerID)
+        XCTAssertEqual(body["quantity"] as? Int, 3)
+        XCTAssertTrue(request.url!.path.hasSuffix("/sale-orders"))
+    }
+
+    func testInvalidCreationKeysNeverDispatch() async throws {
+        for key in [
+            "", "short", String(repeating: "a", count: 129), "request-key-with space",
+            "request-key-with\n", "request-key-ümlaut",
+        ] {
+            MockURLProtocol.configure { _, _ in XCTFail("invalid key dispatched") }
+            do {
+                _ = try await client().createOffer(offerInput(), idempotencyKey: key)
+                XCTFail("accepted invalid key")
+            } catch { XCTAssertEqual(error as? OrdersCommerceError, .invalidRequest) }
+            do {
+                _ = try await client().createSaleOrder(
+                    CreateSaleOrderInput(offerID: offerID, quantity: 1), idempotencyKey: key)
+                XCTFail("accepted invalid key")
+            } catch { XCTAssertEqual(error as? OrdersCommerceError, .invalidRequest) }
+            XCTAssertTrue(MockURLProtocol.requests.isEmpty)
+        }
+    }
+
+    func testCreationRefusesUnrelatedOrMutatedResponse() async throws {
+        for field in [
+            "merchantId", "name", "description", "unitAmountMinor", "productClassification",
+        ] {
+            var response = try fixture("offer")
+            switch field {
+            case "merchantId": response[field] = "12345678-1234-4123-8123-123456789abd"
+            case "unitAmountMinor": response[field] = 1201
+            case "productClassification": response[field] = "physical_goods"
+            default: response[field] = "different"
+            }
+            try respond(response, status: 201)
+            do {
+                _ = try await client().createOffer(
+                    offerInput(), idempotencyKey: "mutated-response-key-001")
+                XCTFail("accepted changed \(field)")
+            } catch { XCTAssertEqual(error as? OrdersCommerceError, .invalidResponse) }
+        }
+        var response = try fixture("order")
+        response["offerId"] = "different-offer"
+        response["variantId"] = "different-offer"
+        try respond(response, status: 200)
+        do {
+            _ = try await client().createSaleOrder(
+                CreateSaleOrderInput(offerID: offerID, quantity: 3),
+                idempotencyKey: "wrong-sale-response-001")
+            XCTFail("accepted different offer")
+        } catch { XCTAssertEqual(error as? OrdersCommerceError, .invalidResponse) }
+    }
+
+    func testCreationFailureDoesNotAutomaticallyRetryAndManualRetryRetainsBody() async throws {
+        let client = try client()
+        let input = try offerInput()
+        let key = "interrupted-offer-key-001"
+        MockURLProtocol.configure { _, transport in
+            transport.client?.urlProtocol(
+                transport, didFailWithError: URLError(.networkConnectionLost))
+        }
+        do {
+            _ = try await client.createOffer(input, idempotencyKey: key)
+            XCTFail("accepted connection loss")
+        } catch { XCTAssertEqual(error as? OrdersCommerceError, .unavailable) }
+        XCTAssertEqual(MockURLProtocol.requests.count, 1)
+        let original = try XCTUnwrap(MockURLProtocol.requests.first)
+        let originalBody = try requestBody(original)
+        try respond(fixture("offer"), status: 200)
+        _ = try await client.createOffer(input, idempotencyKey: key)
+        XCTAssertEqual(MockURLProtocol.requests.count, 1)
+        let retry = try XCTUnwrap(MockURLProtocol.requests.first)
+        XCTAssertEqual(try requestBody(retry), originalBody)
+        XCTAssertEqual(retry.value(forHTTPHeaderField: "Idempotency-Key"), key)
+        for (status, expected) in [
+            (409, OrdersCommerceError.conflict), (422, .invalidRequest),
+            (403, .authorizationRequired),
+        ] {
+            try respond([:], status: status)
+            do {
+                _ = try await client.createOffer(input, idempotencyKey: key)
+                XCTFail("accepted \(status)")
+            } catch { XCTAssertEqual(error as? OrdersCommerceError, expected) }
+            XCTAssertEqual(MockURLProtocol.requests.count, 1)
+        }
+    }
+
 }
