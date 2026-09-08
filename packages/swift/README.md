@@ -28,8 +28,29 @@ let orders = try OrdersCommerceClient(
 let page = try await orders.offers(limit: 50)
 ```
 
-The caller owns the provisioning/session values in this example. Every response must match the configured workspace and merchant; individual reads must match the requested record ID. Models validate closed response fields, supported product categories, USD minor-unit bounds and sale-order amount consistency. Offer photos are display URLs; the client does not fetch them. Reads are bounded to 256 KiB, use fresh caller-supplied tokens, reject redirects and expose recovery errors through `OrdersCommerceError`. The client performs no automatic retry or write.
+The caller owns the provisioning/session values in this example. Every response must match the configured workspace and merchant; individual reads must match the requested record ID. Models validate closed response fields, supported product categories, USD minor-unit bounds and sale-order amount consistency. Offer photos are display URLs; the client does not fetch them. Reads are bounded to 256 KiB, use fresh caller-supplied tokens, reject redirects and expose recovery errors through `OrdersCommerceError`. The client performs no automatic retry.
 
-Offers and sale orders are declarations, so show them separately from verified payments, fees or payouts. This Swift client does not create offers/orders or consume the event projection. The generated TypeScript, Python and Rust operation registry separately includes the scoped event-projection read from the reviewed Orders source; it grants no Graph, MCP or provider admission.
+Offers and sale orders are declarations, so show them separately from verified payments, fees or payouts. This Swift client does not consume the event projection. The generated TypeScript, Python and Rust operation registry separately includes the scoped event-projection read from the reviewed Orders source; it grants no Graph, MCP or provider admission.
 
 The Swift tests decode actual local producer HTTP responses captured at the exact Orders source lock. To regenerate or verify that fixture with a clean producer checkout at the pinned commit, run `python3 scripts/export-swift-commerce-fixture.py --source-repo /path/to/pinned/orders --check` from the SDK root (omit `--check` to regenerate). The fixture uses a synthetic local principal and no provider effects. It does not qualify a real OAuth write grant or hosted TLS.
+
+## Create offers and sale orders
+
+A separately issued human OAuth grant with both `orders:read` and `orders:commerce:write` can call `createOffer(_:idempotencyKey:)` and `createSaleOrder(_:idempotencyKey:)`. The current registered mobile clients still require separate central admission for this scope; adding these methods does not change their grants. The seller's configured merchant is injected by the client when creating an offer. Sale-order input contains only an offer ID, revision one, and quantity; Orders resolves the merchant, currency, classification, unit price and total from that offer.
+
+```swift
+let input = try CreateCatalogOfferInput(
+    productClassification: .offlineServices,
+    name: "Equipment inspection",
+    description: "One on-site equipment inspection",
+    unitAmountMinor: 12000
+)
+// Persist each input and its own key before dispatch. Supply the required commerce grant.
+let offer = try await orders.createOffer(input, idempotencyKey: savedOfferRequestKey)
+let orderInput = try CreateSaleOrderInput(offerID: offer.id, quantity: 1)
+let order = try await orders.createSaleOrder(orderInput, idempotencyKey: savedOrderRequestKey)
+```
+
+Both new creation (`201`) and durable replay (`200`) return the same typed resource. Keep the original input and request key after a timeout, cancellation, or unverifiable response: the server may already have committed. Reopening the app must recover that saved operation before issuing another creation. The SDK never generates or replaces a key automatically. A `conflict` error requires reviewing the existing operation or offer; an authorization error requires reconnecting with the correct workspace grant. These resources do not start checkout or transfer money.
+
+`python3 scripts/test-swift-commerce-creation.py --source-repo /path/to/pinned/orders --build-dir /path/to/isolated/build` compiles the actual Swift SDK and exercises the exact Orders producer over local TCP. It discards an order's first committed response, closes and reopens Orders against the same SQLite database, and proves original-key recovery without another durable resource or event. The test uses a synthetic principal and a qualification-only HTTPS-to-loopback transport bridge; it does not qualify hosted TLS, real account access, or provider execution.

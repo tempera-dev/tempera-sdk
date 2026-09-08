@@ -393,3 +393,46 @@ jobs:
         run: python3 scripts/check-native-transport.py --client packages/swift/Sources/TemperaMerchantSDK/OrdersCommerceClient.swift
       - name: Test Swift package with strict concurrency
         run: swift test -Xswiftc -strict-concurrency=complete
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Read reviewed Orders producer lock
+        id: orders-lock
+        run: |
+          python3 - <<'PYLOCK'
+          import json, os, re
+          from pathlib import Path
+          lock = json.loads(Path("specs/tempera-dropshipping-api.json.source").read_text())
+          expected = {"source_repo": "tempera-dev/tempera-dropshipping", "source_branch": "main", "source_path": "contracts/dropshipping.openapi.json"}
+          if any(lock.get(key) != value for key, value in expected.items()):
+              raise SystemExit("Orders source identity is not allowlisted")
+          commit = lock.get("source_commit", "")
+          if not re.fullmatch(r"[0-9a-f]{40}", commit):
+              raise SystemExit("Orders source requires an exact commit")
+          with open(os.environ["GITHUB_OUTPUT"], "a") as output:
+              output.write(f"commit={commit}\n")
+          PYLOCK
+      - name: Mint Orders contract reader token
+        id: orders-reader
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ secrets.TEMPERA_CONTRACT_READER_CLIENT_ID }}
+          private-key: ${{ secrets.TEMPERA_CONTRACT_READER_PRIVATE_KEY }}
+          owner: tempera-dev
+          repositories: tempera-dropshipping
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          repository: tempera-dev/tempera-dropshipping
+          ref: ${{ steps.orders-lock.outputs.commit }}
+          fetch-depth: 0
+          path: .orders-commerce-source
+          token: ${{ steps.orders-reader.outputs.token }}
+          persist-credentials: false
+      - name: Verify Orders commit belongs to main
+        run: git -C .orders-commerce-source merge-base --is-ancestor "${{ steps.orders-lock.outputs.commit }}" origin/main
+      - name: Install exact Orders test dependencies
+        run: python3 -m pip install -r .orders-commerce-source/requirements-test.txt
+      - name: Test actual Swift commerce creation and durable replay
+        run: python3 scripts/test-swift-commerce-creation.py --source-repo .orders-commerce-source --build-dir "$RUNNER_TEMP/SwiftCommerceHTTP"
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
