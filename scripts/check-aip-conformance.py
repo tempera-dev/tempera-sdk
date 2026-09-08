@@ -28,6 +28,7 @@ from aip_rules import (  # noqa: E402  (path is set immediately above)
     RULES,
     Exemptions,
     discover_violations,
+    declared_protocol_routes,
     is_list_operation,
     is_lower_camel,
     operation_rows,
@@ -142,6 +143,39 @@ SDK_EXEMPTIONS = Exemptions(
     operations=frozenset(PROTOCOL_OPERATION_EXCEPTIONS),
     json_payloads=frozenset(PROTOCOL_JSON_EXCEPTIONS),
 )
+
+
+def exemptions_for(
+    specs: dict[str, dict[str, Any]]
+) -> tuple[Exemptions, list[str]]:
+    """Union the reviewed tables with what each producer declares for itself.
+
+    A producer that publishes x-tempera-protocol-routes has already said which
+    of its routes are governed by a native protocol, and the producer linter
+    checked that claim before the contract was ever published. Re-deriving the
+    same list by hand here is how the reviewed table and the contracts drifted
+    apart: Voice declared /livez and /readyz, and the ratchet still counted
+    them as unversioned resource paths because nobody had mirrored them.
+
+    The declaration is re-validated rather than trusted -- a route that is not
+    served, or that is not an exemptible shape, fails the build.
+    """
+    declared: set[tuple[str, str]] = set()
+    problems: list[str] = []
+    for product, spec in specs.items():
+        routes, issues = declared_protocol_routes(product, spec)
+        declared |= routes
+        problems += issues
+    return (
+        Exemptions(
+            paths=frozenset(PROTOCOL_EXCEPTIONS) | frozenset(declared),
+            prefixes=frozenset(PROTOCOL_PREFIX_EXCEPTIONS),
+            suffixes=frozenset(PROTOCOL_SUFFIX_EXCEPTIONS),
+            operations=frozenset(PROTOCOL_OPERATION_EXCEPTIONS),
+            json_payloads=frozenset(PROTOCOL_JSON_EXCEPTIONS),
+        ),
+        problems,
+    )
 
 
 def load_specs() -> dict[str, dict[str, Any]]:
@@ -321,7 +355,12 @@ def main() -> int:
 
     try:
         specs = load_specs()
-        violations = discover_violations(specs, SDK_EXEMPTIONS)
+        exemptions, declaration_problems = exemptions_for(specs)
+        if declaration_problems:
+            for problem in declaration_problems:
+                print(f"protocol-route declaration rejected: {problem}", file=sys.stderr)
+            return 1
+        violations = discover_violations(specs, exemptions)
         baseline = load_baseline()
     except (OSError, json.JSONDecodeError) as error:
         print(f"AIP conformance gate failed to load inputs: {error}", file=sys.stderr)
