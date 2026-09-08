@@ -134,6 +134,17 @@ def revendor_bespoke(product: str, commit: str, workspace: Path) -> str:
              "--source-branch", config["source_branch"],
              "--source-commit", resolved]
         )
+    if product == "dataEngineMcp":
+        # The operation lock is a second artifact from the same contract, and
+        # check-sdk-surface compares its commit against the MCP locks, so both
+        # have to move together or the surface gate goes red.
+        run([
+            sys.executable, str(SCRIPTS / "sync-data-engine-openapi.py"),
+            "--source", str(checkout / "contracts/openapi/data-engine.openapi.json"),
+            "--source-repo", repository,
+            "--source-branch", config["source_branch"],
+            "--source-commit", resolved,
+        ])
     if product == "paletteEval":
         run([
             sys.executable, str(SCRIPTS / "sync-palette-eval-openapi.py"),

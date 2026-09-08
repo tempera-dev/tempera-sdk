@@ -9788,6 +9788,56 @@ OPERATIONS = {
     ],
     "temperaBio": [
         {
+            "id": "get_bio_health",
+            "upstream_operation_id": "getBioHealth",
+            "method": "GET",
+            "path": "/healthz",
+            "auth": "none",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "Liveness probe."
+        },
+        {
+            "id": "get_bio_openapi_document",
+            "upstream_operation_id": "getBioOpenapiDocument",
+            "method": "GET",
+            "path": "/openapi.json",
+            "auth": "none",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "Serve this document."
+        },
+        {
             "id": "derive_campaign_state",
             "upstream_operation_id": "deriveCampaignState",
             "method": "POST",
@@ -11749,7 +11799,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "none",
             "request_content_type": None,
-            "scope": None,
+            "scope": "admin",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "read",
@@ -11774,7 +11824,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "none",
             "request_content_type": None,
-            "scope": None,
+            "scope": "admin",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "read",
@@ -11799,7 +11849,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "none",
             "request_content_type": None,
-            "scope": None,
+            "scope": "admin",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "read",
@@ -11824,7 +11874,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "none",
             "request_content_type": None,
-            "scope": None,
+            "scope": "admin",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "read",
@@ -11852,7 +11902,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "none",
             "request_content_type": None,
-            "scope": None,
+            "scope": "admin",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "read",
@@ -11888,9 +11938,9 @@ OPERATIONS = {
                 "text"
             ],
             "body_defaults": {},
-            "request_body_kind": "none",
-            "request_content_type": None,
-            "scope": None,
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "admin",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "idempotent",
@@ -11915,9 +11965,9 @@ OPERATIONS = {
             "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
-            "request_body_kind": "none",
-            "request_content_type": None,
-            "scope": None,
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "admin",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
@@ -11952,9 +12002,9 @@ OPERATIONS = {
                 "scope"
             ],
             "body_defaults": {},
-            "request_body_kind": "none",
-            "request_content_type": None,
-            "scope": None,
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "admin",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
@@ -11982,9 +12032,9 @@ OPERATIONS = {
             "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
-            "request_body_kind": "none",
-            "request_content_type": None,
-            "scope": None,
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "admin",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
@@ -11996,7 +12046,7 @@ OPERATIONS = {
             "id": "health",
             "upstream_operation_id": "health.get",
             "method": "GET",
-            "path": "/v1/health",
+            "path": "/healthz",
             "auth": "none",
             "auth_audience": None,
             "path_params": [],
@@ -12022,8 +12072,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.useCases.list",
             "method": "GET",
             "path": "/v1/{parent}/use-cases",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -12054,8 +12104,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.useCases.get",
             "method": "GET",
             "path": "/v1/{parent}/use-cases/{useCaseId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "useCaseId"
@@ -12084,8 +12134,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.artifacts.ingest",
             "method": "POST",
             "path": "/v1/{parent}/artifacts:ingest",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -12121,8 +12171,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.connectorEvidence.ingest",
             "method": "POST",
             "path": "/v1/{parent}/connectorEvidence:ingest",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -12158,8 +12208,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.web.ingest",
             "method": "POST",
             "path": "/v1/{parent}/web:ingest",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -12198,8 +12248,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.campaigns.create",
             "method": "POST",
             "path": "/v1/{parent}/campaigns",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -12241,8 +12291,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.campaigns.list",
             "method": "GET",
             "path": "/v1/{parent}/campaigns",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -12273,8 +12323,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.campaigns.transition",
             "method": "POST",
             "path": "/v1/{parent}/campaigns/{campaignId}:transition",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "campaignId"
@@ -12312,8 +12362,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.reviewerQualifications.get",
             "method": "GET",
             "path": "/v1/{parent}/campaigns/{campaignId}/reviewer-qualification",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "campaignId"
@@ -12342,8 +12392,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.pipelines.runUseCase",
             "method": "POST",
             "path": "/v1/{parent}/pipelines:runUseCase",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -12385,8 +12435,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.expertTasks.list",
             "method": "GET",
             "path": "/v1/{parent}/expert-tasks",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -12420,8 +12470,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.reviewQualificationTasks.create",
             "method": "POST",
             "path": "/v1/{parent}/review-qualification-tasks",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -12459,8 +12509,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.reviewerRevocations.create",
             "method": "POST",
             "path": "/v1/{parent}/reviewer-revocations",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -12496,8 +12546,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.expertTasks.resolve",
             "method": "POST",
             "path": "/v1/{parent}/expert-tasks/{expertTaskId}:resolve",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "expertTaskId"
@@ -12543,8 +12593,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.expertTasks.appeal",
             "method": "POST",
             "path": "/v1/{parent}/expert-tasks/{expertTaskId}:appeal",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "expertTaskId"
@@ -12582,8 +12632,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.expertTaskAssignments.claim",
             "method": "POST",
             "path": "/v1/{parent}/expert-tasks/{expertTaskId}:claim",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "expertTaskId"
@@ -12619,8 +12669,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.expertTaskAssignments.renew",
             "method": "POST",
             "path": "/v1/{parent}/expert-tasks/{expertTaskId}:renew",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "expertTaskId"
@@ -12656,8 +12706,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.expertTaskAssignments.release",
             "method": "POST",
             "path": "/v1/{parent}/expert-tasks/{expertTaskId}:release",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "expertTaskId"
@@ -12692,8 +12742,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.expertTaskAssignments.saveDraft",
             "method": "POST",
             "path": "/v1/{parent}/expert-tasks/{expertTaskId}:saveDraft",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "expertTaskId"
@@ -12732,8 +12782,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.reviewerSessions.record",
             "method": "POST",
             "path": "/v1/{parent}/reviewer-sessions:record",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -12767,8 +12817,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.reviewOperations.get",
             "method": "GET",
             "path": "/v1/{parent}/review-operations",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -12799,8 +12849,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.metrics.get",
             "method": "GET",
             "path": "/v1/{parent}/metrics",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -12828,8 +12878,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.labelQuality.get",
             "method": "GET",
             "path": "/v1/{parent}/label-quality",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -12857,8 +12907,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.ecosystem.readiness.get",
             "method": "GET",
             "path": "/v1/{parent}/ecosystem/readiness",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -12886,8 +12936,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.artifacts.list",
             "method": "GET",
             "path": "/v1/{parent}/artifacts",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -12919,8 +12969,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.artifacts.get",
             "method": "GET",
             "path": "/v1/{parent}/artifacts/{artifactId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "artifactId"
@@ -12951,8 +13001,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.artifacts.labels.list",
             "method": "GET",
             "path": "/v1/{parent}/artifacts/{artifactId}/labels",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "artifactId"
@@ -12984,8 +13034,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.datasets.profile",
             "method": "POST",
             "path": "/v1/{parent}/datasets:profile",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -13018,8 +13068,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.jobs.create",
             "method": "POST",
             "path": "/v1/{parent}/jobs",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -13059,8 +13109,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.jobs.get",
             "method": "GET",
             "path": "/v1/{parent}/jobs/{jobId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "jobId"
@@ -13089,8 +13139,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.jobs.results.list",
             "method": "GET",
             "path": "/v1/{parent}/jobs/{jobId}/results",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "jobId"
@@ -13122,8 +13172,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.products.get",
             "method": "GET",
             "path": "/v1/{parent}/products/{productId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "productId"
@@ -13152,8 +13202,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.products.validate",
             "method": "POST",
             "path": "/v1/{parent}/products/{productId}:validate",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "productId"
@@ -13184,8 +13234,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.products.checkLeakage",
             "method": "POST",
             "path": "/v1/{parent}/products:checkLeakage",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -13219,8 +13269,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.products.manifest.get",
             "method": "GET",
             "path": "/v1/{parent}/products/{productId}/manifest",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "productId"
@@ -13249,8 +13299,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.trainingReleases.admit",
             "method": "POST",
             "path": "/v1/{parent}/training-releases:admit",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -13288,8 +13338,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.trainingReleases.get",
             "method": "GET",
             "path": "/v1/{parent}/training-releases/{releaseId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "releaseId"
@@ -13318,8 +13368,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.products.derive",
             "method": "POST",
             "path": "/v1/{parent}/products/{productId}:derive",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "productId"
@@ -13359,8 +13409,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.products.emitEval",
             "method": "POST",
             "path": "/v1/{parent}/products:emitEval",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -13394,8 +13444,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.sourceDefinitions.create",
             "method": "POST",
             "path": "/v1/{parent}/sourceDefinitions",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -13442,8 +13492,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.sourceDefinitions.list",
             "method": "GET",
             "path": "/v1/{parent}/sourceDefinitions",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -13474,8 +13524,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.sourceDefinitions.get",
             "method": "GET",
             "path": "/v1/{parent}/sourceDefinitions/{sourceDefinitionId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "sourceDefinitionId"
@@ -13504,8 +13554,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.sourceDefinitions.patch",
             "method": "PATCH",
             "path": "/v1/{parent}/sourceDefinitions/{sourceDefinitionId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "sourceDefinitionId"
@@ -13550,8 +13600,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.sourceDefinitions.run",
             "method": "POST",
             "path": "/v1/{parent}/sourceDefinitions/{sourceDefinitionId}:run",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "sourceDefinitionId"
@@ -13588,8 +13638,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.connectorRuns.list",
             "method": "GET",
             "path": "/v1/{parent}/connectorRuns",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -13620,8 +13670,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.connectorRuns.get",
             "method": "GET",
             "path": "/v1/{parent}/connectorRuns/{connectorRunId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "connectorRunId"
@@ -13650,8 +13700,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.sources.extract",
             "method": "POST",
             "path": "/v1/{parent}/sources:extract",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -13699,8 +13749,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.connectors.list",
             "method": "GET",
             "path": "/v1/{parent}/connectors",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -13731,8 +13781,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.tools.create",
             "method": "POST",
             "path": "/v1/{parent}/tools",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -13774,8 +13824,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.tools.list",
             "method": "GET",
             "path": "/v1/{parent}/tools",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -13806,8 +13856,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.tools.get",
             "method": "GET",
             "path": "/v1/{parent}/tools/{toolName}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "toolName"
@@ -13836,8 +13886,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.tools.delete",
             "method": "DELETE",
             "path": "/v1/{parent}/tools/{toolName}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "toolName"
@@ -13866,8 +13916,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.tools.invoke",
             "method": "POST",
             "path": "/v1/{parent}/tools/{toolName}:invoke",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "toolName"
@@ -13900,8 +13950,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.discoveryReleases.commit",
             "method": "POST",
             "path": "/v1/{parent}/discoveryReleases:commit",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -13953,8 +14003,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.discoveryReleases.get",
             "method": "GET",
             "path": "/v1/{parent}/discoveryReleases/{discoveryReleaseId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "discoveryReleaseId"
@@ -13983,8 +14033,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.evidenceRecords.create",
             "method": "POST",
             "path": "/v1/{parent}/evidenceRecords",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -14032,8 +14082,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.evidenceRecords.list",
             "method": "GET",
             "path": "/v1/{parent}/evidenceRecords",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -14065,8 +14115,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.evidenceRecords.get",
             "method": "GET",
             "path": "/v1/{parent}/evidenceRecords/{evidenceRecordId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "evidenceRecordId"
@@ -14095,8 +14145,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.episodes.create",
             "method": "POST",
             "path": "/v1/{parent}/episodes",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -14150,8 +14200,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.episodes.list",
             "method": "GET",
             "path": "/v1/{parent}/episodes",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -14183,8 +14233,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.episodes.get",
             "method": "GET",
             "path": "/v1/{parent}/episodes/{episodeId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "episodeId"
@@ -14213,8 +14263,8 @@ OPERATIONS = {
             "upstream_operation_id": "query_research_retrieval",
             "method": "POST",
             "path": "/v1/{parent}/researchRetrieval:query",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -14258,8 +14308,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.researchCatalogEntries.create",
             "method": "POST",
             "path": "/v1/{parent}/researchCatalogEntries",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -14301,8 +14351,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.researchCatalogEntries.list",
             "method": "GET",
             "path": "/v1/{parent}/researchCatalogEntries",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -14333,8 +14383,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.researchCatalogEntries.get",
             "method": "GET",
             "path": "/v1/{parent}/researchCatalogEntries/{entryId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "entryId"
@@ -14361,6 +14411,56 @@ OPERATIONS = {
     ],
     "humanData": [
         {
+            "id": "get_human_data_health",
+            "upstream_operation_id": "getHumanDataHealth",
+            "method": "GET",
+            "path": "/healthz",
+            "auth": "none",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "Liveness probe."
+        },
+        {
+            "id": "get_human_data_openapi_document",
+            "upstream_operation_id": "getHumanDataOpenapiDocument",
+            "method": "GET",
+            "path": "/openapi.json",
+            "auth": "none",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "Serve this document."
+        },
+        {
             "id": "compute_qualification",
             "upstream_operation_id": "computeQualification",
             "method": "GET",
@@ -14385,7 +14485,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "none",
             "request_content_type": None,
-            "scope": None,
+            "scope": "training:publish",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "read",

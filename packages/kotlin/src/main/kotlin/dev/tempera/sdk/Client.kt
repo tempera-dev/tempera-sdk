@@ -646,8 +646,14 @@ public class TemperaClient(
 
         /**
          * Percent-encode one path parameter. A producer may declare an AIP
-         * resource pattern such as `projects/*`; its structural slashes survive
-         * only after the value matches the pattern exactly.
+         * resource pattern whose wildcard segments stand for a caller-supplied
+         * identifier; the structural slashes between segments survive only
+         * after the value matches the pattern exactly.
+         *
+         * The pattern is deliberately not written out here: Kotlin block
+         * comments nest, so a literal slash-star inside KDoc opens a comment
+         * that the closing marker does not end, and the rest of the file is
+         * swallowed.
          */
         internal fun expandPathParameter(
             value: String,

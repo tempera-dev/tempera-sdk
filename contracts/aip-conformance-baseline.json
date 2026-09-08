@@ -54,7 +54,6 @@
     "cradle|/mcp",
     "cradle|/v1/health",
     "dataEngine|/mcp",
-    "dataEngine|/v1/health",
     "palette|/health",
     "palette|/v1/traces",
     "remi|/livez",

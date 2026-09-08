@@ -31,7 +31,7 @@ Anything this page does not cover is reachable through the raw passthrough:
 
 ### health
 
-`GET /v1/health`
+`GET /healthz`
 
 Check data-engine liveness; returns the service status.
 
@@ -64,7 +64,7 @@ let spec = client.build_request("data_engine", "health", &[])?;
 List the MVP use-case templates (data products and pipeline templates) for a project.
 
 - **Producer operationId:** `projects.useCases.list`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
 - **Call as:** TypeScript `client.dataEngine.listUseCases()` · Python `client.data_engine.list_use_cases()` · Rust `build_request("data_engine", "list_use_cases", params)`
@@ -119,7 +119,7 @@ let spec = client.build_request("data_engine", "list_use_cases", &[
 Fetch one MVP use-case template with its rubric, modalities, skill tags, and target accuracy.
 
 - **Producer operationId:** `projects.useCases.get`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
 - **Call as:** TypeScript `client.dataEngine.getUseCase()` · Python `client.data_engine.get_use_case()` · Rust `build_request("data_engine", "get_use_case", params)`
@@ -165,7 +165,7 @@ let spec = client.build_request("data_engine", "get_use_case", &[
 Ingest one artifact deterministically into the project; returns an async operation handle.
 
 - **Producer operationId:** `projects.artifacts.ingest`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:write`
 - **Call as:** TypeScript `client.dataEngine.ingestArtifact()` · Python `client.data_engine.ingest_artifact()` · Rust `build_request("data_engine", "ingest_artifact", params)`
@@ -226,7 +226,7 @@ let spec = client.build_request("data_engine", "ingest_artifact", &[
 Verify and retain signed Tempera Connectors source evidence.
 
 - **Producer operationId:** `projects.connectorEvidence.ingest`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:write`
 - **Call as:** TypeScript `client.dataEngine.projectsConnectorEvidenceIngest()` · Python `client.data_engine.projects_connector_evidence_ingest()` · Rust `build_request("data_engine", "projects_connector_evidence_ingest", params)`
@@ -281,7 +281,7 @@ let spec = client.build_request("data_engine", "projects_connector_evidence_inge
 Fetch, parse, and ingest one public HTTP(S) page as a web artifact; returns an async operation handle.
 
 - **Producer operationId:** `projects.web.ingest`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:write`
 - **Call as:** TypeScript `client.dataEngine.ingestWeb()` · Python `client.data_engine.ingest_web()` · Rust `build_request("data_engine", "ingest_web", params)`
@@ -343,7 +343,7 @@ let spec = client.build_request("data_engine", "ingest_web", &[
 Create a data campaign with a rubric, budget, target accuracy, and skill tags.
 
 - **Producer operationId:** `projects.campaigns.create`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:write`
 - **Call as:** TypeScript `client.dataEngine.createCampaign()` · Python `client.data_engine.create_campaign()` · Rust `build_request("data_engine", "create_campaign", params)`
@@ -409,7 +409,7 @@ let spec = client.build_request("data_engine", "create_campaign", &[
 List a project's data campaigns with pagination.
 
 - **Producer operationId:** `projects.campaigns.list`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
 - **Call as:** TypeScript `client.dataEngine.listCampaigns()` · Python `client.data_engine.list_campaigns()` · Rust `build_request("data_engine", "list_campaigns", params)`
@@ -464,7 +464,7 @@ let spec = client.build_request("data_engine", "list_campaigns", &[
 Pause, resume, or permanently close campaign job admission; returns an immutable receipt for the committed lifecycle transition.
 
 - **Producer operationId:** `projects.campaigns.transition`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:write`
 - **Call as:** TypeScript `client.dataEngine.transitionCampaign()` · Python `client.data_engine.transition_campaign()` · Rust `build_request("data_engine", "transition_campaign", params)`
@@ -569,7 +569,7 @@ let spec = client.build_request("data_engine", "get_reviewer_qualification", &[
 Run a complete MVP use-case pipeline end to end; verifier selects the configured verification backend.
 
 - **Producer operationId:** `projects.pipelines.runUseCase`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `eval:run`
 - **Call as:** TypeScript `client.dataEngine.runUseCase()` · Python `client.data_engine.run_use_case()` · Rust `build_request("data_engine", "run_use_case", params)`
@@ -634,7 +634,7 @@ let spec = client.build_request("data_engine", "run_use_case", &[
 List human residual review tasks, optionally filtered by status and campaign.
 
 - **Producer operationId:** `projects.expertTasks.list`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
 - **Call as:** TypeScript `client.dataEngine.listExpertTasks()` · Python `client.data_engine.list_expert_tasks()` · Rust `build_request("data_engine", "list_expert_tasks", params)`
@@ -1307,7 +1307,7 @@ let spec = client.build_request("data_engine", "get_review_operations", &[
 Fetch data-engine usage and quality metrics for a project.
 
 - **Producer operationId:** `projects.metrics.get`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
 - **Call as:** TypeScript `client.dataEngine.getMetrics()` · Python `client.data_engine.get_metrics()` · Rust `build_request("data_engine", "get_metrics", params)`
@@ -1349,7 +1349,7 @@ let spec = client.build_request("data_engine", "get_metrics", &[
 Fetch the project label-quality report and unresolved expert backlog.
 
 - **Producer operationId:** `projects.labelQuality.get`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
 - **Call as:** TypeScript `client.dataEngine.getLabelQuality()` · Python `client.data_engine.get_label_quality()` · Rust `build_request("data_engine", "get_label_quality", params)`
@@ -1391,7 +1391,7 @@ let spec = client.build_request("data_engine", "get_label_quality", &[
 Fetch public-site and ecosystem readiness signals for a project.
 
 - **Producer operationId:** `projects.ecosystem.readiness.get`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
 - **Call as:** TypeScript `client.dataEngine.getEcosystemReadiness()` · Python `client.data_engine.get_ecosystem_readiness()` · Rust `build_request("data_engine", "get_ecosystem_readiness", params)`
@@ -1433,7 +1433,7 @@ let spec = client.build_request("data_engine", "get_ecosystem_readiness", &[
 List a project's artifacts with cursor pagination, expanded to the requested view (BASIC or FULL).
 
 - **Producer operationId:** `projects.artifacts.list`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
 - **Call as:** TypeScript `client.dataEngine.listArtifacts()` · Python `client.data_engine.list_artifacts()` · Rust `build_request("data_engine", "list_artifacts", params)`
@@ -1489,7 +1489,7 @@ let spec = client.build_request("data_engine", "list_artifacts", &[
 Fetch one artifact, expanded to the requested view (BASIC or FULL).
 
 - **Producer operationId:** `projects.artifacts.get`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
 - **Call as:** TypeScript `client.dataEngine.getArtifact()` · Python `client.data_engine.get_artifact()` · Rust `build_request("data_engine", "get_artifact", params)`
@@ -1544,7 +1544,7 @@ let spec = client.build_request("data_engine", "get_artifact", &[
 List the labels attached to one artifact.
 
 - **Producer operationId:** `projects.artifacts.labels.list`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
 - **Call as:** TypeScript `client.dataEngine.listArtifactLabels()` · Python `client.data_engine.list_artifact_labels()` · Rust `build_request("data_engine", "list_artifact_labels", params)`
@@ -1603,7 +1603,7 @@ let spec = client.build_request("data_engine", "list_artifact_labels", &[
 Profile dataset quality before export, including duplicates, label coverage, and distributions.
 
 - **Producer operationId:** `projects.datasets.profile`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:write`
 - **Call as:** TypeScript `client.dataEngine.profileDataset()` · Python `client.data_engine.profile_dataset()` · Rust `build_request("data_engine", "profile_dataset", params)`
@@ -1658,7 +1658,7 @@ let spec = client.build_request("data_engine", "profile_dataset", &[
 Create an asynchronous labeling job over a set of artifacts; returns an operation handle to poll.
 
 - **Producer operationId:** `projects.jobs.create`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `eval:run`
 - **Call as:** TypeScript `client.dataEngine.createJob()` · Python `client.data_engine.create_job()` · Rust `build_request("data_engine", "create_job", params)`
@@ -1720,7 +1720,7 @@ let spec = client.build_request("data_engine", "create_job", &[
 Fetch one labeling job with its state and progress.
 
 - **Producer operationId:** `projects.jobs.get`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
 - **Call as:** TypeScript `client.dataEngine.getJob()` · Python `client.data_engine.get_job()` · Rust `build_request("data_engine", "get_job", params)`
@@ -1766,7 +1766,7 @@ let spec = client.build_request("data_engine", "get_job", &[
 List the deterministic label results a job produced.
 
 - **Producer operationId:** `projects.jobs.results.list`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
 - **Call as:** TypeScript `client.dataEngine.getJobResults()` · Python `client.data_engine.get_job_results()` · Rust `build_request("data_engine", "get_job_results", params)`
@@ -1825,7 +1825,7 @@ let spec = client.build_request("data_engine", "get_job_results", &[
 Fetch one emitted product bundle with its status and manifest URL.
 
 - **Producer operationId:** `projects.products.get`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
 - **Call as:** TypeScript `client.dataEngine.getProduct()` · Python `client.data_engine.get_product()` · Rust `build_request("data_engine", "get_product", params)`
@@ -1871,7 +1871,7 @@ let spec = client.build_request("data_engine", "get_product", &[
 Validate an emitted product bundle's referential integrity and hygiene.
 
 - **Producer operationId:** `projects.products.validate`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:write`
 - **Call as:** TypeScript `client.dataEngine.validateProduct()` · Python `client.data_engine.validate_product()` · Rust `build_request("data_engine", "validate_product", params)`
@@ -1917,7 +1917,7 @@ let spec = client.build_request("data_engine", "validate_product", &[
 Check raw-hash leakage between exactly two product bundles.
 
 - **Producer operationId:** `projects.products.checkLeakage`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:write`
 - **Call as:** TypeScript `client.dataEngine.checkProductLeakage()` · Python `client.data_engine.check_product_leakage()` · Rust `build_request("data_engine", "check_product_leakage", params)`
@@ -1968,7 +1968,7 @@ let spec = client.build_request("data_engine", "check_product_leakage", &[
 Fetch an integrity-checked, bounded manifest for an emitted eval product.
 
 - **Producer operationId:** `projects.products.manifest.get`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
 - **Call as:** TypeScript `client.dataEngine.getProductManifest()` · Python `client.data_engine.get_product_manifest()` · Rust `build_request("data_engine", "get_product_manifest", params)`
@@ -2119,7 +2119,7 @@ let spec = client.build_request("data_engine", "get_training_release", &[
 Derive a deterministic post-training bundle from a ready product.
 
 - **Producer operationId:** `projects.products.derive`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `eval:run`
 - **Call as:** TypeScript `client.dataEngine.deriveBundle()` · Python `client.data_engine.derive_bundle()` · Rust `build_request("data_engine", "derive_bundle", params)`
@@ -2185,7 +2185,7 @@ let spec = client.build_request("data_engine", "derive_bundle", &[
 Emit an eval dataset bundle from verified artifacts; returns an async operation handle.
 
 - **Producer operationId:** `projects.products.emitEval`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `eval:run`
 - **Call as:** TypeScript `client.dataEngine.emitEval()` · Python `client.data_engine.emit_eval()` · Rust `build_request("data_engine", "emit_eval", params)`
@@ -2240,7 +2240,7 @@ let spec = client.build_request("data_engine", "emit_eval", &[
 Create an immutable-versioned connector source definition.
 
 - **Producer operationId:** `projects.sourceDefinitions.create`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `connector:manage`
 - **Call as:** TypeScript `client.dataEngine.projectsSourceDefinitionsCreate()` · Python `client.data_engine.projects_source_definitions_create()` · Rust `build_request("data_engine", "projects_source_definitions_create", params)`
@@ -2316,7 +2316,7 @@ let spec = client.build_request("data_engine", "projects_source_definitions_crea
 List project source definitions.
 
 - **Producer operationId:** `projects.sourceDefinitions.list`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `connector:read`
 - **Call as:** TypeScript `client.dataEngine.projectsSourceDefinitionsList()` · Python `client.data_engine.projects_source_definitions_list()` · Rust `build_request("data_engine", "projects_source_definitions_list", params)`
@@ -2371,7 +2371,7 @@ let spec = client.build_request("data_engine", "projects_source_definitions_list
 Get one source definition.
 
 - **Producer operationId:** `projects.sourceDefinitions.get`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `connector:read`
 - **Call as:** TypeScript `client.dataEngine.projectsSourceDefinitionsGet()` · Python `client.data_engine.projects_source_definitions_get()` · Rust `build_request("data_engine", "projects_source_definitions_get", params)`
@@ -2417,7 +2417,7 @@ let spec = client.build_request("data_engine", "projects_source_definitions_get"
 Create a new version of a source definition.
 
 - **Producer operationId:** `projects.sourceDefinitions.patch`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `connector:manage`
 - **Call as:** TypeScript `client.dataEngine.projectsSourceDefinitionsPatch()` · Python `client.data_engine.projects_source_definitions_patch()` · Rust `build_request("data_engine", "projects_source_definitions_patch", params)`
@@ -2492,7 +2492,7 @@ let spec = client.build_request("data_engine", "projects_source_definitions_patc
 Start an exact-replay connector run from a reviewed definition.
 
 - **Producer operationId:** `projects.sourceDefinitions.run`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `connector:run`
 - **Call as:** TypeScript `client.dataEngine.projectsSourceDefinitionsRun()` · Python `client.data_engine.projects_source_definitions_run()` · Rust `build_request("data_engine", "projects_source_definitions_run", params)`
@@ -2551,7 +2551,7 @@ let spec = client.build_request("data_engine", "projects_source_definitions_run"
 List durable connector runs.
 
 - **Producer operationId:** `projects.connectorRuns.list`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `connector:read`
 - **Call as:** TypeScript `client.dataEngine.projectsConnectorRunsList()` · Python `client.data_engine.projects_connector_runs_list()` · Rust `build_request("data_engine", "projects_connector_runs_list", params)`
@@ -2606,7 +2606,7 @@ let spec = client.build_request("data_engine", "projects_connector_runs_list", &
 Get one durable connector run and its terminal receipt.
 
 - **Producer operationId:** `projects.connectorRuns.get`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `connector:read`
 - **Call as:** TypeScript `client.dataEngine.projectsConnectorRunsGet()` · Python `client.data_engine.projects_connector_runs_get()` · Rust `build_request("data_engine", "projects_connector_runs_get", params)`
@@ -2652,7 +2652,7 @@ let spec = client.build_request("data_engine", "projects_connector_runs_get", &[
 Extract bounded objects or records from a configured source connector.
 
 - **Producer operationId:** `projects.sources.extract`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `connector:manage`
 - **Call as:** TypeScript `client.dataEngine.extractSource()` · Python `client.data_engine.extract_source()` · Rust `build_request("data_engine", "extract_source", params)`
@@ -2722,7 +2722,7 @@ let spec = client.build_request("data_engine", "extract_source", &[
 List registered source connectors for a project.
 
 - **Producer operationId:** `projects.connectors.list`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `connector:read`
 - **Call as:** TypeScript `client.dataEngine.listConnectors()` · Python `client.data_engine.list_connectors()` · Rust `build_request("data_engine", "list_connectors", params)`
@@ -2777,7 +2777,7 @@ let spec = client.build_request("data_engine", "list_connectors", &[
 Create or version-bump a stored custom tool.
 
 - **Producer operationId:** `projects.tools.create`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:write`
 - **Call as:** TypeScript `client.dataEngine.createTool()` · Python `client.data_engine.create_tool()` · Rust `build_request("data_engine", "create_tool", params)`
@@ -2842,7 +2842,7 @@ let spec = client.build_request("data_engine", "create_tool", &[
 List stored custom tools and their usage statistics.
 
 - **Producer operationId:** `projects.tools.list`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
 - **Call as:** TypeScript `client.dataEngine.listTools()` · Python `client.data_engine.list_tools()` · Rust `build_request("data_engine", "list_tools", params)`
@@ -2897,7 +2897,7 @@ let spec = client.build_request("data_engine", "list_tools", &[
 Fetch one stored custom tool and its usage statistics.
 
 - **Producer operationId:** `projects.tools.get`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
 - **Call as:** TypeScript `client.dataEngine.getTool()` · Python `client.data_engine.get_tool()` · Rust `build_request("data_engine", "get_tool", params)`
@@ -2943,7 +2943,7 @@ let spec = client.build_request("data_engine", "get_tool", &[
 Delete a stored custom tool and every retained version.
 
 - **Producer operationId:** `projects.tools.delete`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:write`
 - **Call as:** TypeScript `client.dataEngine.deleteTool()` · Python `client.data_engine.delete_tool()` · Rust `build_request("data_engine", "delete_tool", params)`
@@ -2989,7 +2989,7 @@ let spec = client.build_request("data_engine", "delete_tool", &[
 Invoke a stored custom tool through its configured execution boundary.
 
 - **Producer operationId:** `projects.tools.invoke`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:write`
 - **Call as:** TypeScript `client.dataEngine.invokeTool()` · Python `client.data_engine.invoke_tool()` · Rust `build_request("data_engine", "invoke_tool", params)`
@@ -3044,7 +3044,7 @@ let spec = client.build_request("data_engine", "invoke_tool", &[
 Atomically commit an immutable discovery release graph.
 
 - **Producer operationId:** `projects.discoveryReleases.commit`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `eval:run`
 - **Call as:** TypeScript `client.dataEngine.commitDiscoveryRelease()` · Python `client.data_engine.commit_discovery_release()` · Rust `build_request("data_engine", "commit_discovery_release", params)`
@@ -3135,7 +3135,7 @@ let spec = client.build_request("data_engine", "commit_discovery_release", &[
 Get one immutable discovery release.
 
 - **Producer operationId:** `projects.discoveryReleases.get`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
 - **Call as:** TypeScript `client.dataEngine.getDiscoveryRelease()` · Python `client.data_engine.get_discovery_release()` · Rust `build_request("data_engine", "get_discovery_release", params)`
@@ -3181,7 +3181,7 @@ let spec = client.build_request("data_engine", "get_discovery_release", &[
 Create an immutable shared evidence record by canonical content hash.
 
 - **Producer operationId:** `projects.evidenceRecords.create`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `eval:run`
 - **Call as:** TypeScript `client.dataEngine.createEvidenceRecord()` · Python `client.data_engine.create_evidence_record()` · Rust `build_request("data_engine", "create_evidence_record", params)`
@@ -3260,7 +3260,7 @@ let spec = client.build_request("data_engine", "create_evidence_record", &[
 List immutable shared evidence records with bounded cursor pagination.
 
 - **Producer operationId:** `projects.evidenceRecords.list`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
 - **Call as:** TypeScript `client.dataEngine.listEvidenceRecords()` · Python `client.data_engine.list_evidence_records()` · Rust `build_request("data_engine", "list_evidence_records", params)`
@@ -3316,7 +3316,7 @@ let spec = client.build_request("data_engine", "list_evidence_records", &[
 Fetch one immutable shared evidence record by its platform digest.
 
 - **Producer operationId:** `projects.evidenceRecords.get`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
 - **Call as:** TypeScript `client.dataEngine.getEvidenceRecord()` · Python `client.data_engine.get_evidence_record()` · Rust `build_request("data_engine", "get_evidence_record", params)`
@@ -3362,7 +3362,7 @@ let spec = client.build_request("data_engine", "get_evidence_record", &[
 Create an immutable shared episode by canonical content hash.
 
 - **Producer operationId:** `projects.episodes.create`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `eval:run`
 - **Call as:** TypeScript `client.dataEngine.createEpisode()` · Python `client.data_engine.create_episode()` · Rust `build_request("data_engine", "create_episode", params)`
@@ -3453,7 +3453,7 @@ let spec = client.build_request("data_engine", "create_episode", &[
 List immutable shared episodes with bounded cursor pagination.
 
 - **Producer operationId:** `projects.episodes.list`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
 - **Call as:** TypeScript `client.dataEngine.listEpisodes()` · Python `client.data_engine.list_episodes()` · Rust `build_request("data_engine", "list_episodes", params)`
@@ -3509,7 +3509,7 @@ let spec = client.build_request("data_engine", "list_episodes", &[
 Fetch one immutable shared episode by its platform digest.
 
 - **Producer operationId:** `projects.episodes.get`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
 - **Call as:** TypeScript `client.dataEngine.getEpisode()` · Python `client.data_engine.get_episode()` · Rust `build_request("data_engine", "get_episode", params)`
@@ -3555,7 +3555,7 @@ let spec = client.build_request("data_engine", "get_episode", &[
 Retrieve deterministic candidates for one exact canonical typed research obligation.
 
 - **Producer operationId:** `query_research_retrieval`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
 - **Call as:** TypeScript `client.dataEngine.queryResearchRetrieval()` · Python `client.data_engine.query_research_retrieval()` · Rust `build_request("data_engine", "query_research_retrieval", params)`
@@ -3624,7 +3624,7 @@ let spec = client.build_request("data_engine", "query_research_retrieval", &[
 Create an immutable executable research catalog entry by canonical content hash.
 
 - **Producer operationId:** `projects.researchCatalogEntries.create`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:write`
 - **Call as:** TypeScript `client.dataEngine.createResearchCatalogEntry()` · Python `client.data_engine.create_research_catalog_entry()` · Rust `build_request("data_engine", "create_research_catalog_entry", params)`
@@ -3693,7 +3693,7 @@ let spec = client.build_request("data_engine", "create_research_catalog_entry", 
 List immutable executable research catalog entries with bounded pagination.
 
 - **Producer operationId:** `projects.researchCatalogEntries.list`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
 - **Call as:** TypeScript `client.dataEngine.listResearchCatalogEntries()` · Python `client.data_engine.list_research_catalog_entries()` · Rust `build_request("data_engine", "list_research_catalog_entries", params)`
@@ -3748,7 +3748,7 @@ let spec = client.build_request("data_engine", "list_research_catalog_entries", 
 Fetch one immutable executable research catalog entry by content hash.
 
 - **Producer operationId:** `projects.researchCatalogEntries.get`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `data-engine`.
 - **AIP resource path templates:** `parent=projects/*`
 - **Scope:** `dataset:read`
 - **Call as:** TypeScript `client.dataEngine.getResearchCatalogEntry()` · Python `client.data_engine.get_research_catalog_entry()` · Rust `build_request("data_engine", "get_research_catalog_entry", params)`

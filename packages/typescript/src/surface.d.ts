@@ -692,6 +692,10 @@ export interface TemperaGymClient extends TemperaProductClientBase {
 }
 
 export interface TemperaBioClient extends TemperaProductClientBase {
+  /** Liveness probe. */
+  getBioHealth(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Serve this document. */
+  getBioOpenapiDocument(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Derive campaign state. */
   deriveCampaignState(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Prepare candidate set. */
@@ -980,6 +984,10 @@ export interface DataEngineClient extends TemperaProductClientBase {
 }
 
 export interface HumanDataClient extends TemperaProductClientBase {
+  /** Liveness probe. */
+  getHumanDataHealth(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Serve this document. */
+  getHumanDataOpenapiDocument(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Compute live qualification evidence. */
   computeQualification(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }

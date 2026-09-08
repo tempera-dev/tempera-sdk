@@ -6626,6 +6626,26 @@
     ],
     "temperaBio": [
       {
+        "id": "getBioHealth",
+        "method": "GET",
+        "path": "/healthz",
+        "auth": "none",
+        "description": "Liveness probe.",
+        "upstreamOperationId": "getBioHealth",
+        "requestBodyKind": "none",
+        "safeRetry": "read"
+      },
+      {
+        "id": "getBioOpenapiDocument",
+        "method": "GET",
+        "path": "/openapi.json",
+        "auth": "none",
+        "description": "Serve this document.",
+        "upstreamOperationId": "getBioOpenapiDocument",
+        "requestBodyKind": "none",
+        "safeRetry": "read"
+      },
+      {
         "id": "deriveCampaignState",
         "method": "POST",
         "path": "/v1/campaignStates:derive",
@@ -7915,7 +7935,8 @@
         "auth": "none",
         "description": "Check memory-server liveness.",
         "upstreamOperationId": "livez",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "requestBodyKind": "none"
       },
       {
         "id": "readyz",
@@ -7924,7 +7945,8 @@
         "auth": "none",
         "description": "Check memory-server readiness, including database health.",
         "upstreamOperationId": "readyz",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "requestBodyKind": "none"
       },
       {
         "id": "health",
@@ -7933,7 +7955,9 @@
         "auth": "product",
         "description": "Fetch deep store health: schema version, integrity checks, and graph consistency.",
         "upstreamOperationId": "health",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "requestBodyKind": "none",
+        "scope": "admin"
       },
       {
         "id": "getStats",
@@ -7942,7 +7966,9 @@
         "auth": "product",
         "description": "Fetch memory-store statistics: ledger events, nodes, and token counts by kind.",
         "upstreamOperationId": "getStats",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "requestBodyKind": "none",
+        "scope": "admin"
       },
       {
         "id": "getMetrics",
@@ -7951,7 +7977,9 @@
         "auth": "product",
         "description": "Fetch service metrics as JSON, including per-route counters and query-tier latencies.",
         "upstreamOperationId": "getMetrics",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "requestBodyKind": "none",
+        "scope": "admin"
       },
       {
         "id": "getPrometheusMetrics",
@@ -7960,7 +7988,9 @@
         "auth": "product",
         "description": "Fetch service metrics in Prometheus text exposition format for scrape-based monitoring.",
         "upstreamOperationId": "getPrometheusMetrics",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "requestBodyKind": "none",
+        "scope": "admin"
       },
       {
         "id": "listAudit",
@@ -7973,7 +8003,9 @@
         ],
         "description": "List recent service audit events (default 100, maximum 500).",
         "upstreamOperationId": "listAudit",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "requestBodyKind": "none",
+        "scope": "admin"
       },
       {
         "id": "remember",
@@ -7997,7 +8029,10 @@
           "kind",
           "text"
         ],
-        "safeRetry": "idempotent"
+        "safeRetry": "idempotent",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "scope": "admin"
       },
       {
         "id": "project",
@@ -8009,7 +8044,10 @@
         ],
         "description": "Project pending ledger events into the memory graph and return the projection report.",
         "upstreamOperationId": "project",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "scope": "admin"
       },
       {
         "id": "query",
@@ -8032,7 +8070,10 @@
           "question",
           "scope"
         ],
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "scope": "admin"
       },
       {
         "id": "maintenance",
@@ -8047,14 +8088,17 @@
         ],
         "description": "Run store maintenance: optimize, checkpoint, and optionally vacuum, repair orphans, and prune audit history.",
         "upstreamOperationId": "maintenance",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "scope": "admin"
       }
     ],
     "dataEngine": [
       {
         "id": "health",
         "method": "GET",
-        "path": "/v1/health",
+        "path": "/healthz",
         "auth": "none",
         "description": "Check data-engine liveness; returns the service status.",
         "upstreamOperationId": "health.get",
@@ -8065,7 +8109,7 @@
         "id": "listUseCases",
         "method": "GET",
         "path": "/v1/{parent}/use-cases",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent"
         ],
@@ -8080,13 +8124,14 @@
           "pageToken"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "data-engine"
       },
       {
         "id": "getUseCase",
         "method": "GET",
         "path": "/v1/{parent}/use-cases/{useCaseId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent",
           "useCaseId"
@@ -8098,13 +8143,14 @@
           "parent": "projects/*"
         },
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "data-engine"
       },
       {
         "id": "ingestArtifact",
         "method": "POST",
         "path": "/v1/{parent}/artifacts:ingest",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent"
         ],
@@ -8126,13 +8172,14 @@
         "safeRetry": "none",
         "headers": [
           "x-request-id"
-        ]
+        ],
+        "authAudience": "data-engine"
       },
       {
         "id": "projectsConnectorEvidenceIngest",
         "method": "POST",
         "path": "/v1/{parent}/connectorEvidence:ingest",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Verify and retain signed Tempera Connectors source evidence.",
         "upstreamOperationId": "projects.connectorEvidence.ingest",
         "pathParams": [
@@ -8155,13 +8202,14 @@
         "safeRetry": "none",
         "headers": [
           "x-request-id"
-        ]
+        ],
+        "authAudience": "data-engine"
       },
       {
         "id": "ingestWeb",
         "method": "POST",
         "path": "/v1/{parent}/web:ingest",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent"
         ],
@@ -8187,13 +8235,14 @@
         "safeRetry": "none",
         "headers": [
           "x-request-id"
-        ]
+        ],
+        "authAudience": "data-engine"
       },
       {
         "id": "createCampaign",
         "method": "POST",
         "path": "/v1/{parent}/campaigns",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent"
         ],
@@ -8221,13 +8270,14 @@
         "headers": [
           "x-request-id",
           "Idempotency-Key"
-        ]
+        ],
+        "authAudience": "data-engine"
       },
       {
         "id": "listCampaigns",
         "method": "GET",
         "path": "/v1/{parent}/campaigns",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent"
         ],
@@ -8242,13 +8292,14 @@
           "parent": "projects/*"
         },
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "data-engine"
       },
       {
         "id": "transitionCampaign",
         "method": "POST",
         "path": "/v1/{parent}/campaigns/{campaignId}:transition",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent",
           "campaignId"
@@ -8273,13 +8324,14 @@
         "headers": [
           "x-request-id",
           "Idempotency-Key"
-        ]
+        ],
+        "authAudience": "data-engine"
       },
       {
         "id": "getReviewerQualification",
         "method": "GET",
         "path": "/v1/{parent}/campaigns/{campaignId}/reviewer-qualification",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent",
           "campaignId"
@@ -8291,13 +8343,14 @@
           "parent": "projects/*"
         },
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "data-engine"
       },
       {
         "id": "runUseCase",
         "method": "POST",
         "path": "/v1/{parent}/pipelines:runUseCase",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent"
         ],
@@ -8326,13 +8379,14 @@
         "safeRetry": "none",
         "headers": [
           "x-request-id"
-        ]
+        ],
+        "authAudience": "data-engine"
       },
       {
         "id": "listExpertTasks",
         "method": "GET",
         "path": "/v1/{parent}/expert-tasks",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent"
         ],
@@ -8350,13 +8404,14 @@
           "parent": "projects/*"
         },
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "data-engine"
       },
       {
         "id": "createReviewQualificationTask",
         "method": "POST",
         "path": "/v1/{parent}/review-qualification-tasks",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent"
         ],
@@ -8380,13 +8435,14 @@
         },
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "idempotent"
+        "safeRetry": "idempotent",
+        "authAudience": "data-engine"
       },
       {
         "id": "createReviewerRevocation",
         "method": "POST",
         "path": "/v1/{parent}/reviewer-revocations",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent"
         ],
@@ -8408,13 +8464,14 @@
         },
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "idempotent"
+        "safeRetry": "idempotent",
+        "authAudience": "data-engine"
       },
       {
         "id": "resolveExpertTask",
         "method": "POST",
         "path": "/v1/{parent}/expert-tasks/{expertTaskId}:resolve",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent",
           "expertTaskId"
@@ -8447,13 +8504,14 @@
         "safeRetry": "idempotent",
         "headers": [
           "x-request-id"
-        ]
+        ],
+        "authAudience": "data-engine"
       },
       {
         "id": "createExpertTaskAppeal",
         "method": "POST",
         "path": "/v1/{parent}/expert-tasks/{expertTaskId}:appeal",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent",
           "expertTaskId"
@@ -8478,13 +8536,14 @@
         "safeRetry": "idempotent",
         "headers": [
           "x-request-id"
-        ]
+        ],
+        "authAudience": "data-engine"
       },
       {
         "id": "claimExpertTask",
         "method": "POST",
         "path": "/v1/{parent}/expert-tasks/{expertTaskId}:claim",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent",
           "expertTaskId"
@@ -8506,13 +8565,14 @@
         },
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "idempotent"
+        "safeRetry": "idempotent",
+        "authAudience": "data-engine"
       },
       {
         "id": "renewExpertTaskAssignment",
         "method": "POST",
         "path": "/v1/{parent}/expert-tasks/{expertTaskId}:renew",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent",
           "expertTaskId"
@@ -8534,13 +8594,14 @@
         },
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "idempotent"
+        "safeRetry": "idempotent",
+        "authAudience": "data-engine"
       },
       {
         "id": "releaseExpertTaskAssignment",
         "method": "POST",
         "path": "/v1/{parent}/expert-tasks/{expertTaskId}:release",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent",
           "expertTaskId"
@@ -8561,13 +8622,14 @@
         },
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "idempotent"
+        "safeRetry": "idempotent",
+        "authAudience": "data-engine"
       },
       {
         "id": "saveExpertTaskDraft",
         "method": "POST",
         "path": "/v1/{parent}/expert-tasks/{expertTaskId}:saveDraft",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent",
           "expertTaskId"
@@ -8592,13 +8654,14 @@
         },
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "idempotent"
+        "safeRetry": "idempotent",
+        "authAudience": "data-engine"
       },
       {
         "id": "recordReviewerSessionEvent",
         "method": "POST",
         "path": "/v1/{parent}/reviewer-sessions:record",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent"
         ],
@@ -8618,13 +8681,14 @@
         },
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "authAudience": "data-engine"
       },
       {
         "id": "getReviewOperations",
         "method": "GET",
         "path": "/v1/{parent}/review-operations",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent"
         ],
@@ -8639,13 +8703,14 @@
           "parent": "projects/*"
         },
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "data-engine"
       },
       {
         "id": "getMetrics",
         "method": "GET",
         "path": "/v1/{parent}/metrics",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent"
         ],
@@ -8656,13 +8721,14 @@
           "parent": "projects/*"
         },
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "data-engine"
       },
       {
         "id": "getLabelQuality",
         "method": "GET",
         "path": "/v1/{parent}/label-quality",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent"
         ],
@@ -8673,13 +8739,14 @@
           "parent": "projects/*"
         },
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "data-engine"
       },
       {
         "id": "getEcosystemReadiness",
         "method": "GET",
         "path": "/v1/{parent}/ecosystem/readiness",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent"
         ],
@@ -8690,13 +8757,14 @@
           "parent": "projects/*"
         },
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "data-engine"
       },
       {
         "id": "listArtifacts",
         "method": "GET",
         "path": "/v1/{parent}/artifacts",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent"
         ],
@@ -8712,13 +8780,14 @@
           "parent": "projects/*"
         },
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "data-engine"
       },
       {
         "id": "getArtifact",
         "method": "GET",
         "path": "/v1/{parent}/artifacts/{artifactId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent",
           "artifactId"
@@ -8733,13 +8802,14 @@
           "parent": "projects/*"
         },
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "data-engine"
       },
       {
         "id": "listArtifactLabels",
         "method": "GET",
         "path": "/v1/{parent}/artifacts/{artifactId}/labels",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent",
           "artifactId"
@@ -8755,13 +8825,14 @@
           "parent": "projects/*"
         },
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "data-engine"
       },
       {
         "id": "profileDataset",
         "method": "POST",
         "path": "/v1/{parent}/datasets:profile",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent"
         ],
@@ -8780,13 +8851,14 @@
         "safeRetry": "none",
         "headers": [
           "x-request-id"
-        ]
+        ],
+        "authAudience": "data-engine"
       },
       {
         "id": "createJob",
         "method": "POST",
         "path": "/v1/{parent}/jobs",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent"
         ],
@@ -8813,13 +8885,14 @@
         "safeRetry": "idempotent",
         "headers": [
           "x-request-id"
-        ]
+        ],
+        "authAudience": "data-engine"
       },
       {
         "id": "getJob",
         "method": "GET",
         "path": "/v1/{parent}/jobs/{jobId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent",
           "jobId"
@@ -8831,13 +8904,14 @@
           "parent": "projects/*"
         },
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "data-engine"
       },
       {
         "id": "getJobResults",
         "method": "GET",
         "path": "/v1/{parent}/jobs/{jobId}/results",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent",
           "jobId"
@@ -8853,13 +8927,14 @@
           "pageToken"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "data-engine"
       },
       {
         "id": "getProduct",
         "method": "GET",
         "path": "/v1/{parent}/products/{productId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent",
           "productId"
@@ -8871,13 +8946,14 @@
           "parent": "projects/*"
         },
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "data-engine"
       },
       {
         "id": "validateProduct",
         "method": "POST",
         "path": "/v1/{parent}/products/{productId}:validate",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent",
           "productId"
@@ -8892,13 +8968,14 @@
         "safeRetry": "none",
         "headers": [
           "x-request-id"
-        ]
+        ],
+        "authAudience": "data-engine"
       },
       {
         "id": "checkProductLeakage",
         "method": "POST",
         "path": "/v1/{parent}/products:checkLeakage",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent"
         ],
@@ -8919,13 +8996,14 @@
         "safeRetry": "none",
         "headers": [
           "x-request-id"
-        ]
+        ],
+        "authAudience": "data-engine"
       },
       {
         "id": "getProductManifest",
         "method": "GET",
         "path": "/v1/{parent}/products/{productId}/manifest",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent",
           "productId"
@@ -8937,13 +9015,14 @@
           "parent": "projects/*"
         },
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "data-engine"
       },
       {
         "id": "admitTrainingRelease",
         "method": "POST",
         "path": "/v1/{parent}/training-releases:admit",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent"
         ],
@@ -8968,13 +9047,14 @@
         "safeRetry": "idempotent",
         "headers": [
           "x-request-id"
-        ]
+        ],
+        "authAudience": "data-engine"
       },
       {
         "id": "getTrainingRelease",
         "method": "GET",
         "path": "/v1/{parent}/training-releases/{releaseId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent",
           "releaseId"
@@ -8986,13 +9066,14 @@
           "parent": "projects/*"
         },
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "data-engine"
       },
       {
         "id": "deriveBundle",
         "method": "POST",
         "path": "/v1/{parent}/products/{productId}:derive",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent",
           "productId"
@@ -9019,13 +9100,14 @@
         "safeRetry": "none",
         "headers": [
           "x-request-id"
-        ]
+        ],
+        "authAudience": "data-engine"
       },
       {
         "id": "emitEval",
         "method": "POST",
         "path": "/v1/{parent}/products:emitEval",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent"
         ],
@@ -9045,13 +9127,14 @@
         },
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "authAudience": "data-engine"
       },
       {
         "id": "projectsSourceDefinitionsCreate",
         "method": "POST",
         "path": "/v1/{parent}/sourceDefinitions",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Create an immutable-versioned connector source definition.",
         "upstreamOperationId": "projects.sourceDefinitions.create",
         "pathParams": [
@@ -9086,13 +9169,14 @@
         "requestBodyKind": "json",
         "requestContentType": "application/json",
         "scope": "connector:manage",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "authAudience": "data-engine"
       },
       {
         "id": "projectsSourceDefinitionsList",
         "method": "GET",
         "path": "/v1/{parent}/sourceDefinitions",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "List project source definitions.",
         "upstreamOperationId": "projects.sourceDefinitions.list",
         "pathParams": [
@@ -9107,13 +9191,14 @@
         ],
         "requestBodyKind": "none",
         "scope": "connector:read",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "data-engine"
       },
       {
         "id": "projectsSourceDefinitionsGet",
         "method": "GET",
         "path": "/v1/{parent}/sourceDefinitions/{sourceDefinitionId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Get one source definition.",
         "upstreamOperationId": "projects.sourceDefinitions.get",
         "pathParams": [
@@ -9125,13 +9210,14 @@
         },
         "requestBodyKind": "none",
         "scope": "connector:read",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "data-engine"
       },
       {
         "id": "projectsSourceDefinitionsPatch",
         "method": "PATCH",
         "path": "/v1/{parent}/sourceDefinitions/{sourceDefinitionId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Create a new version of a source definition.",
         "upstreamOperationId": "projects.sourceDefinitions.patch",
         "pathParams": [
@@ -9164,13 +9250,14 @@
         "requestBodyKind": "json",
         "requestContentType": "application/json",
         "scope": "connector:manage",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "authAudience": "data-engine"
       },
       {
         "id": "projectsSourceDefinitionsRun",
         "method": "POST",
         "path": "/v1/{parent}/sourceDefinitions/{sourceDefinitionId}:run",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Start an exact-replay connector run from a reviewed definition.",
         "upstreamOperationId": "projects.sourceDefinitions.run",
         "pathParams": [
@@ -9194,13 +9281,14 @@
         "safeRetry": "idempotent",
         "headers": [
           "Idempotency-Key"
-        ]
+        ],
+        "authAudience": "data-engine"
       },
       {
         "id": "projectsConnectorRunsList",
         "method": "GET",
         "path": "/v1/{parent}/connectorRuns",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "List durable connector runs.",
         "upstreamOperationId": "projects.connectorRuns.list",
         "pathParams": [
@@ -9215,13 +9303,14 @@
         ],
         "requestBodyKind": "none",
         "scope": "connector:read",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "data-engine"
       },
       {
         "id": "projectsConnectorRunsGet",
         "method": "GET",
         "path": "/v1/{parent}/connectorRuns/{connectorRunId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Get one durable connector run and its terminal receipt.",
         "upstreamOperationId": "projects.connectorRuns.get",
         "pathParams": [
@@ -9233,13 +9322,14 @@
         },
         "requestBodyKind": "none",
         "scope": "connector:read",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "data-engine"
       },
       {
         "id": "extractSource",
         "method": "POST",
         "path": "/v1/{parent}/sources:extract",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent"
         ],
@@ -9274,13 +9364,14 @@
         "headers": [
           "x-request-id",
           "Idempotency-Key"
-        ]
+        ],
+        "authAudience": "data-engine"
       },
       {
         "id": "listConnectors",
         "method": "GET",
         "path": "/v1/{parent}/connectors",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent"
         ],
@@ -9295,13 +9386,14 @@
           "parent": "projects/*"
         },
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "data-engine"
       },
       {
         "id": "createTool",
         "method": "POST",
         "path": "/v1/{parent}/tools",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent"
         ],
@@ -9330,13 +9422,14 @@
         "safeRetry": "none",
         "headers": [
           "x-request-id"
-        ]
+        ],
+        "authAudience": "data-engine"
       },
       {
         "id": "listTools",
         "method": "GET",
         "path": "/v1/{parent}/tools",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent"
         ],
@@ -9351,13 +9444,14 @@
           "pageToken"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "data-engine"
       },
       {
         "id": "getTool",
         "method": "GET",
         "path": "/v1/{parent}/tools/{toolName}",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent",
           "toolName"
@@ -9369,13 +9463,14 @@
           "parent": "projects/*"
         },
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "data-engine"
       },
       {
         "id": "deleteTool",
         "method": "DELETE",
         "path": "/v1/{parent}/tools/{toolName}",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent",
           "toolName"
@@ -9387,13 +9482,14 @@
           "parent": "projects/*"
         },
         "requestBodyKind": "none",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "authAudience": "data-engine"
       },
       {
         "id": "invokeTool",
         "method": "POST",
         "path": "/v1/{parent}/tools/{toolName}:invoke",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent",
           "toolName"
@@ -9412,13 +9508,14 @@
         "safeRetry": "none",
         "headers": [
           "x-request-id"
-        ]
+        ],
+        "authAudience": "data-engine"
       },
       {
         "id": "commitDiscoveryRelease",
         "method": "POST",
         "path": "/v1/{parent}/discoveryReleases:commit",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Atomically commit an immutable discovery release graph.",
         "upstreamOperationId": "projects.discoveryReleases.commit",
         "pathParams": [
@@ -9456,13 +9553,14 @@
         "scope": "eval:run",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "authAudience": "data-engine"
       },
       {
         "id": "getDiscoveryRelease",
         "method": "GET",
         "path": "/v1/{parent}/discoveryReleases/{discoveryReleaseId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Get one immutable discovery release.",
         "upstreamOperationId": "projects.discoveryReleases.get",
         "pathParams": [
@@ -9474,13 +9572,14 @@
         },
         "scope": "dataset:read",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "data-engine"
       },
       {
         "id": "createEvidenceRecord",
         "method": "POST",
         "path": "/v1/{parent}/evidenceRecords",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent"
         ],
@@ -9514,13 +9613,14 @@
         },
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "authAudience": "data-engine"
       },
       {
         "id": "listEvidenceRecords",
         "method": "GET",
         "path": "/v1/{parent}/evidenceRecords",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent"
         ],
@@ -9536,13 +9636,14 @@
           "parent": "projects/*"
         },
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "data-engine"
       },
       {
         "id": "getEvidenceRecord",
         "method": "GET",
         "path": "/v1/{parent}/evidenceRecords/{evidenceRecordId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent",
           "evidenceRecordId"
@@ -9554,13 +9655,14 @@
           "parent": "projects/*"
         },
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "data-engine"
       },
       {
         "id": "createEpisode",
         "method": "POST",
         "path": "/v1/{parent}/episodes",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent"
         ],
@@ -9600,13 +9702,14 @@
         },
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "authAudience": "data-engine"
       },
       {
         "id": "listEpisodes",
         "method": "GET",
         "path": "/v1/{parent}/episodes",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent"
         ],
@@ -9622,13 +9725,14 @@
           "parent": "projects/*"
         },
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "data-engine"
       },
       {
         "id": "getEpisode",
         "method": "GET",
         "path": "/v1/{parent}/episodes/{episodeId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent",
           "episodeId"
@@ -9640,13 +9744,14 @@
           "parent": "projects/*"
         },
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "data-engine"
       },
       {
         "id": "queryResearchRetrieval",
         "method": "POST",
         "path": "/v1/{parent}/researchRetrieval:query",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent"
         ],
@@ -9676,13 +9781,14 @@
         },
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "authAudience": "data-engine"
       },
       {
         "id": "createResearchCatalogEntry",
         "method": "POST",
         "path": "/v1/{parent}/researchCatalogEntries",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent"
         ],
@@ -9710,13 +9816,14 @@
         },
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "authAudience": "data-engine"
       },
       {
         "id": "listResearchCatalogEntries",
         "method": "GET",
         "path": "/v1/{parent}/researchCatalogEntries",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent"
         ],
@@ -9731,13 +9838,14 @@
           "parent": "projects/*"
         },
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "data-engine"
       },
       {
         "id": "getResearchCatalogEntry",
         "method": "GET",
         "path": "/v1/{parent}/researchCatalogEntries/{entryId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "parent",
           "entryId"
@@ -9749,10 +9857,31 @@
           "parent": "projects/*"
         },
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "data-engine"
       }
     ],
     "humanData": [
+      {
+        "id": "getHumanDataHealth",
+        "method": "GET",
+        "path": "/healthz",
+        "auth": "none",
+        "description": "Liveness probe.",
+        "upstreamOperationId": "getHumanDataHealth",
+        "requestBodyKind": "none",
+        "safeRetry": "read"
+      },
+      {
+        "id": "getHumanDataOpenapiDocument",
+        "method": "GET",
+        "path": "/openapi.json",
+        "auth": "none",
+        "description": "Serve this document.",
+        "upstreamOperationId": "getHumanDataOpenapiDocument",
+        "requestBodyKind": "none",
+        "safeRetry": "read"
+      },
       {
         "id": "computeQualification",
         "method": "GET",
@@ -9769,7 +9898,10 @@
           "productId",
           "releaseId"
         ],
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "scope": "training:publish"
       }
     ],
     "temperaVoice": [

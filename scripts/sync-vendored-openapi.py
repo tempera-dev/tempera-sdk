@@ -41,15 +41,15 @@ PRODUCTS: dict[str, dict[str, str]] = {
     "dataEngine": {
         "source_repo": "tempera-dev/data-engine",
         "source_branch": "main",
-        "source_path": "api/openapi.yaml",
+        "source_path": "contracts/openapi/data-engine.openapi.json",
         "generated_path": "specs/data-engine-openapi.json",
-        "generated_with": "sync-vendored-openapi.py@2+PyYAML@6.0.3+source-pinned-local-json-bundle",
-        "transform": "yaml-json-local-bundle",
+        "generated_with": "sync-vendored-openapi.py@1+verbatim-openapi-copy",
+        "transform": "verbatim",
     },
     "humanData": {
         "source_repo": "tempera-dev/human-data",
         "source_branch": "main",
-        "source_path": "api/openapi.json",
+        "source_path": "contracts/openapi/human-data.openapi.json",
         "generated_path": "specs/human-data-openapi.json",
         "generated_with": "source_lock.py@1+verbatim-openapi-copy",
         "transform": "verbatim",
@@ -89,7 +89,7 @@ PRODUCTS: dict[str, dict[str, str]] = {
     "temperaBio": {
         "source_repo": "tempera-dev/tempera-bio",
         "source_branch": "main",
-        "source_path": "openapi/tempera-bio-discovery-v1.openapi.json",
+        "source_path": "contracts/openapi/bio.openapi.json",
         "generated_path": "specs/tempera-bio-api.json",
         "generated_with": "source_lock.py@1+verbatim-openapi-copy",
         "transform": "verbatim",
@@ -129,9 +129,9 @@ PRODUCTS: dict[str, dict[str, str]] = {
     "remi": {
         "source_repo": "tempera-dev/remi",
         "source_branch": "main",
-        "source_path": "docs/public-http-contract.json",
+        "source_path": "contracts/openapi/remi.openapi.json",
         "generated_path": "specs/remi-http-contract.json",
-        "generated_with": "sync-vendored-openapi.py@1+verbatim-contract-copy",
+        "generated_with": "sync-vendored-openapi.py@1+verbatim-openapi-copy",
         "transform": "verbatim",
     },
     "tempo": {

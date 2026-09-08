@@ -9797,6 +9797,56 @@ export const TEMPERA_OPERATIONS = Object.freeze(
   ],
   "temperaBio": [
     {
+      "id": "getBioHealth",
+      "upstreamOperationId": "getBioHealth",
+      "method": "GET",
+      "path": "/healthz",
+      "auth": "none",
+      "authAudience": null,
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Liveness probe."
+    },
+    {
+      "id": "getBioOpenapiDocument",
+      "upstreamOperationId": "getBioOpenapiDocument",
+      "method": "GET",
+      "path": "/openapi.json",
+      "auth": "none",
+      "authAudience": null,
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Serve this document."
+    },
+    {
       "id": "deriveCampaignState",
       "upstreamOperationId": "deriveCampaignState",
       "method": "POST",
@@ -11758,7 +11808,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "none",
       "requestContentType": null,
-      "scope": null,
+      "scope": "admin",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "read",
@@ -11783,7 +11833,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "none",
       "requestContentType": null,
-      "scope": null,
+      "scope": "admin",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "read",
@@ -11808,7 +11858,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "none",
       "requestContentType": null,
-      "scope": null,
+      "scope": "admin",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "read",
@@ -11833,7 +11883,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "none",
       "requestContentType": null,
-      "scope": null,
+      "scope": "admin",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "read",
@@ -11861,7 +11911,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "none",
       "requestContentType": null,
-      "scope": null,
+      "scope": "admin",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "read",
@@ -11897,9 +11947,9 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "text"
       ],
       "bodyDefaults": {},
-      "requestBodyKind": "none",
-      "requestContentType": null,
-      "scope": null,
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "admin",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "idempotent",
@@ -11924,9 +11974,9 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
-      "requestBodyKind": "none",
-      "requestContentType": null,
-      "scope": null,
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "admin",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
@@ -11961,9 +12011,9 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "scope"
       ],
       "bodyDefaults": {},
-      "requestBodyKind": "none",
-      "requestContentType": null,
-      "scope": null,
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "admin",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
@@ -11991,9 +12041,9 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
-      "requestBodyKind": "none",
-      "requestContentType": null,
-      "scope": null,
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "admin",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
@@ -12005,7 +12055,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "health",
       "upstreamOperationId": "health.get",
       "method": "GET",
-      "path": "/v1/health",
+      "path": "/healthz",
       "auth": "none",
       "authAudience": null,
       "pathParams": [],
@@ -12031,8 +12081,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.useCases.list",
       "method": "GET",
       "path": "/v1/{parent}/use-cases",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -12063,8 +12113,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.useCases.get",
       "method": "GET",
       "path": "/v1/{parent}/use-cases/{useCaseId}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "useCaseId"
@@ -12093,8 +12143,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.artifacts.ingest",
       "method": "POST",
       "path": "/v1/{parent}/artifacts:ingest",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -12130,8 +12180,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.connectorEvidence.ingest",
       "method": "POST",
       "path": "/v1/{parent}/connectorEvidence:ingest",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -12167,8 +12217,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.web.ingest",
       "method": "POST",
       "path": "/v1/{parent}/web:ingest",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -12207,8 +12257,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.campaigns.create",
       "method": "POST",
       "path": "/v1/{parent}/campaigns",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -12250,8 +12300,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.campaigns.list",
       "method": "GET",
       "path": "/v1/{parent}/campaigns",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -12282,8 +12332,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.campaigns.transition",
       "method": "POST",
       "path": "/v1/{parent}/campaigns/{campaignId}:transition",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "campaignId"
@@ -12321,8 +12371,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.reviewerQualifications.get",
       "method": "GET",
       "path": "/v1/{parent}/campaigns/{campaignId}/reviewer-qualification",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "campaignId"
@@ -12351,8 +12401,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.pipelines.runUseCase",
       "method": "POST",
       "path": "/v1/{parent}/pipelines:runUseCase",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -12394,8 +12444,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.expertTasks.list",
       "method": "GET",
       "path": "/v1/{parent}/expert-tasks",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -12429,8 +12479,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.reviewQualificationTasks.create",
       "method": "POST",
       "path": "/v1/{parent}/review-qualification-tasks",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -12468,8 +12518,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.reviewerRevocations.create",
       "method": "POST",
       "path": "/v1/{parent}/reviewer-revocations",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -12505,8 +12555,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.expertTasks.resolve",
       "method": "POST",
       "path": "/v1/{parent}/expert-tasks/{expertTaskId}:resolve",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "expertTaskId"
@@ -12552,8 +12602,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.expertTasks.appeal",
       "method": "POST",
       "path": "/v1/{parent}/expert-tasks/{expertTaskId}:appeal",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "expertTaskId"
@@ -12591,8 +12641,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.expertTaskAssignments.claim",
       "method": "POST",
       "path": "/v1/{parent}/expert-tasks/{expertTaskId}:claim",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "expertTaskId"
@@ -12628,8 +12678,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.expertTaskAssignments.renew",
       "method": "POST",
       "path": "/v1/{parent}/expert-tasks/{expertTaskId}:renew",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "expertTaskId"
@@ -12665,8 +12715,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.expertTaskAssignments.release",
       "method": "POST",
       "path": "/v1/{parent}/expert-tasks/{expertTaskId}:release",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "expertTaskId"
@@ -12701,8 +12751,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.expertTaskAssignments.saveDraft",
       "method": "POST",
       "path": "/v1/{parent}/expert-tasks/{expertTaskId}:saveDraft",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "expertTaskId"
@@ -12741,8 +12791,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.reviewerSessions.record",
       "method": "POST",
       "path": "/v1/{parent}/reviewer-sessions:record",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -12776,8 +12826,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.reviewOperations.get",
       "method": "GET",
       "path": "/v1/{parent}/review-operations",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -12808,8 +12858,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.metrics.get",
       "method": "GET",
       "path": "/v1/{parent}/metrics",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -12837,8 +12887,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.labelQuality.get",
       "method": "GET",
       "path": "/v1/{parent}/label-quality",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -12866,8 +12916,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.ecosystem.readiness.get",
       "method": "GET",
       "path": "/v1/{parent}/ecosystem/readiness",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -12895,8 +12945,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.artifacts.list",
       "method": "GET",
       "path": "/v1/{parent}/artifacts",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -12928,8 +12978,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.artifacts.get",
       "method": "GET",
       "path": "/v1/{parent}/artifacts/{artifactId}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "artifactId"
@@ -12960,8 +13010,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.artifacts.labels.list",
       "method": "GET",
       "path": "/v1/{parent}/artifacts/{artifactId}/labels",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "artifactId"
@@ -12993,8 +13043,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.datasets.profile",
       "method": "POST",
       "path": "/v1/{parent}/datasets:profile",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -13027,8 +13077,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.jobs.create",
       "method": "POST",
       "path": "/v1/{parent}/jobs",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -13068,8 +13118,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.jobs.get",
       "method": "GET",
       "path": "/v1/{parent}/jobs/{jobId}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "jobId"
@@ -13098,8 +13148,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.jobs.results.list",
       "method": "GET",
       "path": "/v1/{parent}/jobs/{jobId}/results",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "jobId"
@@ -13131,8 +13181,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.products.get",
       "method": "GET",
       "path": "/v1/{parent}/products/{productId}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "productId"
@@ -13161,8 +13211,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.products.validate",
       "method": "POST",
       "path": "/v1/{parent}/products/{productId}:validate",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "productId"
@@ -13193,8 +13243,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.products.checkLeakage",
       "method": "POST",
       "path": "/v1/{parent}/products:checkLeakage",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -13228,8 +13278,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.products.manifest.get",
       "method": "GET",
       "path": "/v1/{parent}/products/{productId}/manifest",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "productId"
@@ -13258,8 +13308,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.trainingReleases.admit",
       "method": "POST",
       "path": "/v1/{parent}/training-releases:admit",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -13297,8 +13347,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.trainingReleases.get",
       "method": "GET",
       "path": "/v1/{parent}/training-releases/{releaseId}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "releaseId"
@@ -13327,8 +13377,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.products.derive",
       "method": "POST",
       "path": "/v1/{parent}/products/{productId}:derive",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "productId"
@@ -13368,8 +13418,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.products.emitEval",
       "method": "POST",
       "path": "/v1/{parent}/products:emitEval",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -13403,8 +13453,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.sourceDefinitions.create",
       "method": "POST",
       "path": "/v1/{parent}/sourceDefinitions",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -13451,8 +13501,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.sourceDefinitions.list",
       "method": "GET",
       "path": "/v1/{parent}/sourceDefinitions",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -13483,8 +13533,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.sourceDefinitions.get",
       "method": "GET",
       "path": "/v1/{parent}/sourceDefinitions/{sourceDefinitionId}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "sourceDefinitionId"
@@ -13513,8 +13563,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.sourceDefinitions.patch",
       "method": "PATCH",
       "path": "/v1/{parent}/sourceDefinitions/{sourceDefinitionId}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "sourceDefinitionId"
@@ -13559,8 +13609,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.sourceDefinitions.run",
       "method": "POST",
       "path": "/v1/{parent}/sourceDefinitions/{sourceDefinitionId}:run",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "sourceDefinitionId"
@@ -13597,8 +13647,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.connectorRuns.list",
       "method": "GET",
       "path": "/v1/{parent}/connectorRuns",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -13629,8 +13679,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.connectorRuns.get",
       "method": "GET",
       "path": "/v1/{parent}/connectorRuns/{connectorRunId}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "connectorRunId"
@@ -13659,8 +13709,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.sources.extract",
       "method": "POST",
       "path": "/v1/{parent}/sources:extract",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -13708,8 +13758,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.connectors.list",
       "method": "GET",
       "path": "/v1/{parent}/connectors",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -13740,8 +13790,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.tools.create",
       "method": "POST",
       "path": "/v1/{parent}/tools",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -13783,8 +13833,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.tools.list",
       "method": "GET",
       "path": "/v1/{parent}/tools",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -13815,8 +13865,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.tools.get",
       "method": "GET",
       "path": "/v1/{parent}/tools/{toolName}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "toolName"
@@ -13845,8 +13895,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.tools.delete",
       "method": "DELETE",
       "path": "/v1/{parent}/tools/{toolName}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "toolName"
@@ -13875,8 +13925,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.tools.invoke",
       "method": "POST",
       "path": "/v1/{parent}/tools/{toolName}:invoke",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "toolName"
@@ -13909,8 +13959,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.discoveryReleases.commit",
       "method": "POST",
       "path": "/v1/{parent}/discoveryReleases:commit",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -13962,8 +14012,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.discoveryReleases.get",
       "method": "GET",
       "path": "/v1/{parent}/discoveryReleases/{discoveryReleaseId}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "discoveryReleaseId"
@@ -13992,8 +14042,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.evidenceRecords.create",
       "method": "POST",
       "path": "/v1/{parent}/evidenceRecords",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -14041,8 +14091,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.evidenceRecords.list",
       "method": "GET",
       "path": "/v1/{parent}/evidenceRecords",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -14074,8 +14124,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.evidenceRecords.get",
       "method": "GET",
       "path": "/v1/{parent}/evidenceRecords/{evidenceRecordId}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "evidenceRecordId"
@@ -14104,8 +14154,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.episodes.create",
       "method": "POST",
       "path": "/v1/{parent}/episodes",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -14159,8 +14209,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.episodes.list",
       "method": "GET",
       "path": "/v1/{parent}/episodes",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -14192,8 +14242,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.episodes.get",
       "method": "GET",
       "path": "/v1/{parent}/episodes/{episodeId}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "episodeId"
@@ -14222,8 +14272,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "query_research_retrieval",
       "method": "POST",
       "path": "/v1/{parent}/researchRetrieval:query",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -14267,8 +14317,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.researchCatalogEntries.create",
       "method": "POST",
       "path": "/v1/{parent}/researchCatalogEntries",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -14310,8 +14360,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.researchCatalogEntries.list",
       "method": "GET",
       "path": "/v1/{parent}/researchCatalogEntries",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -14342,8 +14392,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.researchCatalogEntries.get",
       "method": "GET",
       "path": "/v1/{parent}/researchCatalogEntries/{entryId}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "entryId"
@@ -14370,6 +14420,56 @@ export const TEMPERA_OPERATIONS = Object.freeze(
   ],
   "humanData": [
     {
+      "id": "getHumanDataHealth",
+      "upstreamOperationId": "getHumanDataHealth",
+      "method": "GET",
+      "path": "/healthz",
+      "auth": "none",
+      "authAudience": null,
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Liveness probe."
+    },
+    {
+      "id": "getHumanDataOpenapiDocument",
+      "upstreamOperationId": "getHumanDataOpenapiDocument",
+      "method": "GET",
+      "path": "/openapi.json",
+      "auth": "none",
+      "authAudience": null,
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Serve this document."
+    },
+    {
       "id": "computeQualification",
       "upstreamOperationId": "computeQualification",
       "method": "GET",
@@ -14394,7 +14494,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "none",
       "requestContentType": null,
-      "scope": null,
+      "scope": "training:publish",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "read",

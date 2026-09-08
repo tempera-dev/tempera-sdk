@@ -219,7 +219,7 @@ is the default when none is specified.
 | `connector:run` | data-engine: `projectsSourceDefinitionsRun` |
 | `connector:manage` | data-engine: `extractSource`, `projectsSourceDefinitionsCreate`, `projectsSourceDefinitionsPatch` |
 | `eval:run` | data-engine: `commitDiscoveryRelease`, `createEpisode`, `createEvidenceRecord`, `createJob`, `deriveBundle`, `emitEval`, `runUseCase`; palette: `getTemperaEvidence`, `importTemperaBundle`, `recordTemperaDecision`; tempera-gym: `bioProposalsProposeBatch`, `createEpisode`, `createRollout`, `evaluateTask`, `exportEpisode`, `precommitSealedEvaluation`, `runSealedEvaluation`, `stepEpisode`; tempera-voice: `buildVoiceEvalBundle`, `createVoicePaletteHandoff`, `exportVoiceSessions`, `importVoiceEvalResult`, `listVoiceEvalProfiles`, `publishVoicePaletteHandoff`, `sealVoiceEvalResult` |
-| `training:publish` | data-engine: `admitTrainingRelease`, `getTrainingRelease` |
+| `training:publish` | data-engine: `admitTrainingRelease`, `getTrainingRelease`; human-data: `computeQualification` |
 | `review:gold:manage` | data-engine: `createReviewQualificationTask`, `createReviewerRevocation` |
 | `review:resolve` | data-engine: `claimExpertTask`, `createExpertTaskAppeal`, `getReviewOperations`, `getReviewerQualification`, `recordReviewerSessionEvent`, `releaseExpertTaskAssignment`, `renewExpertTaskAssignment`, `resolveExpertTask`, `saveExpertTaskDraft` |
 | `workflow:read` | tempera-workflows: `connectorsList`, `getExperimentSubmission`, `getRun`, `getWorkflow`, `listNodeTypes`, `listRuns`, `listWorkflows` |
@@ -267,7 +267,7 @@ is the default when none is specified.
 | `connection:invoke` | tempera-connectors: `connectionsInvoke` |
 | `connection:write` | tempera-connectors: `connectionsCreate`, `connectionsImportOpenApi`, `connectionsTest` |
 | `connection:read` | tempera-connectors: `connectionsGet`, `connectionsList`, `connectorsList` |
-| `admin` | palette: `createApiKey`, `getUsageSummary`, `revokeApiKey` |
+| `admin` | palette: `createApiKey`, `getUsageSummary`, `revokeApiKey`; remi: `getMetrics`, `getPrometheusMetrics`, `getStats`, `health`, `listAudit`, `maintenance`, `project`, `query`, `remember` |
 | `business:read` | tempera-business: `businessCapabilities`, `businessCasesAudit`, `businessCasesGet`, `businessCasesList`, `businessOperatingState`, `businessProfileGet`, `businessProfileHistoryList` |
 | `business:write` | tempera-business: `businessCasesCreate`, `businessCasesPrepareDraft`, `businessCasesRecordDeclaredReceipt`, `businessCasesUpdateIntake`, `businessProfileInitialize`, `businessProfilePatch` |
 | `business:review` | tempera-business: `businessCasesReviewDraft`, `businessProfileClear` |

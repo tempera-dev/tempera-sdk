@@ -35,7 +35,7 @@ jobs:
           expected = {
               "source_repo": "tempera-dev/data-engine",
               "source_branch": "main",
-              "source_path": "api/openapi.yaml",
+              "source_path": "contracts/openapi/data-engine.openapi.json",
           }
           for field, value in expected.items():
               if lock.get(field) != value:
@@ -73,7 +73,7 @@ jobs:
           python3 -m pip install PyYAML==6.0.3
           python3 scripts/test-sync-vendored-openapi.py
           python3 scripts/sync-vendored-openapi.py --check --product dataEngine --source-repo-dir .data-engine-source --source-commit "${{ steps.data-engine-lock.outputs.commit }}"
-          python3 scripts/sync-data-engine-openapi.py --check --source .data-engine-source/api/openapi.yaml --source-repo tempera-dev/data-engine --source-branch main --source-commit "${{ steps.data-engine-lock.outputs.commit }}"
+          python3 scripts/sync-data-engine-openapi.py --check --source .data-engine-source/contracts/openapi/data-engine.openapi.json --source-repo tempera-dev/data-engine --source-branch main --source-commit "${{ steps.data-engine-lock.outputs.commit }}"
           python3 scripts/sync-data-engine-mcp-contracts.py --check --source-repo-dir .data-engine-source --source-branch main --source-commit "${{ steps.data-engine-lock.outputs.commit }}"
 
   auth-hub-exact-source:

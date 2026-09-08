@@ -41,6 +41,25 @@ MCP_PROTOCOL_VERSION = "2026-07-28"
 OPERATIONS_PER_CHUNK = 25
 
 
+def kdoc(text: str, where: str) -> str:
+    """Refuse documentation text Kotlin's nesting block comments cannot carry.
+
+    Kotlin block comments nest, so a literal "/*" inside KDoc opens a comment
+    the closing marker never ends and the rest of the file is swallowed. This
+    exact hazard broke the hand-written client via an AIP resource pattern
+    written as projects-slash-star, and a producer description could carry it
+    into generated code just as easily -- silently, because the file still
+    looks fine.
+    """
+    for hazard in ("/*", "*/"):
+        if hazard in text:
+            raise ValueError(
+                f"{where}: description contains {hazard!r}, which Kotlin KDoc "
+                "cannot carry; reword it in surface.json"
+            )
+    return text
+
+
 def kotlin_literal(value: str) -> str:
     """Render one string as a Kotlin literal without rewriting source characters."""
     escaped: list[str] = []
@@ -367,7 +386,9 @@ def render(surface: dict[str, Any]) -> str:
     lines.append("// One accessor per product, generated rather than hand-listed so the")
     lines.append("// convenience API cannot drift from the product table.")
     for key, product in surface["products"].items():
-        lines.append(f"/** {product['description']} */")
+        lines.append(
+            f"/** {kdoc(product['description'], f'products.{key}')} */"
+        )
         lines.append(f"public val TemperaClient.{key}: TemperaProductClient")
         lines.append(f"    get() = product({kotlin_literal(key)})")
         lines.append("")

@@ -18,13 +18,69 @@ Browser-agent human review: reviewers inspect provisioned browser-session eviden
 | Audience | `data-engine` |
 | Auth | bearer minted for audience data-engine; Human Data validates nothing itself and forwards the caller's bearer verbatim to Data Engine, which requires scopes dataset:read and training:publish |
 | Client | TypeScript `client.humanData` · Python `client.human_data` · Rust `build_request("human_data", ...)` |
-| Typed operations | 1 |
+| Typed operations | 3 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.humanData.request(path, options)` (TypeScript) /
 `client.human_data.request(path, ...)` (Python).
 
 ## Operations
+
+### getHumanDataHealth
+
+`GET /healthz`
+
+Liveness probe.
+
+- **Producer operationId:** `getHumanDataHealth`
+- **Auth:** None (public endpoint).
+- **Call as:** TypeScript `client.humanData.getHumanDataHealth()` · Python `client.human_data.get_human_data_health()` · Rust `build_request("human_data", "get_human_data_health", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.humanData.getHumanDataHealth();
+```
+
+```python Python
+result = client.human_data.get_human_data_health()
+```
+
+```rust Rust
+let spec = client.build_request("human_data", "get_human_data_health", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getHumanDataOpenapiDocument
+
+`GET /openapi.json`
+
+Serve this document.
+
+- **Producer operationId:** `getHumanDataOpenapiDocument`
+- **Auth:** None (public endpoint).
+- **Call as:** TypeScript `client.humanData.getHumanDataOpenapiDocument()` · Python `client.human_data.get_human_data_openapi_document()` · Rust `build_request("human_data", "get_human_data_openapi_document", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.humanData.getHumanDataOpenapiDocument();
+```
+
+```python Python
+result = client.human_data.get_human_data_openapi_document()
+```
+
+```rust Rust
+let spec = client.build_request("human_data", "get_human_data_openapi_document", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
 
 ### computeQualification
 
@@ -33,7 +89,8 @@ Anything this page does not cover is reachable through the raw passthrough:
 Compute live qualification evidence.
 
 - **Producer operationId:** `computeQualification`
-- **Auth:** Product bearer — an access token minted for audience `data-engine`, or a central `tp_` API key.
+- **Auth:** OAuth access token for audience `data-engine`. Central `tp_` API keys cannot carry the required `training:publish` scope.
+- **Scope:** `training:publish`
 - **Call as:** TypeScript `client.humanData.computeQualification()` · Python `client.human_data.compute_qualification()` · Rust `build_request("human_data", "compute_qualification", params)`
 
 **Query parameters**

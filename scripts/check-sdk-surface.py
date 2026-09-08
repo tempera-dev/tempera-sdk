@@ -288,7 +288,7 @@ def validate_data_engine_openapi_bindings(
         "source_branch": (
             lock.get("source_branch") if allow_non_main else "main"
         ),
-        "source_path": "api/openapi.yaml",
+        "source_path": "contracts/openapi/data-engine.openapi.json",
         "generated_with": "sync-data-engine-openapi.py@4",
     }
     for key, expected in expected_lock_values.items():

@@ -82,7 +82,6 @@ PROTOCOL_EXCEPTIONS = {
     ("controlPlane", "/sso/saml/acs/{configId}"),
     ("cradle", "/v1/health"),
     ("cradle", "/mcp"),
-    ("dataEngine", "/v1/health"),
     ("dataEngine", "/mcp"),
     ("palette", "/health"),
     ("palette", "/v1/traces"),
@@ -209,6 +208,14 @@ def validate_local_references(specs: dict[str, dict[str, Any]]) -> list[str]:
 
     def walk(product: str, document: Any, value: Any, location: str) -> None:
         if isinstance(value, dict):
+            # A subtree that declares its own $id is a separate JSON Schema
+            # resource, and a "#/..." pointer inside it resolves against that
+            # resource rather than against this document. Data Engine embeds
+            # its evidence schema exactly that way -- with the $id, so its
+            # internal #/$defs pointers still resolve -- and resolving them
+            # from the document root reports a break that does not exist.
+            if isinstance(value.get("$id"), str) and location != "#":
+                return
             reference = value.get("$ref")
             if isinstance(reference, str) and reference.startswith("#"):
                 try:
