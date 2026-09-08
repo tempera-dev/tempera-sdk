@@ -42,6 +42,10 @@ EXEMPTIBLE = re.compile(
     r"^/(healthz|readyz|livez|metrics|mcp|bidi|openapi\.json)$"
     r"|^/\.well-known/"
     r"|^/oauth/"
+    # A versioned webhook collection is a legitimate receiver shape; without
+    # this, producers were renaming /v1/webhooks/stripe just to get past the
+    # exemption check, which is churn, not conformance.
+    r"|^/v1/webhooks/"
     r"|webhook$|/callback$|^/v1/otlp/|/events$"
 )
 
