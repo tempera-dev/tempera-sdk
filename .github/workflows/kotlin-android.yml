@@ -92,6 +92,9 @@ jobs:
           sudo udevadm trigger --name-match=kvm
       - name: Reserve hosted runner space for Android userdata
         run: |
+          test "$RUNNER_OS" = Linux
+          test "$RUNNER_ENVIRONMENT" = github-hosted
+          test ! -L /usr/share/dotnet
           df -h "$HOME"
           # This disposable Ubuntu job uses Java/Android, never .NET.
           if [ -d /usr/share/dotnet ]; then
@@ -106,6 +109,13 @@ jobs:
           arch: x86_64
           profile: pixel_6
           disk-size: 2G
+          pre-emulator-launch-script: |
+            df -h "$HOME"
+            available_kib=$(df -Pk "$HOME" | awk 'NR == 2 {print $4}')
+            if [ "$available_kib" -lt 8388608 ]; then
+              echo "Insufficient hosted AVD space: need at least 8 GiB after image installation" >&2
+              exit 1
+            fi
           disable-animations: true
           script: |
             gradle -p packages/kotlin-android -PfixtureTestBuildType=debug :fixture-app:connectedDebugAndroidTest
