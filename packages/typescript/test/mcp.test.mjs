@@ -45,8 +45,13 @@ test("initialize, ping, and tools/list send well-formed JSON-RPC with the bearer
     assert.equal(call.request.jsonrpc, "2.0");
     assert.ok(Number.isInteger(call.request.id));
   }
-  assert.equal(calls[0].request.method, "initialize");
-  assert.equal(calls[0].request.params.protocolVersion, "2025-06-18");
+  assert.equal(calls[0].request.method, "server/discover");
+  assert.equal(calls[0].request.params._meta["io.modelcontextprotocol/protocolVersion"], "2026-07-28");
+  assert.deepEqual(calls[0].request.params._meta["io.modelcontextprotocol/clientInfo"], { name: "tempera-sdk", version: "0.12.0" });
+  for (const call of calls) {
+    assert.equal(call.options.headers["mcp-protocol-version"], "2026-07-28");
+    assert.equal(call.options.headers["mcp-method"], call.request.method);
+  }
   assert.equal(calls[1].request.method, "ping");
   assert.equal(calls[2].request.method, "tools/list");
 });
@@ -59,7 +64,10 @@ test("callTool, whoami, and status wrap tools/call", async () => {
   await client.whoami();
   await client.status();
   assert.equal(calls[0].request.method, "tools/call");
-  assert.deepEqual(calls[0].request.params, { name: "cradle_get_capabilities", arguments: { verbose: true } });
+  assert.deepEqual(calls[0].request.params, {
+    name: "cradle_get_capabilities", arguments: { verbose: true },
+    _meta: { "io.modelcontextprotocol/protocolVersion": "2026-07-28", "io.modelcontextprotocol/clientCapabilities": {} },
+  });
   assert.equal(calls[1].request.params.name, "tempera_whoami");
   assert.equal(calls[2].request.params.name, "tempera_status");
 });

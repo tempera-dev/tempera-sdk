@@ -2,12 +2,12 @@
   "producer": "data-engine",
   "schema": "data-engine.mcp-tools.v1",
   "source": {
-    "commit": "9ad352af58cc88ccba5691159e0e54b3b912b98b",
+    "commit": "041a7e1044d85c230feba1671e0092b8958fd798",
     "files": [
       {
-        "git_blob": "08d8a7a1368bff30140ab431ede9a9dfd500c6aa",
-        "path": "api/openapi.yaml",
-        "sha256": "a6c9bd5dc523e6ce4044a960f12ff08c888d5833e2d917c42dd7831c1ffa01ca"
+        "git_blob": "0b3be446c7ff93baba7f2294ea3c2f0de860d123",
+        "path": "contracts/openapi/data-engine.openapi.json",
+        "sha256": "5cb5e6b3c1a12c975018e9059b4aae7ba6f399915549b89786d43b079d14ab31"
       },
       {
         "git_blob": "691ff70da5862eb5e3b23899b0162623ecbc2ac3",
@@ -15,9 +15,9 @@
         "sha256": "1ca7518518d04c84af2f577bc305edddd638eb41b7cbfceee489f61224c7df84"
       },
       {
-        "git_blob": "77e52cbd3e3d538e6e9c5399add3674b87d70b9e",
+        "git_blob": "2e877c3a11aaa8e6cf7374dd7df9668be2d10485",
         "path": "src/data_engine/app.py",
-        "sha256": "7b3454b5863ee30cf96f88f97720072cdc54522c7a9823ff564f77d52446210f"
+        "sha256": "9ec7c70bf1162aac265a83382c8554d7c675179b5a44c13c59b6a0ea10cb4287"
       },
       {
         "git_blob": "341cd1063cd400c8c30bd0b8c86d83c4b7b1a53b",
@@ -25,9 +25,9 @@
         "sha256": "11ecf62e3ae9c247dd0f50c6279771c9a656bc17b047c8a679b4cefaab1f7206"
       },
       {
-        "git_blob": "3a262100e85b64dc7b7903d700a73c96f85fcf92",
+        "git_blob": "45d4412370d14b0927bbad91ef936aa19afdca69",
         "path": "src/data_engine/mcp_admission.py",
-        "sha256": "e9303f609e4b0dc2c4e5043cfc76ca44f480c24ce98aa00a32ac215ac1853c56"
+        "sha256": "304e8640da0f44abf73cd8e19d22259694da0ed963eff64058725ab12f75b921"
       }
     ],
     "repository": "tempera-dev/data-engine"

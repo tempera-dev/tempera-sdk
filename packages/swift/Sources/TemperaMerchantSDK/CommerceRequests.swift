@@ -71,13 +71,13 @@ public struct CreateCatalogOfferInput: Sendable, Equatable {
         let expiresAt: String?
 
         enum CodingKeys: String, CodingKey {
-            case merchantID = "merchant_id"
-            case productClassification = "product_classification"
+            case merchantID = "merchantId"
+            case productClassification = "productClassification"
             case name, description
-            case photoURL = "photo_url"
+            case photoURL = "photoUrl"
             case currency
-            case unitAmountMinor = "unit_amount_minor"
-            case expiresAt = "expires_at"
+            case unitAmountMinor = "unitAmountMinor"
+            case expiresAt = "expiresAt"
         }
     }
 }
@@ -109,8 +109,8 @@ public struct CreateSaleOrderInput: Sendable, Equatable {
         let quantity: Int64
 
         enum CodingKeys: String, CodingKey {
-            case offerID = "offer_id"
-            case offerRevision = "offer_revision"
+            case offerID = "offerId"
+            case offerRevision = "offerRevision"
             case quantity
         }
     }

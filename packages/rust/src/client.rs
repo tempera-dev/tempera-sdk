@@ -1476,13 +1476,13 @@ mod tests {
             BuildError::MissingQueryParam {
                 product: "tempera_payments".to_string(),
                 operation: "get_payment_intent".to_string(),
-                name: "tenant_id".to_string(),
+                name: "tenantId".to_string(),
             }
         );
         assert!(
             error
                 .to_string()
-                .contains("missing required query parameter \"tenant_id\"")
+                .contains("missing required query parameter \"tenantId\"")
         );
 
         let spec = client
@@ -1495,11 +1495,12 @@ mod tests {
                 ],
             )
             .unwrap();
+        assert!(spec.url.ends_with("/v1/paymentIntents/pi_1"));
         assert!(
             spec.query
-                .contains(&("tenant_id".to_string(), "tenant_1".to_string()))
+                .contains(&("tenantId".to_string(), "tenant_1".to_string()))
         );
-        assert!(!spec.query.iter().any(|(name, _)| name == "tenantId"));
+        assert!(!spec.query.iter().any(|(name, _)| name == "tenant_id"));
     }
 
     #[test]
@@ -2047,8 +2048,8 @@ mod tests {
                 &[
                     ("session_id", "session-fixture".into()),
                     ("status", "pending".into()),
-                    ("limit", ParamValue::Int(100)),
-                    ("after", "action-fixture".into()),
+                    ("page_size", ParamValue::Int(100)),
+                    ("page_token", "action-fixture".into()),
                 ],
             )
             .unwrap();
@@ -2061,8 +2062,8 @@ mod tests {
             request.query,
             vec![
                 ("status".to_string(), "pending".to_string()),
-                ("limit".to_string(), "100".to_string()),
-                ("after".to_string(), "action-fixture".to_string()),
+                ("pageSize".to_string(), "100".to_string()),
+                ("pageToken".to_string(), "action-fixture".to_string()),
             ]
         );
         assert!(request.body_json.is_none());
@@ -2074,6 +2075,23 @@ mod tests {
             )
             .unwrap();
         assert!(legacy.query.is_empty());
+        let sessions = client
+            .build_request(
+                "tempera_voice",
+                "list_voice_sessions",
+                &[
+                    ("profile_ref", "profile-fixture".into()),
+                    ("page_size", ParamValue::Int(20)),
+                ],
+            )
+            .unwrap();
+        assert_eq!(
+            sessions.query,
+            vec![
+                ("profileRef".to_string(), "profile-fixture".to_string()),
+                ("pageSize".to_string(), "20".to_string()),
+            ]
+        );
     }
 
     #[test]

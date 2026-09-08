@@ -136,6 +136,6 @@ mod tests {
         let (id, body) = McpRequestBuilder::new().ping_body();
         assert_eq!(id, 1);
         assert!(parse_mcp_error(&body).is_none());
-        assert_eq!(MCP_PROTOCOL_VERSION, "2025-06-18");
+        assert_eq!(MCP_PROTOCOL_VERSION, "2026-07-28");
     }
 }

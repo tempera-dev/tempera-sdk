@@ -93,6 +93,7 @@ Fetch deep store health: schema version, integrity checks, and graph consistency
 
 - **Producer operationId:** `health`
 - **Auth:** Product bearer — an access token minted for audience `remi`, or a central `tp_` API key.
+- **Scope:** `admin`
 - **Call as:** TypeScript `client.remi.health()` · Python `client.remi.health()` · Rust `build_request("remi", "health", params)`
 
 <CodeGroup>
@@ -121,6 +122,7 @@ Fetch memory-store statistics: ledger events, nodes, and token counts by kind.
 
 - **Producer operationId:** `getStats`
 - **Auth:** Product bearer — an access token minted for audience `remi`, or a central `tp_` API key.
+- **Scope:** `admin`
 - **Call as:** TypeScript `client.remi.getStats()` · Python `client.remi.get_stats()` · Rust `build_request("remi", "get_stats", params)`
 
 <CodeGroup>
@@ -149,6 +151,7 @@ Fetch service metrics as JSON, including per-route counters and query-tier laten
 
 - **Producer operationId:** `getMetrics`
 - **Auth:** Product bearer — an access token minted for audience `remi`, or a central `tp_` API key.
+- **Scope:** `admin`
 - **Call as:** TypeScript `client.remi.getMetrics()` · Python `client.remi.get_metrics()` · Rust `build_request("remi", "get_metrics", params)`
 
 <CodeGroup>
@@ -177,6 +180,7 @@ Fetch service metrics in Prometheus text exposition format for scrape-based moni
 
 - **Producer operationId:** `getPrometheusMetrics`
 - **Auth:** Product bearer — an access token minted for audience `remi`, or a central `tp_` API key.
+- **Scope:** `admin`
 - **Call as:** TypeScript `client.remi.getPrometheusMetrics()` · Python `client.remi.get_prometheus_metrics()` · Rust `build_request("remi", "get_prometheus_metrics", params)`
 
 <CodeGroup>
@@ -205,6 +209,7 @@ List recent service audit events (default 100, maximum 500).
 
 - **Producer operationId:** `listAudit`
 - **Auth:** Product bearer — an access token minted for audience `remi`, or a central `tp_` API key.
+- **Scope:** `admin`
 - **Call as:** TypeScript `client.remi.listAudit()` · Python `client.remi.list_audit()` · Rust `build_request("remi", "list_audit", params)`
 
 **Query parameters**
@@ -249,6 +254,7 @@ Write one memory event into the tenant and project ledger.
 
 - **Producer operationId:** `remember`
 - **Auth:** Product bearer — an access token minted for audience `remi`, or a central `tp_` API key.
+- **Scope:** `admin`
 - **Call as:** TypeScript `client.remi.remember()` · Python `client.remi.remember()` · Rust `build_request("remi", "remember", params)`
 
 **Body parameters**
@@ -304,6 +310,7 @@ Project pending ledger events into the memory graph and return the projection re
 
 - **Producer operationId:** `project`
 - **Auth:** Product bearer — an access token minted for audience `remi`, or a central `tp_` API key.
+- **Scope:** `admin`
 - **Call as:** TypeScript `client.remi.project()` · Python `client.remi.project()` · Rust `build_request("remi", "project", params)`
 
 **Body parameters**
@@ -344,6 +351,7 @@ Answer a scoped memory question with evidence and reconstruction metadata.
 
 - **Producer operationId:** `query`
 - **Auth:** Product bearer — an access token minted for audience `remi`, or a central `tp_` API key.
+- **Scope:** `admin`
 - **Call as:** TypeScript `client.remi.query()` · Python `client.remi.query()` · Rust `build_request("remi", "query", params)`
 
 **Body parameters**
@@ -397,6 +405,7 @@ Run store maintenance: optimize, checkpoint, and optionally vacuum, repair orpha
 
 - **Producer operationId:** `maintenance`
 - **Auth:** Product bearer — an access token minted for audience `remi`, or a central `tp_` API key.
+- **Scope:** `admin`
 - **Call as:** TypeScript `client.remi.maintenance()` · Python `client.remi.maintenance()` · Rust `build_request("remi", "maintenance", params)`
 
 **Body parameters**

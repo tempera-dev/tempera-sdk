@@ -20,6 +20,11 @@ ROOT = Path(__file__).resolve().parents[1]
 TOKEN = "swift-commerce-test-token"
 PREFIX = "/v1/organizations/fixture-org/projects/fixture-project/environments/test/sites/fixture-site"
 TABLES = ("resources", "history", "audit", "events", "event_projections", "commerce_replays")
+EXPECTED_SOURCE = {
+    "source_repo": "tempera-dev/tempera-dropshipping",
+    "source_branch": "main",
+    "source_path": "contracts/openapi/dropshipping.openapi.json",
+}
 
 
 def fail(message):
@@ -33,6 +38,8 @@ def git(source, *parts):
 def validate_source(source):
     lock_path = ROOT / "specs/tempera-dropshipping-api.json.source"
     lock = json.loads(lock_path.read_text())
+    if any(lock.get(key) != value for key, value in EXPECTED_SOURCE.items()):
+        fail("Orders source identity is not allowlisted")
     if git(source, "rev-parse", "HEAD") != lock["source_commit"]:
         fail("A clean checkout at the exact SDK Orders source commit is required")
     if git(source, "status", "--porcelain"):
@@ -89,7 +96,7 @@ class ProducerServer:
                 raise AssertionError("Orders Uvicorn did not stop")
 
 
-def app_for(source, database, receipts):
+def app_for(source, database, receipts, request_bodies):
     sys.path.insert(0, str(source / "src"))
     from tempera_dropshipping.api import create_app
     from tempera_dropshipping.models import Scope
@@ -103,6 +110,13 @@ def app_for(source, database, receipts):
 
     @app.middleware("http")
     async def receipt(request, call_next):
+        if request.method == "POST" and request.url.path in {
+            PREFIX + "/catalog/offers", PREFIX + "/sale-orders"
+        }:
+            try:
+                request_bodies.append(json.loads((await request.body()).decode("utf-8")))
+            except (UnicodeDecodeError, json.JSONDecodeError):
+                request_bodies.append(None)
         response = await call_next(request)
         if request.url.path.startswith(PREFIX):
             receipts.append((request.method, request.url.path, response.status_code))
@@ -167,6 +181,29 @@ def expect_receipts(receipts, order_id):
         raise AssertionError(f"unexpected recovery read receipt: {receipts}")
 
 
+def assert_public_request_bodies(request_bodies):
+    """Prove the SDK spoke the producer's lowerCamelCase public JSON wire."""
+    if len(request_bodies) != 4 or any(not isinstance(body, dict) for body in request_bodies):
+        raise AssertionError("expected four decodable commerce request bodies")
+    offer, *sales = request_bodies
+    required_offer = {
+        "merchantId", "productClassification", "name", "description", "currency",
+        "unitAmountMinor",
+    }
+    if not required_offer.issubset(offer) or any(
+        key in offer for key in (
+            "merchant_id", "product_classification", "photo_url", "unit_amount_minor",
+            "expires_at",
+        )
+    ):
+        raise AssertionError("offer request did not use the public lowerCamelCase wire")
+    if any(
+        set(body) != {"offerId", "offerRevision", "quantity"}
+        for body in sales
+    ):
+        raise AssertionError("sale request did not use the public lowerCamelCase wire")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source-repo", required=True, type=Path)
@@ -178,9 +215,10 @@ def main():
     driver = compile_driver(args.build_dir.resolve(), args.driver.resolve())
 
     receipts = []
+    request_bodies = []
     with tempfile.TemporaryDirectory(prefix="swift-commerce-producer-") as directory:
         database = Path(directory) / "orders.sqlite"
-        first = ProducerServer(app_for(source, database, receipts), receipts)
+        first = ProducerServer(app_for(source, database, receipts, request_bodies), receipts)
         first.start()
         try:
             prepared = invoke(driver, "prepare", first.url)
@@ -192,7 +230,7 @@ def main():
         before = snapshot(database)
         assert_two_declared_rows(before)
 
-        second = ProducerServer(app_for(source, database, receipts), receipts)
+        second = ProducerServer(app_for(source, database, receipts, request_bodies), receipts)
         second.start()
         try:
             recovered = invoke(driver, "recover", second.url, offer_id)
@@ -214,6 +252,7 @@ def main():
             raise AssertionError("recovery, GET, or conflicting idempotency retry changed durable producer state")
 
     expect_receipts(receipts, recovered["order_id"])
+    assert_public_request_bodies(request_bodies)
     statuses = [status for _, _, status in receipts]
     print(f"PASS: Orders {lock['source_commit']} statuses={statuses}; 2 durable declared records; replay state unchanged")
 

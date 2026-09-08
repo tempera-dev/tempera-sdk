@@ -9,6 +9,9 @@ operation. This script renders it into:
   packages/python/src/tempera_sdk/surface.py
   packages/rust/src/surface.rs
 
+plus every target registered by a plug-in renderer under scripts/renderers/
+(C and C++ today; see scripts/renderers/__init__.py).
+
 The generated files are committed; scripts/check-sdk-surface.py regenerates
 them and fails on any diff, so the three packages cannot drift from the
 manifest or from each other. See docs/ROLLOUT.md for the workflow.
@@ -26,6 +29,7 @@ import subprocess
 import sys
 from pathlib import Path
 
+from renderers import load_targets
 from sdk_names import snake_case
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -747,6 +751,10 @@ TARGETS = {
     "packages/python/src/tempera_sdk/surface.py": render_python,
     "packages/rust/src/surface.rs": render_rust,
 }
+# Languages added after the first three register through scripts/renderers/
+# instead of being rendered inline here; they are written and --check-ed
+# exactly like the built-in targets.
+TARGETS.update(load_targets())
 
 
 def main() -> int:

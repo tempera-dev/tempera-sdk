@@ -85,95 +85,29 @@ let spec = client.build_request("tempera_voice", "voice_readiness", &[])?;
 
 </CodeGroup>
 
-### resolveVoiceAction
+### getVoiceCapabilities
 
-`POST /v1/actions/{action_id}:resolve`
+`GET /v1/capabilities`
 
-Resolve Action.
+Capabilities.
 
-- **Producer operationId:** `resolveVoiceAction`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
-- **Scope:** `voice:write`
-- **Call as:** TypeScript `client.temperaVoice.resolveVoiceAction()` · Python `client.tempera_voice.resolve_voice_action()` · Rust `build_request("tempera_voice", "resolve_voice_action", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `action_id` | yes | Substituted into the URL path (percent-encoded). |
-
-**Body parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `approved` | yes | — |
-| `note` | no | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaVoice.resolveVoiceAction({
-  action_id: "<action_id>",
-  approved: "<approved>",
-  note: "<note>",
-});
-```
-
-```python Python
-result = client.tempera_voice.resolve_voice_action({
-    "action_id": "<action_id>",
-    "approved": "<approved>",
-    "note": "<note>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_voice", "resolve_voice_action", &[
-    ("action_id", "<action_id>".into()),
-    ("approved", "<approved>".into()),
-    ("note", "<note>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### listVoiceAgents
-
-`GET /v1/agents`
-
-List Agents.
-
-- **Producer operationId:** `listVoiceAgents`
+- **Producer operationId:** `getVoiceCapabilities`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
 - **Scope:** `voice:read`
-- **Call as:** TypeScript `client.temperaVoice.listVoiceAgents()` · Python `client.tempera_voice.list_voice_agents()` · Rust `build_request("tempera_voice", "list_voice_agents", params)`
-
-**Query parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `limit` | no | — |
+- **Call as:** TypeScript `client.temperaVoice.getVoiceCapabilities()` · Python `client.tempera_voice.get_voice_capabilities()` · Rust `build_request("tempera_voice", "get_voice_capabilities", params)`
 
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.temperaVoice.listVoiceAgents({
-  limit: "<limit>",
-});
+const result = await client.temperaVoice.getVoiceCapabilities();
 ```
 
 ```python Python
-result = client.tempera_voice.list_voice_agents({
-    "limit": "<limit>",
-})
+result = client.tempera_voice.get_voice_capabilities()
 ```
 
 ```rust Rust
-let spec = client.build_request("tempera_voice", "list_voice_agents", &[
-    ("limit", "<limit>".into()),
-])?;
+let spec = client.build_request("tempera_voice", "get_voice_capabilities", &[])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```
@@ -196,45 +130,168 @@ Create Agent.
 | Parameter | Required | Notes |
 |---|---|---|
 | `id` | no | — |
-| `input_audio_format` | no | — |
+| `name` | yes | — |
+| `useCase` | no | — |
 | `instructions` | yes | — |
+| `provider` | no | — |
+| `model` | no | — |
+| `voice` | no | — |
 | `language` | no | — |
+| `outputModality` | no | — |
+| `inputAudioFormat` | no | — |
+| `outputAudioFormat` | no | — |
+| `transcriptionModel` | no | — |
+| `turnDetection` | no | — |
+| `tools` | no | — |
+| `retention` | no | — |
 | `limits` | no | — |
 | `metadata` | no | — |
-| `model` | no | — |
-| `name` | yes | — |
-| `output_audio_format` | no | — |
-| `output_modality` | no | — |
-| `provider` | no | — |
-| `retention` | no | — |
-| `tools` | no | — |
-| `transcription_model` | no | — |
-| `turn_detection` | no | — |
-| `use_case` | no | — |
-| `voice` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaVoice.createVoiceAgent({
-  instructions: "<instructions>",
   name: "<name>",
+  instructions: "<instructions>",
   id: "<id>",
 });
 ```
 
 ```python Python
 result = client.tempera_voice.create_voice_agent({
-    "instructions": "<instructions>",
     "name": "<name>",
+    "instructions": "<instructions>",
     "id": "<id>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_voice", "create_voice_agent", &[
-    ("instructions", "<instructions>".into()),
     ("name", "<name>".into()),
+    ("instructions", "<instructions>".into()),
+    ("id", "<id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listVoiceAgents
+
+`GET /v1/agents`
+
+List Agents.
+
+- **Producer operationId:** `listVoiceAgents`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
+- **Scope:** `voice:read`
+- **Call as:** TypeScript `client.temperaVoice.listVoiceAgents()` · Python `client.tempera_voice.list_voice_agents()` · Rust `build_request("tempera_voice", "list_voice_agents", params)`
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaVoice.listVoiceAgents({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
+```
+
+```python Python
+result = client.tempera_voice.list_voice_agents({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_voice", "list_voice_agents", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### updateVoiceAgent
+
+`PATCH /v1/agents/{agentId}`
+
+Update Agent.
+
+- **Producer operationId:** `updateVoiceAgent`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
+- **Scope:** `voice:write`
+- **Call as:** TypeScript `client.temperaVoice.updateVoiceAgent()` · Python `client.tempera_voice.update_voice_agent()` · Rust `build_request("tempera_voice", "update_voice_agent", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `agentId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `updateMask` | no | — |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `id` | no | — |
+| `name` | yes | — |
+| `useCase` | no | — |
+| `instructions` | yes | — |
+| `provider` | no | — |
+| `model` | no | — |
+| `voice` | no | — |
+| `language` | no | — |
+| `outputModality` | no | — |
+| `inputAudioFormat` | no | — |
+| `outputAudioFormat` | no | — |
+| `transcriptionModel` | no | — |
+| `turnDetection` | no | — |
+| `tools` | no | — |
+| `retention` | no | — |
+| `limits` | no | — |
+| `metadata` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaVoice.updateVoiceAgent({
+  agentId: "<agentId>",
+  name: "<name>",
+  instructions: "<instructions>",
+  id: "<id>",
+});
+```
+
+```python Python
+result = client.tempera_voice.update_voice_agent({
+    "agentId": "<agentId>",
+    "name": "<name>",
+    "instructions": "<instructions>",
+    "id": "<id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_voice", "update_voice_agent", &[
+    ("agentId", "<agentId>".into()),
+    ("name", "<name>".into()),
+    ("instructions", "<instructions>".into()),
     ("id", "<id>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
@@ -245,7 +302,7 @@ let spec = client.build_request("tempera_voice", "create_voice_agent", &[
 
 ### getVoiceAgent
 
-`GET /v1/agents/{agent_id}`
+`GET /v1/agents/{agentId}`
 
 Get Agent.
 
@@ -258,25 +315,25 @@ Get Agent.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `agent_id` | yes | Substituted into the URL path (percent-encoded). |
+| `agentId` | yes | Substituted into the URL path (percent-encoded). |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaVoice.getVoiceAgent({
-  agent_id: "<agent_id>",
+  agentId: "<agentId>",
 });
 ```
 
 ```python Python
 result = client.tempera_voice.get_voice_agent({
-    "agent_id": "<agent_id>",
+    "agentId": "<agentId>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_voice", "get_voice_agent", &[
-    ("agent_id", "<agent_id>".into()),
+    ("agentId", "<agentId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -284,71 +341,100 @@ let spec = client.build_request("tempera_voice", "get_voice_agent", &[
 
 </CodeGroup>
 
-### upsertVoiceAgent
+### createVoiceSession
 
-`PUT /v1/agents/{agent_id}`
+`POST /v1/sessions`
 
-Upsert Agent.
+Create Session.
 
-- **Producer operationId:** `upsertVoiceAgent`
+- **Producer operationId:** `createVoiceSession`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
 - **Scope:** `voice:write`
-- **Call as:** TypeScript `client.temperaVoice.upsertVoiceAgent()` · Python `client.tempera_voice.upsert_voice_agent()` · Rust `build_request("tempera_voice", "upsert_voice_agent", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `agent_id` | yes | Substituted into the URL path (percent-encoded). |
+- **Call as:** TypeScript `client.temperaVoice.createVoiceSession()` · Python `client.tempera_voice.create_voice_session()` · Rust `build_request("tempera_voice", "create_voice_session", params)`
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `id` | no | — |
-| `input_audio_format` | no | — |
-| `instructions` | yes | — |
-| `language` | no | — |
-| `limits` | no | — |
+| `agentId` | yes | — |
+| `channel` | no | — |
+| `externalId` | no | — |
+| `safetyIdentifier` | no | — |
+| `profileRef` | no | — |
+| `goalRef` | no | — |
+| `siteId` | no | — |
 | `metadata` | no | — |
-| `model` | no | — |
-| `name` | yes | — |
-| `output_audio_format` | no | — |
-| `output_modality` | no | — |
-| `provider` | no | — |
-| `retention` | no | — |
-| `tools` | no | — |
-| `transcription_model` | no | — |
-| `turn_detection` | no | — |
-| `use_case` | no | — |
-| `voice` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.temperaVoice.upsertVoiceAgent({
-  agent_id: "<agent_id>",
-  instructions: "<instructions>",
-  name: "<name>",
-  id: "<id>",
+const result = await client.temperaVoice.createVoiceSession({
+  agentId: "<agentId>",
+  channel: "<channel>",
+  externalId: "<externalId>",
 });
 ```
 
 ```python Python
-result = client.tempera_voice.upsert_voice_agent({
-    "agent_id": "<agent_id>",
-    "instructions": "<instructions>",
-    "name": "<name>",
-    "id": "<id>",
+result = client.tempera_voice.create_voice_session({
+    "agentId": "<agentId>",
+    "channel": "<channel>",
+    "externalId": "<externalId>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("tempera_voice", "upsert_voice_agent", &[
-    ("agent_id", "<agent_id>".into()),
-    ("instructions", "<instructions>".into()),
-    ("name", "<name>".into()),
-    ("id", "<id>".into()),
+let spec = client.build_request("tempera_voice", "create_voice_session", &[
+    ("agentId", "<agentId>".into()),
+    ("channel", "<channel>".into()),
+    ("externalId", "<externalId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listVoiceSessions
+
+`GET /v1/sessions`
+
+List Sessions.
+
+- **Producer operationId:** `listVoiceSessions`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
+- **Scope:** `voice:read`
+- **Call as:** TypeScript `client.temperaVoice.listVoiceSessions()` · Python `client.tempera_voice.list_voice_sessions()` · Rust `build_request("tempera_voice", "list_voice_sessions", params)`
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `agentId` | no | — |
+| `profileRef` | no | — |
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaVoice.listVoiceSessions({
+  agentId: "<agentId>",
+  profileRef: "<profileRef>",
+});
+```
+
+```python Python
+result = client.tempera_voice.list_voice_sessions({
+    "agentId": "<agentId>",
+    "profileRef": "<profileRef>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_voice", "list_voice_sessions", &[
+    ("agentId", "<agentId>".into()),
+    ("profileRef", "<profileRef>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -379,6 +465,352 @@ result = client.tempera_voice.get_default_voice_agent()
 
 ```rust Rust
 let spec = client.build_request("tempera_voice", "get_default_voice_agent", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getVoiceSession
+
+`GET /v1/sessions/{sessionId}`
+
+Get Session.
+
+- **Producer operationId:** `getVoiceSession`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
+- **Scope:** `voice:read`
+- **Call as:** TypeScript `client.temperaVoice.getVoiceSession()` · Python `client.tempera_voice.get_voice_session()` · Rust `build_request("tempera_voice", "get_voice_session", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `sessionId` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaVoice.getVoiceSession({
+  sessionId: "<sessionId>",
+});
+```
+
+```python Python
+result = client.tempera_voice.get_voice_session({
+    "sessionId": "<sessionId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_voice", "get_voice_session", &[
+    ("sessionId", "<sessionId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listVoiceSessionEvents
+
+`GET /v1/sessions/{sessionId}/events`
+
+List Events.
+
+- **Producer operationId:** `listVoiceSessionEvents`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
+- **Scope:** `voice:read`
+- **Call as:** TypeScript `client.temperaVoice.listVoiceSessionEvents()` · Python `client.tempera_voice.list_voice_session_events()` · Rust `build_request("tempera_voice", "list_voice_session_events", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `sessionId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `afterSequence` | no | — |
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaVoice.listVoiceSessionEvents({
+  sessionId: "<sessionId>",
+  afterSequence: "<afterSequence>",
+  pageSize: "<pageSize>",
+});
+```
+
+```python Python
+result = client.tempera_voice.list_voice_session_events({
+    "sessionId": "<sessionId>",
+    "afterSequence": "<afterSequence>",
+    "pageSize": "<pageSize>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_voice", "list_voice_session_events", &[
+    ("sessionId", "<sessionId>".into()),
+    ("afterSequence", "<afterSequence>".into()),
+    ("pageSize", "<pageSize>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listVoiceSessionActions
+
+`GET /v1/sessions/{sessionId}/actions`
+
+List Actions.
+
+- **Producer operationId:** `listVoiceSessionActions`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
+- **Scope:** `voice:read`
+- **Call as:** TypeScript `client.temperaVoice.listVoiceSessionActions()` · Python `client.tempera_voice.list_voice_session_actions()` · Rust `build_request("tempera_voice", "list_voice_session_actions", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `sessionId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `status` | no | — |
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaVoice.listVoiceSessionActions({
+  sessionId: "<sessionId>",
+  status: "<status>",
+  pageSize: "<pageSize>",
+});
+```
+
+```python Python
+result = client.tempera_voice.list_voice_session_actions({
+    "sessionId": "<sessionId>",
+    "status": "<status>",
+    "pageSize": "<pageSize>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_voice", "list_voice_session_actions", &[
+    ("sessionId", "<sessionId>".into()),
+    ("status", "<status>".into()),
+    ("pageSize", "<pageSize>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### resolveVoiceAction
+
+`POST /v1/actions/{actionId}:resolve`
+
+Resolve Action.
+
+- **Producer operationId:** `resolveVoiceAction`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
+- **Scope:** `voice:write`
+- **Call as:** TypeScript `client.temperaVoice.resolveVoiceAction()` · Python `client.tempera_voice.resolve_voice_action()` · Rust `build_request("tempera_voice", "resolve_voice_action", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `actionId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `approved` | yes | — |
+| `note` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaVoice.resolveVoiceAction({
+  actionId: "<actionId>",
+  approved: "<approved>",
+  note: "<note>",
+});
+```
+
+```python Python
+result = client.tempera_voice.resolve_voice_action({
+    "actionId": "<actionId>",
+    "approved": "<approved>",
+    "note": "<note>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_voice", "resolve_voice_action", &[
+    ("actionId", "<actionId>".into()),
+    ("approved", "<approved>".into()),
+    ("note", "<note>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### endVoiceSession
+
+`POST /v1/sessions/{sessionId}:end`
+
+End Session.
+
+- **Producer operationId:** `endVoiceSession`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
+- **Scope:** `voice:write`
+- **Call as:** TypeScript `client.temperaVoice.endVoiceSession()` · Python `client.tempera_voice.end_voice_session()` · Rust `build_request("tempera_voice", "end_voice_session", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `sessionId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `reason` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaVoice.endVoiceSession({
+  sessionId: "<sessionId>",
+  reason: "<reason>",
+});
+```
+
+```python Python
+result = client.tempera_voice.end_voice_session({
+    "sessionId": "<sessionId>",
+    "reason": "<reason>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_voice", "end_voice_session", &[
+    ("sessionId", "<sessionId>".into()),
+    ("reason", "<reason>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### exportVoiceSessions
+
+`POST /v1/sessions:export`
+
+Export Sessions.
+
+- **Producer operationId:** `exportVoiceSessions`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
+- **Scope:** `eval:run`
+- **Call as:** TypeScript `client.temperaVoice.exportVoiceSessions()` · Python `client.tempera_voice.export_voice_sessions()` · Rust `build_request("tempera_voice", "export_voice_sessions", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `sessionIds` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaVoice.exportVoiceSessions({
+  sessionIds: "<sessionIds>",
+});
+```
+
+```python Python
+result = client.tempera_voice.export_voice_sessions({
+    "sessionIds": "<sessionIds>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_voice", "export_voice_sessions", &[
+    ("sessionIds", "<sessionIds>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### uploadVoiceArtifact
+
+`POST /v1/artifacts:upload`
+
+Upload Artifact.
+
+- **Producer operationId:** `uploadVoiceArtifact`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
+- **Scope:** `voice:write`
+- **Call as:** TypeScript `client.temperaVoice.uploadVoiceArtifact()` · Python `client.tempera_voice.upload_voice_artifact()` · Rust `build_request("tempera_voice", "upload_voice_artifact", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `name` | yes | — |
+| `contentBase64` | yes | — |
+| `mediaType` | no | — |
+| `classification` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaVoice.uploadVoiceArtifact({
+  name: "<name>",
+  contentBase64: "<contentBase64>",
+  mediaType: "<mediaType>",
+});
+```
+
+```python Python
+result = client.tempera_voice.upload_voice_artifact({
+    "name": "<name>",
+    "contentBase64": "<contentBase64>",
+    "mediaType": "<mediaType>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_voice", "upload_voice_artifact", &[
+    ("name", "<name>".into()),
+    ("contentBase64", "<contentBase64>".into()),
+    ("mediaType", "<mediaType>".into()),
+])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```
@@ -426,85 +858,6 @@ let spec = client.build_request("tempera_voice", "download_voice_artifact", &[
 
 </CodeGroup>
 
-### uploadVoiceArtifact
-
-`POST /v1/artifacts:upload`
-
-Upload Artifact.
-
-- **Producer operationId:** `uploadVoiceArtifact`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
-- **Scope:** `voice:write`
-- **Call as:** TypeScript `client.temperaVoice.uploadVoiceArtifact()` · Python `client.tempera_voice.upload_voice_artifact()` · Rust `build_request("tempera_voice", "upload_voice_artifact", params)`
-
-**Body parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `classification` | no | — |
-| `content_base64` | yes | — |
-| `media_type` | no | — |
-| `name` | yes | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaVoice.uploadVoiceArtifact({
-  content_base64: "<content_base64>",
-  name: "<name>",
-  classification: "<classification>",
-});
-```
-
-```python Python
-result = client.tempera_voice.upload_voice_artifact({
-    "content_base64": "<content_base64>",
-    "name": "<name>",
-    "classification": "<classification>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_voice", "upload_voice_artifact", &[
-    ("content_base64", "<content_base64>".into()),
-    ("name", "<name>".into()),
-    ("classification", "<classification>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### getVoiceCapabilities
-
-`GET /v1/capabilities`
-
-Capabilities.
-
-- **Producer operationId:** `getVoiceCapabilities`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
-- **Scope:** `voice:read`
-- **Call as:** TypeScript `client.temperaVoice.getVoiceCapabilities()` · Python `client.tempera_voice.get_voice_capabilities()` · Rust `build_request("tempera_voice", "get_voice_capabilities", params)`
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaVoice.getVoiceCapabilities();
-```
-
-```python Python
-result = client.tempera_voice.get_voice_capabilities()
-```
-
-```rust Rust
-let spec = client.build_request("tempera_voice", "get_voice_capabilities", &[])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
 ### listVoiceEvalProfiles
 
 `GET /v1/eval-profiles`
@@ -516,254 +869,33 @@ List Eval Profiles.
 - **Scope:** `eval:run`
 - **Call as:** TypeScript `client.temperaVoice.listVoiceEvalProfiles()` · Python `client.tempera_voice.list_voice_eval_profiles()` · Rust `build_request("tempera_voice", "list_voice_eval_profiles", params)`
 
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaVoice.listVoiceEvalProfiles();
-```
-
-```python Python
-result = client.tempera_voice.list_voice_eval_profiles()
-```
-
-```rust Rust
-let spec = client.build_request("tempera_voice", "list_voice_eval_profiles", &[])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### buildVoiceEvalBundle
-
-`POST /v1/evals/bundles:build`
-
-Build Eval Bundle.
-
-- **Producer operationId:** `buildVoiceEvalBundle`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
-- **Scope:** `eval:run`
-- **Call as:** TypeScript `client.temperaVoice.buildVoiceEvalBundle()` · Python `client.tempera_voice.build_voice_eval_bundle()` · Rust `build_request("tempera_voice", "build_voice_eval_bundle", params)`
-
-**Body parameters**
+**Query parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `adapter_import_path` | yes | — |
-| `adapter_import_public_key_path` | yes | — |
-| `adapter_import_signature_path` | yes | — |
-| `bundle_id` | yes | — |
-| `created_at` | no | — |
-| `exposure_ledger_path` | yes | — |
-| `guardrails_path` | yes | — |
-| `preregistration_path` | yes | — |
-| `profile_id` | yes | — |
-| `redaction_policy_path` | yes | — |
-| `release_evidence_path` | yes | — |
+| `pageSize` | no | — |
+| `pageToken` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.temperaVoice.buildVoiceEvalBundle({
-  adapter_import_path: "<adapter_import_path>",
-  adapter_import_public_key_path: "<adapter_import_public_key_path>",
-  adapter_import_signature_path: "<adapter_import_signature_path>",
-  bundle_id: "<bundle_id>",
-  exposure_ledger_path: "<exposure_ledger_path>",
-  guardrails_path: "<guardrails_path>",
-  preregistration_path: "<preregistration_path>",
-  profile_id: "<profile_id>",
-  redaction_policy_path: "<redaction_policy_path>",
-  release_evidence_path: "<release_evidence_path>",
+const result = await client.temperaVoice.listVoiceEvalProfiles({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
 });
 ```
 
 ```python Python
-result = client.tempera_voice.build_voice_eval_bundle({
-    "adapter_import_path": "<adapter_import_path>",
-    "adapter_import_public_key_path": "<adapter_import_public_key_path>",
-    "adapter_import_signature_path": "<adapter_import_signature_path>",
-    "bundle_id": "<bundle_id>",
-    "exposure_ledger_path": "<exposure_ledger_path>",
-    "guardrails_path": "<guardrails_path>",
-    "preregistration_path": "<preregistration_path>",
-    "profile_id": "<profile_id>",
-    "redaction_policy_path": "<redaction_policy_path>",
-    "release_evidence_path": "<release_evidence_path>",
+result = client.tempera_voice.list_voice_eval_profiles({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("tempera_voice", "build_voice_eval_bundle", &[
-    ("adapter_import_path", "<adapter_import_path>".into()),
-    ("adapter_import_public_key_path", "<adapter_import_public_key_path>".into()),
-    ("adapter_import_signature_path", "<adapter_import_signature_path>".into()),
-    ("bundle_id", "<bundle_id>".into()),
-    ("exposure_ledger_path", "<exposure_ledger_path>".into()),
-    ("guardrails_path", "<guardrails_path>".into()),
-    ("preregistration_path", "<preregistration_path>".into()),
-    ("profile_id", "<profile_id>".into()),
-    ("redaction_policy_path", "<redaction_policy_path>".into()),
-    ("release_evidence_path", "<release_evidence_path>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### createVoicePaletteHandoff
-
-`POST /v1/evals/palette-handoffs:create`
-
-Create Palette Handoff.
-
-- **Producer operationId:** `createVoicePaletteHandoff`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
-- **Scope:** `eval:run`
-- **Call as:** TypeScript `client.temperaVoice.createVoicePaletteHandoff()` · Python `client.tempera_voice.create_voice_palette_handoff()` · Rust `build_request("tempera_voice", "create_voice_palette_handoff", params)`
-
-**Body parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `ab_plan_path` | no | — |
-| `evidence_path` | yes | — |
-| `kind` | yes | — |
-| `profile_id` | yes | — |
-| `project_id` | yes | — |
-| `public_key_path` | yes | — |
-| `signature_path` | yes | — |
-| `tenant_id` | yes | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaVoice.createVoicePaletteHandoff({
-  evidence_path: "<evidence_path>",
-  kind: "<kind>",
-  profile_id: "<profile_id>",
-  project_id: "<project_id>",
-  public_key_path: "<public_key_path>",
-  signature_path: "<signature_path>",
-  tenant_id: "<tenant_id>",
-});
-```
-
-```python Python
-result = client.tempera_voice.create_voice_palette_handoff({
-    "evidence_path": "<evidence_path>",
-    "kind": "<kind>",
-    "profile_id": "<profile_id>",
-    "project_id": "<project_id>",
-    "public_key_path": "<public_key_path>",
-    "signature_path": "<signature_path>",
-    "tenant_id": "<tenant_id>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_voice", "create_voice_palette_handoff", &[
-    ("evidence_path", "<evidence_path>".into()),
-    ("kind", "<kind>".into()),
-    ("profile_id", "<profile_id>".into()),
-    ("project_id", "<project_id>".into()),
-    ("public_key_path", "<public_key_path>".into()),
-    ("signature_path", "<signature_path>".into()),
-    ("tenant_id", "<tenant_id>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### publishVoicePaletteHandoff
-
-`POST /v1/evals/palette-handoffs:publish`
-
-Publish Palette Handoff.
-
-- **Producer operationId:** `publishVoicePaletteHandoff`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
-- **Scope:** `eval:run`
-- **Call as:** TypeScript `client.temperaVoice.publishVoicePaletteHandoff()` · Python `client.tempera_voice.publish_voice_palette_handoff()` · Rust `build_request("tempera_voice", "publish_voice_palette_handoff", params)`
-
-**Body parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `handoff_path` | yes | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaVoice.publishVoicePaletteHandoff({
-  handoff_path: "<handoff_path>",
-});
-```
-
-```python Python
-result = client.tempera_voice.publish_voice_palette_handoff({
-    "handoff_path": "<handoff_path>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_voice", "publish_voice_palette_handoff", &[
-    ("handoff_path", "<handoff_path>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### importVoiceEvalResult
-
-`POST /v1/evals/results:import`
-
-Import Eval Result.
-
-- **Producer operationId:** `importVoiceEvalResult`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
-- **Scope:** `eval:run`
-- **Call as:** TypeScript `client.temperaVoice.importVoiceEvalResult()` · Python `client.tempera_voice.import_voice_eval_result()` · Rust `build_request("tempera_voice", "import_voice_eval_result", params)`
-
-**Body parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `artifacts` | yes | — |
-| `attestation_path` | no | — |
-| `attestation_public_key_path` | no | — |
-| `attestation_signature_path` | no | — |
-| `profile_id` | yes | — |
-| `sealed_result_path` | yes | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaVoice.importVoiceEvalResult({
-  artifacts: "<artifacts>",
-  profile_id: "<profile_id>",
-  sealed_result_path: "<sealed_result_path>",
-});
-```
-
-```python Python
-result = client.tempera_voice.import_voice_eval_result({
-    "artifacts": "<artifacts>",
-    "profile_id": "<profile_id>",
-    "sealed_result_path": "<sealed_result_path>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_voice", "import_voice_eval_result", &[
-    ("artifacts", "<artifacts>".into()),
-    ("profile_id", "<profile_id>".into()),
-    ("sealed_result_path", "<sealed_result_path>".into()),
+let spec = client.build_request("tempera_voice", "list_voice_eval_profiles", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -786,29 +918,29 @@ Seal Eval Result.
 
 | Parameter | Required | Notes |
 |---|---|---|
+| `profileId` | yes | — |
 | `draft` | yes | — |
-| `profile_id` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaVoice.sealVoiceEvalResult({
+  profileId: "<profileId>",
   draft: "<draft>",
-  profile_id: "<profile_id>",
 });
 ```
 
 ```python Python
 result = client.tempera_voice.seal_voice_eval_result({
+    "profileId": "<profileId>",
     "draft": "<draft>",
-    "profile_id": "<profile_id>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_voice", "seal_voice_eval_result", &[
+    ("profileId", "<profileId>".into()),
     ("draft", "<draft>".into()),
-    ("profile_id", "<profile_id>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -816,340 +948,236 @@ let spec = client.build_request("tempera_voice", "seal_voice_eval_result", &[
 
 </CodeGroup>
 
-### listVoiceSessions
+### importVoiceEvalResult
 
-`GET /v1/sessions`
+`POST /v1/evals/results:import`
 
-List Sessions.
+Import Eval Result.
 
-- **Producer operationId:** `listVoiceSessions`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
-- **Scope:** `voice:read`
-- **Call as:** TypeScript `client.temperaVoice.listVoiceSessions()` · Python `client.tempera_voice.list_voice_sessions()` · Rust `build_request("tempera_voice", "list_voice_sessions", params)`
-
-**Query parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `agent_id` | no | — |
-| `profile_ref` | no | — |
-| `limit` | no | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaVoice.listVoiceSessions({
-  agent_id: "<agent_id>",
-  profile_ref: "<profile_ref>",
-});
-```
-
-```python Python
-result = client.tempera_voice.list_voice_sessions({
-    "agent_id": "<agent_id>",
-    "profile_ref": "<profile_ref>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_voice", "list_voice_sessions", &[
-    ("agent_id", "<agent_id>".into()),
-    ("profile_ref", "<profile_ref>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### createVoiceSession
-
-`POST /v1/sessions`
-
-Create Session.
-
-- **Producer operationId:** `createVoiceSession`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
-- **Scope:** `voice:write`
-- **Call as:** TypeScript `client.temperaVoice.createVoiceSession()` · Python `client.tempera_voice.create_voice_session()` · Rust `build_request("tempera_voice", "create_voice_session", params)`
-
-**Body parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `agent_id` | yes | — |
-| `channel` | no | — |
-| `external_id` | no | — |
-| `goal_ref` | no | — |
-| `metadata` | no | — |
-| `profile_ref` | no | — |
-| `safety_identifier` | no | — |
-| `site_id` | no | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaVoice.createVoiceSession({
-  agent_id: "<agent_id>",
-  channel: "<channel>",
-  external_id: "<external_id>",
-});
-```
-
-```python Python
-result = client.tempera_voice.create_voice_session({
-    "agent_id": "<agent_id>",
-    "channel": "<channel>",
-    "external_id": "<external_id>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_voice", "create_voice_session", &[
-    ("agent_id", "<agent_id>".into()),
-    ("channel", "<channel>".into()),
-    ("external_id", "<external_id>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### getVoiceSession
-
-`GET /v1/sessions/{session_id}`
-
-Get Session.
-
-- **Producer operationId:** `getVoiceSession`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
-- **Scope:** `voice:read`
-- **Call as:** TypeScript `client.temperaVoice.getVoiceSession()` · Python `client.tempera_voice.get_voice_session()` · Rust `build_request("tempera_voice", "get_voice_session", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `session_id` | yes | Substituted into the URL path (percent-encoded). |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaVoice.getVoiceSession({
-  session_id: "<session_id>",
-});
-```
-
-```python Python
-result = client.tempera_voice.get_voice_session({
-    "session_id": "<session_id>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_voice", "get_voice_session", &[
-    ("session_id", "<session_id>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### listVoiceSessionActions
-
-`GET /v1/sessions/{session_id}/actions`
-
-List Actions.
-
-- **Producer operationId:** `listVoiceSessionActions`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
-- **Scope:** `voice:read`
-- **Call as:** TypeScript `client.temperaVoice.listVoiceSessionActions()` · Python `client.tempera_voice.list_voice_session_actions()` · Rust `build_request("tempera_voice", "list_voice_session_actions", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `session_id` | yes | Substituted into the URL path (percent-encoded). |
-
-**Query parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `status` | no | — |
-| `limit` | no | — |
-| `after` | no | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaVoice.listVoiceSessionActions({
-  session_id: "<session_id>",
-  status: "<status>",
-  limit: "<limit>",
-});
-```
-
-```python Python
-result = client.tempera_voice.list_voice_session_actions({
-    "session_id": "<session_id>",
-    "status": "<status>",
-    "limit": "<limit>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_voice", "list_voice_session_actions", &[
-    ("session_id", "<session_id>".into()),
-    ("status", "<status>".into()),
-    ("limit", "<limit>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### listVoiceSessionEvents
-
-`GET /v1/sessions/{session_id}/events`
-
-List Events.
-
-- **Producer operationId:** `listVoiceSessionEvents`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
-- **Scope:** `voice:read`
-- **Call as:** TypeScript `client.temperaVoice.listVoiceSessionEvents()` · Python `client.tempera_voice.list_voice_session_events()` · Rust `build_request("tempera_voice", "list_voice_session_events", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `session_id` | yes | Substituted into the URL path (percent-encoded). |
-
-**Query parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `after_sequence` | no | — |
-| `limit` | no | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaVoice.listVoiceSessionEvents({
-  session_id: "<session_id>",
-  after_sequence: "<after_sequence>",
-  limit: "<limit>",
-});
-```
-
-```python Python
-result = client.tempera_voice.list_voice_session_events({
-    "session_id": "<session_id>",
-    "after_sequence": "<after_sequence>",
-    "limit": "<limit>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_voice", "list_voice_session_events", &[
-    ("session_id", "<session_id>".into()),
-    ("after_sequence", "<after_sequence>".into()),
-    ("limit", "<limit>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### endVoiceSession
-
-`POST /v1/sessions/{session_id}:end`
-
-End Session.
-
-- **Producer operationId:** `endVoiceSession`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
-- **Scope:** `voice:write`
-- **Call as:** TypeScript `client.temperaVoice.endVoiceSession()` · Python `client.tempera_voice.end_voice_session()` · Rust `build_request("tempera_voice", "end_voice_session", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `session_id` | yes | Substituted into the URL path (percent-encoded). |
-
-**Body parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `reason` | no | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaVoice.endVoiceSession({
-  session_id: "<session_id>",
-  reason: "<reason>",
-});
-```
-
-```python Python
-result = client.tempera_voice.end_voice_session({
-    "session_id": "<session_id>",
-    "reason": "<reason>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_voice", "end_voice_session", &[
-    ("session_id", "<session_id>".into()),
-    ("reason", "<reason>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### exportVoiceSessions
-
-`POST /v1/sessions:export`
-
-Export Sessions.
-
-- **Producer operationId:** `exportVoiceSessions`
+- **Producer operationId:** `importVoiceEvalResult`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
 - **Scope:** `eval:run`
-- **Call as:** TypeScript `client.temperaVoice.exportVoiceSessions()` · Python `client.tempera_voice.export_voice_sessions()` · Rust `build_request("tempera_voice", "export_voice_sessions", params)`
+- **Call as:** TypeScript `client.temperaVoice.importVoiceEvalResult()` · Python `client.tempera_voice.import_voice_eval_result()` · Rust `build_request("tempera_voice", "import_voice_eval_result", params)`
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `session_ids` | yes | — |
+| `profileId` | yes | — |
+| `sealedResultPath` | yes | — |
+| `artifacts` | yes | — |
+| `attestationPath` | no | — |
+| `attestationSignaturePath` | no | — |
+| `attestationPublicKeyPath` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.temperaVoice.exportVoiceSessions({
-  session_ids: "<session_ids>",
+const result = await client.temperaVoice.importVoiceEvalResult({
+  profileId: "<profileId>",
+  sealedResultPath: "<sealedResultPath>",
+  artifacts: "<artifacts>",
 });
 ```
 
 ```python Python
-result = client.tempera_voice.export_voice_sessions({
-    "session_ids": "<session_ids>",
+result = client.tempera_voice.import_voice_eval_result({
+    "profileId": "<profileId>",
+    "sealedResultPath": "<sealedResultPath>",
+    "artifacts": "<artifacts>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("tempera_voice", "export_voice_sessions", &[
-    ("session_ids", "<session_ids>".into()),
+let spec = client.build_request("tempera_voice", "import_voice_eval_result", &[
+    ("profileId", "<profileId>".into()),
+    ("sealedResultPath", "<sealedResultPath>".into()),
+    ("artifacts", "<artifacts>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### buildVoiceEvalBundle
+
+`POST /v1/evals/bundles:build`
+
+Build Eval Bundle.
+
+- **Producer operationId:** `buildVoiceEvalBundle`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
+- **Scope:** `eval:run`
+- **Call as:** TypeScript `client.temperaVoice.buildVoiceEvalBundle()` · Python `client.tempera_voice.build_voice_eval_bundle()` · Rust `build_request("tempera_voice", "build_voice_eval_bundle", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `profileId` | yes | — |
+| `adapterImportPath` | yes | — |
+| `adapterImportSignaturePath` | yes | — |
+| `adapterImportPublicKeyPath` | yes | — |
+| `releaseEvidencePath` | yes | — |
+| `exposureLedgerPath` | yes | — |
+| `redactionPolicyPath` | yes | — |
+| `guardrailsPath` | yes | — |
+| `preregistrationPath` | yes | — |
+| `bundleId` | yes | — |
+| `createdAt` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaVoice.buildVoiceEvalBundle({
+  profileId: "<profileId>",
+  adapterImportPath: "<adapterImportPath>",
+  adapterImportSignaturePath: "<adapterImportSignaturePath>",
+  adapterImportPublicKeyPath: "<adapterImportPublicKeyPath>",
+  releaseEvidencePath: "<releaseEvidencePath>",
+  exposureLedgerPath: "<exposureLedgerPath>",
+  redactionPolicyPath: "<redactionPolicyPath>",
+  guardrailsPath: "<guardrailsPath>",
+  preregistrationPath: "<preregistrationPath>",
+  bundleId: "<bundleId>",
+});
+```
+
+```python Python
+result = client.tempera_voice.build_voice_eval_bundle({
+    "profileId": "<profileId>",
+    "adapterImportPath": "<adapterImportPath>",
+    "adapterImportSignaturePath": "<adapterImportSignaturePath>",
+    "adapterImportPublicKeyPath": "<adapterImportPublicKeyPath>",
+    "releaseEvidencePath": "<releaseEvidencePath>",
+    "exposureLedgerPath": "<exposureLedgerPath>",
+    "redactionPolicyPath": "<redactionPolicyPath>",
+    "guardrailsPath": "<guardrailsPath>",
+    "preregistrationPath": "<preregistrationPath>",
+    "bundleId": "<bundleId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_voice", "build_voice_eval_bundle", &[
+    ("profileId", "<profileId>".into()),
+    ("adapterImportPath", "<adapterImportPath>".into()),
+    ("adapterImportSignaturePath", "<adapterImportSignaturePath>".into()),
+    ("adapterImportPublicKeyPath", "<adapterImportPublicKeyPath>".into()),
+    ("releaseEvidencePath", "<releaseEvidencePath>".into()),
+    ("exposureLedgerPath", "<exposureLedgerPath>".into()),
+    ("redactionPolicyPath", "<redactionPolicyPath>".into()),
+    ("guardrailsPath", "<guardrailsPath>".into()),
+    ("preregistrationPath", "<preregistrationPath>".into()),
+    ("bundleId", "<bundleId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### createVoicePaletteHandoff
+
+`POST /v1/evals/palette-handoffs:create`
+
+Create Palette Handoff.
+
+- **Producer operationId:** `createVoicePaletteHandoff`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
+- **Scope:** `eval:run`
+- **Call as:** TypeScript `client.temperaVoice.createVoicePaletteHandoff()` · Python `client.tempera_voice.create_voice_palette_handoff()` · Rust `build_request("tempera_voice", "create_voice_palette_handoff", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `profileId` | yes | — |
+| `evidencePath` | yes | — |
+| `kind` | yes | — |
+| `signaturePath` | yes | — |
+| `publicKeyPath` | yes | — |
+| `tenantId` | yes | — |
+| `projectId` | yes | — |
+| `abPlanPath` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaVoice.createVoicePaletteHandoff({
+  profileId: "<profileId>",
+  evidencePath: "<evidencePath>",
+  kind: "<kind>",
+  signaturePath: "<signaturePath>",
+  publicKeyPath: "<publicKeyPath>",
+  tenantId: "<tenantId>",
+  projectId: "<projectId>",
+});
+```
+
+```python Python
+result = client.tempera_voice.create_voice_palette_handoff({
+    "profileId": "<profileId>",
+    "evidencePath": "<evidencePath>",
+    "kind": "<kind>",
+    "signaturePath": "<signaturePath>",
+    "publicKeyPath": "<publicKeyPath>",
+    "tenantId": "<tenantId>",
+    "projectId": "<projectId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_voice", "create_voice_palette_handoff", &[
+    ("profileId", "<profileId>".into()),
+    ("evidencePath", "<evidencePath>".into()),
+    ("kind", "<kind>".into()),
+    ("signaturePath", "<signaturePath>".into()),
+    ("publicKeyPath", "<publicKeyPath>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("projectId", "<projectId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### publishVoicePaletteHandoff
+
+`POST /v1/evals/palette-handoffs:publish`
+
+Publish Palette Handoff.
+
+- **Producer operationId:** `publishVoicePaletteHandoff`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-voice`.
+- **Scope:** `eval:run`
+- **Call as:** TypeScript `client.temperaVoice.publishVoicePaletteHandoff()` · Python `client.tempera_voice.publish_voice_palette_handoff()` · Rust `build_request("tempera_voice", "publish_voice_palette_handoff", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `handoffPath` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaVoice.publishVoicePaletteHandoff({
+  handoffPath: "<handoffPath>",
+});
+```
+
+```python Python
+result = client.tempera_voice.publish_voice_palette_handoff({
+    "handoffPath": "<handoffPath>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_voice", "publish_voice_palette_handoff", &[
+    ("handoffPath", "<handoffPath>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.

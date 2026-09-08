@@ -17,34 +17,33 @@ function jsonResponse(body, { status = 200, headers = {} } = {}) {
   });
 }
 
+/** A product key as a hostname label: controlPlane -> control-plane. */
+function kebabCase(productKey) {
+  return productKey.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
+}
+
+/**
+ * One base URL per product, derived from the generated product table rather
+ * than hand-listed. A product added to surface.json is covered by every
+ * conformance loop below the moment it lands, and a wrong product key still
+ * shows up as a wrong host.
+ */
+export function testBaseUrls() {
+  return Object.fromEntries(
+    Object.keys(TEMPERA_PRODUCTS).map((productKey) => [
+      productKey,
+      `https://${kebabCase(productKey)}.example.test`,
+    ]),
+  );
+}
+
 function testClient(overrides = {}) {
   const calls = [];
   const client = createTemperaClient({
     auth: new TemperaAuth({ issuerUrl: "https://api.tempera.dev", apiKey: "tp_key_1" }),
     accountToken: "account_token_1",
     introspectionSecret: "introspect_secret_1",
-    baseUrls: {
-      controlPlane: "https://cp.example.test",
-      palette: "https://palette.example.test",
-      tempo: "https://tempo.example.test",
-      temperaLlm: "https://llm.example.test",
-      temperaVoice: "https://voice.example.test",
-      temperaRisk: "https://risk.example.test",
-      temperaWorkflows: "https://workflows.example.test",
-      temperaGym: "https://gym.example.test",
-      temperaBio: "https://bio.example.test",
-      temperaDocument: "https://document.example.test",
-      temperaPayments: "https://payments.example.test",
-      cradle: "https://cradle.example.test",
-      remi: "https://remi.example.test",
-      dataEngine: "https://data-engine.example.test",
-      humanData: "https://human.example.test",
-      temperaDropshipping: "https://dropshipping.example.test",
-      temperaBusiness: "https://business.example.test",
-      tempJs: "https://tempjs.example.test",
-      tempOS: "https://tempos.example.test",
-      arrha: "https://arrha.example.test",
-    },
+    baseUrls: testBaseUrls(),
     fetch: async (url, options) => {
       calls.push({ url: new URL(url), options });
       return jsonResponse({ ok: true });
@@ -105,18 +104,20 @@ test("every surface operation dispatches its method, path, and auth header", asy
 test("Voice pending filters and pagination reach the request without changing legacy calls", async () => {
   const { client, calls } = testClient();
   await client.temperaVoice.listVoiceSessionActions({
-    session_id: "session-fixture", status: "pending", limit: 100, after: "action-fixture",
+    session_id: "session-fixture", status: "pending", page_size: 100, page_token: "action-fixture",
   });
   assert.equal(calls[0].url.pathname, "/v1/sessions/session-fixture/actions");
   assert.deepEqual(Object.fromEntries(calls[0].url.searchParams), {
-    status: "pending", limit: "100", after: "action-fixture",
+    status: "pending", pageSize: "100", pageToken: "action-fixture",
   });
   assert.equal(calls[0].options.method, "GET");
   assert.equal(calls[0].options.body, undefined);
   await client.temperaVoice.listVoiceSessionActions({ session_id: "session-fixture" });
   assert.equal(calls[1].url.search, "");
-  await client.temperaVoice.listVoiceSessions({ profile_ref: "profile-fixture", limit: 20 });
-  assert.equal(calls[2].url.searchParams.get("profile_ref"), "profile-fixture");
+  await client.temperaVoice.listVoiceSessions({ profile_ref: "profile-fixture", page_size: 20 });
+  assert.equal(calls[2].url.searchParams.get("profileRef"), "profile-fixture");
+  assert.equal(calls[2].url.searchParams.get("pageSize"), "20");
+  assert.equal(calls[2].url.searchParams.get("profile_ref"), null);
 });
 
 test("declared query and body parameters are routed to the right place", async () => {
@@ -345,7 +346,7 @@ test("required query parameters fail fast and emit their canonical wire names", 
     () => client.temperaPayments.getPaymentIntent({ payment_intent_id: "pi_1" }),
     (error) =>
       error instanceof TemperaSdkError &&
-      error.message.includes('missing required query parameter "tenant_id"'),
+      error.message.includes('missing required query parameter "tenantId"'),
   );
   assert.equal(calls.length, 0, "missing required query must not make a request");
 
@@ -353,8 +354,9 @@ test("required query parameters fail fast and emit their canonical wire names", 
     payment_intent_id: "pi_1",
     tenant_id: "tenant_1",
   });
-  assert.equal(calls[0].url.searchParams.get("tenant_id"), "tenant_1");
-  assert.equal(calls[0].url.searchParams.get("tenantId"), null);
+  assert.equal(calls[0].url.pathname, "/v1/paymentIntents/pi_1");
+  assert.equal(calls[0].url.searchParams.get("tenantId"), "tenant_1");
+  assert.equal(calls[0].url.searchParams.get("tenant_id"), null);
 
   await client.temperaGym.listRuns({ environment_id: "env_1", page_size: "" });
   assert.equal(calls[1].url.searchParams.get("pageSize"), "");
@@ -713,7 +715,7 @@ test("passthrough request covers products without typed operations", async () =>
   const { client, calls } = testClient();
   const result = await client.tempJs.request("/runtime/status");
   assert.deepEqual(result, { ok: true });
-  assert.equal(calls[0].url.toString(), "https://tempjs.example.test/runtime/status");
+  assert.equal(calls[0].url.toString(), "https://temp-js.example.test/runtime/status");
 });
 
 test("environment presets resolve control-plane, palette, and product gateway base URLs", async () => {

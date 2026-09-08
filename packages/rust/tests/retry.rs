@@ -236,7 +236,7 @@ fn retry_reuses_original_idempotency_key() {
         assert!(
             request
                 .body
-                .contains(&format!("\"idempotency_key\":\"{IDEMPOTENCY_KEY}\"")),
+                .contains(&format!("\"idempotencyKey\":\"{IDEMPOTENCY_KEY}\"")),
             "identical idempotency key resent: {}",
             request.body
         );

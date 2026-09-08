@@ -18,6 +18,25 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 LEDGER = ROOT / "contracts" / "sdk-exact-source-gaps.json"
+def verified_repositories() -> set[str]:
+    """Repositories the generated exact-source matrix already reproduces.
+
+    A gap for one of these is not a blocker, it is stale paperwork that hides
+    the fact that verification is already running. Refusing it is what stopped
+    tempera-bio, human-data, remi and tempo from staying excluded from CI for
+    months behind an expiring note.
+    """
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location(
+        "sync_vendored_openapi", Path(__file__).resolve().parent / "sync-vendored-openapi.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    spec.loader.exec_module(module)
+    return {config["source_repo"] for config in module.PRODUCTS.values()}
+
+
 EXACT_KEYS = {
     "repository",
     "source_commit",
@@ -50,6 +69,7 @@ def validate(repository: str | None = None) -> list[str]:
     if not isinstance(entries, list):
         return failures + ["gap ledger gaps must be an array"]
     indexed: dict[str, dict[str, str]] = {}
+    verified = verified_repositories()
     for index, entry in enumerate(entries):
         label = f"gaps[{index}]"
         if not isinstance(entry, dict) or set(entry) != EXACT_KEYS:
@@ -63,6 +83,11 @@ def validate(repository: str | None = None) -> list[str]:
             failures.append(f"{label} duplicates repository {repo}")
             continue
         indexed[repo] = entry
+        if repo in verified:
+            failures.append(
+                f"{label} claims {repo} cannot be verified, but the exact-source "
+                "matrix reproduces it; delete the gap"
+            )
         if re.fullmatch(r"[0-9a-f]{40}", entry["source_commit"]) is None:
             failures.append(f"{label} source_commit is not a 40-character SHA")
         if sources.get(repo) != {entry["source_commit"]}:

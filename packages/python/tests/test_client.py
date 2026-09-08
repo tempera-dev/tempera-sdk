@@ -19,6 +19,24 @@ from tempera_sdk.client import PRODUCT_ATTRS
 SAMPLE_PARAM_VALUE = "sample-value"
 
 
+def kebab_case(product_key):
+    """A product key as a hostname label: controlPlane -> control-plane."""
+    return re.sub(r"([a-z0-9])([A-Z])", r"\1-\2", product_key).lower()
+
+
+def make_base_urls():
+    """One base URL per product, derived from the generated product table
+    rather than hand-listed, so a product added to surface.json is covered by
+    every conformance loop below the moment it lands. Keys are the snake_case
+    attribute names; camelCase registry keys are accepted too, which
+    DispatchTest.test_base_urls_accept_camel_case_registry_keys still proves.
+    """
+    return {
+        PRODUCT_ATTRS[product_key]: f"https://{kebab_case(product_key)}.example.test"
+        for product_key in PRODUCTS
+    }
+
+
 def sample_path_param(op, key):
     template = op["path_param_templates"].get(key)
     return template.replace("*", SAMPLE_PARAM_VALUE) if template else SAMPLE_PARAM_VALUE
@@ -53,29 +71,7 @@ def make_client(**overrides):
         auth=TemperaAuth(issuer_url="https://api.tempera.dev", api_key="tp_key_1"),
         account_token="account_token_1",
         introspection_secret="introspect_secret_1",
-        base_urls={
-            # snake_case attribute names and camelCase registry keys both work.
-            "control_plane": "https://cp.example.test",
-            "palette": "https://palette.example.test",
-            "tempo": "https://tempo.example.test",
-            "tempera_llm": "https://llm.example.test",
-            "tempera_voice": "https://voice.example.test",
-            "tempera_risk": "https://risk.example.test",
-            "tempera_workflows": "https://workflows.example.test",
-            "tempera_gym": "https://gym.example.test",
-            "tempera_bio": "https://bio.example.test",
-            "tempera_document": "https://document.example.test",
-            "tempera_payments": "https://payments.example.test",
-            "cradle": "https://cradle.example.test",
-            "remi": "https://remi.example.test",
-            "data_engine": "https://data-engine.example.test",
-            "human_data": "https://human.example.test",
-            "tempera_dropshipping": "https://dropshipping.example.test",
-            "tempera_business": "https://business.example.test",
-            "tempJs": "https://tempjs.example.test",
-            "temp_os": "https://tempos.example.test",
-            "arrha": "https://arrha.example.test",
-        },
+        base_urls=make_base_urls(),
         transport=transport,
     )
     kwargs.update(overrides)
@@ -410,17 +406,25 @@ class DispatchTest(unittest.TestCase):
     def test_voice_pending_queries_and_legacy_requests(self):
         client, transport = make_client()
         client.tempera_voice.list_voice_session_actions(
-            session_id="session-fixture", status="pending", limit=100, after="action-fixture"
+            session_id="session-fixture",
+            status="pending",
+            page_size=100,
+            page_token="action-fixture",
         )
         call = transport.calls[-1]
         self.assertEqual(call["path"], "/v1/sessions/session-fixture/actions")
-        self.assertEqual(call["query"], {"status": "pending", "limit": "100", "after": "action-fixture"})
+        self.assertEqual(
+            call["query"],
+            {"status": "pending", "pageSize": "100", "pageToken": "action-fixture"},
+        )
         self.assertEqual(call["method"], "GET")
         self.assertIsNone(call["data"])
         client.tempera_voice.list_voice_session_actions(session_id="session-fixture")
         self.assertEqual(transport.calls[-1]["query"], {})
-        client.tempera_voice.list_voice_sessions(profile_ref="profile-fixture", limit=20)
-        self.assertEqual(transport.calls[-1]["query"]["profile_ref"], "profile-fixture")
+        client.tempera_voice.list_voice_sessions(profile_ref="profile-fixture", page_size=20)
+        self.assertEqual(transport.calls[-1]["query"]["profileRef"], "profile-fixture")
+        self.assertEqual(transport.calls[-1]["query"]["pageSize"], "20")
+        self.assertNotIn("profile_ref", transport.calls[-1]["query"])
 
     def test_declared_query_and_body_parameters_route_to_the_right_place(self):
         client, transport = make_client()
@@ -801,7 +805,7 @@ class DispatchTest(unittest.TestCase):
     def test_required_query_parameters_fail_fast_and_use_canonical_wire_names(self):
         client, transport = make_client()
         with self.assertRaisesRegex(
-            TemperaSdkError, r'missing required query parameter "tenant_id"'
+            TemperaSdkError, r'missing required query parameter "tenantId"'
         ):
             client.tempera_payments.get_payment_intent({"payment_intent_id": "pi_1"})
         self.assertEqual(transport.calls, [])
@@ -809,8 +813,9 @@ class DispatchTest(unittest.TestCase):
         client.tempera_payments.get_payment_intent(
             {"payment_intent_id": "pi_1", "tenant_id": "tenant_1"}
         )
-        self.assertEqual(transport.calls[0]["query"]["tenant_id"], "tenant_1")
-        self.assertNotIn("tenantId", transport.calls[0]["query"])
+        self.assertEqual(transport.calls[0]["path"], "/v1/paymentIntents/pi_1")
+        self.assertEqual(transport.calls[0]["query"]["tenantId"], "tenant_1")
+        self.assertNotIn("tenant_id", transport.calls[0]["query"])
 
         client.tempera_gym.list_runs({"environment_id": "env_1", "page_size": ""})
         self.assertIn("pageSize=", transport.calls[1]["url"])
@@ -837,6 +842,16 @@ class DispatchTest(unittest.TestCase):
         with self.assertRaises(TemperaSdkError) as ctx:
             client.control_plane.me()
         self.assertIn("create_hosted_session()", str(ctx.exception))
+
+    def test_base_urls_accept_camel_case_registry_keys(self):
+        transport = FakeTransport()
+        client = TemperaClient(
+            base_urls={"tempJs": "https://tempjs.example.test"}, transport=transport
+        )
+        client.temp_js.request("/runtime/status")
+        self.assertEqual(
+            transport.calls[0]["url"], "https://tempjs.example.test/runtime/status"
+        )
 
     def test_product_operations_without_credentials_fail_with_guidance(self):
         client = TemperaClient(base_urls={"palette": "https://palette.example.test"}, transport=FakeTransport())
@@ -889,7 +904,7 @@ class DispatchTest(unittest.TestCase):
         client, transport = make_client()
         result = client.temp_js.request("/runtime/status")
         self.assertEqual(result, {"ok": True})
-        self.assertEqual(transport.calls[0]["url"], "https://tempjs.example.test/runtime/status")
+        self.assertEqual(transport.calls[0]["url"], "https://temp-js.example.test/runtime/status")
 
     def test_environment_presets_resolve_control_plane_palette_and_gateways(self):
         transport = FakeTransport()

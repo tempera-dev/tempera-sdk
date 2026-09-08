@@ -1,9 +1,9 @@
 {
-  "openapi": "3.0.3",
+  "openapi": "3.1.0",
   "info": {
     "title": "tempera-gym API",
     "version": "0.8.0",
-    "description": "Authenticated task, verifier, episode, environment, trajectory, synchronous rollout, outcome-blind Bio batch proposal, and independent sealed-evaluation surface over the shared Tempera RL substrate. Hand-written; tests/test_service.py contains a drift gate that keeps the (method, path, operationId) triples in lockstep with src/tempera_gym/service.py ROUTES. Ordinary HTTP errors use the AIP-193 google.rpc.Status JSON mapping {\"error\": {code, message, status, details}}. Auth is a static bearer (TEMPERA_GYM_API_TOKEN) or a centrally introspected token with audience tempera-gym; reads require scope dataset:read, rollout execution requires eval:run.",
+    "description": "Authenticated task, verifier, episode, environment, trajectory, synchronous rollout, outcome-blind Bio batch proposal, and independent sealed-evaluation surface over the shared Tempera RL substrate. Hand-written; tests/test_service.py contains a drift gate that keeps the (method, path, operationId) triples in lockstep with src/tempera_gym/service.py ROUTES. Every non-2xx response is the shared google.rpc.Status envelope (AIP-193). Auth is a static bearer (TEMPERA_GYM_API_TOKEN) or a centrally introspected token with audience tempera-gym; reads require scope dataset:read, rollout execution requires eval:run.",
     "license": {
       "name": "Proprietary",
       "identifier": "LicenseRef-Proprietary"
@@ -15,12 +15,14 @@
       "description": "local development default (TEMPERA_GYM_HOST/TEMPERA_GYM_PORT)"
     }
   ],
+  "x-tempera-protocol-routes": [
+    "/healthz"
+  ],
   "paths": {
     "/healthz": {
       "get": {
         "operationId": "health.get",
-        "x-tempera-auth-audience": null,
-        "x-tempera-required-scope": null,
+        "x-tempera-auth-kind": "none",
         "summary": "Liveness probe (unauthenticated)",
         "security": [],
         "responses": {
@@ -62,6 +64,7 @@
     "/v1/environments": {
       "get": {
         "operationId": "environments.list",
+        "x-tempera-auth-kind": "oauthResource",
         "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "dataset:read",
         "summary": "Built-in and boot-trusted versioned environment catalog",
@@ -127,13 +130,13 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -141,6 +144,7 @@
     "/v1/domains": {
       "get": {
         "operationId": "domains.list",
+        "x-tempera-auth-kind": "oauthResource",
         "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "dataset:read",
         "summary": "Domain capabilities represented in the versioned task catalog",
@@ -209,10 +213,10 @@
             }
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -220,6 +224,7 @@
     "/v1/tasks": {
       "get": {
         "operationId": "tasks.list",
+        "x-tempera-auth-kind": "oauthResource",
         "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "dataset:read",
         "summary": "List versioned task definitions without agent inputs",
@@ -275,13 +280,13 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -289,6 +294,7 @@
     "/v1/tasks/{task}": {
       "get": {
         "operationId": "tasks.get",
+        "x-tempera-auth-kind": "oauthResource",
         "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "dataset:read",
         "summary": "Get one immutable task definition including its agent-visible input",
@@ -320,16 +326,16 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -337,6 +343,7 @@
     "/v1/tasks/{task}:evaluate": {
       "post": {
         "operationId": "tasks.evaluate",
+        "x-tempera-auth-kind": "oauthResource",
         "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "eval:run",
         "summary": "Deterministically verify one candidate without creating an episode",
@@ -401,19 +408,19 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           },
           "412": {
-            "$ref": "#/components/responses/FailedPrecondition"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -421,6 +428,7 @@
     "/v1/verifiers": {
       "get": {
         "operationId": "verifiers.list",
+        "x-tempera-auth-kind": "oauthResource",
         "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "dataset:read",
         "summary": "List verifier identities and bound tasks without grader content",
@@ -458,10 +466,10 @@
             }
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -469,6 +477,7 @@
     "/v1/episodes": {
       "get": {
         "operationId": "episodes.list",
+        "x-tempera-auth-kind": "oauthResource",
         "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "dataset:read",
         "summary": "List durable episode snapshots, newest first",
@@ -524,18 +533,19 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           }
         }
       },
       "post": {
         "operationId": "episodes.create",
+        "x-tempera-auth-kind": "oauthResource",
         "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "eval:run",
         "summary": "Reset a versioned task into a durable episode",
@@ -585,19 +595,19 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           },
           "412": {
-            "$ref": "#/components/responses/FailedPrecondition"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -605,6 +615,7 @@
     "/v1/episodes/{episode}": {
       "get": {
         "operationId": "episodes.get",
+        "x-tempera-auth-kind": "oauthResource",
         "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "dataset:read",
         "summary": "Read and content-verify one durable episode snapshot",
@@ -633,13 +644,13 @@
             }
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -647,6 +658,7 @@
     "/v1/episodes/{episode}:step": {
       "post": {
         "operationId": "episodes.step",
+        "x-tempera-auth-kind": "oauthResource",
         "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "eval:run",
         "summary": "Apply one schema-validated action and persist the transition",
@@ -714,22 +726,22 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/Conflict"
+            "$ref": "#/components/responses/Error"
           },
           "412": {
-            "$ref": "#/components/responses/FailedPrecondition"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -737,6 +749,7 @@
     "/v1/episodes/{episode}:export": {
       "post": {
         "operationId": "episodes.export",
+        "x-tempera-auth-kind": "oauthResource",
         "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "eval:run",
         "summary": "Retain a completed Gym episode and trajectory in Data Engine",
@@ -800,25 +813,25 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/Conflict"
+            "$ref": "#/components/responses/Error"
           },
           "412": {
-            "$ref": "#/components/responses/FailedPrecondition"
+            "$ref": "#/components/responses/Error"
           },
           "503": {
-            "$ref": "#/components/responses/Unavailable"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -826,6 +839,7 @@
     "/v1/runs": {
       "get": {
         "operationId": "runs.list",
+        "x-tempera-auth-kind": "oauthResource",
         "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "dataset:read",
         "summary": "Persisted-run index, newest first",
@@ -872,16 +886,16 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "412": {
-            "$ref": "#/components/responses/FailedPrecondition"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -889,6 +903,7 @@
     "/v1/runs/{run}": {
       "get": {
         "operationId": "runs.get",
+        "x-tempera-auth-kind": "oauthResource",
         "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "dataset:read",
         "summary": "Full trajectory envelope (incl. metadata.timing) for one run",
@@ -929,16 +944,16 @@
             }
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           },
           "500": {
-            "$ref": "#/components/responses/DataLoss"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -946,6 +961,7 @@
     "/v1/rollouts": {
       "post": {
         "operationId": "rollouts.create",
+        "x-tempera-auth-kind": "oauthResource",
         "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "eval:run",
         "summary": "Execute one rollout synchronously, store it, return the summary",
@@ -1015,25 +1031,25 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           },
           "412": {
-            "$ref": "#/components/responses/FailedPrecondition"
+            "$ref": "#/components/responses/Error"
           },
           "413": {
-            "$ref": "#/components/responses/PayloadTooLarge"
+            "$ref": "#/components/responses/Error"
           },
           "503": {
-            "$ref": "#/components/responses/Unavailable"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1041,6 +1057,7 @@
     "/v1/bio-proposal-policies": {
       "get": {
         "operationId": "bioProposalPolicies.list",
+        "x-tempera-auth-kind": "oauthResource",
         "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "dataset:read",
         "summary": "Discover the four frozen outcome-blind Bio proposal policies",
@@ -1073,8 +1090,10 @@
                       }
                     },
                     "nextPageToken": {
-                      "type": "string",
-                      "nullable": true
+                      "type": [
+                        "string",
+                        "null"
+                      ]
                     }
                   }
                 }
@@ -1082,13 +1101,13 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1096,6 +1115,7 @@
     "/v1/bio-proposals:proposeBatch": {
       "post": {
         "operationId": "bioProposals.proposeBatch",
+        "x-tempera-auth-kind": "oauthResource",
         "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "eval:run",
         "summary": "Propose one constrained Bio candidate batch without outcome access",
@@ -1132,16 +1152,16 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "413": {
-            "$ref": "#/components/responses/PayloadTooLarge"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1149,6 +1169,7 @@
     "/v1/sealed-evaluators": {
       "get": {
         "operationId": "sealedEvaluators.list",
+        "x-tempera-auth-kind": "oauthResource",
         "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "dataset:read",
         "summary": "Discover boot-trusted exact sealed-evaluator identities",
@@ -1188,10 +1209,10 @@
             }
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1199,6 +1220,7 @@
     "/v1/sealed-evaluations": {
       "get": {
         "operationId": "sealedEvaluations.list",
+        "x-tempera-auth-kind": "oauthResource",
         "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "dataset:read",
         "summary": "List persisted sealed-evaluation precommits and results",
@@ -1237,16 +1259,16 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "412": {
-            "$ref": "#/components/responses/FailedPrecondition"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1254,6 +1276,7 @@
     "/v1/sealed-evaluations:precommit": {
       "post": {
         "operationId": "sealedEvaluations.precommit",
+        "x-tempera-auth-kind": "oauthResource",
         "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "eval:run",
         "summary": "Persist an opaque sealed-suite commitment before policy freeze",
@@ -1310,16 +1333,16 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "412": {
-            "$ref": "#/components/responses/FailedPrecondition"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1327,6 +1350,7 @@
     "/v1/sealed-evaluations/{evaluation}": {
       "get": {
         "operationId": "sealedEvaluations.get",
+        "x-tempera-auth-kind": "oauthResource",
         "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "dataset:read",
         "summary": "Read one verified precommit and aggregate sealed result",
@@ -1356,16 +1380,16 @@
             }
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           },
           "412": {
-            "$ref": "#/components/responses/FailedPrecondition"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1373,6 +1397,7 @@
     "/v1/sealed-evaluations/{evaluation}:run": {
       "post": {
         "operationId": "sealedEvaluations.run",
+        "x-tempera-auth-kind": "oauthResource",
         "x-tempera-auth-audience": "tempera-gym",
         "x-tempera-required-scope": "eval:run",
         "summary": "Evaluate one frozen policy through its exact sealed adapter",
@@ -1426,22 +1451,22 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/Conflict"
+            "$ref": "#/components/responses/Error"
           },
           "412": {
-            "$ref": "#/components/responses/FailedPrecondition"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1701,10 +1726,12 @@
             }
           },
           "maxPerGroup": {
-            "type": "integer",
+            "type": [
+              "integer",
+              "null"
+            ],
             "minimum": 1,
-            "maximum": 64,
-            "nullable": true
+            "maximum": 64
           },
           "minimumGroupCoverage": {
             "type": "integer",
@@ -2449,12 +2476,14 @@
             "$ref": "#/components/schemas/SealedEvaluationPrecommit"
           },
           "result": {
-            "allOf": [
+            "anyOf": [
               {
                 "$ref": "#/components/schemas/SealedEvaluationResult"
+              },
+              {
+                "type": "null"
               }
-            ],
-            "nullable": true
+            ]
           }
         }
       },
@@ -2842,17 +2871,23 @@
             "type": "boolean"
           },
           "verifierResult": {
-            "type": "object",
-            "nullable": true
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "trajectoryContentHash": {
-            "type": "string",
-            "nullable": true,
+            "type": [
+              "string",
+              "null"
+            ],
             "pattern": "^[a-f0-9]{64}$"
           },
           "lastTransition": {
-            "type": "object",
-            "nullable": true
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "createdAt": {
             "type": "string",
@@ -2945,48 +2980,68 @@
             ]
           },
           "environmentDigest": {
-            "allOf": [
+            "anyOf": [
               {
                 "$ref": "#/components/schemas/Digest"
+              },
+              {
+                "type": "null"
               }
-            ],
-            "nullable": true
+            ]
           },
           "imageDigest": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "resourceLimits": {
-            "type": "object",
-            "nullable": true
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "observationSchema": {
-            "type": "object",
-            "nullable": true
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "actionSchema": {
-            "type": "object",
-            "nullable": true
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "infoSchema": {
-            "type": "object",
-            "nullable": true
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "actionSpace": {
-            "type": "object",
-            "nullable": true
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "safety": {
-            "type": "object",
-            "nullable": true
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "adapter": {
-            "type": "object",
-            "nullable": true
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "provenance": {
-            "type": "object",
-            "nullable": true
+            "type": [
+              "object",
+              "null"
+            ]
           }
         }
       },
@@ -3037,12 +3092,16 @@
             "type": "number"
           },
           "terminalReason": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "durationMs": {
-            "type": "number",
-            "nullable": true
+            "type": [
+              "number",
+              "null"
+            ]
           }
         }
       },
@@ -3082,133 +3141,77 @@
           }
         }
       },
-      "GoogleRpcStatus": {
+      "Status": {
         "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "code",
-          "message",
-          "status",
-          "details"
-        ],
-        "properties": {
-          "code": {
-            "type": "integer"
-          },
-          "message": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string"
-          },
-          "details": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "additionalProperties": true
-            }
-          }
-        }
-      },
-      "Error": {
-        "type": "object",
+        "description": "The google.rpc.Status error envelope required of every Tempera API (AIP-193).",
         "required": [
           "error"
         ],
+        "additionalProperties": false,
         "properties": {
           "error": {
-            "$ref": "#/components/schemas/GoogleRpcStatus"
+            "type": "object",
+            "required": [
+              "code",
+              "status",
+              "message"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "code": {
+                "type": "integer",
+                "description": "The HTTP status code, repeated in the body so the envelope is self-describing."
+              },
+              "status": {
+                "type": "string",
+                "description": "The canonical google.rpc.Code name, for example INVALID_ARGUMENT.",
+                "enum": [
+                  "CANCELLED",
+                  "UNKNOWN",
+                  "INVALID_ARGUMENT",
+                  "DEADLINE_EXCEEDED",
+                  "NOT_FOUND",
+                  "ALREADY_EXISTS",
+                  "PERMISSION_DENIED",
+                  "UNAUTHENTICATED",
+                  "RESOURCE_EXHAUSTED",
+                  "FAILED_PRECONDITION",
+                  "ABORTED",
+                  "OUT_OF_RANGE",
+                  "UNIMPLEMENTED",
+                  "INTERNAL",
+                  "UNAVAILABLE",
+                  "DATA_LOSS"
+                ]
+              },
+              "message": {
+                "type": "string",
+                "description": "A developer-facing description that is safe to log and safe to show."
+              },
+              "details": {
+                "type": "array",
+                "description": "Structured error details. Present but empty when there are none.",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "requestId": {
+                "type": "string",
+                "description": "The server-assigned request identifier, mirrored from the x-request-id response header."
+              }
+            }
           }
         }
       }
     },
     "responses": {
-      "Unauthenticated": {
-        "description": "Missing or invalid bearer token",
+      "Error": {
+        "description": "A google.rpc.Status error envelope.",
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "Forbidden": {
-        "description": "Wrong audience or missing scope",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "InvalidArgument": {
-        "description": "Malformed request",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "NotFound": {
-        "description": "Unknown route, environment, or run",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "FailedPrecondition": {
-        "description": "Planned environment or unconfigured data directory",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "Conflict": {
-        "description": "Episode is complete or was stepped concurrently",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "PayloadTooLarge": {
-        "description": "Request body over the bound",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "Unavailable": {
-        "description": "Upstream (LLM gateway or introspection) failed closed",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "DataLoss": {
-        "description": "Stored envelope failed content-hash verification",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
+              "$ref": "#/components/schemas/Status"
             }
           }
         }

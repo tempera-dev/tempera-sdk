@@ -22,13 +22,13 @@ final class CommerceRequestsTests: XCTestCase {
         XCTAssertEqual(
             Set(body.keys),
             [
-                "merchant_id", "product_classification", "name", "description", "photo_url",
-                "currency", "unit_amount_minor", "expires_at",
+                "merchantId", "productClassification", "name", "description", "photoUrl",
+                "currency", "unitAmountMinor", "expiresAt",
             ])
-        XCTAssertEqual(body["merchant_id"] as? String, merchantID.uuidString.lowercased())
+        XCTAssertEqual(body["merchantId"] as? String, merchantID.uuidString.lowercased())
         XCTAssertEqual(body["currency"] as? String, "USD")
-        XCTAssertEqual(body["unit_amount_minor"] as? Int, 1_250)
-        XCTAssertEqual(body["expires_at"] as? String, input.encodedExpiresAt)
+        XCTAssertEqual(body["unitAmountMinor"] as? Int, 1_250)
+        XCTAssertEqual(body["expiresAt"] as? String, input.encodedExpiresAt)
         XCTAssertTrue((input.encodedExpiresAt ?? "").hasSuffix("Z"))
         XCTAssertTrue((input.encodedExpiresAt ?? "").contains("."))
     }
@@ -43,8 +43,8 @@ final class CommerceRequestsTests: XCTestCase {
         let body = try XCTUnwrap(
             JSONSerialization.jsonObject(with: input.encoded(merchantID: merchantID))
                 as? [String: Any])
-        XCTAssertNil(body["photo_url"])
-        XCTAssertNil(body["expires_at"])
+        XCTAssertNil(body["photoUrl"])
+        XCTAssertNil(body["expiresAt"])
         XCTAssertThrowsError(
             try CreateCatalogOfferInput(
                 productClassification: .offlineServices,
@@ -93,8 +93,8 @@ final class CommerceRequestsTests: XCTestCase {
         let first = try input.encoded()
         XCTAssertEqual(first, try input.encoded())
         let body = try XCTUnwrap(JSONSerialization.jsonObject(with: first) as? [String: Any])
-        XCTAssertEqual(body["offer_id"] as? String, "offer-1")
-        XCTAssertEqual(body["offer_revision"] as? Int, 1)
+        XCTAssertEqual(body["offerId"] as? String, "offer-1")
+        XCTAssertEqual(body["offerRevision"] as? Int, 1)
         XCTAssertEqual(body["quantity"] as? Int, 10_000)
         XCTAssertThrowsError(try CreateSaleOrderInput(offerID: "bad/id", quantity: 1))
         XCTAssertThrowsError(try CreateSaleOrderInput(offerID: "offer-1", quantity: 0))

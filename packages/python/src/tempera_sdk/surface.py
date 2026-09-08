@@ -7,9 +7,9 @@ TypeScript and Rust packages.
 
 SURFACE_VERSION = 6
 
-AUDIENCES = ('palette', 'tempo', 'cradle', 'remi', 'human-data', 'data-engine', 'tempera-mcp', 'tempera-code', 'tempera-llm', 'tempera-workflows', 'tempera-gym', 'tempera-bio', 'tempera-document', 'tempera-risk', 'tempera-investigations', 'tempera-payments', 'tempera-dropshipping', 'tempera-voice', 'tempera-clearing', 'tempera-business')
+AUDIENCES = ('palette', 'tempo', 'cradle', 'remi', 'human-data', 'data-engine', 'tempera-mcp', 'tempera-code', 'tempera-llm', 'tempera-connectors', 'tempera-workflows', 'tempera-gym', 'tempera-bio', 'tempera-document', 'tempera-risk', 'tempera-investigations', 'tempera-payments', 'tempera-dropshipping', 'tempera-voice', 'tempera-clearing', 'tempera-business')
 DEFAULT_AUDIENCE = 'palette'
-SCOPES = ('mcp:invoke', 'memory:read', 'memory:write', 'memory:manage', 'trace:read', 'trace:write', 'scenario:read', 'scenario:write', 'dataset:read', 'dataset:write', 'connector:read', 'connector:run', 'connector:manage', 'eval:run', 'training:publish', 'review:gold:manage', 'review:resolve', 'workflow:read', 'workflow:write', 'workflow:run', 'bio:source:read', 'bio:proposal:write', 'bio:measurement:verify', 'bio:decision:write', 'bio:experiment:approve', 'bio:experiment:submit', 'bio:signer:manage', 'model:read', 'model:invoke', 'usage:reserve', 'document:read', 'document:write', 'risk:read', 'risk:write', 'risk:review', 'investigation:read', 'investigation:write', 'investigation:run', 'investigation:review', 'pii:unmask', 'payments:intents:read', 'payments:intents:write', 'payments:receipts:read', 'payments:webhooks:write', 'payments:refunds:write', 'payments:admin', 'payments:merchants:read', 'payments:merchants:write', 'orders:read', 'orders:commerce:write', 'voice:read', 'voice:write', 'voice:stream', 'clearing:actions:read', 'clearing:actions:propose', 'clearing:actions:commit', 'clearing:actions:reconcile', 'clearing:receipts:read', 'clearing:actions:approve', 'admin')
+SCOPES = ('mcp:invoke', 'memory:read', 'memory:write', 'memory:manage', 'trace:read', 'trace:write', 'scenario:read', 'scenario:write', 'dataset:read', 'dataset:write', 'connector:read', 'connector:run', 'connector:manage', 'eval:run', 'training:publish', 'review:gold:manage', 'review:resolve', 'workflow:read', 'workflow:write', 'workflow:run', 'bio:source:read', 'bio:proposal:write', 'bio:measurement:verify', 'bio:decision:write', 'bio:experiment:approve', 'bio:experiment:submit', 'bio:signer:manage', 'model:read', 'model:invoke', 'usage:reserve', 'document:read', 'document:write', 'risk:read', 'risk:write', 'risk:review', 'investigation:read', 'investigation:write', 'investigation:run', 'investigation:review', 'pii:unmask', 'payments:intents:read', 'payments:intents:write', 'payments:receipts:read', 'payments:webhooks:write', 'payments:refunds:write', 'payments:admin', 'payments:merchants:read', 'payments:merchants:write', 'orders:read', 'orders:commerce:write', 'voice:read', 'voice:write', 'voice:stream', 'clearing:actions:read', 'clearing:actions:propose', 'clearing:actions:commit', 'clearing:actions:reconcile', 'clearing:receipts:read', 'clearing:actions:approve', 'connection:invoke', 'connection:write', 'connection:read', 'admin', 'business:read', 'business:write', 'business:review', 'orders:write', 'orders:approve', 'offline_access')
 
 ISSUER_PATHS = {'authorize': '/oauth/authorize', 'token': '/oauth/token', 'revoke': '/oauth/revoke', 'introspect': '/v1/oauth/introspect', 'mcp': '/mcp'}
 
@@ -183,7 +183,7 @@ PRODUCTS = {
         "name": "human-data",
         "repository": "https://github.com/tempera-dev/human-data",
         "env_var": "TEMPERA_HUMAN_DATA_URL",
-        "audience": "human-data",
+        "audience": "data-engine",
         "description": "Browser-agent human review: reviewers inspect provisioned browser-session evidence, record decisions, return candidate cases to the agent quality loop, and compute a typed qualification receipt."
     },
     "tempJs": {
@@ -220,6 +220,13 @@ PRODUCTS = {
         "env_var": "TEMPERA_BUSINESS_URL",
         "audience": "tempera-business",
         "description": "Tenant-scoped business profile and business-case drafting with per-fact provenance and an explicit document review lifecycle."
+    },
+    "temperaConnectors": {
+        "name": "tempera-connectors",
+        "repository": "https://github.com/tempera-dev/tempera-connectors-runtime",
+        "env_var": "TEMPERA_CONNECTORS_URL",
+        "audience": "tempera-connectors",
+        "description": "Tenant-scoped external API connection control plane and bounded invocation runtime."
     }
 }
 
@@ -865,6 +872,34 @@ OPERATIONS = {
             "prepare_commit_required": False,
             "safe_retry": "none",
             "description": "Mint a workspace API key (tp_...); the secret is returned exactly once. The workspace ids must match the token's workspace."
+        },
+        {
+            "id": "list_api_key_audiences",
+            "upstream_operation_id": "listApiKeyAudiences",
+            "method": "GET",
+            "path": "/v1/api-keys/audiences",
+            "auth": "account",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "List the resource audiences this caller may mint an API key for, the scopes issuable at each, and why the remaining scopes are refused."
         },
         {
             "id": "revoke_api_key",
@@ -6647,8 +6682,8 @@ OPERATIONS = {
             "upstream_operation_id": "chatCompletions.create",
             "method": "POST",
             "path": "/v1/chat/completions",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-llm",
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -6690,8 +6725,8 @@ OPERATIONS = {
             "upstream_operation_id": "models.list",
             "method": "GET",
             "path": "/v1/models",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-llm",
             "path_params": [],
             "path_param_templates": {},
             "query": [
@@ -6718,8 +6753,8 @@ OPERATIONS = {
             "upstream_operation_id": "responses.create",
             "method": "POST",
             "path": "/v1/responses",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-llm",
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -6780,37 +6815,12 @@ OPERATIONS = {
             "description": "Call GET /healthz."
         },
         {
-            "id": "get_open_api",
-            "upstream_operation_id": "getOpenApi",
-            "method": "GET",
-            "path": "/openapi.yaml",
-            "auth": "none",
-            "auth_audience": None,
-            "path_params": [],
-            "path_param_templates": {},
-            "query": [],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "request_body_kind": "none",
-            "request_content_type": None,
-            "scope": None,
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "read",
-            "description": "Call GET /openapi.yaml."
-        },
-        {
             "id": "execute_graph_read",
             "upstream_operation_id": "executeGraphRead",
             "method": "POST",
             "path": "/v1/projects/{project}/graphReads/execute",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project"
             ],
@@ -6825,7 +6835,7 @@ OPERATIONS = {
             ],
             "body": [
                 "request",
-                "people_binding"
+                "peopleBinding"
             ],
             "forbidden_body": [],
             "required_body": [
@@ -6834,7 +6844,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
-            "scope": None,
+            "scope": "risk:write",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
@@ -6845,8 +6855,8 @@ OPERATIONS = {
             "upstream_operation_id": "createSubject",
             "method": "POST",
             "path": "/v1/projects/{project}/subjects",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project"
             ],
@@ -6861,22 +6871,22 @@ OPERATIONS = {
             ],
             "body": [
                 "schema",
-                "subject_id",
-                "subject_type",
+                "subjectId",
+                "subjectType",
                 "state",
                 "attributes",
-                "external_refs"
+                "externalRefs"
             ],
             "forbidden_body": [],
             "required_body": [
                 "schema",
-                "subject_id",
-                "subject_type"
+                "subjectId",
+                "subjectType"
             ],
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
-            "scope": None,
+            "scope": "risk:write",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
@@ -6887,13 +6897,16 @@ OPERATIONS = {
             "upstream_operation_id": "listSubjects",
             "method": "GET",
             "path": "/v1/projects/{project}/subjects",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project"
             ],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "required_query": [],
             "headers": [],
             "required_headers": [],
@@ -6903,7 +6916,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "none",
             "request_content_type": None,
-            "scope": None,
+            "scope": "risk:read",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "read",
@@ -6914,8 +6927,8 @@ OPERATIONS = {
             "upstream_operation_id": "getSubject",
             "method": "GET",
             "path": "/v1/projects/{project}/subjects/{subjectId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project",
                 "subjectId"
@@ -6931,7 +6944,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "none",
             "request_content_type": None,
-            "scope": None,
+            "scope": "risk:read",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "read",
@@ -6942,8 +6955,8 @@ OPERATIONS = {
             "upstream_operation_id": "ingestEvent",
             "method": "POST",
             "path": "/v1/projects/{project}/events:ingest",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project"
             ],
@@ -6954,30 +6967,30 @@ OPERATIONS = {
             "required_headers": [],
             "body": [
                 "schema",
-                "event_id",
-                "event_type",
-                "subject_id",
-                "counterparty_id",
-                "device_id",
+                "eventId",
+                "eventType",
+                "subjectId",
+                "counterpartyId",
+                "deviceId",
                 "amount",
-                "event_time",
-                "received_at",
+                "eventTime",
+                "receivedAt",
                 "attributes",
-                "evidence_refs"
+                "evidenceRefs"
             ],
             "forbidden_body": [],
             "required_body": [
                 "schema",
-                "event_id",
-                "event_type",
-                "subject_id",
-                "event_time",
-                "received_at"
+                "eventId",
+                "eventType",
+                "subjectId",
+                "eventTime",
+                "receivedAt"
             ],
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
-            "scope": None,
+            "scope": "risk:write",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
@@ -6988,8 +7001,8 @@ OPERATIONS = {
             "upstream_operation_id": "registerPolicy",
             "method": "POST",
             "path": "/v1/projects/{project}/policies",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project"
             ],
@@ -7004,40 +7017,40 @@ OPERATIONS = {
             ],
             "body": [
                 "schema",
-                "policy_id",
+                "policyId",
                 "version",
-                "use_case",
+                "useCase",
                 "segment",
                 "description",
-                "default_action",
-                "default_reason_code",
-                "missing_data_action",
-                "missing_data_reason_code",
-                "conflict_strategy",
+                "defaultAction",
+                "defaultReasonCode",
+                "missingDataAction",
+                "missingDataReasonCode",
+                "conflictStrategy",
                 "rules",
-                "model_dependencies",
-                "change_ticket",
-                "created_by"
+                "modelDependencies",
+                "changeTicket",
+                "createdBy"
             ],
             "forbidden_body": [],
             "required_body": [
                 "schema",
-                "policy_id",
+                "policyId",
                 "version",
-                "use_case",
-                "default_action",
-                "default_reason_code",
-                "missing_data_action",
-                "missing_data_reason_code",
-                "conflict_strategy",
+                "useCase",
+                "defaultAction",
+                "defaultReasonCode",
+                "missingDataAction",
+                "missingDataReasonCode",
+                "conflictStrategy",
                 "rules",
-                "change_ticket",
-                "created_by"
+                "changeTicket",
+                "createdBy"
             ],
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
-            "scope": None,
+            "scope": "risk:write",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
@@ -7048,8 +7061,8 @@ OPERATIONS = {
             "upstream_operation_id": "registerModel",
             "method": "POST",
             "path": "/v1/projects/{project}/models",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project"
             ],
@@ -7064,41 +7077,41 @@ OPERATIONS = {
             ],
             "body": [
                 "schema",
-                "model_id",
+                "modelId",
                 "version",
                 "state",
-                "artifact_sha256",
+                "artifactSha256",
                 "runtime",
-                "input_features",
-                "output_feature",
-                "training_data_refs",
-                "validation_report_ref",
+                "inputFeatures",
+                "outputFeature",
+                "trainingDataRefs",
+                "validationReportRef",
                 "calibration",
                 "limitations",
-                "created_at",
-                "approval_ids"
+                "createdAt",
+                "approvalIds"
             ],
             "forbidden_body": [],
             "required_body": [
                 "schema",
-                "model_id",
+                "modelId",
                 "version",
                 "state",
-                "artifact_sha256",
+                "artifactSha256",
                 "runtime",
-                "input_features",
-                "output_feature",
-                "training_data_refs",
-                "validation_report_ref",
+                "inputFeatures",
+                "outputFeature",
+                "trainingDataRefs",
+                "validationReportRef",
                 "calibration",
                 "limitations",
-                "created_at",
-                "approval_ids"
+                "createdAt",
+                "approvalIds"
             ],
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
-            "scope": None,
+            "scope": "risk:write",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
@@ -7109,8 +7122,8 @@ OPERATIONS = {
             "upstream_operation_id": "ingestModelScore",
             "method": "POST",
             "path": "/v1/projects/{project}/modelScores:ingest",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project"
             ],
@@ -7126,7 +7139,7 @@ OPERATIONS = {
             "body": [
                 "schema",
                 "algorithm",
-                "key_id",
+                "keyId",
                 "score",
                 "signature"
             ],
@@ -7134,14 +7147,14 @@ OPERATIONS = {
             "required_body": [
                 "schema",
                 "algorithm",
-                "key_id",
+                "keyId",
                 "score",
                 "signature"
             ],
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
-            "scope": None,
+            "scope": "risk:write",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
@@ -7152,8 +7165,8 @@ OPERATIONS = {
             "upstream_operation_id": "createApproval",
             "method": "POST",
             "path": "/v1/projects/{project}/approvals",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project"
             ],
@@ -7174,7 +7187,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
-            "scope": None,
+            "scope": "risk:review",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
@@ -7185,8 +7198,8 @@ OPERATIONS = {
             "upstream_operation_id": "deployPolicy",
             "method": "POST",
             "path": "/v1/projects/{project}/policyDeployments",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project"
             ],
@@ -7196,28 +7209,28 @@ OPERATIONS = {
             "headers": [],
             "required_headers": [],
             "body": [
-                "deployment_id",
-                "policy_id",
-                "policy_version",
+                "deploymentId",
+                "policyId",
+                "policyVersion",
                 "mode",
-                "traffic_percent",
-                "effective_at",
-                "approval_ids"
+                "trafficPercent",
+                "effectiveAt",
+                "approvalIds"
             ],
             "forbidden_body": [],
             "required_body": [
-                "deployment_id",
-                "policy_id",
-                "policy_version",
+                "deploymentId",
+                "policyId",
+                "policyVersion",
                 "mode",
-                "traffic_percent",
-                "effective_at",
-                "approval_ids"
+                "trafficPercent",
+                "effectiveAt",
+                "approvalIds"
             ],
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
-            "scope": None,
+            "scope": "risk:write",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
@@ -7228,8 +7241,8 @@ OPERATIONS = {
             "upstream_operation_id": "createDecision",
             "method": "POST",
             "path": "/v1/projects/{project}/decisions",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project"
             ],
@@ -7240,30 +7253,30 @@ OPERATIONS = {
             "required_headers": [],
             "body": [
                 "schema",
-                "request_id",
-                "subject_id",
-                "event_id",
-                "use_case",
+                "requestId",
+                "subjectId",
+                "eventId",
+                "useCase",
                 "segment",
                 "features",
-                "model_versions",
-                "evidence_refs",
-                "as_of",
-                "available_as_of",
-                "execution_mode"
+                "modelVersions",
+                "evidenceRefs",
+                "asOf",
+                "availableAsOf",
+                "executionMode"
             ],
             "forbidden_body": [],
             "required_body": [
                 "schema",
-                "request_id",
-                "subject_id",
-                "use_case",
-                "as_of"
+                "requestId",
+                "subjectId",
+                "useCase",
+                "asOf"
             ],
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
-            "scope": None,
+            "scope": "risk:write",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
@@ -7274,8 +7287,8 @@ OPERATIONS = {
             "upstream_operation_id": "getDecision",
             "method": "GET",
             "path": "/v1/projects/{project}/decisions/{decisionId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project",
                 "decisionId"
@@ -7291,7 +7304,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "none",
             "request_content_type": None,
-            "scope": None,
+            "scope": "risk:read",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "read",
@@ -7302,8 +7315,8 @@ OPERATIONS = {
             "upstream_operation_id": "recordOutcome",
             "method": "POST",
             "path": "/v1/projects/{project}/outcomes",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project"
             ],
@@ -7322,7 +7335,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
-            "scope": None,
+            "scope": "risk:write",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
@@ -7333,8 +7346,8 @@ OPERATIONS = {
             "upstream_operation_id": "createScreening",
             "method": "POST",
             "path": "/v1/projects/{project}/screenings",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project"
             ],
@@ -7344,24 +7357,24 @@ OPERATIONS = {
             "headers": [],
             "required_headers": [],
             "body": [
-                "index_name",
+                "indexName",
                 "subject",
-                "permissible_purpose",
-                "case_id",
+                "permissiblePurpose",
+                "caseId",
                 "threshold",
-                "max_candidates"
+                "maxCandidates"
             ],
             "forbidden_body": [],
             "required_body": [
-                "index_name",
+                "indexName",
                 "subject",
-                "permissible_purpose",
-                "case_id"
+                "permissiblePurpose",
+                "caseId"
             ],
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
-            "scope": None,
+            "scope": "risk:write",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
@@ -7372,13 +7385,16 @@ OPERATIONS = {
             "upstream_operation_id": "listCases",
             "method": "GET",
             "path": "/v1/projects/{project}/cases",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project"
             ],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "required_query": [],
             "headers": [],
             "required_headers": [],
@@ -7388,7 +7404,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "none",
             "request_content_type": None,
-            "scope": None,
+            "scope": "risk:read",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "read",
@@ -7399,8 +7415,8 @@ OPERATIONS = {
             "upstream_operation_id": "createCase",
             "method": "POST",
             "path": "/v1/projects/{project}/cases",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project"
             ],
@@ -7415,33 +7431,33 @@ OPERATIONS = {
             ],
             "body": [
                 "schema",
-                "case_id",
-                "case_type",
+                "caseId",
+                "caseType",
                 "state",
-                "subject_ids",
-                "alert_ids",
-                "assigned_to",
+                "subjectIds",
+                "alertIds",
+                "assignedTo",
                 "disposition",
-                "evidence_refs",
+                "evidenceRefs",
                 "attributes"
             ],
             "forbidden_body": [],
             "required_body": [
                 "schema",
-                "case_id",
-                "case_type",
+                "caseId",
+                "caseType",
                 "state",
-                "subject_ids",
-                "alert_ids",
-                "assigned_to",
+                "subjectIds",
+                "alertIds",
+                "assignedTo",
                 "disposition",
-                "evidence_refs",
+                "evidenceRefs",
                 "attributes"
             ],
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
-            "scope": None,
+            "scope": "risk:write",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
@@ -7452,8 +7468,8 @@ OPERATIONS = {
             "upstream_operation_id": "getCase",
             "method": "GET",
             "path": "/v1/projects/{project}/cases/{caseId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project",
                 "caseId"
@@ -7469,7 +7485,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "none",
             "request_content_type": None,
-            "scope": None,
+            "scope": "risk:read",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "read",
@@ -7480,8 +7496,8 @@ OPERATIONS = {
             "upstream_operation_id": "getCaseDossier",
             "method": "GET",
             "path": "/v1/projects/{project}/cases/{caseId}/dossier",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project",
                 "caseId"
@@ -7497,7 +7513,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "none",
             "request_content_type": None,
-            "scope": None,
+            "scope": "risk:read",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "read",
@@ -7508,8 +7524,8 @@ OPERATIONS = {
             "upstream_operation_id": "createAccessGrant",
             "method": "POST",
             "path": "/v1/projects/{project}/accessGrants",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project"
             ],
@@ -7524,41 +7540,41 @@ OPERATIONS = {
             ],
             "body": [
                 "schema",
-                "grant_id",
-                "case_id",
-                "subject_ids",
-                "actor_ids",
-                "permissible_purpose",
-                "allowed_fields",
-                "allowed_providers",
-                "third_party_disclosure_allowed",
-                "valid_from",
-                "expires_at",
-                "created_by",
-                "approval_ids",
-                "change_ticket"
+                "grantId",
+                "caseId",
+                "subjectIds",
+                "actorIds",
+                "permissiblePurpose",
+                "allowedFields",
+                "allowedProviders",
+                "thirdPartyDisclosureAllowed",
+                "validFrom",
+                "expiresAt",
+                "createdBy",
+                "approvalIds",
+                "changeTicket"
             ],
             "forbidden_body": [],
             "required_body": [
                 "schema",
-                "grant_id",
-                "case_id",
-                "subject_ids",
-                "actor_ids",
-                "permissible_purpose",
-                "allowed_fields",
-                "allowed_providers",
-                "third_party_disclosure_allowed",
-                "valid_from",
-                "expires_at",
-                "created_by",
-                "approval_ids",
-                "change_ticket"
+                "grantId",
+                "caseId",
+                "subjectIds",
+                "actorIds",
+                "permissiblePurpose",
+                "allowedFields",
+                "allowedProviders",
+                "thirdPartyDisclosureAllowed",
+                "validFrom",
+                "expiresAt",
+                "createdBy",
+                "approvalIds",
+                "changeTicket"
             ],
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
-            "scope": None,
+            "scope": "risk:write",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
@@ -7569,8 +7585,8 @@ OPERATIONS = {
             "upstream_operation_id": "revokeAccessGrant",
             "method": "POST",
             "path": "/v1/projects/{project}/accessGrants/{grantId}/revoke",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project",
                 "grantId"
@@ -7590,7 +7606,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
-            "scope": None,
+            "scope": "risk:write",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
@@ -7601,8 +7617,8 @@ OPERATIONS = {
             "upstream_operation_id": "createPeopleDirectoryProfile",
             "method": "POST",
             "path": "/v1/projects/{project}/peopleDirectoryProfiles",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project"
             ],
@@ -7617,38 +7633,38 @@ OPERATIONS = {
             ],
             "body": [
                 "schema",
-                "profile_id",
-                "subject_id",
-                "entity_kind",
+                "profileId",
+                "subjectId",
+                "entityKind",
                 "anchors",
                 "attributes",
-                "source_ids",
-                "evidence_refs",
-                "valid_from",
-                "valid_to",
-                "recorded_at",
-                "retention_expires_at",
-                "non_decisional"
+                "sourceIds",
+                "evidenceRefs",
+                "validFrom",
+                "validTo",
+                "recordedAt",
+                "retentionExpiresAt",
+                "nonDecisional"
             ],
             "forbidden_body": [],
             "required_body": [
                 "schema",
-                "profile_id",
-                "subject_id",
-                "entity_kind",
+                "profileId",
+                "subjectId",
+                "entityKind",
                 "anchors",
                 "attributes",
-                "source_ids",
-                "evidence_refs",
-                "valid_from",
-                "valid_to",
-                "recorded_at",
-                "retention_expires_at"
+                "sourceIds",
+                "evidenceRefs",
+                "validFrom",
+                "validTo",
+                "recordedAt",
+                "retentionExpiresAt"
             ],
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
-            "scope": None,
+            "scope": "risk:write",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
@@ -7659,8 +7675,8 @@ OPERATIONS = {
             "upstream_operation_id": "searchPeople",
             "method": "POST",
             "path": "/v1/projects/{project}/people/search",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project"
             ],
@@ -7671,37 +7687,37 @@ OPERATIONS = {
             "required_headers": [],
             "body": [
                 "schema",
-                "query_id",
-                "subject_id",
-                "access_grant_id",
-                "case_id",
-                "permissible_purpose",
-                "entity_kind",
+                "queryId",
+                "subjectId",
+                "accessGrantId",
+                "caseId",
+                "permissiblePurpose",
+                "entityKind",
                 "anchors",
                 "attributes",
-                "max_candidates",
-                "as_of",
-                "known_at"
+                "maxCandidates",
+                "asOf",
+                "knownAt"
             ],
             "forbidden_body": [],
             "required_body": [
                 "schema",
-                "query_id",
-                "subject_id",
-                "access_grant_id",
-                "case_id",
-                "permissible_purpose",
-                "entity_kind",
+                "queryId",
+                "subjectId",
+                "accessGrantId",
+                "caseId",
+                "permissiblePurpose",
+                "entityKind",
                 "anchors",
                 "attributes",
-                "max_candidates",
-                "as_of",
-                "known_at"
+                "maxCandidates",
+                "asOf",
+                "knownAt"
             ],
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
-            "scope": None,
+            "scope": "risk:write",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
@@ -7712,13 +7728,16 @@ OPERATIONS = {
             "upstream_operation_id": "listSourcePacks",
             "method": "GET",
             "path": "/v1/projects/{project}/sourcePacks",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project"
             ],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
             "required_query": [],
             "headers": [],
             "required_headers": [],
@@ -7728,7 +7747,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "none",
             "request_content_type": None,
-            "scope": None,
+            "scope": "risk:read",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "read",
@@ -7739,8 +7758,8 @@ OPERATIONS = {
             "upstream_operation_id": "getSourcePack",
             "method": "GET",
             "path": "/v1/projects/{project}/sourcePacks/{sourcePackId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project",
                 "sourcePackId"
@@ -7756,7 +7775,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "none",
             "request_content_type": None,
-            "scope": None,
+            "scope": "risk:read",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "read",
@@ -7767,8 +7786,8 @@ OPERATIONS = {
             "upstream_operation_id": "getSourceCoverage",
             "method": "GET",
             "path": "/v1/projects/{project}/sourceCoverage/{sourcePackId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project",
                 "sourcePackId"
@@ -7784,7 +7803,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "none",
             "request_content_type": None,
-            "scope": None,
+            "scope": "risk:read",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "read",
@@ -7795,8 +7814,8 @@ OPERATIONS = {
             "upstream_operation_id": "createResearchJob",
             "method": "POST",
             "path": "/v1/projects/{project}/researchJobs",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project"
             ],
@@ -7813,39 +7832,39 @@ OPERATIONS = {
                 "subject",
                 "question",
                 "purpose",
-                "permissible_purpose",
-                "output_schema",
+                "permissiblePurpose",
+                "outputSchema",
                 "budgets",
-                "source_policy",
-                "case_id",
-                "access_grant_id",
-                "actor_id",
-                "retention_policy_id",
-                "human_review_required",
-                "candidate_binding",
-                "provider_plan",
-                "investigation_profile",
-                "source_pack_ids",
-                "continuation_of_job_id"
+                "sourcePolicy",
+                "caseId",
+                "accessGrantId",
+                "actorId",
+                "retentionPolicyId",
+                "humanReviewRequired",
+                "candidateBinding",
+                "providerPlan",
+                "investigationProfile",
+                "sourcePackIds",
+                "continuationOfJobId"
             ],
             "forbidden_body": [],
             "required_body": [
                 "subject",
                 "question",
                 "purpose",
-                "permissible_purpose",
-                "output_schema",
+                "permissiblePurpose",
+                "outputSchema",
                 "budgets",
-                "source_policy",
-                "case_id",
-                "actor_id",
-                "retention_policy_id",
-                "human_review_required"
+                "sourcePolicy",
+                "caseId",
+                "actorId",
+                "retentionPolicyId",
+                "humanReviewRequired"
             ],
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
-            "scope": None,
+            "scope": "risk:write",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
@@ -7856,8 +7875,8 @@ OPERATIONS = {
             "upstream_operation_id": "getResearchJob",
             "method": "GET",
             "path": "/v1/projects/{project}/researchJobs/{jobId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project",
                 "jobId"
@@ -7873,7 +7892,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "none",
             "request_content_type": None,
-            "scope": None,
+            "scope": "risk:read",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "read",
@@ -7884,8 +7903,8 @@ OPERATIONS = {
             "upstream_operation_id": "streamResearchJobEvents",
             "method": "GET",
             "path": "/v1/projects/{project}/researchJobs/{jobId}/events:stream",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project",
                 "jobId"
@@ -7904,7 +7923,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "none",
             "request_content_type": None,
-            "scope": None,
+            "scope": "risk:read",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "read",
@@ -7915,8 +7934,8 @@ OPERATIONS = {
             "upstream_operation_id": "getResearchJobResult",
             "method": "GET",
             "path": "/v1/projects/{project}/researchJobs/{jobId}/result",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project",
                 "jobId"
@@ -7932,7 +7951,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "none",
             "request_content_type": None,
-            "scope": None,
+            "scope": "risk:read",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "read",
@@ -7943,8 +7962,8 @@ OPERATIONS = {
             "upstream_operation_id": "listResearchJobEvents",
             "method": "GET",
             "path": "/v1/projects/{project}/researchJobs/{jobId}/events",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project",
                 "jobId"
@@ -7952,7 +7971,8 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [
                 "afterSequence",
-                "pageSize"
+                "pageSize",
+                "pageToken"
             ],
             "required_query": [],
             "headers": [],
@@ -7963,7 +7983,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "none",
             "request_content_type": None,
-            "scope": None,
+            "scope": "risk:read",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "read",
@@ -7974,8 +7994,8 @@ OPERATIONS = {
             "upstream_operation_id": "cancelResearchJob",
             "method": "POST",
             "path": "/v1/projects/{project}/researchJobs/{jobId}:cancel",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project",
                 "jobId"
@@ -7995,7 +8015,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
-            "scope": None,
+            "scope": "risk:write",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
@@ -8006,8 +8026,8 @@ OPERATIONS = {
             "upstream_operation_id": "reviewResearchJob",
             "method": "POST",
             "path": "/v1/projects/{project}/researchJobs/{jobId}:review",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project",
                 "jobId"
@@ -8029,7 +8049,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
-            "scope": None,
+            "scope": "risk:review",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
@@ -8040,8 +8060,8 @@ OPERATIONS = {
             "upstream_operation_id": "verifyRiskClearingEvidenceLive",
             "method": "POST",
             "path": "/v1/projects/{project}/riskClearingEvidence:verifyLive",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project"
             ],
@@ -8060,7 +8080,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
-            "scope": None,
+            "scope": "risk:write",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
@@ -8071,8 +8091,8 @@ OPERATIONS = {
             "upstream_operation_id": "abortRiskClearingReservation",
             "method": "POST",
             "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:abort",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project",
                 "reservationId"
@@ -8098,7 +8118,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
-            "scope": None,
+            "scope": "risk:write",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
@@ -8109,8 +8129,8 @@ OPERATIONS = {
             "upstream_operation_id": "markRiskClearingOutcomeUnknown",
             "method": "POST",
             "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:markOutcomeUnknown",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project",
                 "reservationId"
@@ -8136,7 +8156,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
-            "scope": None,
+            "scope": "risk:write",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
@@ -8147,8 +8167,8 @@ OPERATIONS = {
             "upstream_operation_id": "openRiskClearingExposure",
             "method": "POST",
             "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:open",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project",
                 "reservationId"
@@ -8174,7 +8194,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
-            "scope": None,
+            "scope": "risk:write",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
@@ -8185,8 +8205,8 @@ OPERATIONS = {
             "upstream_operation_id": "recordRiskClearingProvisionalOutcome",
             "method": "POST",
             "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:recordProvisionalOutcome",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project",
                 "reservationId"
@@ -8212,7 +8232,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
-            "scope": None,
+            "scope": "risk:write",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
@@ -8223,8 +8243,8 @@ OPERATIONS = {
             "upstream_operation_id": "recordRiskClearingCompensation",
             "method": "POST",
             "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:recordCompensation",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project",
                 "reservationId"
@@ -8250,7 +8270,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
-            "scope": None,
+            "scope": "risk:write",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
@@ -8261,8 +8281,8 @@ OPERATIONS = {
             "upstream_operation_id": "disputeRiskClearingExposure",
             "method": "POST",
             "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:dispute",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project",
                 "reservationId"
@@ -8288,7 +8308,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
-            "scope": None,
+            "scope": "risk:write",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
@@ -8299,8 +8319,8 @@ OPERATIONS = {
             "upstream_operation_id": "settleRiskClearingExposure",
             "method": "POST",
             "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:settle",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project",
                 "reservationId"
@@ -8328,7 +8348,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
-            "scope": None,
+            "scope": "risk:write",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
@@ -8339,11 +8359,36 @@ OPERATIONS = {
             "upstream_operation_id": "exportAudit",
             "method": "GET",
             "path": "/v1/projects/{project}/audit:export",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
             "path_params": [
                 "project"
             ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "risk:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "Call GET /v1/projects/{project}/audit:export."
+        },
+        {
+            "id": "get_open_api",
+            "upstream_operation_id": "getOpenApi",
+            "method": "GET",
+            "path": "/openapi.json",
+            "auth": "none",
+            "auth_audience": None,
+            "path_params": [],
             "path_param_templates": {},
             "query": [],
             "required_query": [],
@@ -8359,7 +8404,34 @@ OPERATIONS = {
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "read",
-            "description": "Call GET /v1/projects/{project}/audit:export."
+            "description": "Call GET /openapi.json."
+        },
+        {
+            "id": "ingest_payment_observation",
+            "upstream_operation_id": "ingestPaymentObservation",
+            "method": "POST",
+            "path": "/v1/projects/{project}/paymentObservations:ingest",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-risk",
+            "path_params": [
+                "project"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "risk:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "none",
+            "description": "Ingest one provider-owned payment observation as a trusted event."
         }
     ],
     "temperaWorkflows": [
@@ -9716,6 +9788,56 @@ OPERATIONS = {
     ],
     "temperaBio": [
         {
+            "id": "get_bio_health",
+            "upstream_operation_id": "getBioHealth",
+            "method": "GET",
+            "path": "/healthz",
+            "auth": "none",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "Liveness probe."
+        },
+        {
+            "id": "get_bio_openapi_document",
+            "upstream_operation_id": "getBioOpenapiDocument",
+            "method": "GET",
+            "path": "/openapi.json",
+            "auth": "none",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "Serve this document."
+        },
+        {
             "id": "derive_campaign_state",
             "upstream_operation_id": "deriveCampaignState",
             "method": "POST",
@@ -10137,7 +10259,7 @@ OPERATIONS = {
             "id": "get_payments_health",
             "upstream_operation_id": "getPaymentsHealth",
             "method": "GET",
-            "path": "/v1/health",
+            "path": "/healthz",
             "auth": "none",
             "auth_audience": None,
             "path_params": [],
@@ -10156,13 +10278,13 @@ OPERATIONS = {
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "read",
-            "description": "Call GET /v1/health."
+            "description": "Report that the process is reachable."
         },
         {
             "id": "create_payment_intent",
             "upstream_operation_id": "createPaymentIntent",
             "method": "POST",
-            "path": "/v1/payment_intents",
+            "path": "/v1/paymentIntents",
             "auth": "oauthResource",
             "auth_audience": "tempera-payments",
             "path_params": [],
@@ -10176,23 +10298,23 @@ OPERATIONS = {
                 "Idempotency-Key"
             ],
             "body": [
-                "tenant_id",
-                "merchant_id",
-                "risk_subject_id",
+                "tenantId",
+                "merchantId",
+                "riskSubjectId",
                 "recipient",
                 "asset",
                 "amount",
-                "expires_in_seconds"
+                "expiresInSeconds"
             ],
             "forbidden_body": [],
             "required_body": [
-                "tenant_id",
-                "merchant_id",
-                "risk_subject_id",
+                "tenantId",
+                "merchantId",
+                "riskSubjectId",
                 "recipient",
                 "asset",
                 "amount",
-                "expires_in_seconds"
+                "expiresInSeconds"
             ],
             "body_defaults": {},
             "request_body_kind": "json",
@@ -10207,18 +10329,18 @@ OPERATIONS = {
             "id": "get_payment_intent",
             "upstream_operation_id": "getPaymentIntent",
             "method": "GET",
-            "path": "/v1/payment_intents/{payment_intent_id}",
+            "path": "/v1/paymentIntents/{paymentIntentId}",
             "auth": "oauthResource",
             "auth_audience": "tempera-payments",
             "path_params": [
-                "payment_intent_id"
+                "paymentIntentId"
             ],
             "path_param_templates": {},
             "query": [
-                "tenant_id"
+                "tenantId"
             ],
             "required_query": [
-                "tenant_id"
+                "tenantId"
             ],
             "headers": [],
             "required_headers": [],
@@ -10238,18 +10360,18 @@ OPERATIONS = {
             "id": "get_payment_settlement_receipt",
             "upstream_operation_id": "getPaymentSettlementReceipt",
             "method": "GET",
-            "path": "/v1/payment_intents/{payment_intent_id}/receipt",
+            "path": "/v1/paymentIntents/{paymentIntentId}/receipt",
             "auth": "oauthResource",
             "auth_audience": "tempera-payments",
             "path_params": [
-                "payment_intent_id"
+                "paymentIntentId"
             ],
             "path_param_templates": {},
             "query": [
-                "tenant_id"
+                "tenantId"
             ],
             "required_query": [
-                "tenant_id"
+                "tenantId"
             ],
             "headers": [],
             "required_headers": [],
@@ -10269,11 +10391,11 @@ OPERATIONS = {
             "id": "create_stripe_checkout",
             "upstream_operation_id": "createStripeCheckout",
             "method": "POST",
-            "path": "/v1/payment_intents/{payment_intent_id}/stripe_checkout",
+            "path": "/v1/paymentIntents/{paymentIntentId}/stripeCheckout",
             "auth": "oauthResource",
             "auth_audience": "tempera-payments",
             "path_params": [
-                "payment_intent_id"
+                "paymentIntentId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -10285,25 +10407,25 @@ OPERATIONS = {
                 "Idempotency-Key"
             ],
             "body": [
-                "tenant_id",
+                "tenantId",
                 "currency",
-                "product_name",
-                "success_url",
-                "cancel_url"
+                "productName",
+                "successUrl",
+                "cancelUrl"
             ],
             "forbidden_body": [],
             "required_body": [
-                "tenant_id",
+                "tenantId",
                 "currency",
-                "product_name",
-                "success_url",
-                "cancel_url"
+                "productName",
+                "successUrl",
+                "cancelUrl"
             ],
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
             "scope": "payments:intents:write",
-            "physical_action": False,
+            "physical_action": True,
             "prepare_commit_required": False,
             "safe_retry": "none",
             "description": "Create an idempotent hosted Stripe Checkout session for a fiat payment intent."
@@ -10312,11 +10434,11 @@ OPERATIONS = {
             "id": "create_card_session",
             "upstream_operation_id": "createCardSession",
             "method": "POST",
-            "path": "/v1/payment_intents/{payment_intent_id}/card_session",
+            "path": "/v1/paymentIntents/{paymentIntentId}/cardSession",
             "auth": "oauthResource",
             "auth_audience": "tempera-payments",
             "path_params": [
-                "payment_intent_id"
+                "paymentIntentId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -10328,25 +10450,25 @@ OPERATIONS = {
                 "Idempotency-Key"
             ],
             "body": [
-                "tenant_id",
+                "tenantId",
                 "acquirer",
-                "success_url",
-                "failure_url",
+                "successUrl",
+                "failureUrl",
                 "billing"
             ],
             "forbidden_body": [],
             "required_body": [
-                "tenant_id",
+                "tenantId",
                 "acquirer",
-                "success_url",
-                "failure_url",
+                "successUrl",
+                "failureUrl",
                 "billing"
             ],
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
             "scope": "payments:intents:write",
-            "physical_action": False,
+            "physical_action": True,
             "prepare_commit_required": False,
             "safe_retry": "none",
             "description": "Create a hosted/tokenizing card session with the selected configured acquirer."
@@ -10386,10 +10508,10 @@ OPERATIONS = {
             "path_params": [],
             "path_param_templates": {},
             "query": [
-                "tenant_id"
+                "tenantId"
             ],
             "required_query": [
-                "tenant_id"
+                "tenantId"
             ],
             "headers": [],
             "required_headers": [],
@@ -10423,14 +10545,14 @@ OPERATIONS = {
                 "Idempotency-Key"
             ],
             "body": [
-                "tenant_id",
+                "tenantId",
                 "country",
                 "currency",
                 "category"
             ],
             "forbidden_body": [],
             "required_body": [
-                "tenant_id",
+                "tenantId",
                 "country",
                 "currency",
                 "category"
@@ -10448,18 +10570,18 @@ OPERATIONS = {
             "id": "get_merchant",
             "upstream_operation_id": "getMerchant",
             "method": "GET",
-            "path": "/v1/merchants/{merchant_id}",
+            "path": "/v1/merchants/{merchantId}",
             "auth": "oauthResource",
             "auth_audience": "tempera-payments",
             "path_params": [
-                "merchant_id"
+                "merchantId"
             ],
             "path_param_templates": {},
             "query": [
-                "tenant_id"
+                "tenantId"
             ],
             "required_query": [
-                "tenant_id"
+                "tenantId"
             ],
             "headers": [],
             "required_headers": [],
@@ -10479,11 +10601,11 @@ OPERATIONS = {
             "id": "refresh_merchant_eligibility",
             "upstream_operation_id": "refreshMerchantEligibility",
             "method": "POST",
-            "path": "/v1/merchants/{merchant_id}/refresh",
+            "path": "/v1/merchants/{merchantId}/refresh",
             "auth": "oauthResource",
             "auth_audience": "tempera-payments",
             "path_params": [
-                "merchant_id"
+                "merchantId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -10491,11 +10613,11 @@ OPERATIONS = {
             "headers": [],
             "required_headers": [],
             "body": [
-                "tenant_id"
+                "tenantId"
             ],
             "forbidden_body": [],
             "required_body": [
-                "tenant_id"
+                "tenantId"
             ],
             "body_defaults": {},
             "request_body_kind": "json",
@@ -10510,11 +10632,11 @@ OPERATIONS = {
             "id": "create_merchant_onboarding_link",
             "upstream_operation_id": "createMerchantOnboardingLink",
             "method": "POST",
-            "path": "/v1/merchants/{merchant_id}/onboarding",
+            "path": "/v1/merchants/{merchantId}/onboarding",
             "auth": "oauthResource",
             "auth_audience": "tempera-payments",
             "path_params": [
-                "merchant_id"
+                "merchantId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -10526,17 +10648,17 @@ OPERATIONS = {
                 "Idempotency-Key"
             ],
             "body": [
-                "tenant_id"
+                "tenantId"
             ],
             "forbidden_body": [],
             "required_body": [
-                "tenant_id"
+                "tenantId"
             ],
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
             "scope": "payments:merchants:write",
-            "physical_action": False,
+            "physical_action": True,
             "prepare_commit_required": False,
             "safe_retry": "none",
             "description": "Create a short-lived Stripe-hosted merchant onboarding link."
@@ -10545,7 +10667,7 @@ OPERATIONS = {
             "id": "receive_stripe_webhook",
             "upstream_operation_id": "receiveStripeWebhook",
             "method": "POST",
-            "path": "/v1/webhooks/stripe",
+            "path": "/v1/webhooks/stripe/callback",
             "auth": "none",
             "auth_audience": None,
             "path_params": [],
@@ -10576,8 +10698,8 @@ OPERATIONS = {
             "id": "health_get",
             "upstream_operation_id": "health.get",
             "method": "GET",
-            "path": "/v1/health",
-            "auth": "product",
+            "path": "/healthz",
+            "auth": "none",
             "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
@@ -10601,11 +10723,11 @@ OPERATIONS = {
             "id": "documents_create",
             "upstream_operation_id": "documents.create",
             "method": "POST",
-            "path": "/v1/projects/{project_id}/documents",
+            "path": "/v1/projects/{projectId}/documents",
             "auth": "oauthResource",
             "auth_audience": "tempera-document",
             "path_params": [
-                "project_id"
+                "projectId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -10632,12 +10754,12 @@ OPERATIONS = {
             "id": "documents_get",
             "upstream_operation_id": "documents.get",
             "method": "GET",
-            "path": "/v1/projects/{project_id}/documents/{document_id}",
+            "path": "/v1/projects/{projectId}/documents/{documentId}",
             "auth": "oauthResource",
             "auth_audience": "tempera-document",
             "path_params": [
-                "project_id",
-                "document_id"
+                "projectId",
+                "documentId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -10657,15 +10779,49 @@ OPERATIONS = {
             "description": "Get a document."
         },
         {
-            "id": "documents_extract",
-            "upstream_operation_id": "documents.extract",
+            "id": "documents_export_evidence",
+            "upstream_operation_id": "documents.exportEvidence",
             "method": "POST",
-            "path": "/v1/projects/{project_id}/documents/{document_id}/extractions",
+            "path": "/v1/projects/{projectId}/documents/{documentId}/evidenceExports",
             "auth": "oauthResource",
             "auth_audience": "tempera-document",
             "path_params": [
-                "project_id",
-                "document_id"
+                "projectId",
+                "documentId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [
+                "extraction",
+                "metadata"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "extraction",
+                "metadata"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "document:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "none",
+            "description": "Export validated extraction from a completed stored source for Data admission."
+        },
+        {
+            "id": "documents_extract",
+            "upstream_operation_id": "documents.extract",
+            "method": "POST",
+            "path": "/v1/projects/{projectId}/documents/{documentId}/extractions",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-document",
+            "path_params": [
+                "projectId",
+                "documentId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -10674,14 +10830,14 @@ OPERATIONS = {
             "required_headers": [],
             "body": [
                 "instructions",
-                "max_output_tokens",
+                "maxOutputTokens",
                 "schema",
-                "schema_name",
-                "unit_indexes"
+                "schemaName",
+                "unitIndexes"
             ],
             "forbidden_body": [],
             "required_body": [
-                "schema_name",
+                "schemaName",
                 "schema",
                 "instructions"
             ],
@@ -10698,12 +10854,12 @@ OPERATIONS = {
             "id": "documents_get_graph",
             "upstream_operation_id": "documents.getGraph",
             "method": "GET",
-            "path": "/v1/projects/{project_id}/documents/{document_id}/graph",
+            "path": "/v1/projects/{projectId}/documents/{documentId}/graph",
             "auth": "oauthResource",
             "auth_audience": "tempera-document",
             "path_params": [
-                "project_id",
-                "document_id"
+                "projectId",
+                "documentId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -10726,12 +10882,12 @@ OPERATIONS = {
             "id": "documents_prepare_retrieval",
             "upstream_operation_id": "documents.prepareRetrieval",
             "method": "POST",
-            "path": "/v1/projects/{project_id}/documents/{document_id}/retrievalIndexes",
+            "path": "/v1/projects/{projectId}/documents/{documentId}/retrievalIndexes",
             "auth": "oauthResource",
             "auth_audience": "tempera-document",
             "path_params": [
-                "project_id",
-                "document_id"
+                "projectId",
+                "documentId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -10756,12 +10912,12 @@ OPERATIONS = {
             "id": "documents_search",
             "upstream_operation_id": "documents.search",
             "method": "POST",
-            "path": "/v1/projects/{project_id}/documents/{document_id}/searches",
+            "path": "/v1/projects/{projectId}/documents/{documentId}/searches",
             "auth": "oauthResource",
             "auth_audience": "tempera-document",
             "path_params": [
-                "project_id",
-                "document_id"
+                "projectId",
+                "documentId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -10771,7 +10927,7 @@ OPERATIONS = {
             "body": [
                 "query",
                 "strategy",
-                "top_k"
+                "topK"
             ],
             "forbidden_body": [],
             "required_body": [
@@ -10790,17 +10946,17 @@ OPERATIONS = {
             "id": "document_units_list",
             "upstream_operation_id": "documentUnits.list",
             "method": "GET",
-            "path": "/v1/projects/{project_id}/documents/{document_id}/units",
+            "path": "/v1/projects/{projectId}/documents/{documentId}/units",
             "auth": "oauthResource",
             "auth_audience": "tempera-document",
             "path_params": [
-                "project_id",
-                "document_id"
+                "projectId",
+                "documentId"
             ],
             "path_param_templates": {},
             "query": [
-                "page_size",
-                "page_token"
+                "pageSize",
+                "pageToken"
             ],
             "required_query": [],
             "headers": [],
@@ -10821,12 +10977,12 @@ OPERATIONS = {
             "id": "documents_process",
             "upstream_operation_id": "documents.process",
             "method": "POST",
-            "path": "/v1/projects/{project_id}/documents/{document_id}:process",
+            "path": "/v1/projects/{projectId}/documents/{documentId}:process",
             "auth": "oauthResource",
             "auth_audience": "tempera-document",
             "path_params": [
-                "project_id",
-                "document_id"
+                "projectId",
+                "documentId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -10853,12 +11009,12 @@ OPERATIONS = {
             "id": "operations_get",
             "upstream_operation_id": "operations.get",
             "method": "GET",
-            "path": "/v1/projects/{project_id}/operations/{operation_id}",
+            "path": "/v1/projects/{projectId}/operations/{operationId}",
             "auth": "oauthResource",
             "auth_audience": "tempera-document",
             "path_params": [
-                "project_id",
-                "operation_id"
+                "projectId",
+                "operationId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -10881,11 +11037,11 @@ OPERATIONS = {
             "id": "uploads_create",
             "upstream_operation_id": "uploads.create",
             "method": "POST",
-            "path": "/v1/projects/{project_id}/uploads",
+            "path": "/v1/projects/{projectId}/uploads",
             "auth": "oauthResource",
             "auth_audience": "tempera-document",
             "path_params": [
-                "project_id"
+                "projectId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -10893,13 +11049,13 @@ OPERATIONS = {
             "headers": [],
             "required_headers": [],
             "body": [
-                "expected_byte_length",
-                "expected_sha256",
-                "media_type"
+                "expectedByteLength",
+                "expectedSha256",
+                "mediaType"
             ],
             "forbidden_body": [],
             "required_body": [
-                "media_type"
+                "mediaType"
             ],
             "body_defaults": {},
             "request_body_kind": "json",
@@ -10914,12 +11070,12 @@ OPERATIONS = {
             "id": "uploads_get",
             "upstream_operation_id": "uploads.get",
             "method": "GET",
-            "path": "/v1/projects/{project_id}/uploads/{upload_id}",
+            "path": "/v1/projects/{projectId}/uploads/{uploadId}",
             "auth": "oauthResource",
             "auth_audience": "tempera-document",
             "path_params": [
-                "project_id",
-                "upload_id"
+                "projectId",
+                "uploadId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -10941,16 +11097,18 @@ OPERATIONS = {
         {
             "id": "uploads_write",
             "upstream_operation_id": "uploads.write",
-            "method": "PUT",
-            "path": "/v1/projects/{project_id}/uploads/{upload_id}/content",
+            "method": "PATCH",
+            "path": "/v1/projects/{projectId}/uploads/{uploadId}/content",
             "auth": "oauthResource",
             "auth_audience": "tempera-document",
             "path_params": [
-                "project_id",
-                "upload_id"
+                "projectId",
+                "uploadId"
             ],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "updateMask"
+            ],
             "required_query": [],
             "headers": [],
             "required_headers": [],
@@ -10970,12 +11128,12 @@ OPERATIONS = {
             "id": "uploads_complete",
             "upstream_operation_id": "uploads.complete",
             "method": "POST",
-            "path": "/v1/projects/{project_id}/uploads/{upload_id}:complete",
+            "path": "/v1/projects/{projectId}/uploads/{uploadId}:complete",
             "auth": "oauthResource",
             "auth_audience": "tempera-document",
             "path_params": [
-                "project_id",
-                "upload_id"
+                "projectId",
+                "uploadId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -10983,7 +11141,7 @@ OPERATIONS = {
             "headers": [],
             "required_headers": [],
             "body": [
-                "byte_length",
+                "byteLength",
                 "sha256"
             ],
             "forbidden_body": [],
@@ -11641,7 +11799,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "none",
             "request_content_type": None,
-            "scope": None,
+            "scope": "admin",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "read",
@@ -11666,7 +11824,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "none",
             "request_content_type": None,
-            "scope": None,
+            "scope": "admin",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "read",
@@ -11691,7 +11849,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "none",
             "request_content_type": None,
-            "scope": None,
+            "scope": "admin",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "read",
@@ -11716,7 +11874,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "none",
             "request_content_type": None,
-            "scope": None,
+            "scope": "admin",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "read",
@@ -11744,7 +11902,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "none",
             "request_content_type": None,
-            "scope": None,
+            "scope": "admin",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "read",
@@ -11780,9 +11938,9 @@ OPERATIONS = {
                 "text"
             ],
             "body_defaults": {},
-            "request_body_kind": "none",
-            "request_content_type": None,
-            "scope": None,
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "admin",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "idempotent",
@@ -11807,9 +11965,9 @@ OPERATIONS = {
             "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
-            "request_body_kind": "none",
-            "request_content_type": None,
-            "scope": None,
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "admin",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
@@ -11844,9 +12002,9 @@ OPERATIONS = {
                 "scope"
             ],
             "body_defaults": {},
-            "request_body_kind": "none",
-            "request_content_type": None,
-            "scope": None,
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "admin",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
@@ -11874,9 +12032,9 @@ OPERATIONS = {
             "forbidden_body": [],
             "required_body": [],
             "body_defaults": {},
-            "request_body_kind": "none",
-            "request_content_type": None,
-            "scope": None,
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "admin",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
@@ -11888,7 +12046,7 @@ OPERATIONS = {
             "id": "health",
             "upstream_operation_id": "health.get",
             "method": "GET",
-            "path": "/v1/health",
+            "path": "/healthz",
             "auth": "none",
             "auth_audience": None,
             "path_params": [],
@@ -11914,8 +12072,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.useCases.list",
             "method": "GET",
             "path": "/v1/{parent}/use-cases",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -11946,8 +12104,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.useCases.get",
             "method": "GET",
             "path": "/v1/{parent}/use-cases/{useCaseId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "useCaseId"
@@ -11976,8 +12134,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.artifacts.ingest",
             "method": "POST",
             "path": "/v1/{parent}/artifacts:ingest",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -12013,8 +12171,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.connectorEvidence.ingest",
             "method": "POST",
             "path": "/v1/{parent}/connectorEvidence:ingest",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -12050,8 +12208,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.web.ingest",
             "method": "POST",
             "path": "/v1/{parent}/web:ingest",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -12090,8 +12248,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.campaigns.create",
             "method": "POST",
             "path": "/v1/{parent}/campaigns",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -12133,8 +12291,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.campaigns.list",
             "method": "GET",
             "path": "/v1/{parent}/campaigns",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -12165,8 +12323,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.campaigns.transition",
             "method": "POST",
             "path": "/v1/{parent}/campaigns/{campaignId}:transition",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "campaignId"
@@ -12204,8 +12362,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.reviewerQualifications.get",
             "method": "GET",
             "path": "/v1/{parent}/campaigns/{campaignId}/reviewer-qualification",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "campaignId"
@@ -12234,8 +12392,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.pipelines.runUseCase",
             "method": "POST",
             "path": "/v1/{parent}/pipelines:runUseCase",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -12277,8 +12435,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.expertTasks.list",
             "method": "GET",
             "path": "/v1/{parent}/expert-tasks",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -12312,8 +12470,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.reviewQualificationTasks.create",
             "method": "POST",
             "path": "/v1/{parent}/review-qualification-tasks",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -12351,8 +12509,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.reviewerRevocations.create",
             "method": "POST",
             "path": "/v1/{parent}/reviewer-revocations",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -12388,8 +12546,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.expertTasks.resolve",
             "method": "POST",
             "path": "/v1/{parent}/expert-tasks/{expertTaskId}:resolve",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "expertTaskId"
@@ -12435,8 +12593,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.expertTasks.appeal",
             "method": "POST",
             "path": "/v1/{parent}/expert-tasks/{expertTaskId}:appeal",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "expertTaskId"
@@ -12474,8 +12632,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.expertTaskAssignments.claim",
             "method": "POST",
             "path": "/v1/{parent}/expert-tasks/{expertTaskId}:claim",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "expertTaskId"
@@ -12511,8 +12669,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.expertTaskAssignments.renew",
             "method": "POST",
             "path": "/v1/{parent}/expert-tasks/{expertTaskId}:renew",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "expertTaskId"
@@ -12548,8 +12706,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.expertTaskAssignments.release",
             "method": "POST",
             "path": "/v1/{parent}/expert-tasks/{expertTaskId}:release",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "expertTaskId"
@@ -12584,8 +12742,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.expertTaskAssignments.saveDraft",
             "method": "POST",
             "path": "/v1/{parent}/expert-tasks/{expertTaskId}:saveDraft",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "expertTaskId"
@@ -12624,8 +12782,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.reviewerSessions.record",
             "method": "POST",
             "path": "/v1/{parent}/reviewer-sessions:record",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -12659,8 +12817,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.reviewOperations.get",
             "method": "GET",
             "path": "/v1/{parent}/review-operations",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -12691,8 +12849,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.metrics.get",
             "method": "GET",
             "path": "/v1/{parent}/metrics",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -12720,8 +12878,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.labelQuality.get",
             "method": "GET",
             "path": "/v1/{parent}/label-quality",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -12749,8 +12907,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.ecosystem.readiness.get",
             "method": "GET",
             "path": "/v1/{parent}/ecosystem/readiness",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -12778,8 +12936,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.artifacts.list",
             "method": "GET",
             "path": "/v1/{parent}/artifacts",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -12811,8 +12969,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.artifacts.get",
             "method": "GET",
             "path": "/v1/{parent}/artifacts/{artifactId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "artifactId"
@@ -12843,8 +13001,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.artifacts.labels.list",
             "method": "GET",
             "path": "/v1/{parent}/artifacts/{artifactId}/labels",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "artifactId"
@@ -12876,8 +13034,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.datasets.profile",
             "method": "POST",
             "path": "/v1/{parent}/datasets:profile",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -12910,8 +13068,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.jobs.create",
             "method": "POST",
             "path": "/v1/{parent}/jobs",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -12951,8 +13109,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.jobs.get",
             "method": "GET",
             "path": "/v1/{parent}/jobs/{jobId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "jobId"
@@ -12981,8 +13139,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.jobs.results.list",
             "method": "GET",
             "path": "/v1/{parent}/jobs/{jobId}/results",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "jobId"
@@ -13014,8 +13172,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.products.get",
             "method": "GET",
             "path": "/v1/{parent}/products/{productId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "productId"
@@ -13044,8 +13202,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.products.validate",
             "method": "POST",
             "path": "/v1/{parent}/products/{productId}:validate",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "productId"
@@ -13076,8 +13234,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.products.checkLeakage",
             "method": "POST",
             "path": "/v1/{parent}/products:checkLeakage",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -13111,8 +13269,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.products.manifest.get",
             "method": "GET",
             "path": "/v1/{parent}/products/{productId}/manifest",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "productId"
@@ -13141,8 +13299,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.trainingReleases.admit",
             "method": "POST",
             "path": "/v1/{parent}/training-releases:admit",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -13180,8 +13338,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.trainingReleases.get",
             "method": "GET",
             "path": "/v1/{parent}/training-releases/{releaseId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "releaseId"
@@ -13210,8 +13368,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.products.derive",
             "method": "POST",
             "path": "/v1/{parent}/products/{productId}:derive",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "productId"
@@ -13251,8 +13409,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.products.emitEval",
             "method": "POST",
             "path": "/v1/{parent}/products:emitEval",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -13286,8 +13444,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.sourceDefinitions.create",
             "method": "POST",
             "path": "/v1/{parent}/sourceDefinitions",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -13334,8 +13492,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.sourceDefinitions.list",
             "method": "GET",
             "path": "/v1/{parent}/sourceDefinitions",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -13366,8 +13524,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.sourceDefinitions.get",
             "method": "GET",
             "path": "/v1/{parent}/sourceDefinitions/{sourceDefinitionId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "sourceDefinitionId"
@@ -13396,8 +13554,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.sourceDefinitions.patch",
             "method": "PATCH",
             "path": "/v1/{parent}/sourceDefinitions/{sourceDefinitionId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "sourceDefinitionId"
@@ -13442,8 +13600,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.sourceDefinitions.run",
             "method": "POST",
             "path": "/v1/{parent}/sourceDefinitions/{sourceDefinitionId}:run",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "sourceDefinitionId"
@@ -13480,8 +13638,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.connectorRuns.list",
             "method": "GET",
             "path": "/v1/{parent}/connectorRuns",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -13512,8 +13670,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.connectorRuns.get",
             "method": "GET",
             "path": "/v1/{parent}/connectorRuns/{connectorRunId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "connectorRunId"
@@ -13542,8 +13700,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.sources.extract",
             "method": "POST",
             "path": "/v1/{parent}/sources:extract",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -13591,8 +13749,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.connectors.list",
             "method": "GET",
             "path": "/v1/{parent}/connectors",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -13623,8 +13781,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.tools.create",
             "method": "POST",
             "path": "/v1/{parent}/tools",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -13666,8 +13824,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.tools.list",
             "method": "GET",
             "path": "/v1/{parent}/tools",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -13698,8 +13856,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.tools.get",
             "method": "GET",
             "path": "/v1/{parent}/tools/{toolName}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "toolName"
@@ -13728,8 +13886,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.tools.delete",
             "method": "DELETE",
             "path": "/v1/{parent}/tools/{toolName}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "toolName"
@@ -13758,8 +13916,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.tools.invoke",
             "method": "POST",
             "path": "/v1/{parent}/tools/{toolName}:invoke",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "toolName"
@@ -13792,8 +13950,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.discoveryReleases.commit",
             "method": "POST",
             "path": "/v1/{parent}/discoveryReleases:commit",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -13845,8 +14003,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.discoveryReleases.get",
             "method": "GET",
             "path": "/v1/{parent}/discoveryReleases/{discoveryReleaseId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "discoveryReleaseId"
@@ -13875,8 +14033,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.evidenceRecords.create",
             "method": "POST",
             "path": "/v1/{parent}/evidenceRecords",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -13924,8 +14082,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.evidenceRecords.list",
             "method": "GET",
             "path": "/v1/{parent}/evidenceRecords",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -13957,8 +14115,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.evidenceRecords.get",
             "method": "GET",
             "path": "/v1/{parent}/evidenceRecords/{evidenceRecordId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "evidenceRecordId"
@@ -13987,8 +14145,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.episodes.create",
             "method": "POST",
             "path": "/v1/{parent}/episodes",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -14042,8 +14200,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.episodes.list",
             "method": "GET",
             "path": "/v1/{parent}/episodes",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -14075,8 +14233,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.episodes.get",
             "method": "GET",
             "path": "/v1/{parent}/episodes/{episodeId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "episodeId"
@@ -14105,8 +14263,8 @@ OPERATIONS = {
             "upstream_operation_id": "query_research_retrieval",
             "method": "POST",
             "path": "/v1/{parent}/researchRetrieval:query",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -14150,8 +14308,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.researchCatalogEntries.create",
             "method": "POST",
             "path": "/v1/{parent}/researchCatalogEntries",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -14193,8 +14351,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.researchCatalogEntries.list",
             "method": "GET",
             "path": "/v1/{parent}/researchCatalogEntries",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent"
             ],
@@ -14225,8 +14383,8 @@ OPERATIONS = {
             "upstream_operation_id": "projects.researchCatalogEntries.get",
             "method": "GET",
             "path": "/v1/{parent}/researchCatalogEntries/{entryId}",
-            "auth": "product",
-            "auth_audience": None,
+            "auth": "oauthResource",
+            "auth_audience": "data-engine",
             "path_params": [
                 "parent",
                 "entryId"
@@ -14253,6 +14411,56 @@ OPERATIONS = {
     ],
     "humanData": [
         {
+            "id": "get_human_data_health",
+            "upstream_operation_id": "getHumanDataHealth",
+            "method": "GET",
+            "path": "/healthz",
+            "auth": "none",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "Liveness probe."
+        },
+        {
+            "id": "get_human_data_openapi_document",
+            "upstream_operation_id": "getHumanDataOpenapiDocument",
+            "method": "GET",
+            "path": "/openapi.json",
+            "auth": "none",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "Serve this document."
+        },
+        {
             "id": "compute_qualification",
             "upstream_operation_id": "computeQualification",
             "method": "GET",
@@ -14277,7 +14485,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "none",
             "request_content_type": None,
-            "scope": None,
+            "scope": "training:publish",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "read",
@@ -14336,27 +14544,66 @@ OPERATIONS = {
             "description": "Readiness."
         },
         {
-            "id": "resolve_voice_action",
-            "upstream_operation_id": "resolveVoiceAction",
-            "method": "POST",
-            "path": "/v1/actions/{action_id}:resolve",
+            "id": "get_voice_capabilities",
+            "upstream_operation_id": "getVoiceCapabilities",
+            "method": "GET",
+            "path": "/v1/capabilities",
             "auth": "oauthResource",
             "auth_audience": "tempera-voice",
-            "path_params": [
-                "action_id"
-            ],
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "voice:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "Capabilities."
+        },
+        {
+            "id": "create_voice_agent",
+            "upstream_operation_id": "createVoiceAgent",
+            "method": "POST",
+            "path": "/v1/agents",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-voice",
+            "path_params": [],
             "path_param_templates": {},
             "query": [],
             "required_query": [],
             "headers": [],
             "required_headers": [],
             "body": [
-                "approved",
-                "note"
+                "id",
+                "name",
+                "useCase",
+                "instructions",
+                "provider",
+                "model",
+                "voice",
+                "language",
+                "outputModality",
+                "inputAudioFormat",
+                "outputAudioFormat",
+                "transcriptionModel",
+                "turnDetection",
+                "tools",
+                "retention",
+                "limits",
+                "metadata"
             ],
             "forbidden_body": [],
             "required_body": [
-                "approved"
+                "name",
+                "instructions"
             ],
             "body_defaults": {},
             "request_body_kind": "json",
@@ -14365,7 +14612,7 @@ OPERATIONS = {
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
-            "description": "Resolve Action."
+            "description": "Create Agent."
         },
         {
             "id": "list_voice_agents",
@@ -14377,7 +14624,8 @@ OPERATIONS = {
             "path_params": [],
             "path_param_templates": {},
             "query": [
-                "limit"
+                "pageSize",
+                "pageToken"
             ],
             "required_query": [],
             "headers": [],
@@ -14395,36 +14643,40 @@ OPERATIONS = {
             "description": "List Agents."
         },
         {
-            "id": "create_voice_agent",
-            "upstream_operation_id": "createVoiceAgent",
-            "method": "POST",
-            "path": "/v1/agents",
+            "id": "update_voice_agent",
+            "upstream_operation_id": "updateVoiceAgent",
+            "method": "PATCH",
+            "path": "/v1/agents/{agentId}",
             "auth": "oauthResource",
             "auth_audience": "tempera-voice",
-            "path_params": [],
+            "path_params": [
+                "agentId"
+            ],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "updateMask"
+            ],
             "required_query": [],
             "headers": [],
             "required_headers": [],
             "body": [
                 "id",
-                "input_audio_format",
-                "instructions",
-                "language",
-                "limits",
-                "metadata",
-                "model",
                 "name",
-                "output_audio_format",
-                "output_modality",
+                "useCase",
+                "instructions",
                 "provider",
-                "retention",
+                "model",
+                "voice",
+                "language",
+                "outputModality",
+                "inputAudioFormat",
+                "outputAudioFormat",
+                "transcriptionModel",
+                "turnDetection",
                 "tools",
-                "transcription_model",
-                "turn_detection",
-                "use_case",
-                "voice"
+                "retention",
+                "limits",
+                "metadata"
             ],
             "forbidden_body": [],
             "required_body": [
@@ -14438,17 +14690,17 @@ OPERATIONS = {
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
-            "description": "Create Agent."
+            "description": "Update Agent."
         },
         {
             "id": "get_voice_agent",
             "upstream_operation_id": "getVoiceAgent",
             "method": "GET",
-            "path": "/v1/agents/{agent_id}",
+            "path": "/v1/agents/{agentId}",
             "auth": "oauthResource",
             "auth_audience": "tempera-voice",
             "path_params": [
-                "agent_id"
+                "agentId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -14468,43 +14720,31 @@ OPERATIONS = {
             "description": "Get Agent."
         },
         {
-            "id": "upsert_voice_agent",
-            "upstream_operation_id": "upsertVoiceAgent",
-            "method": "PUT",
-            "path": "/v1/agents/{agent_id}",
+            "id": "create_voice_session",
+            "upstream_operation_id": "createVoiceSession",
+            "method": "POST",
+            "path": "/v1/sessions",
             "auth": "oauthResource",
             "auth_audience": "tempera-voice",
-            "path_params": [
-                "agent_id"
-            ],
+            "path_params": [],
             "path_param_templates": {},
             "query": [],
             "required_query": [],
             "headers": [],
             "required_headers": [],
             "body": [
-                "id",
-                "input_audio_format",
-                "instructions",
-                "language",
-                "limits",
-                "metadata",
-                "model",
-                "name",
-                "output_audio_format",
-                "output_modality",
-                "provider",
-                "retention",
-                "tools",
-                "transcription_model",
-                "turn_detection",
-                "use_case",
-                "voice"
+                "agentId",
+                "channel",
+                "externalId",
+                "safetyIdentifier",
+                "profileRef",
+                "goalRef",
+                "siteId",
+                "metadata"
             ],
             "forbidden_body": [],
             "required_body": [
-                "name",
-                "instructions"
+                "agentId"
             ],
             "body_defaults": {},
             "request_body_kind": "json",
@@ -14513,7 +14753,37 @@ OPERATIONS = {
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
-            "description": "Upsert Agent."
+            "description": "Create Session."
+        },
+        {
+            "id": "list_voice_sessions",
+            "upstream_operation_id": "listVoiceSessions",
+            "method": "GET",
+            "path": "/v1/sessions",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-voice",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [
+                "agentId",
+                "profileRef",
+                "pageSize",
+                "pageToken"
+            ],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "voice:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "List Sessions."
         },
         {
             "id": "get_default_voice_agent",
@@ -14541,375 +14811,14 @@ OPERATIONS = {
             "description": "Get Default Agent."
         },
         {
-            "id": "download_voice_artifact",
-            "upstream_operation_id": "downloadVoiceArtifact",
-            "method": "GET",
-            "path": "/v1/artifacts/{reference}",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-voice",
-            "path_params": [
-                "reference"
-            ],
-            "path_param_templates": {},
-            "query": [],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "request_body_kind": "none",
-            "request_content_type": None,
-            "scope": "voice:read",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "read",
-            "description": "Download Artifact."
-        },
-        {
-            "id": "upload_voice_artifact",
-            "upstream_operation_id": "uploadVoiceArtifact",
-            "method": "POST",
-            "path": "/v1/artifacts:upload",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-voice",
-            "path_params": [],
-            "path_param_templates": {},
-            "query": [],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [
-                "classification",
-                "content_base64",
-                "media_type",
-                "name"
-            ],
-            "forbidden_body": [],
-            "required_body": [
-                "name",
-                "content_base64"
-            ],
-            "body_defaults": {},
-            "request_body_kind": "json",
-            "request_content_type": "application/json",
-            "scope": "voice:write",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "none",
-            "description": "Upload Artifact."
-        },
-        {
-            "id": "get_voice_capabilities",
-            "upstream_operation_id": "getVoiceCapabilities",
-            "method": "GET",
-            "path": "/v1/capabilities",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-voice",
-            "path_params": [],
-            "path_param_templates": {},
-            "query": [],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "request_body_kind": "none",
-            "request_content_type": None,
-            "scope": "voice:read",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "read",
-            "description": "Capabilities."
-        },
-        {
-            "id": "list_voice_eval_profiles",
-            "upstream_operation_id": "listVoiceEvalProfiles",
-            "method": "GET",
-            "path": "/v1/eval-profiles",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-voice",
-            "path_params": [],
-            "path_param_templates": {},
-            "query": [],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "request_body_kind": "none",
-            "request_content_type": None,
-            "scope": "eval:run",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "read",
-            "description": "List Eval Profiles."
-        },
-        {
-            "id": "build_voice_eval_bundle",
-            "upstream_operation_id": "buildVoiceEvalBundle",
-            "method": "POST",
-            "path": "/v1/evals/bundles:build",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-voice",
-            "path_params": [],
-            "path_param_templates": {},
-            "query": [],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [
-                "adapter_import_path",
-                "adapter_import_public_key_path",
-                "adapter_import_signature_path",
-                "bundle_id",
-                "created_at",
-                "exposure_ledger_path",
-                "guardrails_path",
-                "preregistration_path",
-                "profile_id",
-                "redaction_policy_path",
-                "release_evidence_path"
-            ],
-            "forbidden_body": [],
-            "required_body": [
-                "profile_id",
-                "adapter_import_path",
-                "adapter_import_signature_path",
-                "adapter_import_public_key_path",
-                "release_evidence_path",
-                "exposure_ledger_path",
-                "redaction_policy_path",
-                "guardrails_path",
-                "preregistration_path",
-                "bundle_id"
-            ],
-            "body_defaults": {},
-            "request_body_kind": "json",
-            "request_content_type": "application/json",
-            "scope": "eval:run",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "none",
-            "description": "Build Eval Bundle."
-        },
-        {
-            "id": "create_voice_palette_handoff",
-            "upstream_operation_id": "createVoicePaletteHandoff",
-            "method": "POST",
-            "path": "/v1/evals/palette-handoffs:create",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-voice",
-            "path_params": [],
-            "path_param_templates": {},
-            "query": [],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [
-                "ab_plan_path",
-                "evidence_path",
-                "kind",
-                "profile_id",
-                "project_id",
-                "public_key_path",
-                "signature_path",
-                "tenant_id"
-            ],
-            "forbidden_body": [],
-            "required_body": [
-                "profile_id",
-                "evidence_path",
-                "kind",
-                "signature_path",
-                "public_key_path",
-                "tenant_id",
-                "project_id"
-            ],
-            "body_defaults": {},
-            "request_body_kind": "json",
-            "request_content_type": "application/json",
-            "scope": "eval:run",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "none",
-            "description": "Create Palette Handoff."
-        },
-        {
-            "id": "publish_voice_palette_handoff",
-            "upstream_operation_id": "publishVoicePaletteHandoff",
-            "method": "POST",
-            "path": "/v1/evals/palette-handoffs:publish",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-voice",
-            "path_params": [],
-            "path_param_templates": {},
-            "query": [],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [
-                "handoff_path"
-            ],
-            "forbidden_body": [],
-            "required_body": [
-                "handoff_path"
-            ],
-            "body_defaults": {},
-            "request_body_kind": "json",
-            "request_content_type": "application/json",
-            "scope": "eval:run",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "none",
-            "description": "Publish Palette Handoff."
-        },
-        {
-            "id": "import_voice_eval_result",
-            "upstream_operation_id": "importVoiceEvalResult",
-            "method": "POST",
-            "path": "/v1/evals/results:import",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-voice",
-            "path_params": [],
-            "path_param_templates": {},
-            "query": [],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [
-                "artifacts",
-                "attestation_path",
-                "attestation_public_key_path",
-                "attestation_signature_path",
-                "profile_id",
-                "sealed_result_path"
-            ],
-            "forbidden_body": [],
-            "required_body": [
-                "profile_id",
-                "sealed_result_path",
-                "artifacts"
-            ],
-            "body_defaults": {},
-            "request_body_kind": "json",
-            "request_content_type": "application/json",
-            "scope": "eval:run",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "none",
-            "description": "Import Eval Result."
-        },
-        {
-            "id": "seal_voice_eval_result",
-            "upstream_operation_id": "sealVoiceEvalResult",
-            "method": "POST",
-            "path": "/v1/evals/results:seal",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-voice",
-            "path_params": [],
-            "path_param_templates": {},
-            "query": [],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [
-                "draft",
-                "profile_id"
-            ],
-            "forbidden_body": [],
-            "required_body": [
-                "profile_id",
-                "draft"
-            ],
-            "body_defaults": {},
-            "request_body_kind": "json",
-            "request_content_type": "application/json",
-            "scope": "eval:run",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "none",
-            "description": "Seal Eval Result."
-        },
-        {
-            "id": "list_voice_sessions",
-            "upstream_operation_id": "listVoiceSessions",
-            "method": "GET",
-            "path": "/v1/sessions",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-voice",
-            "path_params": [],
-            "path_param_templates": {},
-            "query": [
-                "agent_id",
-                "profile_ref",
-                "limit"
-            ],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "request_body_kind": "none",
-            "request_content_type": None,
-            "scope": "voice:read",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "read",
-            "description": "List Sessions."
-        },
-        {
-            "id": "create_voice_session",
-            "upstream_operation_id": "createVoiceSession",
-            "method": "POST",
-            "path": "/v1/sessions",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-voice",
-            "path_params": [],
-            "path_param_templates": {},
-            "query": [],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [
-                "agent_id",
-                "channel",
-                "external_id",
-                "goal_ref",
-                "metadata",
-                "profile_ref",
-                "safety_identifier",
-                "site_id"
-            ],
-            "forbidden_body": [],
-            "required_body": [
-                "agent_id"
-            ],
-            "body_defaults": {},
-            "request_body_kind": "json",
-            "request_content_type": "application/json",
-            "scope": "voice:write",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "none",
-            "description": "Create Session."
-        },
-        {
             "id": "get_voice_session",
             "upstream_operation_id": "getVoiceSession",
             "method": "GET",
-            "path": "/v1/sessions/{session_id}",
+            "path": "/v1/sessions/{sessionId}",
             "auth": "oauthResource",
             "auth_audience": "tempera-voice",
             "path_params": [
-                "session_id"
+                "sessionId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -14929,50 +14838,20 @@ OPERATIONS = {
             "description": "Get Session."
         },
         {
-            "id": "list_voice_session_actions",
-            "upstream_operation_id": "listVoiceSessionActions",
-            "method": "GET",
-            "path": "/v1/sessions/{session_id}/actions",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-voice",
-            "path_params": [
-                "session_id"
-            ],
-            "path_param_templates": {},
-            "query": [
-                "status",
-                "limit",
-                "after"
-            ],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "request_body_kind": "none",
-            "request_content_type": None,
-            "scope": "voice:read",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "read",
-            "description": "List Actions."
-        },
-        {
             "id": "list_voice_session_events",
             "upstream_operation_id": "listVoiceSessionEvents",
             "method": "GET",
-            "path": "/v1/sessions/{session_id}/events",
+            "path": "/v1/sessions/{sessionId}/events",
             "auth": "oauthResource",
             "auth_audience": "tempera-voice",
             "path_params": [
-                "session_id"
+                "sessionId"
             ],
             "path_param_templates": {},
             "query": [
-                "after_sequence",
-                "limit"
+                "afterSequence",
+                "pageSize",
+                "pageToken"
             ],
             "required_query": [],
             "headers": [],
@@ -14990,14 +14869,77 @@ OPERATIONS = {
             "description": "List Events."
         },
         {
-            "id": "end_voice_session",
-            "upstream_operation_id": "endVoiceSession",
-            "method": "POST",
-            "path": "/v1/sessions/{session_id}:end",
+            "id": "list_voice_session_actions",
+            "upstream_operation_id": "listVoiceSessionActions",
+            "method": "GET",
+            "path": "/v1/sessions/{sessionId}/actions",
             "auth": "oauthResource",
             "auth_audience": "tempera-voice",
             "path_params": [
-                "session_id"
+                "sessionId"
+            ],
+            "path_param_templates": {},
+            "query": [
+                "status",
+                "pageSize",
+                "pageToken"
+            ],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "voice:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "List Actions."
+        },
+        {
+            "id": "resolve_voice_action",
+            "upstream_operation_id": "resolveVoiceAction",
+            "method": "POST",
+            "path": "/v1/actions/{actionId}:resolve",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-voice",
+            "path_params": [
+                "actionId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [
+                "approved",
+                "note"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "approved"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "voice:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "none",
+            "description": "Resolve Action."
+        },
+        {
+            "id": "end_voice_session",
+            "upstream_operation_id": "endVoiceSession",
+            "method": "POST",
+            "path": "/v1/sessions/{sessionId}:end",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-voice",
+            "path_params": [
+                "sessionId"
             ],
             "path_param_templates": {},
             "query": [],
@@ -15032,11 +14974,11 @@ OPERATIONS = {
             "headers": [],
             "required_headers": [],
             "body": [
-                "session_ids"
+                "sessionIds"
             ],
             "forbidden_body": [],
             "required_body": [
-                "session_ids"
+                "sessionIds"
             ],
             "body_defaults": {},
             "request_body_kind": "json",
@@ -15046,16 +14988,290 @@ OPERATIONS = {
             "prepare_commit_required": False,
             "safe_retry": "none",
             "description": "Export Sessions."
+        },
+        {
+            "id": "upload_voice_artifact",
+            "upstream_operation_id": "uploadVoiceArtifact",
+            "method": "POST",
+            "path": "/v1/artifacts:upload",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-voice",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [
+                "name",
+                "contentBase64",
+                "mediaType",
+                "classification"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "name",
+                "contentBase64"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "voice:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "none",
+            "description": "Upload Artifact."
+        },
+        {
+            "id": "download_voice_artifact",
+            "upstream_operation_id": "downloadVoiceArtifact",
+            "method": "GET",
+            "path": "/v1/artifacts/{reference}",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-voice",
+            "path_params": [
+                "reference"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "voice:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "Download Artifact."
+        },
+        {
+            "id": "list_voice_eval_profiles",
+            "upstream_operation_id": "listVoiceEvalProfiles",
+            "method": "GET",
+            "path": "/v1/eval-profiles",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-voice",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "eval:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "List Eval Profiles."
+        },
+        {
+            "id": "seal_voice_eval_result",
+            "upstream_operation_id": "sealVoiceEvalResult",
+            "method": "POST",
+            "path": "/v1/evals/results:seal",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-voice",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [
+                "profileId",
+                "draft"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "profileId",
+                "draft"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "eval:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "none",
+            "description": "Seal Eval Result."
+        },
+        {
+            "id": "import_voice_eval_result",
+            "upstream_operation_id": "importVoiceEvalResult",
+            "method": "POST",
+            "path": "/v1/evals/results:import",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-voice",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [
+                "profileId",
+                "sealedResultPath",
+                "artifacts",
+                "attestationPath",
+                "attestationSignaturePath",
+                "attestationPublicKeyPath"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "profileId",
+                "sealedResultPath",
+                "artifacts"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "eval:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "none",
+            "description": "Import Eval Result."
+        },
+        {
+            "id": "build_voice_eval_bundle",
+            "upstream_operation_id": "buildVoiceEvalBundle",
+            "method": "POST",
+            "path": "/v1/evals/bundles:build",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-voice",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [
+                "profileId",
+                "adapterImportPath",
+                "adapterImportSignaturePath",
+                "adapterImportPublicKeyPath",
+                "releaseEvidencePath",
+                "exposureLedgerPath",
+                "redactionPolicyPath",
+                "guardrailsPath",
+                "preregistrationPath",
+                "bundleId",
+                "createdAt"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "profileId",
+                "adapterImportPath",
+                "adapterImportSignaturePath",
+                "adapterImportPublicKeyPath",
+                "releaseEvidencePath",
+                "exposureLedgerPath",
+                "redactionPolicyPath",
+                "guardrailsPath",
+                "preregistrationPath",
+                "bundleId"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "eval:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "none",
+            "description": "Build Eval Bundle."
+        },
+        {
+            "id": "create_voice_palette_handoff",
+            "upstream_operation_id": "createVoicePaletteHandoff",
+            "method": "POST",
+            "path": "/v1/evals/palette-handoffs:create",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-voice",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [
+                "profileId",
+                "evidencePath",
+                "kind",
+                "signaturePath",
+                "publicKeyPath",
+                "tenantId",
+                "projectId",
+                "abPlanPath"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "profileId",
+                "evidencePath",
+                "kind",
+                "signaturePath",
+                "publicKeyPath",
+                "tenantId",
+                "projectId"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "eval:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "none",
+            "description": "Create Palette Handoff."
+        },
+        {
+            "id": "publish_voice_palette_handoff",
+            "upstream_operation_id": "publishVoicePaletteHandoff",
+            "method": "POST",
+            "path": "/v1/evals/palette-handoffs:publish",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-voice",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [
+                "handoffPath"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "handoffPath"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "eval:run",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "none",
+            "description": "Publish Palette Handoff."
         }
     ],
     "temperaDropshipping": [
         {
-            "id": "update_business_workspace",
-            "upstream_operation_id": "updateBusinessWorkspace",
+            "id": "create_store",
+            "upstream_operation_id": "createStore",
             "method": "POST",
-            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-dropshipping",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/stores",
+            "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "organization",
                 "project",
@@ -15068,16 +15284,14 @@ OPERATIONS = {
             "headers": [],
             "required_headers": [],
             "body": [
-                "expected_revision",
-                "idempotency_key",
-                "profile_ref",
-                "profile_revision"
+                "id",
+                "displayName",
+                "channel"
             ],
             "forbidden_body": [],
             "required_body": [
-                "expected_revision",
-                "profile_ref",
-                "profile_revision"
+                "id",
+                "displayName"
             ],
             "body_defaults": {},
             "request_body_kind": "json",
@@ -15085,18 +15299,51 @@ OPERATIONS = {
             "scope": "orders:write",
             "physical_action": False,
             "prepare_commit_required": False,
-            "safe_retry": "idempotent",
-            "description": "Put Workspace."
+            "safe_retry": "none",
+            "description": "Create Store."
         },
         {
-            "id": "get_business_workspace",
-            "upstream_operation_id": "getBusinessWorkspace",
+            "id": "list_stores",
+            "upstream_operation_id": "listStores",
             "method": "GET",
-            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspace_id}",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-dropshipping",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/stores",
+            "auth": "product",
+            "auth_audience": None,
             "path_params": [
-                "workspace_id",
+                "organization",
+                "project",
+                "environment",
+                "site"
+            ],
+            "path_param_templates": {},
+            "query": [
+                "pageToken",
+                "pageSize"
+            ],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "orders:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "List Stores."
+        },
+        {
+            "id": "get_store",
+            "upstream_operation_id": "getStore",
+            "method": "GET",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/stores/{storeId}",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "storeId",
                 "organization",
                 "project",
                 "environment",
@@ -15117,18 +15364,16 @@ OPERATIONS = {
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "read",
-            "description": "Get Workspace."
+            "description": "Get Store."
         },
         {
-            "id": "record_business_task_receipt",
-            "upstream_operation_id": "recordBusinessTaskReceipt",
+            "id": "create_catalog_offer",
+            "upstream_operation_id": "createCatalogOffer",
             "method": "POST",
-            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspace_id}/tasks/{task_id}/declared-receipts",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-dropshipping",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/catalog/offers",
+            "auth": "product",
+            "auth_audience": None,
             "path_params": [
-                "workspace_id",
-                "task_id",
                 "organization",
                 "project",
                 "environment",
@@ -15137,145 +15382,47 @@ OPERATIONS = {
             "path_param_templates": {},
             "query": [],
             "required_query": [],
-            "headers": [],
-            "required_headers": [],
+            "headers": [
+                "Idempotency-Key"
+            ],
+            "required_headers": [
+                "Idempotency-Key"
+            ],
             "body": [
-                "expected_revision",
-                "receipt"
+                "merchantId",
+                "productClassification",
+                "name",
+                "description",
+                "photoUrl",
+                "currency",
+                "unitAmountMinor",
+                "expiresAt"
             ],
             "forbidden_body": [],
             "required_body": [
-                "expected_revision",
-                "receipt"
+                "merchantId",
+                "productClassification",
+                "name",
+                "description",
+                "currency",
+                "unitAmountMinor"
             ],
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
-            "scope": "orders:write",
+            "scope": "orders:commerce:write",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
-            "description": "Record Task Receipt."
-        },
-        {
-            "id": "prepare_business_task",
-            "upstream_operation_id": "prepareBusinessTask",
-            "method": "POST",
-            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspace_id}/tasks/{task_id}:prepare",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-dropshipping",
-            "path_params": [
-                "workspace_id",
-                "task_id",
-                "organization",
-                "project",
-                "environment",
-                "site"
-            ],
-            "path_param_templates": {},
-            "query": [],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [
-                "draft",
-                "expected_revision"
-            ],
-            "forbidden_body": [],
-            "required_body": [
-                "expected_revision",
-                "draft"
-            ],
-            "body_defaults": {},
-            "request_body_kind": "json",
-            "request_content_type": "application/json",
-            "scope": "orders:write",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "none",
-            "description": "Prepare Task."
-        },
-        {
-            "id": "prepare_business_browser_task",
-            "upstream_operation_id": "prepareBusinessBrowserTask",
-            "method": "POST",
-            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspace_id}/tasks/{task_id}:prepareBrowser",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-dropshipping",
-            "path_params": [
-                "workspace_id",
-                "task_id",
-                "organization",
-                "project",
-                "environment",
-                "site"
-            ],
-            "path_param_templates": {},
-            "query": [],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [
-                "expected_revision"
-            ],
-            "forbidden_body": [],
-            "required_body": [
-                "expected_revision"
-            ],
-            "body_defaults": {},
-            "request_body_kind": "json",
-            "request_content_type": "application/json",
-            "scope": "orders:write",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "none",
-            "description": "Browser Task."
-        },
-        {
-            "id": "review_business_task",
-            "upstream_operation_id": "reviewBusinessTask",
-            "method": "POST",
-            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspace_id}/tasks/{task_id}:review",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-dropshipping",
-            "path_params": [
-                "workspace_id",
-                "task_id",
-                "organization",
-                "project",
-                "environment",
-                "site"
-            ],
-            "path_param_templates": {},
-            "query": [],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [
-                "expected_revision",
-                "review"
-            ],
-            "forbidden_body": [],
-            "required_body": [
-                "expected_revision",
-                "review"
-            ],
-            "body_defaults": {},
-            "request_body_kind": "json",
-            "request_content_type": "application/json",
-            "scope": "orders:approve",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "none",
-            "description": "Review Task."
+            "description": "Create Catalog Offer."
         },
         {
             "id": "list_catalog_offers",
             "upstream_operation_id": "listCatalogOffers",
             "method": "GET",
             "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/catalog/offers",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-dropshipping",
+            "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "organization",
                 "project",
@@ -15284,8 +15431,8 @@ OPERATIONS = {
             ],
             "path_param_templates": {},
             "query": [
-                "after",
-                "limit"
+                "pageToken",
+                "pageSize"
             ],
             "required_query": [],
             "headers": [],
@@ -15303,64 +15450,14 @@ OPERATIONS = {
             "description": "List Catalog Offers."
         },
         {
-            "id": "create_catalog_offer",
-            "upstream_operation_id": "createCatalogOffer",
-            "method": "POST",
-            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/catalog/offers",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-dropshipping",
-            "path_params": [
-                "organization",
-                "project",
-                "environment",
-                "site"
-            ],
-            "path_param_templates": {},
-            "query": [],
-            "required_query": [],
-            "headers": [
-                "Idempotency-Key"
-            ],
-            "required_headers": [
-                "Idempotency-Key"
-            ],
-            "body": [
-                "currency",
-                "description",
-                "expires_at",
-                "merchant_id",
-                "name",
-                "photo_url",
-                "product_classification",
-                "unit_amount_minor"
-            ],
-            "forbidden_body": [],
-            "required_body": [
-                "merchant_id",
-                "product_classification",
-                "name",
-                "description",
-                "currency",
-                "unit_amount_minor"
-            ],
-            "body_defaults": {},
-            "request_body_kind": "json",
-            "request_content_type": "application/json",
-            "scope": "orders:commerce:write",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "none",
-            "description": "Create Catalog Offer."
-        },
-        {
             "id": "get_catalog_offer",
             "upstream_operation_id": "getCatalogOffer",
             "method": "GET",
-            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/catalog/offers/{offer_id}",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-dropshipping",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/catalog/offers/{offerId}",
+            "auth": "product",
+            "auth_audience": None,
             "path_params": [
-                "offer_id",
+                "offerId",
                 "organization",
                 "project",
                 "environment",
@@ -15384,12 +15481,54 @@ OPERATIONS = {
             "description": "Get Catalog Offer."
         },
         {
-            "id": "list_order_event_projections",
-            "upstream_operation_id": "listOrderEventProjections",
+            "id": "create_sale_order",
+            "upstream_operation_id": "createSaleOrder",
+            "method": "POST",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "organization",
+                "project",
+                "environment",
+                "site"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [
+                "Idempotency-Key"
+            ],
+            "required_headers": [
+                "Idempotency-Key"
+            ],
+            "body": [
+                "offerId",
+                "offerRevision",
+                "quantity"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "offerId",
+                "offerRevision",
+                "quantity"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "orders:commerce:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "none",
+            "description": "Create Sale Order."
+        },
+        {
+            "id": "list_sale_orders",
+            "upstream_operation_id": "listSaleOrders",
             "method": "GET",
-            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/event-projections",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-dropshipping",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders",
+            "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "organization",
                 "project",
@@ -15398,8 +15537,8 @@ OPERATIONS = {
             ],
             "path_param_templates": {},
             "query": [
-                "cursor",
-                "limit"
+                "pageToken",
+                "pageSize"
             ],
             "required_query": [],
             "headers": [],
@@ -15414,15 +15553,46 @@ OPERATIONS = {
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "read",
-            "description": "List Event Projections."
+            "description": "List Sale Orders."
+        },
+        {
+            "id": "get_sale_order",
+            "upstream_operation_id": "getSaleOrder",
+            "method": "GET",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders/{orderId}",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "orderId",
+                "organization",
+                "project",
+                "environment",
+                "site"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "orders:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "Get Sale Order."
         },
         {
             "id": "list_events",
             "upstream_operation_id": "listEvents",
             "method": "GET",
             "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/events",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-dropshipping",
+            "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "organization",
                 "project",
@@ -15431,8 +15601,8 @@ OPERATIONS = {
             ],
             "path_param_templates": {},
             "query": [
-                "after",
-                "limit"
+                "pageToken",
+                "pageSize"
             ],
             "required_query": [],
             "headers": [],
@@ -15450,12 +15620,12 @@ OPERATIONS = {
             "description": "List Events."
         },
         {
-            "id": "list_inbox",
-            "upstream_operation_id": "listInbox",
+            "id": "list_order_event_projections",
+            "upstream_operation_id": "listOrderEventProjections",
             "method": "GET",
-            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/inbox",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-dropshipping",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/event-projections",
+            "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "organization",
                 "project",
@@ -15464,8 +15634,109 @@ OPERATIONS = {
             ],
             "path_param_templates": {},
             "query": [
-                "after",
-                "limit"
+                "pageToken",
+                "pageSize"
+            ],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "orders:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "List Event Projections."
+        },
+        {
+            "id": "list_orders",
+            "upstream_operation_id": "listOrders",
+            "method": "GET",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "organization",
+                "project",
+                "environment",
+                "site"
+            ],
+            "path_param_templates": {},
+            "query": [
+                "pageToken",
+                "pageSize"
+            ],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "orders:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "List Orders."
+        },
+        {
+            "id": "create_order",
+            "upstream_operation_id": "createOrder",
+            "method": "POST",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "organization",
+                "project",
+                "environment",
+                "site"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [
+                "expectedRevision",
+                "record"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "record"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "orders:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "none",
+            "description": "Create Order."
+        },
+        {
+            "id": "list_inbox",
+            "upstream_operation_id": "listInbox",
+            "method": "GET",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/inbox",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "organization",
+                "project",
+                "environment",
+                "site"
+            ],
+            "path_param_templates": {},
+            "query": [
+                "pageToken",
+                "pageSize"
             ],
             "required_query": [],
             "headers": [],
@@ -15487,8 +15758,8 @@ OPERATIONS = {
             "upstream_operation_id": "getBusinessSummary",
             "method": "GET",
             "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/operating-summary",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-dropshipping",
+            "auth": "product",
+            "auth_audience": None,
             "path_params": [
                 "organization",
                 "project",
@@ -15513,82 +15784,14 @@ OPERATIONS = {
             "description": "Operating Summary."
         },
         {
-            "id": "list_orders",
-            "upstream_operation_id": "listOrders",
-            "method": "GET",
-            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-dropshipping",
-            "path_params": [
-                "organization",
-                "project",
-                "environment",
-                "site"
-            ],
-            "path_param_templates": {},
-            "query": [
-                "after",
-                "limit"
-            ],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "request_body_kind": "none",
-            "request_content_type": None,
-            "scope": "orders:read",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "read",
-            "description": "List Orders."
-        },
-        {
-            "id": "create_order",
-            "upstream_operation_id": "createOrder",
-            "method": "POST",
-            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-dropshipping",
-            "path_params": [
-                "organization",
-                "project",
-                "environment",
-                "site"
-            ],
-            "path_param_templates": {},
-            "query": [],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [
-                "expected_revision",
-                "record"
-            ],
-            "forbidden_body": [],
-            "required_body": [
-                "record"
-            ],
-            "body_defaults": {},
-            "request_body_kind": "json",
-            "request_content_type": "application/json",
-            "scope": "orders:write",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "none",
-            "description": "Create Order."
-        },
-        {
             "id": "get_order",
             "upstream_operation_id": "getOrder",
             "method": "GET",
-            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{order_id}",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-dropshipping",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{orderId}",
+            "auth": "product",
+            "auth_audience": None,
             "path_params": [
-                "order_id",
+                "orderId",
                 "organization",
                 "project",
                 "environment",
@@ -15615,28 +15818,30 @@ OPERATIONS = {
             "id": "update_order",
             "upstream_operation_id": "updateOrder",
             "method": "PATCH",
-            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{order_id}",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-dropshipping",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{orderId}",
+            "auth": "product",
+            "auth_audience": None,
             "path_params": [
-                "order_id",
+                "orderId",
                 "organization",
                 "project",
                 "environment",
                 "site"
             ],
             "path_param_templates": {},
-            "query": [],
+            "query": [
+                "updateMask"
+            ],
             "required_query": [],
             "headers": [],
             "required_headers": [],
             "body": [
-                "expected_revision",
+                "expectedRevision",
                 "record"
             ],
             "forbidden_body": [],
             "required_body": [
-                "expected_revision",
+                "expectedRevision",
                 "record"
             ],
             "body_defaults": {},
@@ -15649,85 +15854,14 @@ OPERATIONS = {
             "description": "Update Order."
         },
         {
-            "id": "list_order_audit_events",
-            "upstream_operation_id": "listOrderAuditEvents",
-            "method": "GET",
-            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{order_id}/audit",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-dropshipping",
-            "path_params": [
-                "order_id",
-                "organization",
-                "project",
-                "environment",
-                "site"
-            ],
-            "path_param_templates": {},
-            "query": [
-                "after",
-                "limit"
-            ],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "request_body_kind": "none",
-            "request_content_type": None,
-            "scope": "orders:read",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "read",
-            "description": "Audit."
-        },
-        {
-            "id": "prepare_proposal",
-            "upstream_operation_id": "prepareProposal",
-            "method": "POST",
-            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{order_id}/proposals",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-dropshipping",
-            "path_params": [
-                "order_id",
-                "organization",
-                "project",
-                "environment",
-                "site"
-            ],
-            "path_param_templates": {},
-            "query": [],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [
-                "expected_revision",
-                "quote_id"
-            ],
-            "forbidden_body": [],
-            "required_body": [
-                "expected_revision",
-                "quote_id"
-            ],
-            "body_defaults": {},
-            "request_body_kind": "json",
-            "request_content_type": "application/json",
-            "scope": "orders:write",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "none",
-            "description": "Prepare."
-        },
-        {
             "id": "evaluate_order",
             "upstream_operation_id": "evaluateOrder",
             "method": "POST",
-            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{order_id}:evaluate",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-dropshipping",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{orderId}:evaluate",
+            "auth": "product",
+            "auth_audience": None,
             "path_params": [
-                "order_id",
+                "orderId",
                 "organization",
                 "project",
                 "environment",
@@ -15739,11 +15873,11 @@ OPERATIONS = {
             "headers": [],
             "required_headers": [],
             "body": [
-                "expected_revision"
+                "expectedRevision"
             ],
             "forbidden_body": [],
             "required_body": [
-                "expected_revision"
+                "expectedRevision"
             ],
             "body_defaults": {},
             "request_body_kind": "json",
@@ -15755,14 +15889,14 @@ OPERATIONS = {
             "description": "Evaluate Order."
         },
         {
-            "id": "reconcile_order",
-            "upstream_operation_id": "reconcileOrder",
+            "id": "prepare_proposal",
+            "upstream_operation_id": "prepareProposal",
             "method": "POST",
-            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{order_id}:reconcile",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-dropshipping",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{orderId}/proposals",
+            "auth": "product",
+            "auth_audience": None,
             "path_params": [
-                "order_id",
+                "orderId",
                 "organization",
                 "project",
                 "environment",
@@ -15774,34 +15908,32 @@ OPERATIONS = {
             "headers": [],
             "required_headers": [],
             "body": [
-                "evidence_ref",
-                "expected_revision",
-                "purchase_state"
+                "expectedRevision",
+                "quoteId"
             ],
             "forbidden_body": [],
             "required_body": [
-                "expected_revision",
-                "purchase_state",
-                "evidence_ref"
+                "expectedRevision",
+                "quoteId"
             ],
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
-            "scope": "orders:approve",
+            "scope": "orders:write",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
-            "description": "Reconcile."
+            "description": "Prepare."
         },
         {
             "id": "get_proposal",
             "upstream_operation_id": "getProposal",
             "method": "GET",
-            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/proposals/{proposal_id}",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-dropshipping",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/proposals/{proposalId}",
+            "auth": "product",
+            "auth_audience": None,
             "path_params": [
-                "proposal_id",
+                "proposalId",
                 "organization",
                 "project",
                 "environment",
@@ -15825,55 +15957,14 @@ OPERATIONS = {
             "description": "Get Proposal."
         },
         {
-            "id": "record_manual_outcome",
-            "upstream_operation_id": "recordManualOutcome",
-            "method": "POST",
-            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/proposals/{proposal_id}/manual-outcome",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-dropshipping",
-            "path_params": [
-                "proposal_id",
-                "organization",
-                "project",
-                "environment",
-                "site"
-            ],
-            "path_param_templates": {},
-            "query": [],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [
-                "evidence_ref",
-                "expected_revision",
-                "outcome",
-                "proposal_digest"
-            ],
-            "forbidden_body": [],
-            "required_body": [
-                "expected_revision",
-                "proposal_digest",
-                "outcome",
-                "evidence_ref"
-            ],
-            "body_defaults": {},
-            "request_body_kind": "json",
-            "request_content_type": "application/json",
-            "scope": "orders:write",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "none",
-            "description": "Outcome."
-        },
-        {
             "id": "approve_proposal",
             "upstream_operation_id": "approveProposal",
             "method": "POST",
-            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/proposals/{proposal_id}:approve",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-dropshipping",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/proposals/{proposalId}:approve",
+            "auth": "product",
+            "auth_audience": None,
             "path_params": [
-                "proposal_id",
+                "proposalId",
                 "organization",
                 "project",
                 "environment",
@@ -15885,13 +15976,13 @@ OPERATIONS = {
             "headers": [],
             "required_headers": [],
             "body": [
-                "expected_revision",
-                "proposal_digest"
+                "expectedRevision",
+                "proposalDigest"
             ],
             "forbidden_body": [],
             "required_body": [
-                "expected_revision",
-                "proposal_digest"
+                "expectedRevision",
+                "proposalDigest"
             ],
             "body_defaults": {},
             "request_body_kind": "json",
@@ -15906,11 +15997,11 @@ OPERATIONS = {
             "id": "execute_proposal",
             "upstream_operation_id": "executeProposal",
             "method": "POST",
-            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/proposals/{proposal_id}:execute",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-dropshipping",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/proposals/{proposalId}:execute",
+            "auth": "product",
+            "auth_audience": None,
             "path_params": [
-                "proposal_id",
+                "proposalId",
                 "organization",
                 "project",
                 "environment",
@@ -15922,13 +16013,13 @@ OPERATIONS = {
             "headers": [],
             "required_headers": [],
             "body": [
-                "expected_revision",
-                "proposal_digest"
+                "expectedRevision",
+                "proposalDigest"
             ],
             "forbidden_body": [],
             "required_body": [
-                "expected_revision",
-                "proposal_digest"
+                "expectedRevision",
+                "proposalDigest"
             ],
             "body_defaults": {},
             "request_body_kind": "json",
@@ -15940,152 +16031,14 @@ OPERATIONS = {
             "description": "Execute."
         },
         {
-            "id": "list_sale_orders",
-            "upstream_operation_id": "listSaleOrders",
-            "method": "GET",
-            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-dropshipping",
-            "path_params": [
-                "organization",
-                "project",
-                "environment",
-                "site"
-            ],
-            "path_param_templates": {},
-            "query": [
-                "after",
-                "limit"
-            ],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "request_body_kind": "none",
-            "request_content_type": None,
-            "scope": "orders:read",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "read",
-            "description": "List Sale Orders."
-        },
-        {
-            "id": "create_sale_order",
-            "upstream_operation_id": "createSaleOrder",
+            "id": "record_manual_outcome",
+            "upstream_operation_id": "recordManualOutcome",
             "method": "POST",
-            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-dropshipping",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/proposals/{proposalId}/manual-outcome",
+            "auth": "product",
+            "auth_audience": None,
             "path_params": [
-                "organization",
-                "project",
-                "environment",
-                "site"
-            ],
-            "path_param_templates": {},
-            "query": [],
-            "required_query": [],
-            "headers": [
-                "Idempotency-Key"
-            ],
-            "required_headers": [
-                "Idempotency-Key"
-            ],
-            "body": [
-                "offer_id",
-                "offer_revision",
-                "quantity"
-            ],
-            "forbidden_body": [],
-            "required_body": [
-                "offer_id",
-                "offer_revision",
-                "quantity"
-            ],
-            "body_defaults": {},
-            "request_body_kind": "json",
-            "request_content_type": "application/json",
-            "scope": "orders:commerce:write",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "none",
-            "description": "Create Sale Order."
-        },
-        {
-            "id": "get_sale_order",
-            "upstream_operation_id": "getSaleOrder",
-            "method": "GET",
-            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders/{order_id}",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-dropshipping",
-            "path_params": [
-                "order_id",
-                "organization",
-                "project",
-                "environment",
-                "site"
-            ],
-            "path_param_templates": {},
-            "query": [],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "request_body_kind": "none",
-            "request_content_type": None,
-            "scope": "orders:read",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "read",
-            "description": "Get Sale Order."
-        },
-        {
-            "id": "list_stores",
-            "upstream_operation_id": "listStores",
-            "method": "GET",
-            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/stores",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-dropshipping",
-            "path_params": [
-                "organization",
-                "project",
-                "environment",
-                "site"
-            ],
-            "path_param_templates": {},
-            "query": [
-                "after",
-                "limit"
-            ],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "request_body_kind": "none",
-            "request_content_type": None,
-            "scope": "orders:read",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "read",
-            "description": "List Stores."
-        },
-        {
-            "id": "create_store",
-            "upstream_operation_id": "createStore",
-            "method": "POST",
-            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/stores",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-dropshipping",
-            "path_params": [
+                "proposalId",
                 "organization",
                 "project",
                 "environment",
@@ -16097,14 +16050,17 @@ OPERATIONS = {
             "headers": [],
             "required_headers": [],
             "body": [
-                "channel",
-                "display_name",
-                "id"
+                "expectedRevision",
+                "proposalDigest",
+                "outcome",
+                "evidenceRef"
             ],
             "forbidden_body": [],
             "required_body": [
-                "id",
-                "display_name"
+                "expectedRevision",
+                "proposalDigest",
+                "outcome",
+                "evidenceRef"
             ],
             "body_defaults": {},
             "request_body_kind": "json",
@@ -16113,17 +16069,243 @@ OPERATIONS = {
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
-            "description": "Create Store."
+            "description": "Outcome."
         },
         {
-            "id": "get_store",
-            "upstream_operation_id": "getStore",
-            "method": "GET",
-            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/stores/{store_id}",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-dropshipping",
+            "id": "reconcile_order",
+            "upstream_operation_id": "reconcileOrder",
+            "method": "POST",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{orderId}:reconcile",
+            "auth": "product",
+            "auth_audience": None,
             "path_params": [
-                "store_id",
+                "orderId",
+                "organization",
+                "project",
+                "environment",
+                "site"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [
+                "expectedRevision",
+                "purchaseState",
+                "evidenceRef"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "expectedRevision",
+                "purchaseState",
+                "evidenceRef"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "orders:approve",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "none",
+            "description": "Reconcile."
+        },
+        {
+            "id": "list_order_audit_events",
+            "upstream_operation_id": "listOrderAuditEvents",
+            "method": "GET",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{orderId}/audit",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "orderId",
+                "organization",
+                "project",
+                "environment",
+                "site"
+            ],
+            "path_param_templates": {},
+            "query": [
+                "pageToken",
+                "pageSize"
+            ],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "orders:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "Audit."
+        },
+        {
+            "id": "update_business_workspace",
+            "upstream_operation_id": "updateBusinessWorkspace",
+            "method": "POST",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "organization",
+                "project",
+                "environment",
+                "site"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [
+                "expectedRevision",
+                "profileRef",
+                "profileRevision",
+                "idempotencyKey"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "expectedRevision",
+                "profileRef",
+                "profileRevision"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "orders:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "idempotent",
+            "description": "Put Workspace."
+        },
+        {
+            "id": "prepare_business_task",
+            "upstream_operation_id": "prepareBusinessTask",
+            "method": "POST",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspaceId}/tasks/{taskId}:prepare",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "workspaceId",
+                "taskId",
+                "organization",
+                "project",
+                "environment",
+                "site"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [
+                "expectedRevision",
+                "draft"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "expectedRevision",
+                "draft"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "orders:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "none",
+            "description": "Prepare Task."
+        },
+        {
+            "id": "review_business_task",
+            "upstream_operation_id": "reviewBusinessTask",
+            "method": "POST",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspaceId}/tasks/{taskId}:review",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "workspaceId",
+                "taskId",
+                "organization",
+                "project",
+                "environment",
+                "site"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [
+                "expectedRevision",
+                "review"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "expectedRevision",
+                "review"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "orders:approve",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "none",
+            "description": "Review Task."
+        },
+        {
+            "id": "record_business_task_receipt",
+            "upstream_operation_id": "recordBusinessTaskReceipt",
+            "method": "POST",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspaceId}/tasks/{taskId}/declared-receipts",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "workspaceId",
+                "taskId",
+                "organization",
+                "project",
+                "environment",
+                "site"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [
+                "expectedRevision",
+                "receipt"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "expectedRevision",
+                "receipt"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "orders:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "none",
+            "description": "Record Task Receipt."
+        },
+        {
+            "id": "get_business_workspace",
+            "upstream_operation_id": "getBusinessWorkspace",
+            "method": "GET",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspaceId}",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "workspaceId",
                 "organization",
                 "project",
                 "environment",
@@ -16144,17 +16326,343 @@ OPERATIONS = {
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "read",
-            "description": "Get Store."
+            "description": "Get Workspace."
+        },
+        {
+            "id": "prepare_business_browser_task",
+            "upstream_operation_id": "prepareBusinessBrowserTask",
+            "method": "POST",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspaceId}/tasks/{taskId}:prepareBrowser",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "workspaceId",
+                "taskId",
+                "organization",
+                "project",
+                "environment",
+                "site"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [
+                "expectedRevision"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "expectedRevision"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "orders:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "none",
+            "description": "Browser Task."
         }
     ],
     "temperaBusiness": [
         {
+            "id": "business_capabilities",
+            "upstream_operation_id": "business.capabilities",
+            "method": "GET",
+            "path": "/v1/capabilities",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "business:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "Capabilities."
+        },
+        {
+            "id": "business_cases_create",
+            "upstream_operation_id": "business.cases.create",
+            "method": "POST",
+            "path": "/v1/cases",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [
+                "idempotencyKey",
+                "intake",
+                "profileRef"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "idempotencyKey",
+                "intake"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "business:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "idempotent",
+            "description": "Create."
+        },
+        {
+            "id": "business_cases_list",
+            "upstream_operation_id": "business.cases.list",
+            "method": "GET",
+            "path": "/v1/cases",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [
+                "pageToken",
+                "pageSize"
+            ],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "business:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "Listing."
+        },
+        {
+            "id": "business_cases_get",
+            "upstream_operation_id": "business.cases.get",
+            "method": "GET",
+            "path": "/v1/cases/{caseId}",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "caseId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "business:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "Get Case."
+        },
+        {
+            "id": "business_cases_update_intake",
+            "upstream_operation_id": "business.cases.updateIntake",
+            "method": "POST",
+            "path": "/v1/cases/{caseId}:updateIntake",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "caseId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [
+                "idempotencyKey",
+                "expectedRevision",
+                "intake"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "idempotencyKey",
+                "expectedRevision",
+                "intake"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "business:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "idempotent",
+            "description": "Update."
+        },
+        {
+            "id": "business_cases_prepare_draft",
+            "upstream_operation_id": "business.cases.prepareDraft",
+            "method": "POST",
+            "path": "/v1/cases/{caseId}:prepareDraft",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "caseId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [
+                "idempotencyKey",
+                "expectedRevision",
+                "draft"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "idempotencyKey",
+                "expectedRevision",
+                "draft"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "business:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "idempotent",
+            "description": "Prepare."
+        },
+        {
+            "id": "business_cases_review_draft",
+            "upstream_operation_id": "business.cases.reviewDraft",
+            "method": "POST",
+            "path": "/v1/cases/{caseId}:reviewDraft",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "caseId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [
+                "idempotencyKey",
+                "expectedRevision",
+                "preparationDigest",
+                "decision"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "idempotencyKey",
+                "expectedRevision",
+                "preparationDigest",
+                "decision"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "business:review",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "idempotent",
+            "description": "Review."
+        },
+        {
+            "id": "business_cases_record_declared_receipt",
+            "upstream_operation_id": "business.cases.recordDeclaredReceipt",
+            "method": "POST",
+            "path": "/v1/cases/{caseId}/declaredReceipts",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "caseId"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [
+                "idempotencyKey",
+                "expectedRevision",
+                "preparationDigest",
+                "receiptRef",
+                "owner",
+                "reportedOutcome"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "idempotencyKey",
+                "expectedRevision",
+                "preparationDigest",
+                "receiptRef",
+                "owner",
+                "reportedOutcome"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "business:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "idempotent",
+            "description": "Receipt."
+        },
+        {
+            "id": "business_cases_audit",
+            "upstream_operation_id": "business.cases.auditEvents.list",
+            "method": "GET",
+            "path": "/v1/cases/{caseId}/audit",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "caseId"
+            ],
+            "path_param_templates": {},
+            "query": [
+                "pageToken",
+                "pageSize"
+            ],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "business:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "Audit."
+        },
+        {
             "id": "business_profile_get",
             "upstream_operation_id": "business.profile.get",
             "method": "GET",
-            "path": "/v1/business-profile",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-business",
+            "path": "/v1/businessProfile",
+            "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -16174,17 +16682,83 @@ OPERATIONS = {
             "description": "Profile."
         },
         {
-            "id": "business_profile_history",
-            "upstream_operation_id": "business.profile.history",
+            "id": "business_profile_initialize",
+            "upstream_operation_id": "business.profile.initialize",
+            "method": "POST",
+            "path": "/v1/businessProfile:initialize",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [
+                "idempotencyKey",
+                "facts",
+                "references",
+                "availableServices"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "idempotencyKey"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "business:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "idempotent",
+            "description": "Initialize."
+        },
+        {
+            "id": "business_profile_patch",
+            "upstream_operation_id": "business.profile.patch",
+            "method": "POST",
+            "path": "/v1/businessProfile:patch",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [
+                "idempotencyKey",
+                "expectedRevision",
+                "facts",
+                "references",
+                "availableServices"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "idempotencyKey",
+                "expectedRevision"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "business:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "idempotent",
+            "description": "Patch."
+        },
+        {
+            "id": "business_profile_history_list",
+            "upstream_operation_id": "business.profile.history.list",
             "method": "GET",
-            "path": "/v1/business-profile/history",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-business",
+            "path": "/v1/businessProfile/history",
+            "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [
-                "after",
-                "limit"
+                "pageToken",
+                "pageSize"
             ],
             "required_query": [],
             "headers": [],
@@ -16205,9 +16779,9 @@ OPERATIONS = {
             "id": "business_profile_clear",
             "upstream_operation_id": "business.profile.clear",
             "method": "POST",
-            "path": "/v1/business-profile:clear",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-business",
+            "path": "/v1/businessProfile:clear",
+            "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -16215,14 +16789,14 @@ OPERATIONS = {
             "headers": [],
             "required_headers": [],
             "body": [
-                "expected_revision",
-                "idempotency_key",
+                "idempotencyKey",
+                "expectedRevision",
                 "reason"
             ],
             "forbidden_body": [],
             "required_body": [
-                "idempotency_key",
-                "expected_revision"
+                "idempotencyKey",
+                "expectedRevision"
             ],
             "body_defaults": {},
             "request_body_kind": "json",
@@ -16234,368 +16808,12 @@ OPERATIONS = {
             "description": "Clear."
         },
         {
-            "id": "business_profile_initialize",
-            "upstream_operation_id": "business.profile.initialize",
-            "method": "POST",
-            "path": "/v1/business-profile:initialize",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-business",
-            "path_params": [],
-            "path_param_templates": {},
-            "query": [],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [
-                "available_services",
-                "facts",
-                "idempotency_key",
-                "references"
-            ],
-            "forbidden_body": [],
-            "required_body": [
-                "idempotency_key"
-            ],
-            "body_defaults": {},
-            "request_body_kind": "json",
-            "request_content_type": "application/json",
-            "scope": "business:write",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "idempotent",
-            "description": "Initialize."
-        },
-        {
-            "id": "business_profile_patch",
-            "upstream_operation_id": "business.profile.patch",
-            "method": "POST",
-            "path": "/v1/business-profile:patch",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-business",
-            "path_params": [],
-            "path_param_templates": {},
-            "query": [],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [
-                "available_services",
-                "expected_revision",
-                "facts",
-                "idempotency_key",
-                "references"
-            ],
-            "forbidden_body": [],
-            "required_body": [
-                "idempotency_key",
-                "expected_revision"
-            ],
-            "body_defaults": {},
-            "request_body_kind": "json",
-            "request_content_type": "application/json",
-            "scope": "business:write",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "idempotent",
-            "description": "Patch."
-        },
-        {
-            "id": "business_capabilities",
-            "upstream_operation_id": "business.capabilities",
-            "method": "GET",
-            "path": "/v1/capabilities",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-business",
-            "path_params": [],
-            "path_param_templates": {},
-            "query": [],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "request_body_kind": "none",
-            "request_content_type": None,
-            "scope": "business:read",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "read",
-            "description": "Capabilities."
-        },
-        {
-            "id": "business_cases_list",
-            "upstream_operation_id": "business.cases.list",
-            "method": "GET",
-            "path": "/v1/cases",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-business",
-            "path_params": [],
-            "path_param_templates": {},
-            "query": [
-                "after",
-                "limit"
-            ],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "request_body_kind": "none",
-            "request_content_type": None,
-            "scope": "business:read",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "read",
-            "description": "Listing."
-        },
-        {
-            "id": "business_cases_create",
-            "upstream_operation_id": "business.cases.create",
-            "method": "POST",
-            "path": "/v1/cases",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-business",
-            "path_params": [],
-            "path_param_templates": {},
-            "query": [],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [
-                "idempotency_key",
-                "intake",
-                "profile_ref"
-            ],
-            "forbidden_body": [],
-            "required_body": [
-                "idempotency_key",
-                "intake"
-            ],
-            "body_defaults": {},
-            "request_body_kind": "json",
-            "request_content_type": "application/json",
-            "scope": "business:write",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "idempotent",
-            "description": "Create."
-        },
-        {
-            "id": "business_cases_get",
-            "upstream_operation_id": "business.cases.get",
-            "method": "GET",
-            "path": "/v1/cases/{case_id}",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-business",
-            "path_params": [
-                "case_id"
-            ],
-            "path_param_templates": {},
-            "query": [],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "request_body_kind": "none",
-            "request_content_type": None,
-            "scope": "business:read",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "read",
-            "description": "Get Case."
-        },
-        {
-            "id": "business_cases_audit",
-            "upstream_operation_id": "business.cases.audit",
-            "method": "GET",
-            "path": "/v1/cases/{case_id}/audit",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-business",
-            "path_params": [
-                "case_id"
-            ],
-            "path_param_templates": {},
-            "query": [
-                "after",
-                "limit"
-            ],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [],
-            "forbidden_body": [],
-            "required_body": [],
-            "body_defaults": {},
-            "request_body_kind": "none",
-            "request_content_type": None,
-            "scope": "business:read",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "read",
-            "description": "Audit."
-        },
-        {
-            "id": "business_cases_record_declared_receipt",
-            "upstream_operation_id": "business.cases.recordDeclaredReceipt",
-            "method": "POST",
-            "path": "/v1/cases/{case_id}/declared-receipts",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-business",
-            "path_params": [
-                "case_id"
-            ],
-            "path_param_templates": {},
-            "query": [],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [
-                "expected_revision",
-                "idempotency_key",
-                "owner",
-                "preparation_digest",
-                "receipt_ref",
-                "reported_outcome"
-            ],
-            "forbidden_body": [],
-            "required_body": [
-                "idempotency_key",
-                "expected_revision",
-                "preparation_digest",
-                "receipt_ref",
-                "owner",
-                "reported_outcome"
-            ],
-            "body_defaults": {},
-            "request_body_kind": "json",
-            "request_content_type": "application/json",
-            "scope": "business:write",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "idempotent",
-            "description": "Receipt."
-        },
-        {
-            "id": "business_cases_prepare_draft",
-            "upstream_operation_id": "business.cases.prepareDraft",
-            "method": "POST",
-            "path": "/v1/cases/{case_id}:prepareDraft",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-business",
-            "path_params": [
-                "case_id"
-            ],
-            "path_param_templates": {},
-            "query": [],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [
-                "draft",
-                "expected_revision",
-                "idempotency_key"
-            ],
-            "forbidden_body": [],
-            "required_body": [
-                "idempotency_key",
-                "expected_revision",
-                "draft"
-            ],
-            "body_defaults": {},
-            "request_body_kind": "json",
-            "request_content_type": "application/json",
-            "scope": "business:write",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "idempotent",
-            "description": "Prepare."
-        },
-        {
-            "id": "business_cases_review_draft",
-            "upstream_operation_id": "business.cases.reviewDraft",
-            "method": "POST",
-            "path": "/v1/cases/{case_id}:reviewDraft",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-business",
-            "path_params": [
-                "case_id"
-            ],
-            "path_param_templates": {},
-            "query": [],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [
-                "decision",
-                "expected_revision",
-                "idempotency_key",
-                "preparation_digest"
-            ],
-            "forbidden_body": [],
-            "required_body": [
-                "idempotency_key",
-                "expected_revision",
-                "preparation_digest",
-                "decision"
-            ],
-            "body_defaults": {},
-            "request_body_kind": "json",
-            "request_content_type": "application/json",
-            "scope": "business:review",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "idempotent",
-            "description": "Review."
-        },
-        {
-            "id": "business_cases_update_intake",
-            "upstream_operation_id": "business.cases.updateIntake",
-            "method": "POST",
-            "path": "/v1/cases/{case_id}:updateIntake",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-business",
-            "path_params": [
-                "case_id"
-            ],
-            "path_param_templates": {},
-            "query": [],
-            "required_query": [],
-            "headers": [],
-            "required_headers": [],
-            "body": [
-                "expected_revision",
-                "idempotency_key",
-                "intake"
-            ],
-            "forbidden_body": [],
-            "required_body": [
-                "idempotency_key",
-                "expected_revision",
-                "intake"
-            ],
-            "body_defaults": {},
-            "request_body_kind": "json",
-            "request_content_type": "application/json",
-            "scope": "business:write",
-            "physical_action": False,
-            "prepare_commit_required": False,
-            "safe_retry": "idempotent",
-            "description": "Update."
-        },
-        {
             "id": "business_operating_state",
             "upstream_operation_id": "business.operatingState",
             "method": "GET",
-            "path": "/v1/operating-state",
-            "auth": "oauthResource",
-            "auth_audience": "tempera-business",
+            "path": "/v1/operatingState",
+            "auth": "product",
+            "auth_audience": None,
             "path_params": [],
             "path_param_templates": {},
             "query": [],
@@ -16613,6 +16831,253 @@ OPERATIONS = {
             "prepare_commit_required": False,
             "safe_retry": "read",
             "description": "Operating State."
+        }
+    ],
+    "temperaConnectors": [
+        {
+            "id": "health_check",
+            "upstream_operation_id": "health.check",
+            "method": "GET",
+            "path": "/healthz",
+            "auth": "none",
+            "auth_audience": None,
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": None,
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "Read-only service liveness endpoint."
+        },
+        {
+            "id": "connections_list",
+            "upstream_operation_id": "connections.list",
+            "method": "GET",
+            "path": "/v1/connections",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-connectors",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [
+                "state",
+                "pageSize",
+                "pageToken"
+            ],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "connection:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "List the authenticated workspace's redacted connector connections."
+        },
+        {
+            "id": "connections_create",
+            "upstream_operation_id": "connections.create",
+            "method": "POST",
+            "path": "/v1/connections",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-connectors",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [
+                "authScheme",
+                "baseUrl",
+                "connectorId",
+                "connectorRevision",
+                "credentialName",
+                "displayName",
+                "operations",
+                "specificationArtifactRef",
+                "specificationDigest"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "connectorId",
+                "displayName"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "connection:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "none",
+            "description": "Create a draft tenant-scoped connection from the catalog or a manual manifest."
+        },
+        {
+            "id": "connections_get",
+            "upstream_operation_id": "connections.get",
+            "method": "GET",
+            "path": "/v1/connections/{id}",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-connectors",
+            "path_params": [
+                "id"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "connection:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "Get one tenant-scoped connection without exposing secret material."
+        },
+        {
+            "id": "connections_invoke",
+            "upstream_operation_id": "connections.invoke",
+            "method": "POST",
+            "path": "/v1/connections/{id}:invoke",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-connectors",
+            "path_params": [
+                "id"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [
+                "idempotencyKey",
+                "input",
+                "operationId"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "operationId"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "connection:invoke",
+            "physical_action": True,
+            "prepare_commit_required": False,
+            "safe_retry": "idempotent",
+            "description": "Execute an active declared operation with a revision-pinned receipt."
+        },
+        {
+            "id": "connections_test",
+            "upstream_operation_id": "connections.test",
+            "method": "POST",
+            "path": "/v1/connections/{id}:test",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-connectors",
+            "path_params": [
+                "id"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [
+                "operationId"
+            ],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "connection:write",
+            "physical_action": True,
+            "prepare_commit_required": False,
+            "safe_retry": "none",
+            "description": "Safely test one declared read-only operation and activate/degrade the connection."
+        },
+        {
+            "id": "connections_import_open_api",
+            "upstream_operation_id": "connections.importOpenApi",
+            "method": "POST",
+            "path": "/v1/connections:importOpenApi",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-connectors",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [
+                "authScheme",
+                "baseUrl",
+                "connectorId",
+                "credentialName",
+                "displayName",
+                "document",
+                "sourceUrl"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "displayName",
+                "authScheme"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "connection:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "none",
+            "description": "Normalize a caller-supplied OpenAPI 3 document into a draft connection."
+        },
+        {
+            "id": "connectors_list",
+            "upstream_operation_id": "connectors.list",
+            "method": "GET",
+            "path": "/v1/connectors",
+            "auth": "oauthResource",
+            "auth_audience": "tempera-connectors",
+            "path_params": [],
+            "path_param_templates": {},
+            "query": [
+                "pageSize",
+                "pageToken"
+            ],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "connection:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "List the reviewed, read-only connector catalog."
         }
     ]
 }

@@ -15,7 +15,7 @@ from .auth import TemperaAuth, Transport, _default_transport, _encode_json
 from .errors import TemperaApiError, TemperaMcpError, TemperaSdkError, _with_context
 from .surface import MCP_GATEWAY
 
-MCP_PROTOCOL_VERSION = "2025-06-18"
+MCP_PROTOCOL_VERSION = "2026-07-28"
 
 MCP_ERROR_CODES = dict(MCP_GATEWAY["errorCodes"])
 
@@ -50,12 +50,18 @@ class TemperaMcpClient:
         """Send one JSON-RPC request and return its result (raises TemperaMcpError on rpc errors)."""
         payload: dict[str, Any] = {"jsonrpc": "2.0", "id": self._next_id, "method": method}
         self._next_id += 1
-        if params is not None:
-            payload["params"] = dict(params)
+        request_params = dict(params or {})
+        meta = dict(request_params.get("_meta") or {})
+        meta["io.modelcontextprotocol/protocolVersion"] = MCP_PROTOCOL_VERSION
+        meta["io.modelcontextprotocol/clientCapabilities"] = {}
+        request_params["_meta"] = meta
+        payload["params"] = request_params
         headers = {
             "accept": "application/json",
             "content-type": "application/json",
             "authorization": f"Bearer {self._resolve_bearer()}",
+            "mcp-protocol-version": MCP_PROTOCOL_VERSION,
+            "mcp-method": method,
         }
         try:
             parsed = self.transport("POST", self.url, headers, _encode_json(payload))
@@ -79,13 +85,13 @@ class TemperaMcpClient:
         return parsed.get("result") if isinstance(parsed, Mapping) else None
 
     def initialize(self, *, name: str = "tempera-sdk", version: str = "0.12.0") -> Any:
-        """Open an MCP session and fetch server capabilities and instructions."""
+        """Discover the stateless MCP server's capabilities and instructions."""
         return self.rpc(
-            "initialize",
+            "server/discover",
             {
-                "protocolVersion": MCP_PROTOCOL_VERSION,
-                "capabilities": {},
-                "clientInfo": {"name": name, "version": version},
+                "_meta": {
+                    "io.modelcontextprotocol/clientInfo": {"name": name, "version": version},
+                },
             },
         )
 

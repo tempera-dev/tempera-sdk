@@ -118,7 +118,7 @@
         "packages/python/tests/test_retry.py",
         "packages/rust/tests/retry.rs"
       ],
-      "notes": "All three generated clients expose the 24 canonical Orders and 15 business-case operations with their producer-declared scopes, the tempera-dropshipping and tempera-business audiences, and a per-operation safeRetry classification. Retry conformance is proven per language against a real local HTTP server. Provenance is a STAGED pin: both locks bind unmerged producer feature branches (tempera-dropshipping feat/a1-canonical-orders 969edf4e00d444d58530b2d4eaf04435c0cc6798 and tempera-business feat/a2-business-profile 7ea07eab390a1018c64a23d72eb8b158e252ac94), admitted through contracts/sdk-staged-sources.json, not a trusted-main lock."
+      "notes": "All three generated clients expose the 24 canonical Orders and 15 business-case operations with their producer-declared scopes, the tempera-dropshipping and tempera-business audiences, and a per-operation safeRetry classification. Retry conformance is proven per language against a real local HTTP server. Provenance is a trusted-main lock: both receipts bind commits on the producers' main branches (tempera-dropshipping main e223fa5ced512055e286dde7c7bfbe4f1641cc11 and tempera-business main 0d635ac7f3ec4261fbc45c74efe510349b4d38d6) whose contract blobs equal the current main heads; contracts/sdk-staged-sources.json no longer admits any branch pin."
     }
   ],
   "physical_execution": {
@@ -133,7 +133,7 @@
     "Durable-signal, campaign-compiler, and Bio-proposal client tests prove request construction and exact producer-contract parity; they do not prove receipt of a real provider callback, a saved workflow, a valid biological ranking, or successful external execution.",
     "Authorization clients transport approvals and external secret references; they do not approve, resolve a secret, submit physical work, or prove provider execution without an authorized caller.",
     "The SDK transports evidence contracts; it does not determine biological validity, experimental execution, production qualification, or dataset eligibility.",
-    "The tempera-dropshipping and tempera-business locks pin unmerged producer feature branches through the expiring staged-source ledger; they do not prove a merged mainline contract, a registered control-plane audience or scope, or any hosted deployment.",
+    "The tempera-dropshipping and tempera-business locks pin exact commits on the producers' main branches; a mainline lock does not prove a registered control-plane audience or scope, or any hosted deployment.",
     "The native transport contract binds hand-written Kotlin and Swift call sites to published routes and digests; it does not build, run, or otherwise qualify either mobile application."
   ]
 }

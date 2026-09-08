@@ -11,7 +11,7 @@
 import { TEMPERA_MCP_GATEWAY } from "./surface.js";
 import { TemperaMcpError, TemperaSdkError, apiErrorFromResponse } from "./errors.js";
 
-export const MCP_PROTOCOL_VERSION = "2025-06-18";
+export const MCP_PROTOCOL_VERSION = "2026-07-28";
 
 export class TemperaMcpClient {
   constructor({ url, auth, bearer, fetch: fetchImpl } = {}) {
@@ -32,14 +32,25 @@ export class TemperaMcpClient {
 
   /** Send one JSON-RPC request and return its result (throws TemperaMcpError on rpc errors). */
   async rpc(method, params = undefined) {
+    const requestMeta = {
+      ...((params ?? {})._meta ?? {}),
+        "io.modelcontextprotocol/protocolVersion": MCP_PROTOCOL_VERSION,
+        "io.modelcontextprotocol/clientCapabilities": {},
+    };
+    const requestParams = {
+      ...(params ?? {}),
+      _meta: requestMeta,
+    };
     const response = await this.fetch(this.url, {
       method: "POST",
       headers: {
         accept: "application/json",
         "content-type": "application/json",
         authorization: `Bearer ${this.#resolveBearer()}`,
+        "mcp-protocol-version": MCP_PROTOCOL_VERSION,
+        "mcp-method": method,
       },
-      body: JSON.stringify({ jsonrpc: "2.0", id: this.nextId++, method, ...(params !== undefined ? { params } : {}) }),
+      body: JSON.stringify({ jsonrpc: "2.0", id: this.nextId++, method, params: requestParams }),
     });
     const text = await response.text();
     const parsed = text ? JSON.parse(text) : null;
@@ -68,12 +79,10 @@ export class TemperaMcpClient {
     return parsed?.result;
   }
 
-  /** Open an MCP session and fetch server capabilities and instructions. */
+  /** Discover the stateless MCP server's capabilities and instructions. */
   initialize({ name = "tempera-sdk", version = "0.12.0" } = {}) {
-    return this.rpc("initialize", {
-      protocolVersion: MCP_PROTOCOL_VERSION,
-      capabilities: {},
-      clientInfo: { name, version },
+    return this.rpc("server/discover", {
+      _meta: { "io.modelcontextprotocol/clientInfo": { name, version } },
     });
   }
 

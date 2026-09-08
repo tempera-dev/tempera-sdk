@@ -1,12 +1,12 @@
 {
   "generated_path": "specs/data-engine-mcp-tools.json",
-  "generated_sha256": "58aadf0cc8f6a9392cbafd73bade004e238fd408a2e860e38361c2b688b8750f",
+  "generated_sha256": "c98b7bbe5c181e6c9a1eabc48863456bc24a02787f87b0a4fa1ccc4057b4896b",
   "generated_with": "sync-data-engine-mcp-contracts.py@1+verbatim",
   "schema_version": 1,
-  "source_blob_sha": "983c4708af4a60de062537109f415c9bbe2b2a7a",
+  "source_blob_sha": "27a12544eeac32fb1fabababb39c9f1058a377fd",
   "source_branch": "main",
-  "source_commit": "467a080972a9f1d7589c0e3730dcd91cbabd4218",
+  "source_commit": "6556c26192509282b2f7c26226fe06c906a9108d",
   "source_path": "api/mcp-tools.json",
   "source_repo": "tempera-dev/data-engine",
-  "source_sha256": "58aadf0cc8f6a9392cbafd73bade004e238fd408a2e860e38361c2b688b8750f"
+  "source_sha256": "c98b7bbe5c181e6c9a1eabc48863456bc24a02787f87b0a4fa1ccc4057b4896b"
 }

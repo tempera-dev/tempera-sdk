@@ -1,298 +1,1724 @@
 {
-  "schema_version": 1,
-  "service": "remi",
-  "default_base_url": "http://127.0.0.1:8765",
-  "contract_kind": "http-route-manifest",
-  "source_of_truth": {
-    "router": "crates/beater-memory/src/server.rs",
-    "cli": "crates/beater-memory/src/bin/beater-memory.rs",
-    "readme": "README.md"
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Remi",
+    "version": "0.1.0",
+    "description": "Temporal memory server: remember, project, query, and maintain an agent memory graph.\n\nAuthorization is a single static service bearer token, configured with --token, --token-file, or the REMI_TOKEN environment variable, and presented as `Authorization: Bearer <token>`. The server makes one binary authorization decision: hold that service-administrator credential, or be refused. It does not introspect central tokens and does not differentiate scopes per route, which is why every /v1 operation declares x-tempera-required-scope `admin` rather than a narrower memory:* scope. Narrowing this requires central token introspection, which the server does not implement.\n\nEvery response carries an x-request-id header; a valid client-supplied value is echoed. Errors are google.rpc.Status envelopes with a google.rpc.ErrorInfo detail whose domain is remi.tempera.dev. 401 carries WWW-Authenticate; 429, 503, and 504 carry Retry-After.",
+    "license": {
+      "name": "Apache-2.0",
+      "identifier": "Apache-2.0"
+    }
   },
-  "auth": {
-    "scheme": "bearer",
-    "header": "Authorization",
-    "format": "Bearer <token>",
-    "env": "BEATER_MEMORY_TOKEN",
-    "notes": [
-      "The serve command refuses to start without a bearer token unless --allow-no-auth is passed.",
-      "All /v1 routes require the configured bearer when auth is enabled.",
-      "/livez and /readyz are unauthenticated process and readiness probes."
-    ]
-  },
-  "request_id": {
-    "header": "x-request-id",
-    "semantics": "Tracing and durable audit correlation only; this is not a replay or idempotency guarantee."
-  },
-  "error_shape": {
-    "content_type": "application/json",
-    "schema": "ErrorBody",
-    "fields": [
-      "error.code",
-      "error.status",
-      "error.message",
-      "error.details"
-    ],
-    "field_types": {
-      "error.code": "integer",
-      "error.status": "string",
-      "error.message": "string",
-      "error.details": "array"
-    },
-    "detail_type": "google.rpc.ErrorInfo",
-    "detail_domain": "remi.tempera.dev",
-    "status_header_semantics": {
-      "401": "WWW-Authenticate: Bearer",
-      "429": "Retry-After",
-      "503": "Retry-After",
-      "504": "Retry-After"
-    },
-    "reasons": [
-      "unauthorized",
-      "rate_limited",
-      "service_busy",
-      "service_timeout",
-      "bad_request",
-      "internal_error"
-    ],
-    "statuses": [
-      "INVALID_ARGUMENT",
-      "UNAUTHENTICATED",
-      "RESOURCE_EXHAUSTED",
-      "INTERNAL",
-      "UNAVAILABLE",
-      "DEADLINE_EXCEEDED"
-    ]
-  },
-  "endpoints": [
+  "servers": [
     {
-      "operation": "livez",
-      "method": "GET",
-      "path": "/livez",
-      "auth": "public",
-      "response_schema": "LiveResponse",
-      "response_fields": [
-        "status"
-      ]
-    },
-    {
-      "operation": "readyz",
-      "method": "GET",
-      "path": "/readyz",
-      "auth": "public",
-      "response_schema": "ReadyResponse",
-      "response_fields": [
-        "status",
-        "database",
-        "message"
-      ]
-    },
-    {
-      "operation": "health",
-      "method": "GET",
-      "path": "/v1/health",
-      "auth": "bearer",
-      "response_schema": "StoreHealth",
-      "response_fields": [
-        "applicationId",
-        "expectedApplicationId",
-        "schemaVersion",
-        "expectedSchemaVersion",
-        "integrityOk",
-        "integrityMessages",
-        "foreignKeyViolations",
-        "graphIntegrityOk",
-        "graphIntegrity",
-        "stats"
-      ]
-    },
-    {
-      "operation": "getStats",
-      "method": "GET",
-      "path": "/v1/stats",
-      "auth": "bearer",
-      "response_schema": "StoreStats",
-      "response_fields": [
-        "ledgerEvents",
-        "pendingEvents",
-        "nodes",
-        "activeNodes",
-        "edges",
-        "auditEvents"
-      ]
-    },
-    {
-      "operation": "getMetrics",
-      "method": "GET",
-      "path": "/v1/metrics",
-      "auth": "bearer",
-      "response_schema": "ServiceMetricsSnapshot",
-      "response_fields": [
-        "startedAtUnixMs",
-        "totalRequests",
-        "authorizedRequests",
-        "unauthorizedRequests",
-        "rateLimitedRequests",
-        "dbBusyRequests",
-        "dbTimeoutRequests",
-        "successfulRequests",
-        "failedRequests",
-        "liveRequests",
-        "readyRequests",
-        "healthRequests",
-        "statsRequests",
-        "rememberRequests",
-        "projectRequests",
-        "queryRequests",
-        "maintenanceRequests",
-        "metricsRequests",
-        "auditRequests"
-      ]
-    },
-    {
-      "operation": "getPrometheusMetrics",
-      "method": "GET",
-      "path": "/v1/metrics/prometheus",
-      "auth": "bearer",
-      "response_schema": "PrometheusText"
-    },
-    {
-      "operation": "listAudit",
-      "method": "GET",
-      "path": "/v1/audit",
-      "auth": "bearer",
-      "query_schema": "AuditHttpQuery",
-      "query_fields": [
-        "pageSize",
-        "pageToken"
-      ],
-      "response_schema": "AuditHttpResponse",
-      "response_fields": [
-        "events",
-        "nextPageToken"
-      ]
-    },
-    {
-      "operation": "remember",
-      "method": "POST",
-      "path": "/v1/remember",
-      "auth": "bearer",
-      "request_schema": "RememberHttpRequest",
-      "request_fields": [
-        "tenantId",
-        "projectId",
-        "environmentId",
-        "kind",
-        "text",
-        "idempotencyKey",
-        "project"
-      ],
-      "required_request_fields": [
-        "tenantId",
-        "projectId",
-        "kind",
-        "text"
-      ],
-      "response_schema": "RememberHttpResponse",
-      "response_fields": [
-        "ingested",
-        "project"
-      ],
-      "idempotency_field": "idempotencyKey",
-      "description": "Write one memory event into the tenant and project ledger."
-    },
-    {
-      "operation": "project",
-      "method": "POST",
-      "path": "/v1/project",
-      "auth": "bearer",
-      "request_schema": "ProjectHttpRequest",
-      "request_fields": [
-        "limit"
-      ],
-      "required_request_fields": [],
-      "response_schema": "ProjectReport",
-      "response_fields": [
-        "eventsSeen",
-        "eventsProjected",
-        "eventsSkipped",
-        "memoriesAdded",
-        "memoriesUpdated",
-        "memoriesInvalidated",
-        "memoriesNooped",
-        "edgesAdded"
-      ]
-    },
-    {
-      "operation": "query",
-      "method": "POST",
-      "path": "/v1/query",
-      "auth": "bearer",
-      "request_schema": "QueryHttpRequest",
-      "request_fields": [
-        "question",
-        "scope",
-        "maxTokens",
-        "requireFresh",
-        "modes",
-        "reconstructionMode",
-        "maxReconstructionSteps",
-        "maxReconstructionTokens"
-      ],
-      "required_request_fields": [
-        "question",
-        "scope"
-      ],
-      "response_schema": "MemoryAnswer",
-      "response_fields": [
-        "answer",
-        "evidence",
-        "citedSpans",
-        "contradictions",
-        "staleAssumptions",
-        "suggestedNextQueries",
-        "tokenEstimate",
-        "tierUsed",
-        "reconstruction"
-      ],
-      "description": "Answer a scoped memory question with evidence and reconstruction metadata."
-    },
-    {
-      "operation": "maintenance",
-      "method": "POST",
-      "path": "/v1/maintenance",
-      "auth": "bearer",
-      "request_schema": "MaintenanceHttpRequest",
-      "request_fields": [
-        "vacuum",
-        "repairOrphans",
-        "pruneAuditBeforeUnixMs",
-        "retainLatestAuditEvents"
-      ],
-      "required_request_fields": [],
-      "response_schema": "MaintenanceReport",
-      "response_fields": [
-        "optimized",
-        "walCheckpointBusy",
-        "walCheckpointLogFrames",
-        "walCheckpointCheckpointedFrames",
-        "vacuumed",
-        "repairedOrphans",
-        "prunedAuditEvents",
-        "graphIntegrityBefore",
-        "graphIntegrityAfter",
-        "graphRepair",
-        "auditPrune"
-      ]
+      "url": "http://127.0.0.1:8765",
+      "description": "Default bind address of a locally served memory server."
     }
   ],
-  "sdk": {
-    "status": "producer_contract",
-    "published_in": "tempera-dev/tempera-sdk",
-    "surface": "surface.json operations.remi",
-    "notes": [
-      "The aggregate SDK must vendor this manifest from an immutable Remi main commit.",
-      "Endpoint operation values are the generated SDK operation identities.",
-      "Resource-oriented Google AIP migration remains producer-owned and must update the router, this manifest, and generated clients together."
-    ]
+  "x-tempera-protocol-routes": [
+    "/livez",
+    "/readyz"
+  ],
+  "paths": {
+    "/livez": {
+      "get": {
+        "operationId": "livez",
+        "summary": "Check liveness",
+        "description": "Report that the process is running and able to answer HTTP. This probe never touches the database and is never authenticated.",
+        "responses": {
+          "200": {
+            "description": "The process is live.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LiveResponse"
+                }
+              }
+            }
+          }
+        },
+        "x-tempera-auth-kind": "none",
+        "security": []
+      }
+    },
+    "/readyz": {
+      "get": {
+        "operationId": "readyz",
+        "summary": "Check readiness",
+        "description": "Report whether the service can serve database-backed traffic. Returns 503 with the same body shape, not an error envelope, when the database is unhealthy, saturated, or slow. Never authenticated.",
+        "responses": {
+          "200": {
+            "description": "The service is ready.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadyResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The service is not ready.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadyResponse"
+                }
+              }
+            }
+          }
+        },
+        "x-tempera-auth-kind": "none",
+        "security": []
+      }
+    },
+    "/v1/health": {
+      "get": {
+        "operationId": "health",
+        "summary": "Get store health",
+        "description": "Fetch deep store health: schema identity, SQLite integrity, and graph consistency, together with the store statistics.",
+        "responses": {
+          "200": {
+            "description": "Store health.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreHealth"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          },
+          "504": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "product",
+        "x-tempera-required-scope": "admin",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/stats": {
+      "get": {
+        "operationId": "getStats",
+        "summary": "Get store statistics",
+        "description": "Fetch memory-store row counts: ledger events, pending events, nodes, edges, and retained audit events.",
+        "responses": {
+          "200": {
+            "description": "Store statistics.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreStats"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          },
+          "504": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "product",
+        "x-tempera-required-scope": "admin",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/metrics": {
+      "get": {
+        "operationId": "getMetrics",
+        "summary": "Get service metrics",
+        "description": "Fetch in-process service counters as JSON. Served from memory, so it stays available while the database work queue is saturated.",
+        "responses": {
+          "200": {
+            "description": "Service metrics.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceMetricsSnapshot"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "product",
+        "x-tempera-required-scope": "admin",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/metrics/prometheus": {
+      "get": {
+        "operationId": "getPrometheusMetrics",
+        "summary": "Get service metrics in Prometheus text format",
+        "description": "Fetch the same counters in Prometheus text exposition format for scrape-based monitoring. Served from memory.",
+        "responses": {
+          "200": {
+            "description": "Service metrics in Prometheus text exposition format.",
+            "content": {
+              "text/plain; version=0.0.4; charset=utf-8": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "product",
+        "x-tempera-required-scope": "admin",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/audit": {
+      "get": {
+        "operationId": "listAudit",
+        "summary": "List service audit events",
+        "description": "List recent durable service audit events, newest first. Page tokens are opaque, checksummed, and bound to the page size that minted them.",
+        "parameters": [
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "description": "Events per page, 1 to 500. Defaults to 100.",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "description": "The nextPageToken from the previous page.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "One page of audit events.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditHttpResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          },
+          "504": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "product",
+        "x-tempera-required-scope": "admin",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/remember": {
+      "post": {
+        "operationId": "remember",
+        "summary": "Remember one memory event",
+        "description": "Write one memory event into the tenant and project ledger, and by default project pending events into the memory graph before returning.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RememberHttpRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The write result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RememberHttpResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error"
+          },
+          "415": {
+            "$ref": "#/components/responses/Error"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          },
+          "504": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "product",
+        "x-tempera-required-scope": "admin",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/project": {
+      "post": {
+        "operationId": "project",
+        "summary": "Project pending ledger events",
+        "description": "Project pending ledger events into the memory graph and return the projection report.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectHttpRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The projection report.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectReport"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error"
+          },
+          "415": {
+            "$ref": "#/components/responses/Error"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          },
+          "504": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "product",
+        "x-tempera-required-scope": "admin",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/query": {
+      "post": {
+        "operationId": "query",
+        "summary": "Answer a scoped memory question",
+        "description": "Answer a scoped memory question with evidence, contradictions, stale assumptions, and reconstruction metadata.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QueryHttpRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The answer and its evidence.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemoryAnswer"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error"
+          },
+          "415": {
+            "$ref": "#/components/responses/Error"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          },
+          "504": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "product",
+        "x-tempera-required-scope": "admin",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/v1/maintenance": {
+      "post": {
+        "operationId": "maintenance",
+        "summary": "Run a maintenance pass",
+        "description": "Run one bounded local maintenance pass: WAL checkpoint, optional VACUUM, optional orphan repair, and optional audit retention pruning.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MaintenanceHttpRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The maintenance report.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MaintenanceReport"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error"
+          },
+          "415": {
+            "$ref": "#/components/responses/Error"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          },
+          "504": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "product",
+        "x-tempera-required-scope": "admin",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "The static memory-server service bearer token."
+      }
+    },
+    "schemas": {
+      "Status": {
+        "type": "object",
+        "description": "The google.rpc.Status error envelope required of every Tempera API (AIP-193).",
+        "required": [
+          "error"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": [
+              "code",
+              "status",
+              "message"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "code": {
+                "type": "integer",
+                "description": "The HTTP status code, repeated in the body so the envelope is self-describing."
+              },
+              "status": {
+                "type": "string",
+                "description": "The canonical google.rpc.Code name, for example INVALID_ARGUMENT.",
+                "enum": [
+                  "CANCELLED",
+                  "UNKNOWN",
+                  "INVALID_ARGUMENT",
+                  "DEADLINE_EXCEEDED",
+                  "NOT_FOUND",
+                  "ALREADY_EXISTS",
+                  "PERMISSION_DENIED",
+                  "UNAUTHENTICATED",
+                  "RESOURCE_EXHAUSTED",
+                  "FAILED_PRECONDITION",
+                  "ABORTED",
+                  "OUT_OF_RANGE",
+                  "UNIMPLEMENTED",
+                  "INTERNAL",
+                  "UNAVAILABLE",
+                  "DATA_LOSS"
+                ]
+              },
+              "message": {
+                "type": "string",
+                "description": "A developer-facing description that is safe to log and safe to show."
+              },
+              "details": {
+                "type": "array",
+                "description": "Structured error details. Present but empty when there are none.",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "requestId": {
+                "type": "string",
+                "description": "The server-assigned request identifier, mirrored from the x-request-id response header."
+              }
+            }
+          }
+        }
+      },
+      "LiveResponse": {
+        "type": "object",
+        "description": "Liveness probe result. The process is running and can answer HTTP.",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Always \"ok\" while the process is serving."
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "ReadyResponse": {
+        "type": "object",
+        "description": "Readiness probe result, including the outcome of the database health check.",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "\"ok\" when the service is ready, otherwise \"not_ready\"."
+          },
+          "database": {
+            "type": "string",
+            "description": "\"ok\", \"unhealthy\", \"busy\", or \"timeout\"."
+          },
+          "message": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Why the service is not ready, or null when it is ready."
+          }
+        },
+        "required": [
+          "status",
+          "database"
+        ]
+      },
+      "StoreStats": {
+        "type": "object",
+        "description": "Operational row counts for the memory database.",
+        "properties": {
+          "ledgerEvents": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Total append-only ledger events."
+          },
+          "pendingEvents": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Ledger events not yet projected into the graph."
+          },
+          "nodes": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Memory nodes in the projection graph."
+          },
+          "activeNodes": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Memory nodes that have not been invalidated."
+          },
+          "edges": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Edges in the projection graph."
+          },
+          "auditEvents": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Durable service audit events retained."
+          }
+        },
+        "required": [
+          "ledgerEvents",
+          "pendingEvents",
+          "nodes",
+          "activeNodes",
+          "edges",
+          "auditEvents"
+        ]
+      },
+      "GraphIntegrityReport": {
+        "type": "object",
+        "description": "Projection-graph integrity counts not covered by SQLite foreign keys.",
+        "properties": {
+          "orphanEdgesFrom": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Edges whose source node no longer exists."
+          },
+          "orphanEdgesTo": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Edges whose target node no longer exists."
+          },
+          "orphanNodeSpans": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Span rows whose node no longer exists."
+          },
+          "orphanCueIndexEntries": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Cue index rows whose node no longer exists."
+          }
+        },
+        "required": [
+          "orphanEdgesFrom",
+          "orphanEdgesTo",
+          "orphanNodeSpans",
+          "orphanCueIndexEntries"
+        ]
+      },
+      "StoreHealth": {
+        "type": "object",
+        "description": "Deep store health: schema identity, SQLite integrity, and graph consistency.",
+        "properties": {
+          "applicationId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "SQLite application_id read from the database file."
+          },
+          "expectedApplicationId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "The application_id this build writes."
+          },
+          "schemaVersion": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0,
+            "description": "Schema version read from the database file."
+          },
+          "expectedSchemaVersion": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0,
+            "description": "The schema version this build expects."
+          },
+          "integrityOk": {
+            "type": "boolean",
+            "description": "Whether PRAGMA integrity_check reported no problems."
+          },
+          "integrityMessages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Raw integrity_check output when it is not simply ok."
+          },
+          "foreignKeyViolations": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Rows reported by PRAGMA foreign_key_check."
+          },
+          "graphIntegrityOk": {
+            "type": "boolean",
+            "description": "Whether graphIntegrity is clean."
+          },
+          "graphIntegrity": {
+            "$ref": "#/components/schemas/GraphIntegrityReport"
+          },
+          "stats": {
+            "$ref": "#/components/schemas/StoreStats"
+          }
+        },
+        "required": [
+          "applicationId",
+          "expectedApplicationId",
+          "schemaVersion",
+          "expectedSchemaVersion",
+          "integrityOk",
+          "integrityMessages",
+          "foreignKeyViolations",
+          "graphIntegrityOk",
+          "graphIntegrity",
+          "stats"
+        ]
+      },
+      "ServiceMetricsSnapshot": {
+        "type": "object",
+        "description": "In-process service counters since the server started.",
+        "properties": {
+          "startedAtUnixMs": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Unix milliseconds when this metrics window started."
+          },
+          "totalRequests": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "description": "Requests seen on instrumented routes."
+          },
+          "authorizedRequests": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "description": "Requests that passed bearer authorization."
+          },
+          "unauthorizedRequests": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "description": "Requests rejected as unauthenticated."
+          },
+          "rateLimitedRequests": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "description": "Requests rejected by the per-actor rate limiter."
+          },
+          "dbBusyRequests": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "description": "Requests shed because the database work queue was full."
+          },
+          "dbTimeoutRequests": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "description": "Requests that exceeded the database task budget."
+          },
+          "successfulRequests": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "description": "Requests that produced a 2xx response."
+          },
+          "failedRequests": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "description": "Requests that produced an error response."
+          },
+          "liveRequests": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "description": "Requests to /livez."
+          },
+          "readyRequests": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "description": "Requests to /readyz."
+          },
+          "healthRequests": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "description": "Requests to /v1/health."
+          },
+          "statsRequests": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "description": "Requests to /v1/stats."
+          },
+          "rememberRequests": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "description": "Requests to /v1/remember."
+          },
+          "projectRequests": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "description": "Requests to /v1/project."
+          },
+          "queryRequests": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "description": "Requests to /v1/query."
+          },
+          "maintenanceRequests": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "description": "Requests to /v1/maintenance."
+          },
+          "metricsRequests": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "description": "Requests to the two metrics routes."
+          },
+          "auditRequests": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "description": "Requests to /v1/audit."
+          }
+        },
+        "required": [
+          "startedAtUnixMs",
+          "totalRequests",
+          "authorizedRequests",
+          "unauthorizedRequests",
+          "rateLimitedRequests",
+          "dbBusyRequests",
+          "dbTimeoutRequests",
+          "successfulRequests",
+          "failedRequests",
+          "liveRequests",
+          "readyRequests",
+          "healthRequests",
+          "statsRequests",
+          "rememberRequests",
+          "projectRequests",
+          "queryRequests",
+          "maintenanceRequests",
+          "metricsRequests",
+          "auditRequests"
+        ]
+      },
+      "AuditEvent": {
+        "type": "object",
+        "description": "One durable service audit event.",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Monotonic audit row identifier."
+          },
+          "occurredAtUnixMs": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Unix milliseconds when the event was recorded."
+          },
+          "actor": {
+            "type": "string",
+            "description": "Stable hash of the presented bearer, \"anonymous\", or \"unauthenticated\"."
+          },
+          "action": {
+            "type": "string",
+            "description": "The logical operation, for example remember or query."
+          },
+          "outcome": {
+            "type": "string",
+            "description": "\"success\", \"failure\", \"denied\", or \"rate_limited\"."
+          },
+          "route": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The HTTP route that produced the event."
+          },
+          "statusCode": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32",
+            "minimum": 0,
+            "description": "The HTTP status code returned to the caller."
+          },
+          "detail": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Free-form JSON detail; never raw memory text."
+          }
+        },
+        "required": [
+          "id",
+          "occurredAtUnixMs",
+          "actor",
+          "action",
+          "outcome",
+          "detail"
+        ]
+      },
+      "AuditHttpResponse": {
+        "type": "object",
+        "description": "One page of service audit events, newest first.",
+        "properties": {
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditEvent"
+            },
+            "description": "The page of events."
+          },
+          "nextPageToken": {
+            "type": "string",
+            "description": "Opaque cursor for the next page; absent on the last page."
+          }
+        },
+        "required": [
+          "events"
+        ]
+      },
+      "MemoryNodeKind": {
+        "type": "string",
+        "description": "Typed memory node families in the projection graph.",
+        "enum": [
+          "episode",
+          "fact",
+          "entity_cue",
+          "tag",
+          "procedure",
+          "state",
+          "gotcha",
+          "anti_memory",
+          "topic"
+        ]
+      },
+      "MemoryMode": {
+        "type": "string",
+        "description": "Which memory substores a query may consult.",
+        "enum": [
+          "semantic",
+          "episodic",
+          "procedural",
+          "gotcha",
+          "state"
+        ]
+      },
+      "MemoryTier": {
+        "type": "string",
+        "description": "The highest retrieval tier used to produce an answer.",
+        "enum": [
+          "cue_seed",
+          "activation",
+          "active_reconstruction"
+        ]
+      },
+      "ReconstructionMode": {
+        "type": "string",
+        "description": "Read-time active reconstruction policy.",
+        "enum": [
+          "off",
+          "auto",
+          "force"
+        ]
+      },
+      "ReconstructionReason": {
+        "type": "string",
+        "description": "Why a query did or did not escalate into active reconstruction.",
+        "enum": [
+          "forced",
+          "empty_evidence",
+          "low_confidence",
+          "ambiguous_evidence",
+          "compositional_query"
+        ]
+      },
+      "ProjectReport": {
+        "type": "object",
+        "description": "Result of one projection pass over pending ledger events.",
+        "properties": {
+          "eventsSeen": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "description": "Pending events read."
+          },
+          "eventsProjected": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "description": "Events applied to the projection graph."
+          },
+          "eventsSkipped": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "description": "Events skipped, for example duplicates."
+          },
+          "memoriesAdded": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "description": "Memory nodes created."
+          },
+          "memoriesUpdated": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "description": "Memory nodes updated in place."
+          },
+          "memoriesInvalidated": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "description": "Memory nodes invalidated by newer belief."
+          },
+          "memoriesNooped": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "description": "Events that changed nothing."
+          },
+          "edgesAdded": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "description": "Edges created."
+          }
+        },
+        "required": [
+          "eventsSeen",
+          "eventsProjected",
+          "eventsSkipped",
+          "memoriesAdded",
+          "memoriesUpdated",
+          "memoriesInvalidated",
+          "memoriesNooped",
+          "edgesAdded"
+        ]
+      },
+      "RememberHttpRequest": {
+        "type": "object",
+        "description": "One memory event to append to the tenant and project ledger.",
+        "properties": {
+          "tenantId": {
+            "type": "string",
+            "description": "Tenant that owns the memory."
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project within the tenant."
+          },
+          "environmentId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Optional environment within the project."
+          },
+          "kind": {
+            "$ref": "#/components/schemas/MemoryNodeKind"
+          },
+          "text": {
+            "type": "string",
+            "description": "The memory text to distil and project."
+          },
+          "idempotencyKey": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Caller-chosen key that collapses retries of the same write."
+          },
+          "project": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "Project pending events before returning; defaults to true."
+          }
+        },
+        "required": [
+          "tenantId",
+          "projectId",
+          "kind",
+          "text"
+        ],
+        "additionalProperties": false
+      },
+      "RememberHttpResponse": {
+        "type": "object",
+        "description": "Result of appending one memory event.",
+        "properties": {
+          "ingested": {
+            "type": "boolean",
+            "description": "False when an idempotency key collapsed the write."
+          },
+          "project": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ProjectReport"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The projection report, or null when projection was not requested."
+          }
+        },
+        "required": [
+          "ingested"
+        ]
+      },
+      "ProjectHttpRequest": {
+        "type": "object",
+        "description": "Bounded request to project pending ledger events.",
+        "properties": {
+          "limit": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64",
+            "minimum": 0,
+            "description": "Maximum pending events to project; defaults to 1000."
+          }
+        }
+      },
+      "MemoryScope": {
+        "type": "object",
+        "description": "Tenant, project, environment, and as-of bound for a memory query.",
+        "properties": {
+          "tenantId": {
+            "type": "string",
+            "description": "Tenant that owns the memory."
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project within the tenant."
+          },
+          "environmentId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Optional environment within the project."
+          },
+          "asOfUnixMs": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64",
+            "description": "Answer as the memory stood at this Unix millisecond."
+          }
+        },
+        "required": [
+          "tenantId",
+          "projectId"
+        ]
+      },
+      "QueryHttpRequest": {
+        "type": "object",
+        "description": "A scoped memory question with an optional retrieval budget.",
+        "properties": {
+          "question": {
+            "type": "string",
+            "description": "The natural-language question."
+          },
+          "scope": {
+            "$ref": "#/components/schemas/MemoryScope"
+          },
+          "maxTokens": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32",
+            "minimum": 0,
+            "description": "Answer token budget; defaults to 1200."
+          },
+          "requireFresh": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "Refuse memories invalidated before the as-of bound."
+          },
+          "modes": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/MemoryMode"
+            },
+            "description": "Restrict retrieval to these substores."
+          },
+          "reconstructionMode": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReconstructionMode"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Active reconstruction policy; defaults to off."
+          },
+          "maxReconstructionSteps": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32",
+            "minimum": 0,
+            "description": "Reconstruction step budget; defaults to 4."
+          },
+          "maxReconstructionTokens": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32",
+            "minimum": 0,
+            "description": "Reconstruction token budget; defaults to 2000."
+          }
+        },
+        "required": [
+          "question",
+          "scope"
+        ],
+        "additionalProperties": false
+      },
+      "CitedSpan": {
+        "type": "object",
+        "description": "Span provenance for a returned memory.",
+        "properties": {
+          "tenantId": {
+            "type": "string",
+            "description": "Tenant that owns the span."
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project within the tenant."
+          },
+          "traceId": {
+            "type": "string",
+            "description": "Trace the span belongs to."
+          },
+          "spanId": {
+            "type": "string",
+            "description": "The cited span."
+          },
+          "seq": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0,
+            "description": "Position of the span within the trace."
+          }
+        },
+        "required": [
+          "tenantId",
+          "projectId",
+          "traceId",
+          "spanId",
+          "seq"
+        ]
+      },
+      "Evidence": {
+        "type": "object",
+        "description": "One compact evidence item that can be placed into model context.",
+        "properties": {
+          "nodeId": {
+            "type": "string",
+            "description": "Memory node the evidence came from."
+          },
+          "kind": {
+            "$ref": "#/components/schemas/MemoryNodeKind"
+          },
+          "text": {
+            "type": "string",
+            "description": "The evidence text."
+          },
+          "score": {
+            "type": "number",
+            "format": "float",
+            "description": "Retrieval score."
+          },
+          "tokenEstimate": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0,
+            "description": "Estimated tokens the text costs."
+          },
+          "citedSpans": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CitedSpan"
+            },
+            "description": "Spans this evidence was distilled from."
+          }
+        },
+        "required": [
+          "nodeId",
+          "kind",
+          "text",
+          "score",
+          "tokenEstimate",
+          "citedSpans"
+        ]
+      },
+      "Contradiction": {
+        "type": "object",
+        "description": "A contradiction surfaced instead of silently collapsed.",
+        "properties": {
+          "olderNodeId": {
+            "type": "string",
+            "description": "The superseded memory."
+          },
+          "newerNodeId": {
+            "type": "string",
+            "description": "The superseding memory."
+          },
+          "summary": {
+            "type": "string",
+            "description": "What the two memories disagree about."
+          }
+        },
+        "required": [
+          "olderNodeId",
+          "newerNodeId",
+          "summary"
+        ]
+      },
+      "StaleAssumption": {
+        "type": "object",
+        "description": "A premise that may be stale under the requested freshness.",
+        "properties": {
+          "nodeId": {
+            "type": "string",
+            "description": "The memory that may be stale."
+          },
+          "summary": {
+            "type": "string",
+            "description": "What the premise asserts."
+          },
+          "invalidatedAtUnixMs": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64",
+            "description": "When the premise was invalidated, if it was."
+          }
+        },
+        "required": [
+          "nodeId",
+          "summary"
+        ]
+      },
+      "ReconstructionReport": {
+        "type": "object",
+        "description": "Diagnostics for a bounded active reconstruction pass.",
+        "properties": {
+          "mode": {
+            "$ref": "#/components/schemas/ReconstructionMode"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/ReconstructionReason"
+          },
+          "stepsUsed": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0,
+            "description": "Expansion steps actually taken."
+          },
+          "tokensSpent": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0,
+            "description": "Tokens spent on reconstruction."
+          },
+          "expandedNodeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Nodes the pass expanded."
+          },
+          "acceptedNodeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Nodes the pass kept as evidence."
+          },
+          "prunedNodeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Nodes the pass discarded."
+          }
+        },
+        "required": [
+          "mode",
+          "reason",
+          "stepsUsed",
+          "tokensSpent",
+          "expandedNodeIds",
+          "acceptedNodeIds",
+          "prunedNodeIds"
+        ]
+      },
+      "MemoryAnswer": {
+        "type": "object",
+        "description": "An answer with the evidence and reconstruction metadata behind it.",
+        "properties": {
+          "answer": {
+            "type": "string",
+            "description": "The composed answer; empty when nothing was recalled."
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Evidence"
+            },
+            "description": "Evidence supporting the answer."
+          },
+          "citedSpans": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CitedSpan"
+            },
+            "description": "Every span cited by the evidence."
+          },
+          "contradictions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Contradiction"
+            },
+            "description": "Contradictions surfaced rather than collapsed."
+          },
+          "staleAssumptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StaleAssumption"
+            },
+            "description": "Premises that may be stale under the as-of bound."
+          },
+          "suggestedNextQueries": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Follow-up questions worth asking."
+          },
+          "tokenEstimate": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0,
+            "description": "Estimated tokens the answer and evidence cost."
+          },
+          "tierUsed": {
+            "$ref": "#/components/schemas/MemoryTier"
+          },
+          "reconstruction": {
+            "$ref": "#/components/schemas/ReconstructionReport"
+          }
+        },
+        "required": [
+          "answer",
+          "evidence",
+          "citedSpans",
+          "contradictions",
+          "staleAssumptions",
+          "suggestedNextQueries",
+          "tokenEstimate",
+          "tierUsed"
+        ]
+      },
+      "MaintenanceHttpRequest": {
+        "type": "object",
+        "description": "Options for one local maintenance pass.",
+        "properties": {
+          "vacuum": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "Run VACUUM after checkpointing."
+          },
+          "repairOrphans": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "Delete orphaned graph rows."
+          },
+          "pruneAuditBeforeUnixMs": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64",
+            "description": "Delete audit events older than this Unix millisecond."
+          },
+          "retainLatestAuditEvents": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64",
+            "minimum": 0,
+            "description": "Keep at most this many of the newest audit events."
+          }
+        },
+        "additionalProperties": false
+      },
+      "GraphRepairReport": {
+        "type": "object",
+        "description": "Rows removed by graph integrity repair.",
+        "properties": {
+          "memoryEdgesRemoved": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Orphaned edges deleted."
+          },
+          "nodeSpansRemoved": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Orphaned span rows deleted."
+          },
+          "cueIndexEntriesRemoved": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Orphaned cue index rows deleted."
+          }
+        },
+        "required": [
+          "memoryEdgesRemoved",
+          "nodeSpansRemoved",
+          "cueIndexEntriesRemoved"
+        ]
+      },
+      "AuditPruneReport": {
+        "type": "object",
+        "description": "Rows removed by audit retention maintenance.",
+        "properties": {
+          "auditEventsRemoved": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Audit events deleted."
+          }
+        },
+        "required": [
+          "auditEventsRemoved"
+        ]
+      },
+      "MaintenanceReport": {
+        "type": "object",
+        "description": "Result of one local maintenance pass.",
+        "properties": {
+          "optimized": {
+            "type": "boolean",
+            "description": "Whether PRAGMA optimize ran."
+          },
+          "walCheckpointBusy": {
+            "type": "integer",
+            "format": "int64",
+            "description": "WAL checkpoint busy result."
+          },
+          "walCheckpointLogFrames": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Frames in the WAL at checkpoint time."
+          },
+          "walCheckpointCheckpointedFrames": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Frames checkpointed."
+          },
+          "vacuumed": {
+            "type": "boolean",
+            "description": "Whether VACUUM ran."
+          },
+          "repairedOrphans": {
+            "type": "boolean",
+            "description": "Whether orphan repair ran."
+          },
+          "prunedAuditEvents": {
+            "type": "boolean",
+            "description": "Whether audit pruning ran."
+          },
+          "graphIntegrityBefore": {
+            "$ref": "#/components/schemas/GraphIntegrityReport"
+          },
+          "graphIntegrityAfter": {
+            "$ref": "#/components/schemas/GraphIntegrityReport"
+          },
+          "graphRepair": {
+            "$ref": "#/components/schemas/GraphRepairReport"
+          },
+          "auditPrune": {
+            "$ref": "#/components/schemas/AuditPruneReport"
+          }
+        },
+        "required": [
+          "optimized",
+          "walCheckpointBusy",
+          "walCheckpointLogFrames",
+          "walCheckpointCheckpointedFrames",
+          "vacuumed",
+          "repairedOrphans",
+          "prunedAuditEvents",
+          "graphIntegrityBefore",
+          "graphIntegrityAfter",
+          "graphRepair",
+          "auditPrune"
+        ]
+      }
+    },
+    "responses": {
+      "Error": {
+        "description": "A google.rpc.Status error envelope.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Status"
+            }
+          }
+        }
+      }
+    }
   }
 }

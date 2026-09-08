@@ -8,9 +8,21 @@ operation under the wrong audience, or keeping a stale request shape after the
 producer contract moves.
 
 `contracts/native-transport-v1.json` closes that gap. For every admitted
-operation it publishes the method, the path template, the auth audience, and a
-request and response digest derived from the vendored producer contract. This
-script both writes that file and checks a native client against it.
+operation it publishes the method, the path template, the auth audience and
+scope, and a request and response digest derived from the vendored producer
+contract. This script both writes that file and checks a native client against
+it.
+
+Four producers are admitted. tempera-dropshipping and tempera-business publish
+every operation surface.json carries for them. tempera-payments publishes only
+the merchant onboarding seam named in PAYMENTS_NATIVE_OPERATIONS, each entry
+validated against the producer's wire metadata. tempera-voice publishes only
+the phone-relevant session, pending-action, and agent operations named in
+NATIVE_OPERATIONS (no eval, artifact, agent-authoring, or export routes) plus
+one synthetic WebSocket operation, `temperaVoice.streamVoiceSession`, taken
+from the contract's top-level `x-tempera-websocket-contract`: method `WSS`,
+the contract's path, audience, and required scope, and both digests computed
+over that websocket contract object itself.
 
 Usage:
   python3 scripts/check-native-transport.py --write        # regenerate
@@ -21,13 +33,17 @@ A native call site declares itself with an annotation comment placed
 immediately above the call:
 
     // tempera-transport: temperaDropshipping.listInbox GET /v1/organizations/...
+    // tempera-transport: temperaVoice.streamVoiceSession WSS /v1/sessions/{session_id}/stream
 
-The checker requires that the annotation names a real operation, that the
+The checker requires that the annotation names a published operation, that the
 method and path template match the contract exactly, and that the very next
 code line carries a string literal whose interpolated path shape is that same
-route. It also requires that every literal reaching into the canonical
-`/v1/organizations/...` namespace is annotated, so a new hand-written call
-cannot slip in undeclared.
+route. A `WSS` annotation is checked exactly like an HTTP one. It also requires
+that every literal reaching into a producer's canonical namespace
+(NATIVE_NAMESPACES: `/v1/organizations` for dropshipping; `/v1/operating-state`,
+`/v1/business-profile`, and `/v1/cases` for business; `/v1/merchants` for
+payments; `/v1/sessions`, `/v1/agents`, and `/v1/actions` for voice) is
+annotated, so a new hand-written call cannot slip in undeclared.
 """
 
 from __future__ import annotations
@@ -45,11 +61,49 @@ SURFACE = ROOT / "surface.json"
 CONTRACT = ROOT / "contracts" / "native-transport-v1.json"
 
 # Products whose operations the native clients are allowed to call directly.
-NATIVE_PRODUCTS = ("temperaDropshipping", "temperaBusiness", "temperaPayments")
+NATIVE_PRODUCTS = ("temperaDropshipping", "temperaBusiness", "temperaPayments", "temperaVoice")
 PRODUCT_SPECS = {
     "temperaDropshipping": "tempera-dropshipping-api.json",
     "temperaBusiness": "tempera-business-api.json",
     "temperaPayments": "tempera-payments-api.json",
+    "temperaVoice": "tempera-voice-api.json",
+}
+# Operations each product publishes to the phones, by surface.json id. None
+# means every operation surface.json carries for the product. An allowlisted
+# id that surface.json no longer carries fails the build rather than silently
+# shrinking the published set. temperaPayments is bounded by the explicit
+# PAYMENTS_NATIVE_OPERATIONS mapping below instead of by surface.json.
+NATIVE_OPERATIONS: dict[str, frozenset[str] | None] = {
+    "temperaDropshipping": None,
+    "temperaBusiness": None,
+    "temperaPayments": None,
+    "temperaVoice": frozenset(
+        {
+            "createVoiceSession",
+            "getVoiceSession",
+            "listVoiceSessions",
+            "listVoiceSessionActions",
+            "listVoiceSessionEvents",
+            "endVoiceSession",
+            "resolveVoiceAction",
+            "listVoiceAgents",
+            "getDefaultVoiceAgent",
+        }
+    ),
+}
+# Producers whose vendored OpenAPI carries a top-level
+# x-tempera-websocket-contract the phones consume directly. Each is published
+# as one synthetic operation with this method.
+WEBSOCKET_PRODUCTS = ("temperaVoice",)
+WEBSOCKET_CONTRACT_KEY = "x-tempera-websocket-contract"
+WEBSOCKET_METHOD = "WSS"
+# Route roots a hand-written client may only name from an annotated call site.
+# A literal matches a root when it equals it or continues it with "/" or ":".
+NATIVE_NAMESPACES: dict[str, tuple[str, ...]] = {
+    "temperaDropshipping": ("/v1/organizations",),
+    "temperaBusiness": ("/v1/operatingState", "/v1/businessProfile", "/v1/cases"),
+    "temperaPayments": ("/v1/merchants",),
+    "temperaVoice": ("/v1/sessions", "/v1/agents", "/v1/actions"),
 }
 
 # Payments remains a broad producer contract, but native phones receive only
@@ -70,8 +124,8 @@ PAYMENTS_NATIVE_OPERATIONS = (
         "upstreamOperationId": "getWorkspaceMerchant",
         "method": "GET",
         "path": "/v1/merchants",
-        "query": ["tenant_id"],
-        "requiredQuery": ["tenant_id"],
+        "query": ["tenantId"],
+        "requiredQuery": ["tenantId"],
         "safeRetry": "read",
         "authAudience": "tempera-payments",
         "scope": "payments:merchants:read",
@@ -81,8 +135,8 @@ PAYMENTS_NATIVE_OPERATIONS = (
         "upstreamOperationId": "createMerchant",
         "method": "POST",
         "path": "/v1/merchants",
-        "body": ["tenant_id", "country", "currency", "category"],
-        "requiredBody": ["tenant_id", "country", "currency", "category"],
+        "body": ["tenantId", "country", "currency", "category"],
+        "requiredBody": ["tenantId", "country", "currency", "category"],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
         "safeRetry": "none",
@@ -95,10 +149,10 @@ PAYMENTS_NATIVE_OPERATIONS = (
         "id": "getMerchant",
         "upstreamOperationId": "getMerchant",
         "method": "GET",
-        "path": "/v1/merchants/{merchant_id}",
-        "pathParams": ["merchant_id"],
-        "query": ["tenant_id"],
-        "requiredQuery": ["tenant_id"],
+        "path": "/v1/merchants/{merchantId}",
+        "pathParams": ["merchantId"],
+        "query": ["tenantId"],
+        "requiredQuery": ["tenantId"],
         "safeRetry": "read",
         "authAudience": "tempera-payments",
         "scope": "payments:merchants:read",
@@ -107,10 +161,10 @@ PAYMENTS_NATIVE_OPERATIONS = (
         "id": "refreshMerchantEligibility",
         "upstreamOperationId": "refreshMerchantEligibility",
         "method": "POST",
-        "path": "/v1/merchants/{merchant_id}/refresh",
-        "pathParams": ["merchant_id"],
-        "body": ["tenant_id"],
-        "requiredBody": ["tenant_id"],
+        "path": "/v1/merchants/{merchantId}/refresh",
+        "pathParams": ["merchantId"],
+        "body": ["tenantId"],
+        "requiredBody": ["tenantId"],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
         "safeRetry": "none",
@@ -121,10 +175,10 @@ PAYMENTS_NATIVE_OPERATIONS = (
         "id": "createMerchantOnboardingLink",
         "upstreamOperationId": "createMerchantOnboardingLink",
         "method": "POST",
-        "path": "/v1/merchants/{merchant_id}/onboarding",
-        "pathParams": ["merchant_id"],
-        "body": ["tenant_id"],
-        "requiredBody": ["tenant_id"],
+        "path": "/v1/merchants/{merchantId}/onboarding",
+        "pathParams": ["merchantId"],
+        "body": ["tenantId"],
+        "requiredBody": ["tenantId"],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
         "safeRetry": "none",
@@ -143,7 +197,6 @@ ANNOTATION_RE = re.compile(
 STRING_LITERAL_RE = re.compile(r'"((?:[^"\\]|\\.)*)"')
 # Kotlin "$name" / "${expr}" and Swift "\(expr)" interpolations.
 INTERPOLATION_RE = re.compile(r"\\\([^)]*\)|\$\{[^}]*\}|\$[A-Za-z_][A-Za-z0-9_]*")
-CANONICAL_PREFIXES = ("/v1/organizations/", "/v1/merchants")
 
 
 def digest(value: Any) -> str:
@@ -219,6 +272,46 @@ def validate_payment_mapping(op: dict[str, Any], upstream_operation: dict[str, A
         raise ValueError(f"Payments native headers drift for {op['id']}")
 
 
+def websocket_operation(
+    product: str, spec: dict[str, Any], audience: str
+) -> dict[str, Any]:
+    """The synthetic WSS operation published from a producer's websocket contract."""
+    contract = spec.get(WEBSOCKET_CONTRACT_KEY)
+    if not isinstance(contract, dict):
+        raise ValueError(f"{product}: vendored contract has no {WEBSOCKET_CONTRACT_KEY}")
+    operation_id = contract.get("operationId")
+    path = contract.get("path")
+    ws_audience = contract.get("x-tempera-auth-audience")
+    scope = contract.get("x-tempera-required-scope")
+    if not isinstance(operation_id, str) or not operation_id:
+        raise ValueError(f"{product}: {WEBSOCKET_CONTRACT_KEY} names no operationId")
+    if not isinstance(path, str) or not path.startswith("/"):
+        raise ValueError(f"{product}: {WEBSOCKET_CONTRACT_KEY} names no absolute path")
+    if ws_audience != audience:
+        raise ValueError(
+            f"{product}: {WEBSOCKET_CONTRACT_KEY} audience {ws_audience!r} "
+            f"differs from the product audience {audience!r}"
+        )
+    if not isinstance(scope, str) or not scope:
+        raise ValueError(f"{product}: {WEBSOCKET_CONTRACT_KEY} names no required scope")
+    return {
+        "operation": f"{product}.{operation_id}",
+        "product": product,
+        "id": operation_id,
+        "upstreamOperationId": operation_id,
+        "method": WEBSOCKET_METHOD,
+        "pathTemplate": path,
+        "pathShape": path_shape(path),
+        "authAudience": ws_audience,
+        "scope": scope,
+        "safeRetry": "none",
+        "headers": [],
+        "requiredHeaders": [],
+        "requestDigest": digest(contract),
+        "responseDigest": digest(contract),
+    }
+
+
 def build_contract() -> dict[str, Any]:
     surface = json.loads(SURFACE.read_text(encoding="utf-8"))
     producers: list[dict[str, Any]] = []
@@ -229,10 +322,11 @@ def build_contract() -> dict[str, Any]:
         lock = json.loads(
             (ROOT / "specs" / f"{spec_name}.source").read_text(encoding="utf-8")
         )
+        audience = surface["products"][product]["audience"]
         producers.append(
             {
                 "product": product,
-                "audience": surface["products"][product]["audience"],
+                "audience": audience,
                 "envVar": surface["products"][product]["envVar"],
                 "spec": f"specs/{spec_name}",
                 "sourceRepo": lock["source_repo"],
@@ -247,7 +341,12 @@ def build_contract() -> dict[str, Any]:
             if product == "temperaPayments"
             else surface["operations"][product]
         )
+        allowed = NATIVE_OPERATIONS[product]
+        published: set[str] = set()
         for op in native_surface:
+            if allowed is not None and op["id"] not in allowed:
+                continue
+            published.add(op["id"])
             upstream_operation = upstream[op["upstreamOperationId"]]
             if product == "temperaPayments":
                 validate_payment_mapping(op, upstream_operation)
@@ -282,6 +381,21 @@ def build_contract() -> dict[str, Any]:
                     "responseDigest": digest(response_schema(spec, upstream_operation)),
                 }
             )
+        if allowed is not None:
+            missing = sorted(allowed - published)
+            if missing:
+                raise ValueError(
+                    f"{product}: allowlisted operations missing from surface.json: "
+                    f"{missing}"
+                )
+        if product in WEBSOCKET_PRODUCTS:
+            stream = websocket_operation(product, spec, audience)
+            if stream["id"] in published:
+                raise ValueError(
+                    f"{product}: websocket operation {stream['id']} collides with "
+                    "an HTTP operation"
+                )
+            operations.append(stream)
     return {
         "schema_version": 1,
         "contract": "tempera.native-transport/v1",
@@ -289,8 +403,11 @@ def build_contract() -> dict[str, Any]:
             "Method, path template, auth audience, and request/response digests "
             "for every operation a hand-written native client may call. "
             "Generated by scripts/check-native-transport.py from surface.json "
-            "and the vendored producer contracts. Any remaining unmerged source "
-            "pins are explicitly listed in contracts/sdk-staged-sources.json."
+            "and the vendored producer contracts; each producer below records the "
+            "exact mainline commit its vendored contract was locked to. Method "
+            "WSS marks the synthetic WebSocket operation published from the "
+            "producer's x-tempera-websocket-contract; both of its digests cover "
+            "that contract object."
         ),
         "surfaceVersion": surface["version"],
         "producers": producers,
@@ -312,6 +429,19 @@ def literal_path_shapes(line: str) -> list[str]:
             shape = "/" + shape
         shapes.append(shape)
     return shapes
+
+
+def in_namespace(shape: str, root: str) -> bool:
+    root = root.rstrip("/")
+    return shape == root or shape.startswith(root + "/") or shape.startswith(root + ":")
+
+
+def namespace_owner(shape: str) -> str | None:
+    """The product whose canonical namespace a route shape reaches into, if any."""
+    for product, roots in NATIVE_NAMESPACES.items():
+        if any(in_namespace(shape, root) for root in roots):
+            return product
+    return None
 
 
 def check_client(path: Path, contract: dict[str, Any]) -> list[str]:
@@ -365,9 +495,10 @@ def check_client(path: Path, contract: dict[str, Any]) -> list[str]:
         if number in annotated_lines or ANNOTATION_RE.search(line):
             continue
         for shape in literal_path_shapes(line):
-            if any(shape.startswith(prefix) for prefix in CANONICAL_PREFIXES):
+            owner = namespace_owner(shape)
+            if owner is not None:
                 failures.append(
-                    f"{path.name}:{number}: undeclared canonical route {shape}; "
+                    f"{path.name}:{number}: undeclared {owner} route {shape}; "
                     "add a tempera-transport annotation above the call site"
                 )
     return failures

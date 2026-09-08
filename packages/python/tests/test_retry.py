@@ -124,7 +124,7 @@ class RetryRulesTest(unittest.TestCase):
             self.assertEqual(len(bodies), 1, "every attempt resent byte-identical bytes")
             for request in server.received:
                 sent = json.loads(request["body"])
-                self.assertEqual(sent["idempotency_key"], IDEMPOTENCY_KEY)
+                self.assertEqual(sent["idempotencyKey"], IDEMPOTENCY_KEY)
             self.assertEqual(
                 slept, [INITIAL_BACKOFF_SECONDS, INITIAL_BACKOFF_SECONDS * 2]
             )

@@ -1,0 +1,69 @@
+{
+  "$comment": "The canonical google.rpc.Status error envelope (AIP-193). Every Tempera producer embeds these two components byte-identically under components.schemas.Status and components.responses.Error. scripts/lint_producer_contract.py compares against this file.",
+  "schemas": {
+    "Status": {
+      "type": "object",
+      "description": "The google.rpc.Status error envelope required of every Tempera API (AIP-193).",
+      "required": ["error"],
+      "additionalProperties": false,
+      "properties": {
+        "error": {
+          "type": "object",
+          "required": ["code", "status", "message"],
+          "additionalProperties": false,
+          "properties": {
+            "code": {
+              "type": "integer",
+              "description": "The HTTP status code, repeated in the body so the envelope is self-describing."
+            },
+            "status": {
+              "type": "string",
+              "description": "The canonical google.rpc.Code name, for example INVALID_ARGUMENT.",
+              "enum": [
+                "CANCELLED",
+                "UNKNOWN",
+                "INVALID_ARGUMENT",
+                "DEADLINE_EXCEEDED",
+                "NOT_FOUND",
+                "ALREADY_EXISTS",
+                "PERMISSION_DENIED",
+                "UNAUTHENTICATED",
+                "RESOURCE_EXHAUSTED",
+                "FAILED_PRECONDITION",
+                "ABORTED",
+                "OUT_OF_RANGE",
+                "UNIMPLEMENTED",
+                "INTERNAL",
+                "UNAVAILABLE",
+                "DATA_LOSS"
+              ]
+            },
+            "message": {
+              "type": "string",
+              "description": "A developer-facing description that is safe to log and safe to show."
+            },
+            "details": {
+              "type": "array",
+              "description": "Structured error details. Present but empty when there are none.",
+              "items": { "type": "object", "additionalProperties": true }
+            },
+            "requestId": {
+              "type": "string",
+              "description": "The server-assigned request identifier, mirrored from the x-request-id response header."
+            }
+          }
+        }
+      }
+    }
+  },
+  "responses": {
+    "Error": {
+      "description": "A google.rpc.Status error envelope.",
+      "content": {
+        "application/json": {
+          "schema": { "$ref": "#/components/schemas/Status" }
+        }
+      }
+    }
+  }
+}

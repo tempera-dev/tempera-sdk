@@ -1,13 +1,13 @@
 {
   "generated_path": "specs/remi-http-contract.json",
-  "generated_sha256": "59e942fc33a82f9ad3203276a1b014103384c6b1380413fa81880f71fa72af41",
-  "generated_with": "sync-vendored-openapi.py@1+verbatim-contract-copy",
+  "generated_sha256": "a6e65b9b8028bbea23e16229748beef814c6fbad1d21242bc47fe0882fa26c11",
+  "generated_with": "sync-vendored-openapi.py@1+verbatim-openapi-copy",
   "schema_version": 1,
-  "source_blob_sha": "74a70be7ad9b507d180a724b594cce7ac9becb39",
+  "source_blob_sha": "617e0c1ccbbf8bb36a3854b857ec27a5539292cc",
   "source_branch": "main",
-  "source_commit": "29fa2b8ac04f6c0a3b5e04a40c70bb58f6fc7ea1",
+  "source_commit": "18cbc253d6f82523109f99e4e8c641e8ab625105",
   "source_mode": "100644",
-  "source_path": "docs/public-http-contract.json",
+  "source_path": "contracts/openapi/remi.openapi.json",
   "source_repo": "tempera-dev/remi",
-  "source_sha256": "59e942fc33a82f9ad3203276a1b014103384c6b1380413fa81880f71fa72af41"
+  "source_sha256": "a6e65b9b8028bbea23e16229748beef814c6fbad1d21242bc47fe0882fa26c11"
 }

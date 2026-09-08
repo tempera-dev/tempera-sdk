@@ -37,6 +37,7 @@ from staged_source import validate_exact_local_source
 ROOT = Path(__file__).resolve().parents[1]
 LOCK = ROOT / "contracts" / "data-engine-openapi-operations.json"
 DEFAULT_SOURCE = ROOT.parent / "data-engine" / "api" / "openapi.yaml"
+HTTP_METHODS = {"get", "post", "put", "patch", "delete"}
 METHOD_RE = re.compile(r"^    (get|post|put|patch|delete):\s*$")
 PATH_RE = re.compile(r"^  (/[^\s]*):\s*$")
 OPERATION_ID_RE = re.compile(r"^      operationId:\s*([^\s#]+)\s*$")
@@ -56,51 +57,57 @@ def extract_operations_text(
 ) -> list[dict[str, str | None]]:
     """Extract operation identities and canonical auth metadata.
 
-    The data-engine contract deliberately uses conventional block YAML for
-    paths, methods, and operation IDs.  Parsing this narrow grammar avoids a
-    runtime YAML dependency in all SDK language CI jobs.
+    Data Engine now publishes JSON at the canonical contract path, so this
+    reads the document rather than scraping a narrow YAML grammar. The scraper
+    it replaces could not see flow-style sequences, which meant it had been
+    comparing MCP tool bodies against an empty required-field set for every
+    schema that declared `required` inline -- a hole that was invisible
+    precisely because the parser silently returned nothing.
     """
+    try:
+        document = json.loads(source_text)
+    except json.JSONDecodeError as error:
+        raise ValueError(f"{source_label} is not valid JSON: {error}") from error
+    # A protocol route -- health, MCP transport -- takes no Tempera credential,
+    # so it declares no audience and no scope. It is still a real operation the
+    # SDK types, so it is extracted; only the auth metadata is treated as
+    # legitimately absent. Demanding it would force the contract to lie about
+    # what /healthz requires.
+    protocol_routes = set(document.get("x-tempera-protocol-routes") or [])
     operations: list[dict[str, str | None]] = []
-    in_paths = False
-    path: str | None = None
-    method: str | None = None
-    for raw in source_text.splitlines():
-        if raw == "paths:":
-            in_paths = True
+    for path, item in (document.get("paths") or {}).items():
+        if not isinstance(item, dict):
             continue
-        if in_paths and raw and not raw.startswith(" "):
-            break
-        if not in_paths:
-            continue
-        path_match = PATH_RE.match(raw)
-        if path_match:
-            path = path_match.group(1)
-            method = None
-            continue
-        method_match = METHOD_RE.match(raw)
-        if method_match and path is not None:
-            method = method_match.group(1).upper()
-            continue
-        operation_match = OPERATION_ID_RE.match(raw)
-        if operation_match and path is not None and method is not None:
-            operations.append(
-                {
-                    "operationId": operation_match.group(1),
-                    "method": method,
-                    "path": path,
-                }
-            )
-            continue
-        auth_match = AUTH_EXTENSION_RE.match(raw)
-        if auth_match and method is not None and operations:
-            key = "audience" if auth_match.group(1) == "audience" else "requiredScope"
-            if key in operations[-1]:
+        for method, operation in item.items():
+            if method.lower() not in HTTP_METHODS or not isinstance(operation, dict):
+                continue
+            operation_id = operation.get("operationId")
+            if not isinstance(operation_id, str) or not operation_id:
                 raise ValueError(
-                    f"duplicate x-tempera-{auth_match.group(1)} for "
-                    f"{operations[-1]['operationId']!r} in {source_label}"
+                    f"{method.upper()} {path} has no operationId in {source_label}"
                 )
-            value = auth_match.group(2).strip("'\"")
-            operations[-1][key] = None if value == "null" else value
+            entry: dict[str, str | None] = {
+                "operationId": operation_id,
+                "method": method.upper(),
+                "path": path,
+            }
+            for extension, key in (
+                ("x-tempera-auth-audience", "audience"),
+                ("x-tempera-required-scope", "requiredScope"),
+            ):
+                if extension not in operation:
+                    continue
+                value = operation[extension]
+                if value is not None and not isinstance(value, str):
+                    raise ValueError(
+                        f"{extension} for {operation_id!r} must be a string or null "
+                        f"in {source_label}"
+                    )
+                entry[key] = value
+            if path in protocol_routes:
+                entry.setdefault("audience", None)
+                entry.setdefault("requiredScope", None)
+            operations.append(entry)
     if not operations:
         raise ValueError(f"no OpenAPI operations found in {source_label}")
     seen: set[str] = set()

@@ -132,6 +132,8 @@ final class ProducerBridge: URLProtocol, @unchecked Sendable {
                 fatalError("expected discarded post-commit response")
             } catch let error as OrdersCommerceError { precondition(error == .unavailable) }
             precondition(ProducerBridge.statuses() == [201, 201], "no automatic retry permitted")
+            // Private driver control JSON intentionally stays snake_case. The
+            // HTTP request body is asserted separately as the public camelCase wire.
             try output(["offer_id": offer.id])
         } else {
             precondition(arguments.count == 4)

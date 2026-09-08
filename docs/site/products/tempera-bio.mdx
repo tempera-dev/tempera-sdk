@@ -21,13 +21,69 @@ Fail-closed computational-biology artifact pipeline for source ingestion, propos
 | Audience | `tempera-bio` |
 | Auth | bearer minted for audience tempera-bio with the operation's bio scope, or a central tp_ API key |
 | Client | TypeScript `client.temperaBio` · Python `client.tempera_bio` · Rust `build_request("tempera_bio", ...)` |
-| Typed operations | 12 |
+| Typed operations | 14 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.temperaBio.request(path, options)` (TypeScript) /
 `client.tempera_bio.request(path, ...)` (Python).
 
 ## Operations
+
+### getBioHealth
+
+`GET /healthz`
+
+Liveness probe.
+
+- **Producer operationId:** `getBioHealth`
+- **Auth:** None (public endpoint).
+- **Call as:** TypeScript `client.temperaBio.getBioHealth()` · Python `client.tempera_bio.get_bio_health()` · Rust `build_request("tempera_bio", "get_bio_health", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaBio.getBioHealth();
+```
+
+```python Python
+result = client.tempera_bio.get_bio_health()
+```
+
+```rust Rust
+let spec = client.build_request("tempera_bio", "get_bio_health", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getBioOpenapiDocument
+
+`GET /openapi.json`
+
+Serve this document.
+
+- **Producer operationId:** `getBioOpenapiDocument`
+- **Auth:** None (public endpoint).
+- **Call as:** TypeScript `client.temperaBio.getBioOpenapiDocument()` · Python `client.tempera_bio.get_bio_openapi_document()` · Rust `build_request("tempera_bio", "get_bio_openapi_document", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaBio.getBioOpenapiDocument();
+```
+
+```python Python
+result = client.tempera_bio.get_bio_openapi_document()
+```
+
+```rust Rust
+let spec = client.build_request("tempera_bio", "get_bio_openapi_document", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
 
 ### deriveCampaignState
 

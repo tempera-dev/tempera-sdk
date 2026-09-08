@@ -85,7 +85,7 @@ test("retry_reuses_original_idempotency_key", async () => {
     const bodies = server.received.map((request) => request.body);
     assert.equal(new Set(bodies).size, 1, "every attempt resent byte-identical bytes");
     for (const request of server.received) {
-      assert.equal(JSON.parse(request.body).idempotency_key, IDEMPOTENCY_KEY);
+      assert.equal(JSON.parse(request.body).idempotencyKey, IDEMPOTENCY_KEY);
     }
     assert.deepEqual(slept, [INITIAL_BACKOFF_MS, INITIAL_BACKOFF_MS * 2]);
   } finally {
