@@ -30,12 +30,10 @@ kotlin { jvmToolchain(17) }
 
 dependencies {
     implementation(project(":"))
-    implementation("androidx.activity:activity-ktx:1.10.1")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test:runner:1.6.2")
     androidTestCompileOnly("com.google.errorprone:error_prone_annotations:2.27.0")
     androidTestImplementation("androidx.test:core:1.6.1")
-    androidTestImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
 }
 
 val jvmRuntime by configurations.creating {
@@ -80,8 +78,12 @@ tasks.register("verifyReleaseTestAnnotationClasspath") {
             }
         fun isAnnotation(module: org.gradle.api.artifacts.component.ModuleComponentIdentifier) =
             module.group == "com.google.errorprone" && module.module == "error_prone_annotations"
+        fun isTracing(module: org.gradle.api.artifacts.component.ModuleComponentIdentifier) =
+            module.group == "androidx.tracing" && module.module == "tracing"
         check(modules("releaseAndroidTestCompileClasspath").any(::isAnnotation)) { "Missing test compile annotation dependency" }
         check(modules("releaseAndroidTestRuntimeClasspath").none(::isAnnotation)) { "Compiler annotations leaked into test runtime dependencies" }
+        check(modules("releaseRuntimeClasspath").none(::isTracing)) { "Tracing leaked into minified fixture app runtime" }
+        check(modules("releaseAndroidTestRuntimeClasspath").any(::isTracing)) { "Test runner tracing dependency is missing from test runtime" }
         println("Error Prone annotations present only in Release AndroidTest compile classpath")
     }
 }

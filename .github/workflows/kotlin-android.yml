@@ -75,6 +75,7 @@ jobs:
   android-runtime:
     needs: android-library-and-fixture
     runs-on: ubuntu-latest
+    timeout-minutes: 35
     strategy:
       fail-fast: false
       matrix:
@@ -117,8 +118,26 @@ jobs:
             test "$(df -Pk "$HOME" | awk 'NR == 2 {print $4}')" -ge 8388608 || { echo "Insufficient hosted AVD space: need at least 8 GiB after image installation" >&2; exit 1; }
           disable-animations: true
           script: |
-            gradle -p packages/kotlin-android -PfixtureTestBuildType=debug :fixture-app:connectedDebugAndroidTest
-            gradle -p packages/kotlin-android -PfixtureTestBuildType=release :fixture-app:connectedReleaseAndroidTest
+            gradle -p packages/kotlin-android -PfixtureTestBuildType=debug -Pandroid.testInstrumentationRunnerArguments.temperaExpectedApi=${{ matrix.api-level }} :fixture-app:connectedDebugAndroidTest
+            gradle -p packages/kotlin-android -PfixtureTestBuildType=release -Pandroid.testInstrumentationRunnerArguments.temperaExpectedApi=${{ matrix.api-level }} :fixture-app:connectedReleaseAndroidTest
+      - name: Require Debug and minified Release runtime execution
+        run: |
+          python3 - <<'PYTHON'
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          root = Path("packages/kotlin-android/fixture-app/build/outputs/androidTest-results/connected")
+          for variant in ("debug", "release"):
+              reports = list((root / variant).glob("TEST-*.xml"))
+              assert len(reports) == 1, f"Expected one {variant} device report, got {reports}"
+              suite = ET.parse(reports[0]).getroot()
+              assert suite.get("tests") == "1", f"{variant} did not execute the expected test"
+              assert all(suite.get(key) == "0" for key in ("failures", "errors", "skipped")), f"{variant} has failure/error/skip"
+              cases = suite.findall("testcase")
+              assert len(cases) == 1 and cases[0].get("classname") == "dev.tempera.sdk.fixture.AndroidSdkRuntimeTest"
+              assert cases[0].get("name") == "authMcpAndBaseJsonClassesLoadOnDevice"
+              assert not any(cases[0].find(tag) is not None for tag in ("failure", "error", "skipped"))
+              print(f"{variant}: expected SDK loopback executed once with no failures or skips")
+          PYTHON
       - uses: actions/upload-artifact@v4
         if: always()
         with:
