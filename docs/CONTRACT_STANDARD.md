@@ -18,7 +18,16 @@ every producer repository at `.tempera/agent-kit/scripts/lint_producer_contract.
 
 `openapi` MUST be the exact string `3.1.0`. 3.0.x documents are upgraded, not
 tolerated: 3.1.0 is the first release whose schema dialect is JSON Schema
-2020-12, which is what every downstream generator already assumes.
+2020-12, which is what every downstream generator already assumes. Upgrading
+is not a version-string edit: `nullable: true` becomes a type union or an
+`anyOf` with `"null"`, and `exclusiveMinimum`/`exclusiveMaximum` become
+numbers rather than booleans.
+
+Every local `$ref` MUST resolve inside the document. A contract can satisfy
+every rule below and still be unusable: `tempera-connectors` published four
+references to components it never defined, because utoipa emits the literal
+type path written in the annotation, and nothing noticed until the SDK tried
+to derive typed operations from it.
 
 The file MUST be reproducible. A producer whose contract is emitted from server
 code publishes a regeneration entry point; a producer whose contract is
@@ -81,7 +90,19 @@ declared in `x-tempera-protocol-routes` at the document root:
 ```
 
 An undeclared route gets no exemption. A declared route that does not exist is
-an error. This is what stops the exemption list from becoming a dumping ground.
+an error. And only health, transport and identity-protocol shapes may be
+declared at all — a `/v1/...` resource path is refused even when it is listed,
+which is what stops the exemption list from becoming a dumping ground.
+
+Health probes are served at `/healthz` and `/readyz`, not under `/v1`. That is
+not a style preference: a versioned health route is a resource path, so it
+cannot be exempted, and the rename is the only way to stop carrying a
+permanent violation. Data Engine, Payments and Document all moved for this
+reason; Gym, LLM, Workflows, Clearing and Connectors were already there.
+
+The aggregate ratchet in `tempera-sdk` reads this declaration rather than
+keeping its own table, and re-validates it. A producer's exemption list and
+the SDK's cannot drift apart because there is only one.
 
 ## 4. Required `x-tempera-*` extensions
 
@@ -113,6 +134,16 @@ A producer merge to `main` that touches the contract path MUST fire a
 with `{"product": "<sdkKey>", "commit": "<40-hex>"}`. The SDK's receiver
 re-vendors at that exact commit, regenerates every language surface, runs the
 gates, and opens a pull request. No human copies a spec between repositories.
+
+The agent kit distributes that workflow as `.github/workflows/notify-sdk.yml`,
+byte-identical everywhere. It cannot fire yet: sending a dispatch needs write
+access to `tempera-sdk`, and the only app installed org-wide is read-only, so
+the workflow skips with an explanation rather than reddening every producer's
+build. Until an organization administrator creates a write-scoped notifier app
+and publishes `TEMPERA_CONTRACT_NOTIFIER_CLIENT_ID` and
+`TEMPERA_CONTRACT_NOTIFIER_PRIVATE_KEY`, the SDK's three-hourly sweep
+re-vendors from each producer's `main` on its own, so propagation is delayed
+rather than lost.
 
 The SDK pins each vendored contract with a `.source` lock recording the source
 repository, branch, 40-character commit, path, git blob SHA, SHA-256, and the
