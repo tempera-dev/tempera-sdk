@@ -111,13 +111,13 @@ class McpTest {
     fun listToolsReturnsTheToolsArray() {
         val transport =
             gateway(
-                """{"jsonrpc":"2.0","id":1,"result":{"tools":[{"name":"tempera_search"},{"name":"tempera_invoke"}]}}"""
+                """{"jsonrpc":"2.0","id":1,"result":{"tools":[{"name":"tempera_search","inputSchema":{}},{"name":"tempera_invoke","inputSchema":{}}]}}"""
             )
         val tools = client(transport).listTools()
         assertEquals(2, tools.size)
         assertEquals(TemperaJson.Text("tempera_search"), tools[0]["name"])
 
-        val empty = client(gateway("""{"jsonrpc":"2.0","id":1,"result":{}}"""))
+        val empty = client(gateway("""{"jsonrpc":"2.0","id":1,"result":{"tools":[]}}"""))
         assertTrue(empty.listTools().isEmpty())
     }
 
@@ -136,27 +136,149 @@ class McpTest {
     }
 
     @Test
-    fun nonConformantErrorsAreHandledUniformly() {
-        // A string error becomes code 0 with its own text.
-        var error = assertThrows<TemperaMcpException> { client(gateway("""{"error":"nope"}""")).ping() }
-        assertEquals(0, error.code)
-        assertEquals("nope", error.detail)
-
-        // An object without an integer code keeps its message, code 0.
-        error =
-            assertThrows<TemperaMcpException> {
-                client(gateway("""{"error":{"code":"x","message":"m"}}""")).ping()
+    fun rpcEnvelopeValidationFailsClosedAndAcceptsExplicitNullResult() {
+        assertSdkError("jsonrpc must be exactly 2.0") {
+            client(gateway("""{"jsonrpc":"1.0","id":1,"result":null}""")).ping()
+        }
+        assertSdkError("response id does not match request id") {
+            client(gateway("""{"jsonrpc":"2.0","id":"1","result":null}""")).ping()
+        }
+        for (id in listOf("1.0", "true", "null")) {
+            assertSdkError("response id does not match request id") {
+                client(gateway("""{"jsonrpc":"2.0","id":$id,"result":null}""")).ping()
             }
-        assertEquals(0, error.code)
-        assertEquals("m", error.detail)
+        }
+        assertSdkError("response id does not match request id") { client(gateway("""{"jsonrpc":"2.0","id":9007199254740992,"result":null}""")).ping() }
+        assertSdkError("response id does not match request id") {
+            client(gateway("""{"jsonrpc":"2.0","id":1,"id":1,"result":null}""")).ping()
+        }
+        assertSdkError("exactly one result or error") {
+            client(gateway("""{"jsonrpc":"2.0","id":1,"result":null,"result":null}""")).ping()
+        }
+        assertSdkError("exactly one result or error") {
+            client(gateway("""{"jsonrpc":"2.0","id":1,"error":{"code":1,"message":"x"},"error":{"code":1,"message":"x"}}""")).ping()
+        }
+        assertSdkError("exactly one result or error") {
+            client(gateway("""{"jsonrpc":"2.0","id":1,"result":null,"error":null}""")).ping()
+        }
+        assertSdkError("exactly one result or error") { client(gateway("""{"jsonrpc":"2.0","id":1}""")).ping() }
+        assertSdkError("error code must be an integer") { client(gateway("""{"jsonrpc":"2.0","id":1,"error":{"code":1,"code":2,"message":"x"}}""")).ping() }
+        assertSdkError("error code must be an integer") {
+            client(gateway("""{"jsonrpc":"2.0","id":1,"error":{"code":"x","message":"m"}}""")).ping()
+        }
+        assertSdkError("jsonrpc must be exactly 2.0") {
+            client(gateway("""{"jsonrpc":"2.0","jsonrpc":"2.0","id":1,"result":null}""")).ping()
+        }
+        assertEquals(TemperaJson.Null, client(gateway("""{"jsonrpc":"2.0","id":1,"result":null}""")).ping())
+    }
 
-        // An object with neither gets the shared label.
-        error = assertThrows<TemperaMcpException> { client(gateway("""{"error":{}}""")).ping() }
-        assertEquals("MCP error", error.detail)
+    @Test
+    fun listToolsFollowsOpaqueCursorsAndRejectsPartialCatalogs() {
+        val transport = StubTransport { request, attempt ->
+            val cursor = TemperaJson.parse(request.body!!)?.get("params")?.get("cursor")?.asString()
+            val result = if (attempt == 1) {
+                assertEquals(null, cursor)
+                """{"tools":[{"name":"a","inputSchema":{}}],"nextCursor":"opaque-1"}"""
+            } else {
+                assertEquals("opaque-1", cursor)
+                """{"tools":[{"name":"b","inputSchema":{}}]}"""
+            }
+            StubTransport.json("""{"jsonrpc":"2.0","id":$attempt,"result":$result}""")
+        }
+        assertEquals(listOf("a", "b"), client(transport).listTools().map { it["name"]?.asString() })
 
-        // A null error is not an error.
-        val result = client(gateway("""{"error":null,"result":{"ok":true}}""")).ping()
-        assertEquals(TemperaJson.Bool(true), result["ok"])
+        val repeating = StubTransport { _, attempt ->
+            StubTransport.json("""{"jsonrpc":"2.0","id":$attempt,"result":{"tools":[],"nextCursor":"again"}}""")
+        }
+        assertSdkError("repeated or empty nextCursor") { client(repeating).listTools() }
+        val conflict = StubTransport { _, attempt ->
+            val result = if (attempt == 1) """{"tools":[{"name":"same","inputSchema":{}}],"nextCursor":"next"}""" else """{"tools":[{"inputSchema":{},"name":"same"}]}"""
+            StubTransport.json("""{"jsonrpc":"2.0","id":$attempt,"result":$result}""")
+        }
+        assertSdkError("duplicate tool name") { client(conflict).listTools() }
+        assertSdkError("tools array") {
+            client(gateway("""{"jsonrpc":"2.0","id":1,"result":{}}""")).listTools()
+        }
+        assertSdkError("tool must be an object") {
+            client(gateway("""{"jsonrpc":"2.0","id":1,"result":{"tools":[true]}}""")).listTools()
+        }
+        assertSdkError("inputSchema must be an object") {
+            client(gateway("""{"jsonrpc":"2.0","id":1,"result":{"tools":[{"name":"x"}]}}""")).listTools()
+        }
+        assertSdkError("invisible character") {
+            client(gateway("""{"jsonrpc":"2.0","id":1,"result":{"tools":[{"name":"x\u202ey","inputSchema":{}}]}}""")).listTools()
+        }
+        assertSdkError("duplicate object key") {
+            client(gateway("""{"jsonrpc":"2.0","id":1,"result":{"tools":[{"name":"x","inputSchema":{"a":[[{"x":1,"x":2}]]}}]}}""")).listTools()
+        }
+    }
+
+    @Test
+    fun listToolsBoundsEveryReceivedDescriptorIncludingDuplicates() {
+        fun descriptors(count: Int, name: String): String =
+            List(count) { """{"name":"$name","inputSchema":{}}""" }.joinToString(",")
+
+        val overOnePage = descriptors(10_001, "same")
+        assertSdkError("response byte limit") {
+            client(gateway("x".repeat(1_048_577))).listTools()
+        }
+        assertSdkError("exceeds item limit") {
+            client(gateway("""{"jsonrpc":"2.0","id":1,"result":{"tools":[$overOnePage]}}""")).listTools()
+        }
+        val cumulative = StubTransport { _, attempt ->
+            val result =
+                if (attempt == 1) """{"tools":[${List(10_000) { index -> """{"name":"unique-$index","inputSchema":{}}""" }.joinToString(",")}],"nextCursor":"more"}"""
+                else """{"tools":[{"name":"later","inputSchema":{}}]}"""
+            StubTransport.json("""{"jsonrpc":"2.0","id":$attempt,"result":$result}""")
+        }
+        assertSdkError("exceeds item limit") { client(cumulative).listTools() }
+
+        val exact = List(10_000) { index -> """{"name":"tool-$index","inputSchema":{}}""" }.joinToString(",")
+        val tools = client(gateway("""{"jsonrpc":"2.0","id":1,"result":{"tools":[$exact]}}""")).listTools()
+        assertEquals(10_000, tools.size)
+
+        val exactPages = StubTransport { _, attempt ->
+            val continuation = if (attempt < 100) ",\"nextCursor\":\"cursor-$attempt\"" else ""
+            StubTransport.json("""{"jsonrpc":"2.0","id":$attempt,"result":{"tools":[]$continuation}}""")
+        }
+        assertTrue(client(exactPages).listTools().isEmpty())
+        val overPages = StubTransport { _, attempt ->
+            StubTransport.json("""{"jsonrpc":"2.0","id":$attempt,"result":{"tools":[],"nextCursor":"cursor-$attempt"}}""")
+        }
+        assertSdkError("exceeds page limit") { client(overPages).listTools() }
+    }
+
+    @Test
+    fun listToolsAcceptsExactByteBudgetsAndRejectsBeforeParsing() {
+        fun page(bytes: Int, id: Int, name: String, next: String? = null): String {
+            val prefix = """{"jsonrpc":"2.0","id":$id,"result":{"tools":[{"name":"$name","description":""""
+            val suffix = """","inputSchema":{}}]""" + (next?.let { ",\"nextCursor\":\"$it\"" } ?: "") + "}}"
+            return prefix + "x".repeat(bytes - prefix.length - suffix.length) + suffix
+        }
+        assertTrue(client(gateway(page(1_048_576, 1, "one"))).listTools().isNotEmpty())
+        assertSdkError("response byte limit") { client(gateway(page(1_048_577, 1, "one"))).listTools() }
+        val exact = StubTransport { _, attempt -> StubTransport.json(page(1_048_576, attempt, "p$attempt", if (attempt < 8) "c$attempt" else null)) }
+        assertEquals(8, client(exact).listTools().size)
+        val over = StubTransport { _, attempt -> StubTransport.json(page(if (attempt <= 7) 1_048_576 else if (attempt == 8) 1_047_553 else 1_024, attempt, "p$attempt", if (attempt < 9) "c$attempt" else null)) }
+        assertSdkError("response byte limit") { client(over).listTools() }
+        val httpError = StubTransport.always("x".repeat(1_048_577), status = 500)
+        assertSdkError("response byte limit") { client(httpError).listTools() }
+    }
+
+    @Test
+    fun concurrentPingsUseUniqueCorrelatedIds() {
+        val ids = java.util.concurrent.ConcurrentHashMap.newKeySet<Long>()
+        val transport = object : TemperaTransport {
+            override fun send(request: TemperaHttpRequest): TemperaHttpResponse {
+                val id = (TemperaJson.parse(request.body!!)!!["id"] as TemperaJson.Int64).value
+                ids.add(id)
+                return StubTransport.json("""{"jsonrpc":"2.0","id":$id,"result":{"ok":true}}""")
+            }
+        }
+        val client = TemperaMcpClient(url = "https://api.tempera.dev/mcp", bearer = "mcp_token_1", transport = transport)
+        val executor = java.util.concurrent.Executors.newFixedThreadPool(8)
+        try { executor.invokeAll(List(128) { java.util.concurrent.Callable { client.ping() } }).forEach { it.get() } } finally { executor.shutdownNow() }
+        assertEquals((1L..128L).toSet(), ids)
     }
 
     @Test
@@ -171,6 +293,7 @@ class McpTest {
         assertEquals("PERMISSION_DENIED", error.code)
         assertEquals("mcpGateway", error.product)
         assertEquals("tools/list", error.operation)
+        assertEquals(1, transport.attempts, "MCP POSTs are never automatically retried")
     }
 
     @Test
