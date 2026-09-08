@@ -12,8 +12,8 @@
 
 use crate::error::{Json, json_escape, parse_json};
 
-/// MCP protocol revision sent in `initialize` requests.
-pub const MCP_PROTOCOL_VERSION: &str = "2025-06-18";
+/// MCP protocol revision used by the stateless discovery lifecycle.
+pub const MCP_PROTOCOL_VERSION: &str = "2026-07-28";
 
 /// Builds JSON-RPC 2.0 request bodies for the MCP gateway with monotonically
 /// increasing request ids. Each `*_body` method returns `(id, body)` so the
@@ -41,12 +41,22 @@ impl McpRequestBuilder {
         id
     }
 
-    /// Body for `initialize`: open an MCP session and fetch server
-    /// capabilities and instructions.
+    fn meta_fields_json() -> String {
+        format!(
+            "\"_meta\":{{\"io.modelcontextprotocol/protocolVersion\":\"{MCP_PROTOCOL_VERSION}\",\"io.modelcontextprotocol/clientCapabilities\":{{}}}}"
+        )
+    }
+
+    fn meta_json() -> String {
+        format!("{{{}}}", Self::meta_fields_json())
+    }
+
+    /// Body for stateless `server/discover`. Send it with
+    /// `MCP-Protocol-Version: 2026-07-28` and `MCP-Method: server/discover`.
     pub fn initialize_body(&mut self, client_name: &str, client_version: &str) -> (i64, String) {
         let id = self.take_id();
         let body = format!(
-            "{{\"jsonrpc\":\"2.0\",\"id\":{id},\"method\":\"initialize\",\"params\":{{\"protocolVersion\":\"{MCP_PROTOCOL_VERSION}\",\"capabilities\":{{}},\"clientInfo\":{{\"name\":\"{}\",\"version\":\"{}\"}}}}}}",
+            "{{\"jsonrpc\":\"2.0\",\"id\":{id},\"method\":\"server/discover\",\"params\":{{\"_meta\":{{\"io.modelcontextprotocol/protocolVersion\":\"{MCP_PROTOCOL_VERSION}\",\"io.modelcontextprotocol/clientInfo\":{{\"name\":\"{}\",\"version\":\"{}\"}},\"io.modelcontextprotocol/clientCapabilities\":{{}}}}}}}}",
             json_escape(client_name),
             json_escape(client_version)
         );
@@ -58,7 +68,10 @@ impl McpRequestBuilder {
         let id = self.take_id();
         (
             id,
-            format!("{{\"jsonrpc\":\"2.0\",\"id\":{id},\"method\":\"ping\"}}"),
+            format!(
+                "{{\"jsonrpc\":\"2.0\",\"id\":{id},\"method\":\"ping\",\"params\":{}}}",
+                Self::meta_json()
+            ),
         )
     }
 
@@ -68,7 +81,10 @@ impl McpRequestBuilder {
         let id = self.take_id();
         (
             id,
-            format!("{{\"jsonrpc\":\"2.0\",\"id\":{id},\"method\":\"tools/list\"}}"),
+            format!(
+                "{{\"jsonrpc\":\"2.0\",\"id\":{id},\"method\":\"tools/list\",\"params\":{}}}",
+                Self::meta_json()
+            ),
         )
     }
 
@@ -81,10 +97,14 @@ impl McpRequestBuilder {
         arguments_json: Option<&str>,
     ) -> (i64, String) {
         let id = self.take_id();
-        let body = format!(
-            "{{\"jsonrpc\":\"2.0\",\"id\":{id},\"method\":\"tools/call\",\"params\":{{\"name\":\"{}\",\"arguments\":{}}}}}",
+        let params = format!(
+            "\"name\":\"{}\",\"arguments\":{},{}",
             json_escape(tool_name),
-            arguments_json.unwrap_or("{}")
+            arguments_json.unwrap_or("{}"),
+            Self::meta_fields_json()
+        );
+        let body = format!(
+            "{{\"jsonrpc\":\"2.0\",\"id\":{id},\"method\":\"tools/call\",\"params\":{{{params}}}}}"
         );
         (id, body)
     }
@@ -168,19 +188,18 @@ mod tests {
         assert_eq!(id, 1);
         assert_eq!(
             body,
-            "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{\"protocolVersion\":\"2025-06-18\",\"capabilities\":{},\"clientInfo\":{\"name\":\"tempera-sdk\",\"version\":\"0.12.0\"}}}"
+            "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"server/discover\",\"params\":{\"_meta\":{\"io.modelcontextprotocol/protocolVersion\":\"2026-07-28\",\"io.modelcontextprotocol/clientInfo\":{\"name\":\"tempera-sdk\",\"version\":\"0.12.0\"},\"io.modelcontextprotocol/clientCapabilities\":{}}}}"
         );
 
         let (id, body) = builder.ping_body();
         assert_eq!(id, 2);
-        assert_eq!(body, "{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"ping\"}");
-        assert!(!body.contains("params"));
+        assert_eq!(body, "{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"ping\",\"params\":{\"_meta\":{\"io.modelcontextprotocol/protocolVersion\":\"2026-07-28\",\"io.modelcontextprotocol/clientCapabilities\":{}}}}");
 
         let (id, body) = builder.list_tools_body();
         assert_eq!(id, 3);
         assert_eq!(
             body,
-            "{\"jsonrpc\":\"2.0\",\"id\":3,\"method\":\"tools/list\"}"
+            "{\"jsonrpc\":\"2.0\",\"id\":3,\"method\":\"tools/list\",\"params\":{\"_meta\":{\"io.modelcontextprotocol/protocolVersion\":\"2026-07-28\",\"io.modelcontextprotocol/clientCapabilities\":{}}}}"
         );
     }
 
@@ -195,11 +214,12 @@ mod tests {
         assert_eq!(id, 1);
         assert_eq!(
             body,
-            "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"palette_list_traces\",\"arguments\":{\"tenant_id\":\"t1\",\"limit\":5}}}"
+            "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"palette_list_traces\",\"arguments\":{\"tenant_id\":\"t1\",\"limit\":5},\"_meta\":{\"io.modelcontextprotocol/protocolVersion\":\"2026-07-28\",\"io.modelcontextprotocol/clientCapabilities\":{}}}}"
         );
 
         let (_, body) = builder.call_tool_body("tempo_observe", None);
         assert!(body.contains("\"arguments\":{}"));
+        assert!(body.contains("\"io.modelcontextprotocol/protocolVersion\":\"2026-07-28\""));
 
         // Tool names with quotes are escaped, and every body parses back.
         let (_, body) = builder.call_tool_body("weird\"name", None);
@@ -214,13 +234,13 @@ mod tests {
         assert_eq!(id, 1);
         assert_eq!(
             body,
-            "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"tempera_whoami\",\"arguments\":{}}}"
+            "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"tempera_whoami\",\"arguments\":{},\"_meta\":{\"io.modelcontextprotocol/protocolVersion\":\"2026-07-28\",\"io.modelcontextprotocol/clientCapabilities\":{}}}}"
         );
         let (id, body) = builder.status_body();
         assert_eq!(id, 2);
         assert_eq!(
             body,
-            "{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"tools/call\",\"params\":{\"name\":\"tempera_status\",\"arguments\":{}}}"
+            "{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"tools/call\",\"params\":{\"name\":\"tempera_status\",\"arguments\":{},\"_meta\":{\"io.modelcontextprotocol/protocolVersion\":\"2026-07-28\",\"io.modelcontextprotocol/clientCapabilities\":{}}}}"
         );
     }
 

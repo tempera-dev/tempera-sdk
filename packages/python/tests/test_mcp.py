@@ -47,9 +47,13 @@ class McpClientTest(unittest.TestCase):
             self.assertEqual(call["headers"]["authorization"], "Bearer tp_key_1")
             self.assertEqual(call["request"]["jsonrpc"], "2.0")
             self.assertIsInstance(call["request"]["id"], int)
-        self.assertEqual(transport.calls[0]["request"]["method"], "initialize")
-        self.assertEqual(transport.calls[0]["request"]["params"]["protocolVersion"], "2025-06-18")
-        self.assertEqual(MCP_PROTOCOL_VERSION, "2025-06-18")
+        self.assertEqual(transport.calls[0]["request"]["method"], "server/discover")
+        self.assertEqual(transport.calls[0]["request"]["params"]["_meta"]["io.modelcontextprotocol/protocolVersion"], "2026-07-28")
+        self.assertEqual(transport.calls[0]["request"]["params"]["_meta"]["io.modelcontextprotocol/clientInfo"], {"name": "tempera-sdk", "version": "0.12.0"})
+        self.assertEqual(MCP_PROTOCOL_VERSION, "2026-07-28")
+        for call in transport.calls:
+            self.assertEqual(call["headers"]["mcp-protocol-version"], "2026-07-28")
+            self.assertEqual(call["headers"]["mcp-method"], call["request"]["method"])
         self.assertEqual(transport.calls[1]["request"]["method"], "ping")
         self.assertEqual(transport.calls[2]["request"]["method"], "tools/list")
 
@@ -60,7 +64,7 @@ class McpClientTest(unittest.TestCase):
         client.ping()
         self.assertEqual(
             transport.calls[0]["data"],
-            b'{"jsonrpc":"2.0","id":1,"method":"ping"}',
+            b'{"jsonrpc":"2.0","id":1,"method":"ping","params":{"_meta":{"io.modelcontextprotocol/protocolVersion":"2026-07-28","io.modelcontextprotocol/clientCapabilities":{}}}}',
         )
 
     def test_call_tool_whoami_and_status_wrap_tools_call(self):
@@ -77,7 +81,14 @@ class McpClientTest(unittest.TestCase):
         self.assertEqual(transport.calls[0]["request"]["method"], "tools/call")
         self.assertEqual(
             transport.calls[0]["request"]["params"],
-            {"name": "cradle_get_capabilities", "arguments": {"verbose": True}},
+            {
+                "name": "cradle_get_capabilities",
+                "arguments": {"verbose": True},
+                "_meta": {
+                    "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                    "io.modelcontextprotocol/clientCapabilities": {},
+                },
+            },
         )
         self.assertEqual(transport.calls[1]["request"]["params"]["name"], "tempera_whoami")
         self.assertEqual(transport.calls[2]["request"]["params"]["name"], "tempera_status")
