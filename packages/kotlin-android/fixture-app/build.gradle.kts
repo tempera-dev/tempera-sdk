@@ -74,12 +74,14 @@ tasks.register("verifyRuntimeVariantConflict") {
 // Verify annotations resolve for test compilation without entering Android runtime artifacts.
 tasks.register("verifyReleaseTestAnnotationClasspath") {
     doLast {
-        val compile = configurations.getByName("releaseAndroidTestCompileClasspath").resolvedConfiguration.resolvedArtifacts
-        val runtime = configurations.getByName("releaseAndroidTestRuntimeClasspath").resolvedConfiguration.resolvedArtifacts
-        fun isAnnotation(artifact: org.gradle.api.artifacts.ResolvedArtifact) =
-            artifact.moduleVersion.id.group == "com.google.errorprone" && artifact.name == "error_prone_annotations"
-        check(compile.any(::isAnnotation)) { "Missing test compile annotation dependency" }
-        check(runtime.none(::isAnnotation)) { "Compiler annotations leaked into test runtime dependencies" }
+        fun modules(configuration: String) = configurations.getByName(configuration)
+            .incoming.resolutionResult.allComponents.mapNotNull {
+                it.id as? org.gradle.api.artifacts.component.ModuleComponentIdentifier
+            }
+        fun isAnnotation(module: org.gradle.api.artifacts.component.ModuleComponentIdentifier) =
+            module.group == "com.google.errorprone" && module.module == "error_prone_annotations"
+        check(modules("releaseAndroidTestCompileClasspath").any(::isAnnotation)) { "Missing test compile annotation dependency" }
+        check(modules("releaseAndroidTestRuntimeClasspath").none(::isAnnotation)) { "Compiler annotations leaked into test runtime dependencies" }
         println("Error Prone annotations present only in Release AndroidTest compile classpath")
     }
 }
