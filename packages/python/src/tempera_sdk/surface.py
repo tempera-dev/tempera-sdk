@@ -9,7 +9,7 @@ SURFACE_VERSION = 6
 
 AUDIENCES = ('palette', 'tempo', 'cradle', 'remi', 'human-data', 'data-engine', 'tempera-mcp', 'tempera-code', 'tempera-llm', 'tempera-workflows', 'tempera-gym', 'tempera-bio', 'tempera-document', 'tempera-risk', 'tempera-investigations', 'tempera-payments', 'tempera-dropshipping', 'tempera-voice', 'tempera-clearing', 'tempera-business')
 DEFAULT_AUDIENCE = 'palette'
-SCOPES = ('mcp:invoke', 'memory:read', 'memory:write', 'memory:manage', 'trace:read', 'trace:write', 'scenario:read', 'scenario:write', 'dataset:read', 'dataset:write', 'connector:read', 'connector:run', 'connector:manage', 'eval:run', 'training:publish', 'review:gold:manage', 'review:resolve', 'workflow:read', 'workflow:write', 'workflow:run', 'bio:source:read', 'bio:proposal:write', 'bio:measurement:verify', 'bio:decision:write', 'bio:experiment:approve', 'bio:experiment:submit', 'bio:signer:manage', 'model:read', 'model:invoke', 'usage:reserve', 'document:read', 'document:write', 'risk:read', 'risk:write', 'risk:review', 'investigation:read', 'investigation:write', 'investigation:run', 'investigation:review', 'pii:unmask', 'payments:intents:read', 'payments:intents:write', 'payments:receipts:read', 'payments:webhooks:write', 'payments:refunds:write', 'payments:admin', 'payments:merchants:read', 'payments:merchants:write', 'orders:read', 'voice:read', 'voice:write', 'voice:stream', 'clearing:actions:read', 'clearing:actions:propose', 'clearing:actions:commit', 'clearing:actions:reconcile', 'clearing:receipts:read', 'clearing:actions:approve', 'admin')
+SCOPES = ('mcp:invoke', 'memory:read', 'memory:write', 'memory:manage', 'trace:read', 'trace:write', 'scenario:read', 'scenario:write', 'dataset:read', 'dataset:write', 'connector:read', 'connector:run', 'connector:manage', 'eval:run', 'training:publish', 'review:gold:manage', 'review:resolve', 'workflow:read', 'workflow:write', 'workflow:run', 'bio:source:read', 'bio:proposal:write', 'bio:measurement:verify', 'bio:decision:write', 'bio:experiment:approve', 'bio:experiment:submit', 'bio:signer:manage', 'model:read', 'model:invoke', 'usage:reserve', 'document:read', 'document:write', 'risk:read', 'risk:write', 'risk:review', 'investigation:read', 'investigation:write', 'investigation:run', 'investigation:review', 'pii:unmask', 'payments:intents:read', 'payments:intents:write', 'payments:receipts:read', 'payments:webhooks:write', 'payments:refunds:write', 'payments:admin', 'payments:merchants:read', 'payments:merchants:write', 'orders:read', 'orders:commerce:write', 'voice:read', 'voice:write', 'voice:stream', 'clearing:actions:read', 'clearing:actions:propose', 'clearing:actions:commit', 'clearing:actions:reconcile', 'clearing:receipts:read', 'clearing:actions:approve', 'admin')
 
 ISSUER_PATHS = {'authorize': '/oauth/authorize', 'token': '/oauth/token', 'revoke': '/oauth/revoke', 'introspect': '/v1/oauth/introspect', 'mcp': '/mcp'}
 
@@ -15346,7 +15346,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
-            "scope": "orders:write",
+            "scope": "orders:commerce:write",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",
@@ -16008,7 +16008,7 @@ OPERATIONS = {
             "body_defaults": {},
             "request_body_kind": "json",
             "request_content_type": "application/json",
-            "scope": "orders:write",
+            "scope": "orders:commerce:write",
             "physical_action": False,
             "prepare_commit_required": False,
             "safe_retry": "none",

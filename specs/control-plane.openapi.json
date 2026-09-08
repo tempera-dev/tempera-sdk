@@ -5285,6 +5285,7 @@
           "payments:merchants:read",
           "payments:merchants:write",
           "orders:read",
+          "orders:commerce:write",
           "voice:read",
           "voice:write",
           "voice:stream",
@@ -5299,7 +5300,7 @@
       },
       "ApiKeyScope": {
         "type": "string",
-        "description": "A service-principal scope. OAuth-only orders:read and human-only review:resolve, review:gold:manage, training:publish, bio:experiment:approve, bio:signer:manage, payments:merchants:write, and clearing:actions:approve are intentionally excluded.",
+        "description": "A service-principal scope. OAuth-only orders:read and human-only orders:commerce:write, review:resolve, review:gold:manage, training:publish, bio:experiment:approve, bio:signer:manage, payments:merchants:write, and clearing:actions:approve are intentionally excluded.",
         "enum": [
           "mcp:invoke",
           "memory:read",

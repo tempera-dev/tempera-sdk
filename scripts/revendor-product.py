@@ -29,6 +29,31 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "scripts"
 
+# Three producers predate the PRODUCTS registry and keep bespoke sync scripts.
+# Leaving them out of this chain is how they drift: a sweep that says it
+# re-vendored everything has to actually mean everything.
+BESPOKE = {
+    "controlPlane": {
+        "source_repo": "tempera-dev/auth-hub",
+        "source_branch": "main",
+        "commands": [
+            ["sync-control-plane-openapi.py"],
+        ],
+    },
+    "dataEngineMcp": {
+        "source_repo": "tempera-dev/data-engine",
+        "source_branch": "main",
+        "commands": [
+            ["sync-data-engine-mcp-contracts.py"],
+        ],
+    },
+    "paletteEval": {
+        "source_repo": "tempera-dev/palette",
+        "source_branch": "main",
+        "commands": [],  # takes a checkout path rather than repo-dir arguments
+    },
+}
+
 
 def registry() -> dict[str, dict[str, str]]:
     sys.path.insert(0, str(SCRIPTS))
@@ -89,6 +114,35 @@ def clone(repository: str, branch: str, commit: str, destination: Path) -> str:
     return resolved
 
 
+def revendor_bespoke(product: str, commit: str, workspace: Path) -> str:
+    """Re-vendor a producer whose sync predates the PRODUCTS registry."""
+    config = BESPOKE[product]
+    repository = config["source_repo"]
+    checkout = workspace / repository.split("/", 1)[1]
+    resolved = (
+        subprocess.run(
+            ["git", "-C", str(checkout), "rev-parse", "HEAD"],
+            check=True, capture_output=True, text=True,
+        ).stdout.strip()
+        if checkout.exists()
+        else clone(repository, config["source_branch"], commit, checkout)
+    )
+    for command in config["commands"]:
+        run(
+            [sys.executable, str(SCRIPTS / command[0]), *command[1:],
+             "--source-repo-dir", str(checkout),
+             "--source-branch", config["source_branch"],
+             "--source-commit", resolved]
+        )
+    if product == "paletteEval":
+        run([
+            sys.executable, str(SCRIPTS / "sync-palette-eval-openapi.py"),
+            "--source", str(checkout / "sdks/openapi/palette-api.json"),
+            "--source-checkout", str(checkout),
+        ])
+    return resolved
+
+
 def revendor(product: str, commit: str, workspace: Path) -> str:
     config = registry()[product]
     repository = config["source_repo"]
@@ -131,12 +185,13 @@ def main() -> int:
     args = parser.parse_args()
 
     products = registry()
+    known = set(products) | set(BESPOKE)
     requested = (
-        sorted(products)
+        sorted(known)
         if args.products.strip() == "all"
         else [item.strip() for item in args.products.split(",") if item.strip()]
     )
-    unknown = [product for product in requested if product not in products]
+    unknown = [product for product in requested if product not in known]
     if unknown:
         print(f"unknown products: {', '.join(unknown)}", file=sys.stderr)
         return 1
@@ -148,14 +203,23 @@ def main() -> int:
     workspace.mkdir(parents=True, exist_ok=True)
     try:
         for product in requested:
-            resolved = revendor(product, args.commit, workspace)
+            resolved = (
+                revendor_bespoke(product, args.commit, workspace)
+                if product in BESPOKE
+                else revendor(product, args.commit, workspace)
+            )
             print(f"vendored {product} at {resolved}", flush=True)
         # Order matters: the surface is derived from the specs, the language
         # tables from the surface, and the documentation from the tables.
-        run(
-            [sys.executable, str(SCRIPTS / "sync-openapi-surface.py")]
-            + [argument for product in requested for argument in ("--product", product)]
-        )
+        typed = [product for product in requested if product in products]
+        # paletteEval and dataEngineMcp publish side contracts, not typed
+        # operations, so they have nothing to synchronize into the surface.
+        surfaced = typed + (["controlPlane"] if "controlPlane" in requested else [])
+        if surfaced:
+            run(
+                [sys.executable, str(SCRIPTS / "sync-openapi-surface.py")]
+                + [argument for product in surfaced for argument in ("--product", product)]
+            )
         run([sys.executable, str(SCRIPTS / "gen-sdk-surface.py")])
         run([sys.executable, str(SCRIPTS / "gen-sdk-docs.py")])
     except subprocess.CalledProcessError as error:

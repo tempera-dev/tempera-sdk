@@ -149,7 +149,7 @@ public object TemperaSurface {
     /** The audience used when a product declares none. */
     public const val defaultAudience: String = "palette"
     /** Every registered OAuth scope. */
-    public val scopes: List<String> = listOf("mcp:invoke", "memory:read", "memory:write", "memory:manage", "trace:read", "trace:write", "scenario:read", "scenario:write", "dataset:read", "dataset:write", "connector:read", "connector:run", "connector:manage", "eval:run", "training:publish", "review:gold:manage", "review:resolve", "workflow:read", "workflow:write", "workflow:run", "bio:source:read", "bio:proposal:write", "bio:measurement:verify", "bio:decision:write", "bio:experiment:approve", "bio:experiment:submit", "bio:signer:manage", "model:read", "model:invoke", "usage:reserve", "document:read", "document:write", "risk:read", "risk:write", "risk:review", "investigation:read", "investigation:write", "investigation:run", "investigation:review", "pii:unmask", "payments:intents:read", "payments:intents:write", "payments:receipts:read", "payments:webhooks:write", "payments:refunds:write", "payments:admin", "payments:merchants:read", "payments:merchants:write", "orders:read", "voice:read", "voice:write", "voice:stream", "clearing:actions:read", "clearing:actions:propose", "clearing:actions:commit", "clearing:actions:reconcile", "clearing:receipts:read", "clearing:actions:approve", "admin")
+    public val scopes: List<String> = listOf("mcp:invoke", "memory:read", "memory:write", "memory:manage", "trace:read", "trace:write", "scenario:read", "scenario:write", "dataset:read", "dataset:write", "connector:read", "connector:run", "connector:manage", "eval:run", "training:publish", "review:gold:manage", "review:resolve", "workflow:read", "workflow:write", "workflow:run", "bio:source:read", "bio:proposal:write", "bio:measurement:verify", "bio:decision:write", "bio:experiment:approve", "bio:experiment:submit", "bio:signer:manage", "model:read", "model:invoke", "usage:reserve", "document:read", "document:write", "risk:read", "risk:write", "risk:review", "investigation:read", "investigation:write", "investigation:run", "investigation:review", "pii:unmask", "payments:intents:read", "payments:intents:write", "payments:receipts:read", "payments:webhooks:write", "payments:refunds:write", "payments:admin", "payments:merchants:read", "payments:merchants:write", "orders:read", "orders:commerce:write", "voice:read", "voice:write", "voice:stream", "clearing:actions:read", "clearing:actions:propose", "clearing:actions:commit", "clearing:actions:reconcile", "clearing:receipts:read", "clearing:actions:approve", "admin")
 
     /** The issuer's authorization endpoint path. */
     public const val authorizePath: String = "/oauth/authorize"
@@ -12398,7 +12398,7 @@ private object TemperaOperationChunk18 {
             bodyDefaults = emptyList(),
             requestBodyKind = "json",
             requestContentType = "application/json",
-            scope = "orders:write",
+            scope = "orders:commerce:write",
             physicalAction = false,
             prepareCommitRequired = false,
             safeRetry = "none",
@@ -12892,7 +12892,7 @@ private object TemperaOperationChunk18 {
             bodyDefaults = emptyList(),
             requestBodyKind = "json",
             requestContentType = "application/json",
-            scope = "orders:write",
+            scope = "orders:commerce:write",
             physicalAction = false,
             prepareCommitRequired = false,
             safeRetry = "none",

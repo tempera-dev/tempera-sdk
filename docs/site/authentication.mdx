@@ -253,6 +253,7 @@ is the default when none is specified.
 | `payments:merchants:read` | tempera-payments: `getMerchant`, `getMerchantWorkspace`, `getWorkspaceMerchant`, `refreshMerchantEligibility` |
 | `payments:merchants:write` | tempera-payments: `createMerchant`, `createMerchantOnboardingLink` |
 | `orders:read` | tempera-dropshipping: `evaluateOrder`, `getBusinessSummary`, `getBusinessWorkspace`, `getCatalogOffer`, `getOrder`, `getProposal`, `getSaleOrder`, `getStore`, `listCatalogOffers`, `listEvents`, `listInbox`, `listOrderAuditEvents`, `listOrderEventProjections`, `listOrders`, `listSaleOrders`, `listStores` |
+| `orders:commerce:write` | tempera-dropshipping: `createCatalogOffer`, `createSaleOrder` |
 | `voice:read` | tempera-voice: `downloadVoiceArtifact`, `getDefaultVoiceAgent`, `getVoiceAgent`, `getVoiceCapabilities`, `getVoiceSession`, `listVoiceAgents`, `listVoiceSessionActions`, `listVoiceSessionEvents`, `listVoiceSessions` |
 | `voice:write` | tempera-voice: `createVoiceAgent`, `createVoiceSession`, `endVoiceSession`, `resolveVoiceAction`, `uploadVoiceArtifact`, `upsertVoiceAgent` |
 | `voice:stream` | No typed SDK operation declares it yet; enforced server-side. |
