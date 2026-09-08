@@ -5,3 +5,6 @@ __pycache__/
 .DS_Store
 .build/
 .swiftpm/
+
+# Agent worktrees are local scratch, never part of the tree.
+.claude/worktrees/
