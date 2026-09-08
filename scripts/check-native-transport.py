@@ -101,7 +101,7 @@ WEBSOCKET_METHOD = "WSS"
 # A literal matches a root when it equals it or continues it with "/" or ":".
 NATIVE_NAMESPACES: dict[str, tuple[str, ...]] = {
     "temperaDropshipping": ("/v1/organizations",),
-    "temperaBusiness": ("/v1/operating-state", "/v1/business-profile", "/v1/cases"),
+    "temperaBusiness": ("/v1/operatingState", "/v1/businessProfile", "/v1/cases"),
     "temperaPayments": ("/v1/merchants",),
     "temperaVoice": ("/v1/sessions", "/v1/agents", "/v1/actions"),
 }
