@@ -4,6 +4,9 @@ on:
   pull_request:
   push:
     branches: [main]
+  # Lets a maintainer re-run the whole gate set against a branch without
+  # pushing an empty commit.
+  workflow_dispatch:
 
 jobs:
   data-engine-exact-source:
