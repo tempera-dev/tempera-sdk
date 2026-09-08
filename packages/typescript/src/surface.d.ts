@@ -1048,6 +1048,8 @@ export interface TemperaDropshippingClient extends TemperaProductClientBase {
   createCatalogOffer(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Get Catalog Offer. */
   getCatalogOffer(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List Event Projections. */
+  listOrderEventProjections(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List Events. */
   listEvents(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Inbox. */

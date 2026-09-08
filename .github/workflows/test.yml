@@ -389,5 +389,7 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - name: Check native operation bindings
         run: python3 scripts/check-native-transport.py --client packages/swift/Sources/TemperaMerchantSDK/TemperaMerchantSDK.swift
+      - name: Check Orders commerce operation bindings
+        run: python3 scripts/check-native-transport.py --client packages/swift/Sources/TemperaMerchantSDK/OrdersCommerceClient.swift
       - name: Test Swift package with strict concurrency
         run: swift test -Xswiftc -strict-concurrency=complete

@@ -4259,6 +4259,868 @@
         "x-tempera-required-scope": "orders:read"
       }
     },
+    "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/event-projections": {
+      "get": {
+        "operationId": "listOrderEventProjections",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "organization",
+            "required": true,
+            "schema": {
+              "title": "Organization",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "project",
+            "required": true,
+            "schema": {
+              "title": "Project",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "environment",
+            "required": true,
+            "schema": {
+              "title": "Environment",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "site",
+            "required": true,
+            "schema": {
+              "title": "Site",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "maxLength": 2048,
+              "minLength": 1,
+              "title": "Cursor",
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "coverage": {
+                      "const": "EMITTED_LOCAL_EVENTS_SINCE_INSTALLATION",
+                      "default": "EMITTED_LOCAL_EVENTS_SINCE_INSTALLATION",
+                      "title": "Coverage",
+                      "type": "string"
+                    },
+                    "historical_completeness": {
+                      "const": "UNKNOWN",
+                      "default": "UNKNOWN",
+                      "title": "Historical Completeness",
+                      "type": "string"
+                    },
+                    "installation_lower_source_position": {
+                      "title": "Installation Lower Source Position",
+                      "type": "string"
+                    },
+                    "items": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "accepted_by": {
+                            "const": "LOCAL_ORDERS_TRANSACTION",
+                            "default": "LOCAL_ORDERS_TRANSACTION",
+                            "title": "Accepted By",
+                            "type": "string"
+                          },
+                          "actor": {
+                            "maxLength": 160,
+                            "minLength": 1,
+                            "title": "Actor",
+                            "type": "string"
+                          },
+                          "admission": {
+                            "enum": [
+                              "LOCAL_DECLARATION",
+                              "SIGNED_DELIVERY_CUSTODY",
+                              "LOCAL_LINEAGE_DECLARATION"
+                            ],
+                            "title": "Admission",
+                            "type": "string"
+                          },
+                          "canonicalization": {
+                            "const": "tempera.orders.canonical-json/v1",
+                            "default": "tempera.orders.canonical-json/v1",
+                            "title": "Canonicalization",
+                            "type": "string"
+                          },
+                          "envelope_digest": {
+                            "title": "Envelope Digest",
+                            "type": "string"
+                          },
+                          "event_type": {
+                            "enum": [
+                              "order.imported",
+                              "order.revised",
+                              "order.manual_purchase_fenced",
+                              "order.declared_reconciliation",
+                              "catalog_offer.created",
+                              "sale_order.created",
+                              "shopify.reconciliation_required",
+                              "source.corrected",
+                              "source.retracted"
+                            ],
+                            "title": "Event Type",
+                            "type": "string"
+                          },
+                          "external_authority": {
+                            "const": "NONE",
+                            "default": "NONE",
+                            "title": "External Authority",
+                            "type": "string"
+                          },
+                          "journal_sequence": {
+                            "title": "Journal Sequence",
+                            "type": "string"
+                          },
+                          "known_at": {
+                            "title": "Known At",
+                            "type": "null"
+                          },
+                          "lineage": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "parent_event_digest": {
+                                "title": "Parent Event Digest",
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "reason": {
+                                "maxLength": 160,
+                                "minLength": 1,
+                                "title": "Reason",
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "relation": {
+                                "enum": [
+                                  "initial",
+                                  "supersedes",
+                                  "correction",
+                                  "retraction",
+                                  "unknown_previous"
+                                ],
+                                "title": "Relation",
+                                "type": "string"
+                              },
+                              "replacement_event_digest": {
+                                "title": "Replacement Event Digest",
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "relation",
+                              "parent_event_digest",
+                              "reason"
+                            ],
+                            "title": "Lineage",
+                            "type": "object"
+                          },
+                          "observed_at": {
+                            "title": "Observed At",
+                            "type": "null"
+                          },
+                          "payload": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "catalog_offer": {
+                                "additionalProperties": false,
+                                "properties": {
+                                  "currency": {
+                                    "const": "USD",
+                                    "default": "USD",
+                                    "title": "Currency",
+                                    "type": "string"
+                                  },
+                                  "id": {
+                                    "maxLength": 128,
+                                    "minLength": 1,
+                                    "title": "Id",
+                                    "type": "string"
+                                  },
+                                  "kind": {
+                                    "const": "catalog_offer",
+                                    "default": "catalog_offer",
+                                    "title": "Kind",
+                                    "type": "string"
+                                  },
+                                  "merchant_id": {
+                                    "title": "Merchant Id",
+                                    "type": "string"
+                                  },
+                                  "product_classification": {
+                                    "enum": [
+                                      "physical_goods",
+                                      "offline_services"
+                                    ],
+                                    "title": "Product Classification",
+                                    "type": "string"
+                                  },
+                                  "revision": {
+                                    "const": 1,
+                                    "default": 1,
+                                    "title": "Revision",
+                                    "type": "integer"
+                                  },
+                                  "unit_amount_minor": {
+                                    "maximum": 99999999.0,
+                                    "minimum": 1.0,
+                                    "title": "Unit Amount Minor",
+                                    "type": "integer"
+                                  }
+                                },
+                                "required": [
+                                  "id",
+                                  "merchant_id",
+                                  "product_classification",
+                                  "unit_amount_minor"
+                                ],
+                                "title": "OfferPayload",
+                                "type": [
+                                  "object",
+                                  "null"
+                                ]
+                              },
+                              "kind": {
+                                "enum": [
+                                  "order",
+                                  "catalog_offer",
+                                  "sale_order",
+                                  "shopify_delivery"
+                                ],
+                                "title": "Kind",
+                                "type": "string"
+                              },
+                              "order": {
+                                "additionalProperties": false,
+                                "properties": {
+                                  "acquisition_minor": {
+                                    "maximum": 1000000000000.0,
+                                    "minimum": 0.0,
+                                    "title": "Acquisition Minor",
+                                    "type": "integer"
+                                  },
+                                  "currency": {
+                                    "title": "Currency",
+                                    "type": "string"
+                                  },
+                                  "fees_minor": {
+                                    "maximum": 1000000000000.0,
+                                    "minimum": 0.0,
+                                    "title": "Fees Minor",
+                                    "type": "integer"
+                                  },
+                                  "id": {
+                                    "maxLength": 128,
+                                    "minLength": 1,
+                                    "title": "Id",
+                                    "type": "string"
+                                  },
+                                  "kind": {
+                                    "const": "order",
+                                    "default": "order",
+                                    "title": "Kind",
+                                    "type": "string"
+                                  },
+                                  "original_fulfillment_cost_minor": {
+                                    "maximum": 1000000000000.0,
+                                    "minimum": 0.0,
+                                    "title": "Original Fulfillment Cost Minor",
+                                    "type": "integer"
+                                  },
+                                  "paid_amount_minor": {
+                                    "maximum": 1000000000000.0,
+                                    "minimum": 0.0,
+                                    "title": "Paid Amount Minor",
+                                    "type": "integer"
+                                  },
+                                  "purchase_state": {
+                                    "enum": [
+                                      "none",
+                                      "pending",
+                                      "accepted",
+                                      "unknown",
+                                      "cancellation_requested",
+                                      "cancellation_confirmed",
+                                      "rejected"
+                                    ],
+                                    "title": "Purchase State",
+                                    "type": "string"
+                                  },
+                                  "quantity": {
+                                    "maximum": 1000000.0,
+                                    "minimum": 1.0,
+                                    "title": "Quantity",
+                                    "type": "integer"
+                                  },
+                                  "revision": {
+                                    "maximum": 2147483647.0,
+                                    "minimum": 1.0,
+                                    "title": "Revision",
+                                    "type": "integer"
+                                  },
+                                  "variant_id": {
+                                    "maxLength": 160,
+                                    "minLength": 1,
+                                    "title": "Variant Id",
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "id",
+                                  "revision",
+                                  "variant_id",
+                                  "currency",
+                                  "quantity",
+                                  "paid_amount_minor",
+                                  "original_fulfillment_cost_minor",
+                                  "fees_minor",
+                                  "acquisition_minor",
+                                  "purchase_state"
+                                ],
+                                "title": "OrderPayload",
+                                "type": [
+                                  "object",
+                                  "null"
+                                ]
+                              },
+                              "sale_order": {
+                                "additionalProperties": false,
+                                "properties": {
+                                  "amount_minor": {
+                                    "maximum": 99999999.0,
+                                    "minimum": 1.0,
+                                    "title": "Amount Minor",
+                                    "type": "integer"
+                                  },
+                                  "currency": {
+                                    "const": "USD",
+                                    "default": "USD",
+                                    "title": "Currency",
+                                    "type": "string"
+                                  },
+                                  "id": {
+                                    "maxLength": 128,
+                                    "minLength": 1,
+                                    "title": "Id",
+                                    "type": "string"
+                                  },
+                                  "kind": {
+                                    "const": "sale_order",
+                                    "default": "sale_order",
+                                    "title": "Kind",
+                                    "type": "string"
+                                  },
+                                  "merchant_id": {
+                                    "title": "Merchant Id",
+                                    "type": "string"
+                                  },
+                                  "offer_id": {
+                                    "maxLength": 128,
+                                    "minLength": 1,
+                                    "title": "Offer Id",
+                                    "type": "string"
+                                  },
+                                  "offer_revision": {
+                                    "const": 1,
+                                    "default": 1,
+                                    "title": "Offer Revision",
+                                    "type": "integer"
+                                  },
+                                  "product_classification": {
+                                    "enum": [
+                                      "physical_goods",
+                                      "offline_services"
+                                    ],
+                                    "title": "Product Classification",
+                                    "type": "string"
+                                  },
+                                  "quantity": {
+                                    "maximum": 10000.0,
+                                    "minimum": 1.0,
+                                    "title": "Quantity",
+                                    "type": "integer"
+                                  },
+                                  "revision": {
+                                    "const": 1,
+                                    "default": 1,
+                                    "title": "Revision",
+                                    "type": "integer"
+                                  },
+                                  "unit_amount_minor": {
+                                    "maximum": 99999999.0,
+                                    "minimum": 1.0,
+                                    "title": "Unit Amount Minor",
+                                    "type": "integer"
+                                  }
+                                },
+                                "required": [
+                                  "id",
+                                  "offer_id",
+                                  "merchant_id",
+                                  "product_classification",
+                                  "quantity",
+                                  "unit_amount_minor",
+                                  "amount_minor"
+                                ],
+                                "title": "SalePayload",
+                                "type": [
+                                  "object",
+                                  "null"
+                                ]
+                              },
+                              "shopify_delivery": {
+                                "additionalProperties": false,
+                                "properties": {
+                                  "delivery_id": {
+                                    "maxLength": 128,
+                                    "minLength": 1,
+                                    "title": "Delivery Id",
+                                    "type": "string"
+                                  },
+                                  "delivery_occurrence_verified": {
+                                    "const": false,
+                                    "default": false,
+                                    "title": "Delivery Occurrence Verified",
+                                    "type": "boolean"
+                                  },
+                                  "delivery_request_digest": {
+                                    "title": "Delivery Request Digest",
+                                    "type": "string"
+                                  },
+                                  "installation_id": {
+                                    "maxLength": 128,
+                                    "minLength": 1,
+                                    "title": "Installation Id",
+                                    "type": "string"
+                                  },
+                                  "kind": {
+                                    "const": "shopify_delivery",
+                                    "default": "shopify_delivery",
+                                    "title": "Kind",
+                                    "type": "string"
+                                  },
+                                  "metadata_basis": {
+                                    "const": "CONFIGURED_INSTALLATION_AND_DECLARED_HEADERS",
+                                    "default": "CONFIGURED_INSTALLATION_AND_DECLARED_HEADERS",
+                                    "title": "Metadata Basis",
+                                    "type": "string"
+                                  },
+                                  "processing": {
+                                    "const": "reconciliation_required",
+                                    "default": "reconciliation_required",
+                                    "title": "Processing",
+                                    "type": "string"
+                                  },
+                                  "raw_request_sha256": {
+                                    "title": "Raw Request Sha256",
+                                    "type": "string"
+                                  },
+                                  "signature_scope": {
+                                    "const": "RAW_BODY_ONLY",
+                                    "default": "RAW_BODY_ONLY",
+                                    "title": "Signature Scope",
+                                    "type": "string"
+                                  },
+                                  "store_id": {
+                                    "maxLength": 128,
+                                    "minLength": 1,
+                                    "title": "Store Id",
+                                    "type": "string"
+                                  },
+                                  "topic": {
+                                    "enum": [
+                                      "orders/create",
+                                      "orders/updated",
+                                      "orders/cancelled",
+                                      "fulfillments/create",
+                                      "fulfillments/update",
+                                      "app/uninstalled"
+                                    ],
+                                    "title": "Topic",
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "store_id",
+                                  "installation_id",
+                                  "delivery_id",
+                                  "topic",
+                                  "raw_request_sha256",
+                                  "delivery_request_digest"
+                                ],
+                                "title": "DeliveryPayload",
+                                "type": [
+                                  "object",
+                                  "null"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "kind"
+                            ],
+                            "title": "ProjectionPayload",
+                            "type": "object"
+                          },
+                          "projection_payload_digest": {
+                            "title": "Projection Payload Digest",
+                            "type": "string"
+                          },
+                          "provider_fact_admission": {
+                            "const": "NONE",
+                            "default": "NONE",
+                            "title": "Provider Fact Admission",
+                            "type": "string"
+                          },
+                          "recorded_at": {
+                            "title": "Recorded At",
+                            "type": "string"
+                          },
+                          "resource": {
+                            "maxLength": 512,
+                            "minLength": 1,
+                            "title": "Resource",
+                            "type": "string"
+                          },
+                          "resource_revision": {
+                            "maximum": 2147483647.0,
+                            "minimum": 1.0,
+                            "title": "Resource Revision",
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "schema_version": {
+                            "const": "tempera.orders.event-projection/v1",
+                            "default": "tempera.orders.event-projection/v1",
+                            "title": "Schema Version",
+                            "type": "string"
+                          },
+                          "scope": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "environment": {
+                                "enum": [
+                                  "development",
+                                  "test",
+                                  "staging",
+                                  "production"
+                                ],
+                                "title": "Environment",
+                                "type": "string"
+                              },
+                              "organization_id": {
+                                "maxLength": 160,
+                                "minLength": 1,
+                                "title": "Organization Id",
+                                "type": "string"
+                              },
+                              "project_id": {
+                                "maxLength": 160,
+                                "minLength": 1,
+                                "title": "Project Id",
+                                "type": "string"
+                              },
+                              "site_id": {
+                                "maxLength": 160,
+                                "minLength": 1,
+                                "title": "Site Id",
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "organization_id",
+                              "project_id",
+                              "environment",
+                              "site_id"
+                            ],
+                            "title": "Scope",
+                            "type": "object"
+                          },
+                          "source": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "installation_id": {
+                                "maxLength": 128,
+                                "minLength": 1,
+                                "title": "Installation Id",
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "kind": {
+                                "enum": [
+                                  "resource_revision",
+                                  "provider_delivery"
+                                ],
+                                "title": "Kind",
+                                "type": "string"
+                              },
+                              "native_id": {
+                                "maxLength": 512,
+                                "minLength": 1,
+                                "title": "Native Id",
+                                "type": "string"
+                              },
+                              "provider": {
+                                "const": "shopify",
+                                "title": "Provider",
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "kind",
+                              "native_id",
+                              "provider",
+                              "installation_id"
+                            ],
+                            "title": "SourceIdentity",
+                            "type": "object"
+                          },
+                          "source_record_digest": {
+                            "title": "Source Record Digest",
+                            "type": "string"
+                          },
+                          "valid_at": {
+                            "title": "Valid At",
+                            "type": "null"
+                          }
+                        },
+                        "required": [
+                          "scope",
+                          "journal_sequence",
+                          "event_type",
+                          "resource",
+                          "resource_revision",
+                          "actor",
+                          "recorded_at",
+                          "valid_at",
+                          "observed_at",
+                          "known_at",
+                          "source",
+                          "source_record_digest",
+                          "payload",
+                          "projection_payload_digest",
+                          "lineage",
+                          "admission",
+                          "envelope_digest"
+                        ],
+                        "title": "EventProjection",
+                        "type": "object"
+                      },
+                      "maxItems": 100,
+                      "title": "Items",
+                      "type": "array"
+                    },
+                    "local_lineage_coverage": {
+                      "const": "INTERNAL_DECLARATION_PRIMITIVE_ONLY",
+                      "default": "INTERNAL_DECLARATION_PRIMITIVE_ONLY",
+                      "title": "Local Lineage Coverage",
+                      "type": "string"
+                    },
+                    "next_cursor": {
+                      "title": "Next Cursor",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "page_complete": {
+                      "title": "Page Complete",
+                      "type": "boolean"
+                    },
+                    "provider_correction_coverage": {
+                      "const": "UNSUPPORTED",
+                      "default": "UNSUPPORTED",
+                      "title": "Provider Correction Coverage",
+                      "type": "string"
+                    },
+                    "snapshot_upper_source_position": {
+                      "title": "Snapshot Upper Source Position",
+                      "type": "string"
+                    },
+                    "source_position_disclosure": {
+                      "const": "DATABASE_GLOBAL_POSITIONS_FILTERED_BY_SCOPE",
+                      "default": "DATABASE_GLOBAL_POSITIONS_FILTERED_BY_SCOPE",
+                      "title": "Source Position Disclosure",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "next_cursor",
+                    "snapshot_upper_source_position",
+                    "installation_lower_source_position",
+                    "page_complete"
+                  ],
+                  "title": "ProjectionPage",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "AIP-193 error envelope. Branch on details[0].reason, never on message.",
+                  "properties": {
+                    "error": {
+                      "properties": {
+                        "code": {
+                          "type": "integer"
+                        },
+                        "details": {
+                          "items": {
+                            "properties": {
+                              "@type": {
+                                "type": "string"
+                              },
+                              "domain": {
+                                "type": "string"
+                              },
+                              "metadata": {
+                                "additionalProperties": {
+                                  "type": "string"
+                                },
+                                "type": "object"
+                              },
+                              "reason": {
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Typed error envelope"
+          },
+          "default": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "AIP-193 error envelope. Branch on details[0].reason, never on message.",
+                  "properties": {
+                    "error": {
+                      "properties": {
+                        "code": {
+                          "type": "integer"
+                        },
+                        "details": {
+                          "items": {
+                            "properties": {
+                              "@type": {
+                                "type": "string"
+                              },
+                              "domain": {
+                                "type": "string"
+                              },
+                              "metadata": {
+                                "additionalProperties": {
+                                  "type": "string"
+                                },
+                                "type": "object"
+                              },
+                              "reason": {
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Typed error envelope"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Event Projections",
+        "x-tempera-effect": "read",
+        "x-tempera-external-authority": "NONE",
+        "x-tempera-release": "local-candidate",
+        "x-tempera-required-scope": "orders:read"
+      }
+    },
     "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/events": {
       "get": {
         "operationId": "listEvents",
