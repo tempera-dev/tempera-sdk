@@ -7,6 +7,8 @@ on:
       - "packages/kotlin-android/**"
       - "scripts/check-kotlin-android-artifact.py"
       - "scripts/test-check-kotlin-android-artifact.py"
+      - "scripts/qualify-kotlin-android-release.py"
+      - "scripts/test-qualify-kotlin-android-release.py"
       - ".github/workflows/kotlin-android.yml"
   push:
     branches: [main]
@@ -15,6 +17,8 @@ on:
       - "packages/kotlin-android/**"
       - "scripts/check-kotlin-android-artifact.py"
       - "scripts/test-check-kotlin-android-artifact.py"
+      - "scripts/qualify-kotlin-android-release.py"
+      - "scripts/test-qualify-kotlin-android-release.py"
       - ".github/workflows/kotlin-android.yml"
   workflow_dispatch:
 
@@ -38,6 +42,7 @@ jobs:
 
   android-library-and-fixture:
     runs-on: ubuntu-latest
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4
@@ -47,6 +52,8 @@ jobs:
       - uses: gradle/actions/setup-gradle@06832c7b30a0129d7fb559bcc6e43d26f6374244 # v4
         with:
           gradle-version: "8.11.1"
+      - name: Release qualification protocol controls
+        run: python3 scripts/test-qualify-kotlin-android-release.py
       - name: JVM and Android publications for capability fixture
         env:
           FIXTURE_REPOSITORY: ${{ runner.temp }}/tempera-sdk-fixture-repository
@@ -119,14 +126,15 @@ jobs:
           disable-animations: true
           script: |
             gradle -p packages/kotlin-android -PfixtureTestBuildType=debug -Pandroid.testInstrumentationRunnerArguments.temperaExpectedApi=${{ matrix.api-level }} :fixture-app:connectedDebugAndroidTest
-            gradle -p packages/kotlin-android -PfixtureTestBuildType=release -Pandroid.testInstrumentationRunnerArguments.temperaExpectedApi=${{ matrix.api-level }} :fixture-app:connectedReleaseAndroidTest
-      - name: Require Debug and minified Release runtime execution
+            gradle -p packages/kotlin-android :fixture-app:assembleRelease
+            python3 scripts/qualify-kotlin-android-release.py --apk packages/kotlin-android/fixture-app/build/outputs/apk/release/fixture-app-release.apk --expected-api ${{ matrix.api-level }} --evidence-dir packages/kotlin-android/fixture-app/build/outputs/release-qualification
+      - name: Require Debug instrumentation execution
         run: |
           python3 - <<'PYTHON'
           from pathlib import Path
           import xml.etree.ElementTree as ET
           root = Path("packages/kotlin-android/fixture-app/build/outputs/androidTest-results/connected")
-          for variant in ("debug", "release"):
+          for variant in ("debug",):
               reports = list((root / variant).glob("TEST-*.xml"))
               assert len(reports) == 1, f"Expected one {variant} device report, got {reports}"
               suite = ET.parse(reports[0]).getroot()
@@ -145,4 +153,6 @@ jobs:
           path: |
             packages/kotlin-android/fixture-app/build/reports/
             packages/kotlin-android/fixture-app/build/outputs/androidTest-results/
+            packages/kotlin-android/fixture-app/build/outputs/release-qualification/
+            packages/kotlin-android/fixture-app/build/outputs/mapping/release/
             packages/kotlin-android/fixture-app/build/outputs/apk/
