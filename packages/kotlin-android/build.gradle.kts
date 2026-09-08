@@ -29,7 +29,7 @@ kotlin {
     jvmToolchain(17)
 }
 
-android.sourceSets.getByName("main").kotlin {
+kotlin.sourceSets.getByName("main").kotlin.apply {
     srcDir("../kotlin/src/main/kotlin")
     exclude("dev/tempera/sdk/JdkHttpTransport.kt")
     exclude("dev/tempera/sdk/JvmDefaultTransport.kt")
