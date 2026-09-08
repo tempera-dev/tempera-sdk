@@ -5,13 +5,17 @@ import XCTest
 
 final class McpTests: XCTestCase {
     private func gateway(
-        _ body: String = #"{"jsonrpc":"2.0","id":1,"result":{"ok":true}}"#
+        _ body: String? = nil
     ) -> StubTransport {
-        StubTransport(responder: { _, _ in
-            TemperaHTTPResponse(
+        StubTransport(responder: { request, _ in
+            let response = body ?? {
+                let id = TemperaJSON.parse(request.body ?? Data())?["id"]?.intValue ?? -1
+                return #"{"jsonrpc":"2.0","id":\#(id),"result":{"ok":true}}"#
+            }()
+            return TemperaHTTPResponse(
                 status: 200,
                 headers: [TemperaKeyValue(key: "content-type", value: "application/json")],
-                body: Data(body.utf8)
+                body: Data(response.utf8)
             )
         })
     }

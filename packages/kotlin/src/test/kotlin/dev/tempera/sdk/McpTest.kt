@@ -10,8 +10,14 @@ class McpTest {
     private val version = TemperaSurface.mcpProtocolVersion
 
     private fun gateway(
-        body: String = """{"jsonrpc":"2.0","id":1,"result":{"ok":true}}"""
-    ): StubTransport = StubTransport.always(body)
+        body: String? = null
+    ): StubTransport = StubTransport { request, _ ->
+        val response = body ?: run {
+            val id = (TemperaJson.parse(request.body!!)!!["id"] as TemperaJson.Int64).value
+            """{"jsonrpc":"2.0","id":$id,"result":{"ok":true}}"""
+        }
+        StubTransport.json(response)
+    }
 
     private fun client(transport: StubTransport): TemperaMcpClient =
         TemperaMcpClient(
