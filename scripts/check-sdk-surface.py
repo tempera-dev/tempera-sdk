@@ -63,6 +63,14 @@ REQUIRED_MARKERS = {
     "packages/rust/src/retry.rs": ["pub fn canonical_idempotency_key", "pub fn send_with_retry", "RETRYABLE_STATUSES", "MAX_ATTEMPTS"],
     "packages/rust/src/client.rs": ["pub struct TemperaClient", "pub struct RequestSpec"],
     "packages/rust/src/mcp.rs": ["MCP_PROTOCOL_VERSION"],
+    "packages/swift/Sources/TemperaSDK/Errors.swift": ["public struct TemperaApiError", "public struct TemperaNormalizedError"],
+    "packages/swift/Sources/TemperaSDK/Client.swift": ["public actor TemperaClient", "public struct TemperaProductClient"],
+    "packages/swift/Sources/TemperaSDK/Mcp.swift": ["TemperaSurface.mcpProtocolVersion"],
+    "packages/kotlin/src/main/kotlin/dev/tempera/sdk/Errors.kt": ["public class TemperaApiException", "public data class TemperaNormalizedError"],
+    "packages/kotlin/src/main/kotlin/dev/tempera/sdk/Client.kt": ["public class TemperaClient", "public class TemperaProductClient"],
+    "packages/kotlin/src/main/kotlin/dev/tempera/sdk/Mcp.kt": ["public class TemperaMcpClient"],
+    "packages/c/include/tempera/tempera.h": ["tempera_client_build_request", "tempera_normalize_error_body"],
+    "packages/cpp/include/tempera/client.hpp": ["build_request"],
     "packages/rust/src/auth.rs": ["pub struct TemperaAuth", "pub fn pkce_challenge_s256"],
 }
 
@@ -85,6 +93,17 @@ def package_versions() -> dict[str, str]:
     cargo = (ROOT / "packages/rust/Cargo.toml").read_text()
     match = re.search(r'^version\s*=\s*"([^"]+)"', cargo, re.MULTILINE)
     versions["rust"] = match.group(1) if match else "?"
+    # Swift has no manifest version field, so its package states one in source.
+    swift = (ROOT / "packages/swift/Sources/TemperaSDK/TemperaSDK.swift").read_text()
+    match = re.search(r'public static let version = "([^"]+)"', swift)
+    versions["swift"] = match.group(1) if match else "?"
+    kotlin = (ROOT / "packages/kotlin/build.gradle.kts").read_text()
+    match = re.search(r'^version\s*=\s*"([^"]+)"', kotlin, re.MULTILINE)
+    versions["kotlin"] = match.group(1) if match else "?"
+    for language in ("c", "cpp"):
+        cmake = (ROOT / f"packages/{language}/CMakeLists.txt").read_text()
+        match = re.search(r'VERSION\s+([0-9]+\.[0-9]+\.[0-9]+)', cmake)
+        versions[language] = match.group(1) if match else "?"
     return versions
 
 

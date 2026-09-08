@@ -337,3 +337,42 @@ jobs:
         run: python3 scripts/check-native-transport.py --client packages/swift/Sources/TemperaMerchantSDK/OrdersCommerceClient.swift
       - name: Test Swift package with strict concurrency
         run: swift test -Xswiftc -strict-concurrency=complete
+
+  kotlin:
+    name: kotlin package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@06832c7b30a0129d7fb559bcc6e43d26f6374244 # v4
+      # The package has no wrapper committed, so the action's Gradle is used
+      # deliberately rather than a wrapper nobody has verified.
+      - name: Test the Kotlin package
+        working-directory: packages/kotlin
+        run: gradle --no-daemon test
+
+  native:
+    name: c and c++ packages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      # Both packages are dependency-free by design, so they are built with a
+      # bare compiler rather than a build system: if that stops working, the
+      # packages have grown a dependency they were not supposed to have.
+      - name: Build and test the C package
+        run: |
+          cc -std=c99 -Wall -Wextra -Werror -pedantic -Ipackages/c/include \
+            packages/c/tests/test_tempera.c packages/c/src/*.c -o /tmp/tempera-c-tests
+          /tmp/tempera-c-tests
+      - name: Build and test the C++ package
+        run: |
+          c++ -std=c++20 -Wall -Wextra -Werror -pedantic -Ipackages/cpp/include \
+            packages/cpp/tests/test_tempera.cpp -o /tmp/tempera-cpp-tests
+          /tmp/tempera-cpp-tests
+      - name: Build both under CMake
+        run: |
+          cmake -S packages/c -B /tmp/build-c && cmake --build /tmp/build-c
+          cmake -S packages/cpp -B /tmp/build-cpp && cmake --build /tmp/build-cpp
