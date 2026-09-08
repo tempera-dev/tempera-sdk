@@ -177,8 +177,14 @@ def load_manifest(data: bytes) -> dict[str, Any]:
         folded_destination = destination.casefold()
         allowed_destination = (
             folded_destination.startswith(".codex/skills/tempera-")
+            or folded_destination.startswith(".claude/skills/tempera-")
             or folded_destination.startswith(".tempera/agent-kit/")
             or folded_destination == "scripts/sync-agent-kit.py"
+            # The producer notify workflow is the one file the kit places in a
+            # consumer's CI directory. It is allowed by exact name rather than
+            # by prefix: a manifest must never be able to overwrite an
+            # arbitrary workflow in the repositories it is distributed to.
+            or folded_destination == ".github/workflows/notify-sdk.yml"
         )
         if not allowed_destination:
             raise ValueError(f"destination is outside the agent-kit allowlist: {destination}")
