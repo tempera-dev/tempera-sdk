@@ -33,7 +33,7 @@ public struct CreateMerchantRequest: Codable, Sendable {
     }
 
     enum CodingKeys: String, CodingKey {
-        case tenantID = "tenant_id"
+        case tenantID = "tenantId"
         case country
         case currency
         case category
@@ -48,7 +48,7 @@ public struct MerchantTenantRequest: Codable, Sendable {
     }
 
     enum CodingKeys: String, CodingKey {
-        case tenantID = "tenant_id"
+        case tenantID = "tenantId"
     }
 }
 
@@ -72,21 +72,21 @@ public struct Merchant: Codable, Sendable, Equatable {
 
     enum CodingKeys: String, CodingKey {
         case id
-        case tenantID = "tenant_id"
+        case tenantID = "tenantId"
         case country
         case currency
         case category
-        case workspaceReady = "workspace_ready"
-        case paymentsEnabled = "payments_enabled"
-        case payoutsEnabled = "payouts_enabled"
-        case actionRequired = "action_required"
-        case requirementsCurrent = "requirements_current"
-        case currentlyDue = "currently_due"
-        case pastDue = "past_due"
-        case pendingVerification = "pending_verification"
-        case disabledReason = "disabled_reason"
-        case nextAction = "next_action"
-        case providerObservedAt = "provider_observed_at"
+        case workspaceReady = "workspaceReady"
+        case paymentsEnabled = "paymentsEnabled"
+        case payoutsEnabled = "payoutsEnabled"
+        case actionRequired = "actionRequired"
+        case requirementsCurrent = "requirementsCurrent"
+        case currentlyDue = "currentlyDue"
+        case pastDue = "pastDue"
+        case pendingVerification = "pendingVerification"
+        case disabledReason = "disabledReason"
+        case nextAction = "nextAction"
+        case providerObservedAt = "providerObservedAt"
     }
 
     public func isReady(now: Date = Date()) -> Bool {
@@ -110,7 +110,7 @@ public struct MerchantWorkspace: Codable, Sendable, Equatable {
     public let merchant: Merchant?
 
     enum CodingKeys: String, CodingKey {
-        case tenantID = "tenant_id"
+        case tenantID = "tenantId"
         case merchant
     }
 
@@ -141,9 +141,9 @@ public struct MerchantOnboardingLink: Codable, Sendable, Equatable {
     public let expiresAt: Int64
 
     enum CodingKeys: String, CodingKey {
-        case merchantID = "merchant_id"
+        case merchantID = "merchantId"
         case url
-        case expiresAt = "expires_at"
+        case expiresAt = "expiresAt"
     }
 }
 
@@ -250,7 +250,7 @@ public final class MerchantClient: Sendable {
             // tempera-transport: temperaPayments.getWorkspaceMerchant GET /v1/merchants
             path: "/v1/merchants",
             method: "GET",
-            query: [URLQueryItem(name: "tenant_id", value: tenantID)],
+            query: [URLQueryItem(name: "tenantId", value: tenantID)],
             body: Optional<MerchantTenantRequest>.none,
             idempotencyKey: nil,
             expectedMerchantID: nil,
@@ -283,10 +283,10 @@ public final class MerchantClient: Sendable {
         try validateTenant(tenantID)
         let merchantID = id.uuidString.lowercased()
         return try await send(
-            // tempera-transport: temperaPayments.getMerchant GET /v1/merchants/{merchant_id}
+            // tempera-transport: temperaPayments.getMerchant GET /v1/merchants/{merchantId}
             path: "/v1/merchants/\(merchantID)",
             method: "GET",
-            query: [URLQueryItem(name: "tenant_id", value: tenantID)],
+            query: [URLQueryItem(name: "tenantId", value: tenantID)],
             body: Optional<MerchantTenantRequest>.none,
             idempotencyKey: nil,
             expectedMerchantID: id,
@@ -298,7 +298,7 @@ public final class MerchantClient: Sendable {
         try validateTenant(tenantID)
         let merchantID = id.uuidString.lowercased()
         return try await send(
-            // tempera-transport: temperaPayments.refreshMerchantEligibility POST /v1/merchants/{merchant_id}/refresh
+            // tempera-transport: temperaPayments.refreshMerchantEligibility POST /v1/merchants/{merchantId}/refresh
             path: "/v1/merchants/\(merchantID)/refresh",
             method: "POST",
             query: [],
@@ -317,7 +317,7 @@ public final class MerchantClient: Sendable {
         try validateTenant(tenantID)
         let merchantID = id.uuidString.lowercased()
         let link: MerchantOnboardingLink = try await sendRaw(
-            // tempera-transport: temperaPayments.createMerchantOnboardingLink POST /v1/merchants/{merchant_id}/onboarding
+            // tempera-transport: temperaPayments.createMerchantOnboardingLink POST /v1/merchants/{merchantId}/onboarding
             path: "/v1/merchants/\(merchantID)/onboarding",
             method: "POST",
             query: [],

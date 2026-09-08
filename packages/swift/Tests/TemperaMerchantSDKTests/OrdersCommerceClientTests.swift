@@ -64,7 +64,7 @@ final class OrdersCommerceClientTests: XCTestCase {
         XCTAssertEqual(order.amountMinor, 3600)
         XCTAssertEqual(MockURLProtocol.requests.last?.url?.path, prefix + "/sale-orders/" + orderID)
         try respond(fixture("offers"))
-        let offers = try await client.offers(after: "previous-offer", limit: 10)
+        let offers = try await client.offers(pageToken: "previous-offer", pageSize: 10)
         XCTAssertEqual(offers.items.count, 1)
         XCTAssertEqual(MockURLProtocol.requests.last?.url?.path, prefix + "/catalog/offers")
         let query = URLComponents(
@@ -72,8 +72,8 @@ final class OrdersCommerceClientTests: XCTestCase {
         XCTAssertEqual(
             query,
             [
-                URLQueryItem(name: "limit", value: "10"),
-                URLQueryItem(name: "after", value: "previous-offer"),
+                URLQueryItem(name: "pageSize", value: "10"),
+                URLQueryItem(name: "pageToken", value: "previous-offer"),
             ])
         try respond(fixture("orders"))
         let orders = try await client.saleOrders()
@@ -89,11 +89,11 @@ final class OrdersCommerceClientTests: XCTestCase {
     }
 
     func testScopeMerchantAndResourceMismatchesFailClosed() async throws {
-        for field in ["scope", "merchant_id", "id"] {
+        for field in ["scope", "merchantId", "id"] {
             var body = try fixture("offer")
             if field == "scope" {
                 var scope = body[field] as! [String: Any]
-                scope["site_id"] = "another-site"
+                scope["siteId"] = "another-site"
                 body[field] = scope
             } else {
                 body[field] = field == "id" ? "other-offer" : "12345678-1234-4123-8123-123456789abd"
@@ -110,10 +110,10 @@ final class OrdersCommerceClientTests: XCTestCase {
         var page = try fixture("offers")
         let item = try fixture("offer")
         page["items"] = [item, item]
-        for limit in [1, 10] {
+        for pageSize in [1, 10] {
             try respond(page)
             do {
-                _ = try await client().offers(limit: limit)
+                _ = try await client().offers(pageSize: pageSize)
                 XCTFail("accepted invalid page")
             } catch { XCTAssertEqual(error as? OrdersCommerceError, .invalidResponse) }
         }
@@ -127,10 +127,10 @@ final class OrdersCommerceClientTests: XCTestCase {
                 XCTFail("accepted invalid ID")
             } catch { XCTAssertEqual(error as? OrdersCommerceError, .invalidRequest) }
         }
-        for limit in [0, 101] {
+        for pageSize in [0, 101] {
             do {
-                _ = try await client().offers(limit: limit)
-                XCTFail("accepted invalid limit")
+                _ = try await client().offers(pageSize: pageSize)
+                XCTFail("accepted invalid pageSize")
             } catch { XCTAssertEqual(error as? OrdersCommerceError, .invalidRequest) }
         }
         for token in ["", "bad\rheader", "nonascii-é", String(repeating: "a", count: 4097)] {

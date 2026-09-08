@@ -76,7 +76,7 @@ public final class OrdersCommerceClient: Sendable {
 
     deinit { session.invalidateAndCancel() }
 
-    public func offers(after: String? = nil, limit: Int = 50) async throws -> CatalogOfferPage {
+    public func offers(pageToken: String? = nil, pageSize: Int = 50) async throws -> CatalogOfferPage {
         let organization = segment(scope.organizationID)
         let project = segment(scope.projectID)
         let environment = segment(scope.environment.rawValue)
@@ -85,8 +85,8 @@ public final class OrdersCommerceClient: Sendable {
             path:
             // tempera-transport: temperaDropshipping.listCatalogOffers GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/catalog/offers
                 "/v1/organizations/\(organization)/projects/\(project)/environments/\(environment)/sites/\(site)/catalog/offers",
-            query: try pageQuery(after: after, limit: limit))
-        guard page.items.count <= limit,
+            query: try pageQuery(pageToken: pageToken, pageSize: pageSize))
+        guard page.items.count <= pageSize,
             page.items.allSatisfy({ $0.scope == scope && $0.merchantID == merchantID }),
             Set(page.items.map(\.id)).count == page.items.count
         else { throw OrdersCommerceError.invalidResponse }
@@ -102,7 +102,7 @@ public final class OrdersCommerceClient: Sendable {
         let offerID = segment(id)
         let offer: CatalogOffer = try await read(
             path:
-            // tempera-transport: temperaDropshipping.getCatalogOffer GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/catalog/offers/{offer_id}
+            // tempera-transport: temperaDropshipping.getCatalogOffer GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/catalog/offers/{offerId}
                 "/v1/organizations/\(organization)/projects/\(project)/environments/\(environment)/sites/\(site)/catalog/offers/\(offerID)",
             query: [])
         guard offer.scope == scope, offer.merchantID == merchantID, offer.id == id else {
@@ -111,7 +111,7 @@ public final class OrdersCommerceClient: Sendable {
         return offer
     }
 
-    public func saleOrders(after: String? = nil, limit: Int = 50) async throws -> SaleOrderPage {
+    public func saleOrders(pageToken: String? = nil, pageSize: Int = 50) async throws -> SaleOrderPage {
         let organization = segment(scope.organizationID)
         let project = segment(scope.projectID)
         let environment = segment(scope.environment.rawValue)
@@ -120,8 +120,8 @@ public final class OrdersCommerceClient: Sendable {
             path:
             // tempera-transport: temperaDropshipping.listSaleOrders GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders
                 "/v1/organizations/\(organization)/projects/\(project)/environments/\(environment)/sites/\(site)/sale-orders",
-            query: try pageQuery(after: after, limit: limit))
-        guard page.items.count <= limit,
+            query: try pageQuery(pageToken: pageToken, pageSize: pageSize))
+        guard page.items.count <= pageSize,
             page.items.allSatisfy({ $0.scope == scope && $0.merchantID == merchantID }),
             Set(page.items.map(\.id)).count == page.items.count
         else { throw OrdersCommerceError.invalidResponse }
@@ -137,7 +137,7 @@ public final class OrdersCommerceClient: Sendable {
         let orderID = segment(id)
         let order: SaleOrder = try await read(
             path:
-            // tempera-transport: temperaDropshipping.getSaleOrder GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders/{order_id}
+            // tempera-transport: temperaDropshipping.getSaleOrder GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders/{orderId}
                 "/v1/organizations/\(organization)/projects/\(project)/environments/\(environment)/sites/\(site)/sale-orders/\(orderID)",
             query: [])
         guard order.scope == scope, order.merchantID == merchantID, order.id == id else {
@@ -146,12 +146,12 @@ public final class OrdersCommerceClient: Sendable {
         return order
     }
 
-    private func pageQuery(after: String?, limit: Int) throws -> [URLQueryItem] {
-        guard (1...100).contains(limit) else { throw OrdersCommerceError.invalidRequest }
-        var query = [URLQueryItem(name: "limit", value: String(limit))]
-        if let after {
-            try resourceID(after)
-            query.append(URLQueryItem(name: "after", value: after))
+    private func pageQuery(pageToken: String?, pageSize: Int) throws -> [URLQueryItem] {
+        guard (1...100).contains(pageSize) else { throw OrdersCommerceError.invalidRequest }
+        var query = [URLQueryItem(name: "pageSize", value: String(pageSize))]
+        if let pageToken {
+            try resourceID(pageToken)
+            query.append(URLQueryItem(name: "pageToken", value: pageToken))
         }
         return query
     }

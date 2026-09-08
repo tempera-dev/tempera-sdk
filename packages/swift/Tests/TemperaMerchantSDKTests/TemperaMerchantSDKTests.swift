@@ -121,7 +121,7 @@ final class TemperaMerchantSDKTests: XCTestCase {
     ) -> Data {
         let observed = observedAt ?? Int(Date().timeIntervalSince1970)
         return Data("""
-        {"id":"\(merchantID.uuidString.lowercased())","tenant_id":"\(tenantID)","country":"\(country)","currency":"\(currency)","category":"physical_goods","workspace_ready":true,"payments_enabled":true,"payouts_enabled":true,"action_required":false,"requirements_current":true,"currently_due":[],"past_due":[],"pending_verification":[],"disabled_reason":null,"next_action":"ready","provider_observed_at":\(observed)}
+        {"id":"\(merchantID.uuidString.lowercased())","tenantId":"\(tenantID)","country":"\(country)","currency":"\(currency)","category":"physical_goods","workspaceReady":true,"paymentsEnabled":true,"payoutsEnabled":true,"actionRequired":false,"requirementsCurrent":true,"currentlyDue":[],"pastDue":[],"pendingVerification":[],"disabledReason":null,"nextAction":"ready","providerObservedAt":\(observed)}
         """.utf8)
     }
 
@@ -145,7 +145,7 @@ final class TemperaMerchantSDKTests: XCTestCase {
             XCTAssertEqual(request.timeoutInterval, 15)
             XCTAssertEqual(
                 String(data: bodyData(request), encoding: .utf8),
-                "{\"category\":\"physical_goods\",\"country\":\"US\",\"currency\":\"usd\",\"tenant_id\":\"tenant-a\"}"
+                "{\"category\":\"physical_goods\",\"country\":\"US\",\"currency\":\"usd\",\"tenantId\":\"tenant-a\"}"
             )
             let body = self.merchantJSON()
             protocolInstance.deliver(self.response(body, contentLength: body.count), body: body)
@@ -161,7 +161,7 @@ final class TemperaMerchantSDKTests: XCTestCase {
         MockURLProtocol.configure { request, protocolInstance in
             XCTAssertEqual(request.httpMethod, "GET")
             XCTAssertEqual(request.url?.path, "/v1/merchants")
-            XCTAssertEqual(request.url?.query, "tenant_id=tenant-a")
+            XCTAssertEqual(request.url?.query, "tenantId=tenant-a")
             XCTAssertNil(request.httpBody)
             let body = self.merchantJSON()
             protocolInstance.deliver(self.response(body, contentLength: body.count), body: body)
@@ -174,7 +174,7 @@ final class TemperaMerchantSDKTests: XCTestCase {
         MockURLProtocol.configure { request, protocolInstance in
             XCTAssertEqual(request.httpMethod, "GET")
             XCTAssertEqual(request.url?.path, "/v1/merchants/\(self.merchantID.uuidString.lowercased())")
-            XCTAssertEqual(request.url?.query, "tenant_id=tenant-a")
+            XCTAssertEqual(request.url?.query, "tenantId=tenant-a")
             let body = self.merchantJSON()
             protocolInstance.deliver(self.response(body, contentLength: body.count), body: body)
         }
@@ -187,7 +187,7 @@ final class TemperaMerchantSDKTests: XCTestCase {
             XCTAssertEqual(request.httpMethod, "POST")
             XCTAssertEqual(request.url?.path, "/v1/merchants/\(self.merchantID.uuidString.lowercased())/refresh")
             XCTAssertNil(request.url?.query)
-            XCTAssertEqual(String(data: bodyData(request), encoding: .utf8), "{\"tenant_id\":\"tenant-a\"}")
+            XCTAssertEqual(String(data: bodyData(request), encoding: .utf8), "{\"tenantId\":\"tenant-a\"}")
             let body = self.merchantJSON()
             protocolInstance.deliver(self.response(body, contentLength: body.count), body: body)
         }
@@ -200,8 +200,8 @@ final class TemperaMerchantSDKTests: XCTestCase {
             XCTAssertEqual(request.httpMethod, "POST")
             XCTAssertEqual(request.url?.path, "/v1/merchants/\(self.merchantID.uuidString.lowercased())/onboarding")
             XCTAssertEqual(request.value(forHTTPHeaderField: "Idempotency-Key"), "key-2")
-            XCTAssertEqual(String(data: bodyData(request), encoding: .utf8), "{\"tenant_id\":\"tenant-a\"}")
-            let body = Data("{\"merchant_id\":\"\(self.merchantID.uuidString.lowercased())\",\"url\":\"https://connect.stripe.com/onboard\",\"expires_at\":\(Int(Date().timeIntervalSince1970) + 60)}".utf8)
+            XCTAssertEqual(String(data: bodyData(request), encoding: .utf8), "{\"tenantId\":\"tenant-a\"}")
+            let body = Data("{\"merchantId\":\"\(self.merchantID.uuidString.lowercased())\",\"url\":\"https://connect.stripe.com/onboard\",\"expiresAt\":\(Int(Date().timeIntervalSince1970) + 60)}".utf8)
             protocolInstance.deliver(self.response(body, contentLength: body.count), body: body)
         }
 
@@ -352,7 +352,7 @@ final class TemperaMerchantSDKTests: XCTestCase {
 
     func testOnboardingLinkRejectsWrongHostAndExpiredLink() async throws {
         MockURLProtocol.configure { _, protocolInstance in
-            let body = Data("{\"merchant_id\":\"\(self.merchantID.uuidString.lowercased())\",\"url\":\"https://evil.example/x\",\"expires_at\":\(Int(Date().timeIntervalSince1970) + 60)}".utf8)
+            let body = Data("{\"merchantId\":\"\(self.merchantID.uuidString.lowercased())\",\"url\":\"https://evil.example/x\",\"expiresAt\":\(Int(Date().timeIntervalSince1970) + 60)}".utf8)
             protocolInstance.deliver(self.response(body, contentLength: body.count), body: body)
         }
         do {
@@ -363,7 +363,7 @@ final class TemperaMerchantSDKTests: XCTestCase {
         }
 
         MockURLProtocol.configure { _, protocolInstance in
-            let body = Data("{\"merchant_id\":\"\(self.merchantID.uuidString.lowercased())\",\"url\":\"https://connect.stripe.com/onboard\",\"expires_at\":1}".utf8)
+            let body = Data("{\"merchantId\":\"\(self.merchantID.uuidString.lowercased())\",\"url\":\"https://connect.stripe.com/onboard\",\"expiresAt\":1}".utf8)
             protocolInstance.deliver(self.response(body, contentLength: body.count), body: body)
         }
         do {
@@ -399,7 +399,7 @@ final class TemperaMerchantSDKTests: XCTestCase {
     func testCancellingOneRequestDoesNotCancelAnother() async throws {
         let slowStarted = expectation(description: "slow request started")
         MockURLProtocol.configure { request, protocolInstance in
-            if request.url?.query == "tenant_id=tenant-slow" {
+            if request.url?.query == "tenantId=tenant-slow" {
                 slowStarted.fulfill()
                 let body = self.merchantJSON(tenantID: "tenant-slow")
                 protocolInstance.deliver(after: 0.2, response: self.response(body, contentLength: body.count), body: body)
@@ -459,22 +459,22 @@ extension TemperaMerchantSDKTests {
     func testMerchantWorkspaceWireAndNull() async throws {
         MockURLProtocol.configure { request, protocolInstance in
             XCTAssertEqual(request.url?.path, "/v1/merchants/workspace"); XCTAssertNil(request.url?.query)
-            let body = Data("{\"tenant_id\":\"tenant-a\",\"merchant\":null}".utf8)
+            let body = Data("{\"tenantId\":\"tenant-a\",\"merchant\":null}".utf8)
             protocolInstance.deliver(self.response(body, contentLength: body.count), body: body)
         }
         let workspace = try await client().workspace()
         XCTAssertNil(workspace.merchant)
     }
     func testMerchantWorkspaceNestedMismatchRejected() async throws {
-        MockURLProtocol.configure { _, p in let m=String(data:self.merchantJSON(tenantID:"tenant-b"),encoding:.utf8)!; let body=Data("{\"tenant_id\":\"tenant-a\",\"merchant\":\(m)}".utf8); p.deliver(self.response(body,contentLength:body.count),body:body) }
+        MockURLProtocol.configure { _, p in let m=String(data:self.merchantJSON(tenantID:"tenant-b"),encoding:.utf8)!; let body=Data("{\"tenantId\":\"tenant-a\",\"merchant\":\(m)}".utf8); p.deliver(self.response(body,contentLength:body.count),body:body) }
         await XCTAssertThrowsErrorAsync { _ = try await self.client().workspace() }
     }
     func testMerchantWorkspaceMissingMerchantRejected() async throws {
-        MockURLProtocol.configure { _, p in let body=Data("{\"tenant_id\":\"tenant-a\"}".utf8); p.deliver(self.response(body,contentLength:body.count),body:body) }
+        MockURLProtocol.configure { _, p in let body=Data("{\"tenantId\":\"tenant-a\"}".utf8); p.deliver(self.response(body,contentLength:body.count),body:body) }
         await XCTAssertThrowsErrorAsync { _ = try await self.client().workspace() }
     }
     func testMerchantWorkspaceBadTenantRejected() async throws {
-        MockURLProtocol.configure { _, p in let body=Data("{\"tenant_id\":\"\",\"merchant\":null}".utf8); p.deliver(self.response(body,contentLength:body.count),body:body) }
+        MockURLProtocol.configure { _, p in let body=Data("{\"tenantId\":\"\",\"merchant\":null}".utf8); p.deliver(self.response(body,contentLength:body.count),body:body) }
         await XCTAssertThrowsErrorAsync { _ = try await self.client().workspace() }
     }
 }

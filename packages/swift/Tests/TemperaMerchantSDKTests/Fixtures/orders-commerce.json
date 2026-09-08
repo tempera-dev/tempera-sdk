@@ -2,96 +2,96 @@
   "qualification": "ACTUAL_LOCAL_HTTP_DECLARATIONS_ONLY",
   "responses": {
     "offer": {
-      "created_at": "2026-09-07T12:34:56.123456Z",
+      "createdAt": "2026-09-07T12:34:56.123456Z",
       "currency": "USD",
       "description": "An actual local declaration",
-      "expires_at": null,
+      "expiresAt": null,
       "id": "00000000-0000-4000-8000-000000000001",
-      "merchant_id": "12345678-1234-4123-8123-123456789abc",
+      "merchantId": "12345678-1234-4123-8123-123456789abc",
       "name": "Fixture service",
-      "photo_url": null,
-      "product_classification": "offline_services",
+      "photoUrl": null,
+      "productClassification": "offline_services",
       "revision": 1,
       "scope": {
         "environment": "test",
-        "organization_id": "fixture-org",
-        "project_id": "fixture-project",
-        "site_id": "fixture-site"
+        "organizationId": "fixture-org",
+        "projectId": "fixture-project",
+        "siteId": "fixture-site"
       },
-      "unit_amount_minor": 1200
+      "unitAmountMinor": 1200
     },
     "offers": {
       "items": [
         {
-          "created_at": "2026-09-07T12:34:56.123456Z",
+          "createdAt": "2026-09-07T12:34:56.123456Z",
           "currency": "USD",
           "description": "An actual local declaration",
-          "expires_at": null,
+          "expiresAt": null,
           "id": "00000000-0000-4000-8000-000000000001",
-          "merchant_id": "12345678-1234-4123-8123-123456789abc",
+          "merchantId": "12345678-1234-4123-8123-123456789abc",
           "name": "Fixture service",
-          "photo_url": null,
-          "product_classification": "offline_services",
+          "photoUrl": null,
+          "productClassification": "offline_services",
           "revision": 1,
           "scope": {
             "environment": "test",
-            "organization_id": "fixture-org",
-            "project_id": "fixture-project",
-            "site_id": "fixture-site"
+            "organizationId": "fixture-org",
+            "projectId": "fixture-project",
+            "siteId": "fixture-site"
           },
-          "unit_amount_minor": 1200
+          "unitAmountMinor": 1200
         }
       ],
-      "next_cursor": null
+      "nextPageToken": null
     },
     "order": {
-      "amount_minor": 3600,
-      "amount_source": "catalog_offer_revision",
-      "created_at": "2026-09-07T12:34:56.123456Z",
+      "amountMinor": 3600,
+      "amountSource": "catalog_offer_revision",
+      "createdAt": "2026-09-07T12:34:56.123456Z",
       "currency": "USD",
       "id": "00000000-0000-4000-8000-000000000002",
-      "merchant_id": "12345678-1234-4123-8123-123456789abc",
-      "offer_id": "00000000-0000-4000-8000-000000000001",
-      "offer_revision": 1,
-      "product_classification": "offline_services",
+      "merchantId": "12345678-1234-4123-8123-123456789abc",
+      "offerId": "00000000-0000-4000-8000-000000000001",
+      "offerRevision": 1,
+      "productClassification": "offline_services",
       "quantity": 3,
       "revision": 1,
       "scope": {
         "environment": "test",
-        "organization_id": "fixture-org",
-        "project_id": "fixture-project",
-        "site_id": "fixture-site"
+        "organizationId": "fixture-org",
+        "projectId": "fixture-project",
+        "siteId": "fixture-site"
       },
-      "unit_amount_minor": 1200,
-      "variant_id": "00000000-0000-4000-8000-000000000001"
+      "unitAmountMinor": 1200,
+      "variantId": "00000000-0000-4000-8000-000000000001"
     },
     "orders": {
       "items": [
         {
-          "amount_minor": 3600,
-          "amount_source": "catalog_offer_revision",
-          "created_at": "2026-09-07T12:34:56.123456Z",
+          "amountMinor": 3600,
+          "amountSource": "catalog_offer_revision",
+          "createdAt": "2026-09-07T12:34:56.123456Z",
           "currency": "USD",
           "id": "00000000-0000-4000-8000-000000000002",
-          "merchant_id": "12345678-1234-4123-8123-123456789abc",
-          "offer_id": "00000000-0000-4000-8000-000000000001",
-          "offer_revision": 1,
-          "product_classification": "offline_services",
+          "merchantId": "12345678-1234-4123-8123-123456789abc",
+          "offerId": "00000000-0000-4000-8000-000000000001",
+          "offerRevision": 1,
+          "productClassification": "offline_services",
           "quantity": 3,
           "revision": 1,
           "scope": {
             "environment": "test",
-            "organization_id": "fixture-org",
-            "project_id": "fixture-project",
-            "site_id": "fixture-site"
+            "organizationId": "fixture-org",
+            "projectId": "fixture-project",
+            "siteId": "fixture-site"
           },
-          "unit_amount_minor": 1200,
-          "variant_id": "00000000-0000-4000-8000-000000000001"
+          "unitAmountMinor": 1200,
+          "variantId": "00000000-0000-4000-8000-000000000001"
         }
       ],
-      "next_cursor": null
+      "nextPageToken": null
     }
   },
-  "source_commit": "a519f9f4898a557bec6f77533e3cc8ba11727866",
-  "source_sha256": "0c8dba5d7b9d066f6e725ebf5e4d23f7f74ec84e979c0b49e803d4ac8e0df1cf"
+  "source_commit": "e30288d7969c52668a56fe94cf9c2d402a6da1ab",
+  "source_sha256": "c7b8ae66d63c3ab2c7f393e8eded19c7cb47540376bcb25e6ff09dd6399d6760"
 }
