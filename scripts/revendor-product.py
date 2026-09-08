@@ -68,7 +68,19 @@ def registry() -> dict[str, dict[str, str]]:
 
 def run(command: list[str], cwd: Path | None = None) -> None:
     print(f"$ {' '.join(command)}", flush=True)
-    subprocess.run(command, cwd=cwd, check=True)
+    subprocess.run(command, cwd=cwd, check=True, env=git_environment())
+
+
+def git_environment() -> dict[str, str]:
+    """Pass reader credentials to child processes without persisting or logging them."""
+    environment = os.environ.copy()
+    token = environment.get("GH_TOKEN") or environment.get("GITHUB_TOKEN")
+    if token:
+        index = int(environment.get("GIT_CONFIG_COUNT", "0"))
+        environment[f"GIT_CONFIG_KEY_{index}"] = "http.https://github.com/.extraheader"
+        environment[f"GIT_CONFIG_VALUE_{index}"] = f"Authorization: Basic {_basic(token)}"
+        environment["GIT_CONFIG_COUNT"] = str(index + 1)
+    return environment
 
 
 def _basic(token: str) -> str:
@@ -78,30 +90,8 @@ def _basic(token: str) -> str:
 
 def clone(repository: str, branch: str, commit: str, destination: Path) -> str:
     """Clone a producer and check out the exact commit we intend to vendor."""
-    token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
     canonical = f"https://github.com/{repository}.git"
-    url = (
-        f"https://x-access-token:{token}@github.com/{repository}.git"
-        if token
-        else canonical
-    )
-    run(["git", "clone", "--quiet", "--no-tags", url, str(destination)])
-    # Two reasons to rewrite the remote immediately: a token embedded in a
-    # clone URL is written verbatim into .git/config, and the source-lock
-    # validator canonicalizes `git remote get-url origin` to decide whether
-    # this checkout really is the producer it claims to be. A credentialed
-    # URL does not canonicalize, so vendoring would refuse it.
-    run(["git", "remote", "set-url", "origin", canonical], cwd=destination)
-    if token:
-        run(
-            [
-                "git",
-                "config",
-                "http.https://github.com/.extraheader",
-                f"Authorization: Basic {_basic(token)}",
-            ],
-            cwd=destination,
-        )
+    run(["git", "clone", "--quiet", "--no-tags", canonical, str(destination)])
     run(["git", "fetch", "--quiet", "--no-tags", "origin", branch], cwd=destination)
     resolved = commit or subprocess.run(
         ["git", "rev-parse", f"origin/{branch}"],
