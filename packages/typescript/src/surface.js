@@ -5,9 +5,9 @@
 
 export const TEMPERA_SURFACE_VERSION = 6;
 
-export const TEMPERA_AUDIENCES = Object.freeze(["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm", "tempera-workflows", "tempera-gym", "tempera-bio", "tempera-document", "tempera-risk", "tempera-investigations", "tempera-payments", "tempera-dropshipping", "tempera-voice", "tempera-clearing", "tempera-business"]);
+export const TEMPERA_AUDIENCES = Object.freeze(["palette", "tempo", "cradle", "remi", "human-data", "data-engine", "tempera-mcp", "tempera-code", "tempera-llm", "tempera-connectors", "tempera-workflows", "tempera-gym", "tempera-bio", "tempera-document", "tempera-risk", "tempera-investigations", "tempera-payments", "tempera-dropshipping", "tempera-voice", "tempera-clearing", "tempera-business"]);
 export const DEFAULT_AUDIENCE = "palette";
-export const TEMPERA_SCOPES = Object.freeze(["mcp:invoke", "memory:read", "memory:write", "memory:manage", "trace:read", "trace:write", "scenario:read", "scenario:write", "dataset:read", "dataset:write", "connector:read", "connector:run", "connector:manage", "eval:run", "training:publish", "review:gold:manage", "review:resolve", "workflow:read", "workflow:write", "workflow:run", "bio:source:read", "bio:proposal:write", "bio:measurement:verify", "bio:decision:write", "bio:experiment:approve", "bio:experiment:submit", "bio:signer:manage", "model:read", "model:invoke", "usage:reserve", "document:read", "document:write", "risk:read", "risk:write", "risk:review", "investigation:read", "investigation:write", "investigation:run", "investigation:review", "pii:unmask", "payments:intents:read", "payments:intents:write", "payments:receipts:read", "payments:webhooks:write", "payments:refunds:write", "payments:admin", "payments:merchants:read", "payments:merchants:write", "orders:read", "orders:commerce:write", "voice:read", "voice:write", "voice:stream", "clearing:actions:read", "clearing:actions:propose", "clearing:actions:commit", "clearing:actions:reconcile", "clearing:receipts:read", "clearing:actions:approve", "admin"]);
+export const TEMPERA_SCOPES = Object.freeze(["mcp:invoke", "memory:read", "memory:write", "memory:manage", "trace:read", "trace:write", "scenario:read", "scenario:write", "dataset:read", "dataset:write", "connector:read", "connector:run", "connector:manage", "eval:run", "training:publish", "review:gold:manage", "review:resolve", "workflow:read", "workflow:write", "workflow:run", "bio:source:read", "bio:proposal:write", "bio:measurement:verify", "bio:decision:write", "bio:experiment:approve", "bio:experiment:submit", "bio:signer:manage", "model:read", "model:invoke", "usage:reserve", "document:read", "document:write", "risk:read", "risk:write", "risk:review", "investigation:read", "investigation:write", "investigation:run", "investigation:review", "pii:unmask", "payments:intents:read", "payments:intents:write", "payments:receipts:read", "payments:webhooks:write", "payments:refunds:write", "payments:admin", "payments:merchants:read", "payments:merchants:write", "orders:read", "orders:commerce:write", "voice:read", "voice:write", "voice:stream", "clearing:actions:read", "clearing:actions:propose", "clearing:actions:commit", "clearing:actions:reconcile", "clearing:receipts:read", "clearing:actions:approve", "connection:invoke", "connection:write", "connection:read", "admin", "business:read", "business:write", "business:review", "orders:write", "orders:approve", "offline_access"]);
 
 export const TEMPERA_ISSUER_PATHS = Object.freeze({
   "authorize": "/oauth/authorize",
@@ -190,7 +190,7 @@ export const TEMPERA_PRODUCTS = Object.freeze(
     "name": "human-data",
     "repository": "https://github.com/tempera-dev/human-data",
     "envVar": "TEMPERA_HUMAN_DATA_URL",
-    "audience": "human-data",
+    "audience": "data-engine",
     "description": "Browser-agent human review: reviewers inspect provisioned browser-session evidence, record decisions, return candidate cases to the agent quality loop, and compute a typed qualification receipt."
   },
   "tempJs": {
@@ -227,6 +227,13 @@ export const TEMPERA_PRODUCTS = Object.freeze(
     "envVar": "TEMPERA_BUSINESS_URL",
     "audience": "tempera-business",
     "description": "Tenant-scoped business profile and business-case drafting with per-fact provenance and an explicit document review lifecycle."
+  },
+  "temperaConnectors": {
+    "name": "tempera-connectors",
+    "repository": "https://github.com/tempera-dev/tempera-connectors-runtime",
+    "envVar": "TEMPERA_CONNECTORS_URL",
+    "audience": "tempera-connectors",
+    "description": "Tenant-scoped external API connection control plane and bounded invocation runtime."
   }
 }
 );
@@ -874,6 +881,34 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "prepareCommitRequired": false,
       "safeRetry": "none",
       "description": "Mint a workspace API key (tp_...); the secret is returned exactly once. The workspace ids must match the token's workspace."
+    },
+    {
+      "id": "listApiKeyAudiences",
+      "upstreamOperationId": "listApiKeyAudiences",
+      "method": "GET",
+      "path": "/v1/api-keys/audiences",
+      "auth": "account",
+      "authAudience": null,
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "List the resource audiences this caller may mint an API key for, the scopes issuable at each, and why the remaining scopes are refused."
     },
     {
       "id": "revokeApiKey",
@@ -6656,8 +6691,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "chatCompletions.create",
       "method": "POST",
       "path": "/v1/chat/completions",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-llm",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -6699,8 +6734,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "models.list",
       "method": "GET",
       "path": "/v1/models",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-llm",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
@@ -6727,8 +6762,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "responses.create",
       "method": "POST",
       "path": "/v1/responses",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-llm",
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -6789,37 +6824,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Call GET /healthz."
     },
     {
-      "id": "getOpenApi",
-      "upstreamOperationId": "getOpenApi",
-      "method": "GET",
-      "path": "/openapi.yaml",
-      "auth": "none",
-      "authAudience": null,
-      "pathParams": [],
-      "pathParamTemplates": {},
-      "query": [],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "requestBodyKind": "none",
-      "requestContentType": null,
-      "scope": null,
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "read",
-      "description": "Call GET /openapi.yaml."
-    },
-    {
       "id": "executeGraphRead",
       "upstreamOperationId": "executeGraphRead",
       "method": "POST",
       "path": "/v1/projects/{project}/graphReads/execute",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project"
       ],
@@ -6834,7 +6844,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "body": [
         "request",
-        "people_binding"
+        "peopleBinding"
       ],
       "forbiddenBody": [],
       "requiredBody": [
@@ -6843,7 +6853,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "json",
       "requestContentType": "application/json",
-      "scope": null,
+      "scope": "risk:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
@@ -6854,8 +6864,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "createSubject",
       "method": "POST",
       "path": "/v1/projects/{project}/subjects",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project"
       ],
@@ -6870,22 +6880,22 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "body": [
         "schema",
-        "subject_id",
-        "subject_type",
+        "subjectId",
+        "subjectType",
         "state",
         "attributes",
-        "external_refs"
+        "externalRefs"
       ],
       "forbiddenBody": [],
       "requiredBody": [
         "schema",
-        "subject_id",
-        "subject_type"
+        "subjectId",
+        "subjectType"
       ],
       "bodyDefaults": {},
       "requestBodyKind": "json",
       "requestContentType": "application/json",
-      "scope": null,
+      "scope": "risk:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
@@ -6896,13 +6906,16 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "listSubjects",
       "method": "GET",
       "path": "/v1/projects/{project}/subjects",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project"
       ],
       "pathParamTemplates": {},
-      "query": [],
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
       "requiredQuery": [],
       "headers": [],
       "requiredHeaders": [],
@@ -6912,7 +6925,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "none",
       "requestContentType": null,
-      "scope": null,
+      "scope": "risk:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "read",
@@ -6923,8 +6936,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "getSubject",
       "method": "GET",
       "path": "/v1/projects/{project}/subjects/{subjectId}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project",
         "subjectId"
@@ -6940,7 +6953,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "none",
       "requestContentType": null,
-      "scope": null,
+      "scope": "risk:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "read",
@@ -6951,8 +6964,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "ingestEvent",
       "method": "POST",
       "path": "/v1/projects/{project}/events:ingest",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project"
       ],
@@ -6963,30 +6976,30 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredHeaders": [],
       "body": [
         "schema",
-        "event_id",
-        "event_type",
-        "subject_id",
-        "counterparty_id",
-        "device_id",
+        "eventId",
+        "eventType",
+        "subjectId",
+        "counterpartyId",
+        "deviceId",
         "amount",
-        "event_time",
-        "received_at",
+        "eventTime",
+        "receivedAt",
         "attributes",
-        "evidence_refs"
+        "evidenceRefs"
       ],
       "forbiddenBody": [],
       "requiredBody": [
         "schema",
-        "event_id",
-        "event_type",
-        "subject_id",
-        "event_time",
-        "received_at"
+        "eventId",
+        "eventType",
+        "subjectId",
+        "eventTime",
+        "receivedAt"
       ],
       "bodyDefaults": {},
       "requestBodyKind": "json",
       "requestContentType": "application/json",
-      "scope": null,
+      "scope": "risk:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
@@ -6997,8 +7010,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "registerPolicy",
       "method": "POST",
       "path": "/v1/projects/{project}/policies",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project"
       ],
@@ -7013,40 +7026,40 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "body": [
         "schema",
-        "policy_id",
+        "policyId",
         "version",
-        "use_case",
+        "useCase",
         "segment",
         "description",
-        "default_action",
-        "default_reason_code",
-        "missing_data_action",
-        "missing_data_reason_code",
-        "conflict_strategy",
+        "defaultAction",
+        "defaultReasonCode",
+        "missingDataAction",
+        "missingDataReasonCode",
+        "conflictStrategy",
         "rules",
-        "model_dependencies",
-        "change_ticket",
-        "created_by"
+        "modelDependencies",
+        "changeTicket",
+        "createdBy"
       ],
       "forbiddenBody": [],
       "requiredBody": [
         "schema",
-        "policy_id",
+        "policyId",
         "version",
-        "use_case",
-        "default_action",
-        "default_reason_code",
-        "missing_data_action",
-        "missing_data_reason_code",
-        "conflict_strategy",
+        "useCase",
+        "defaultAction",
+        "defaultReasonCode",
+        "missingDataAction",
+        "missingDataReasonCode",
+        "conflictStrategy",
         "rules",
-        "change_ticket",
-        "created_by"
+        "changeTicket",
+        "createdBy"
       ],
       "bodyDefaults": {},
       "requestBodyKind": "json",
       "requestContentType": "application/json",
-      "scope": null,
+      "scope": "risk:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
@@ -7057,8 +7070,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "registerModel",
       "method": "POST",
       "path": "/v1/projects/{project}/models",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project"
       ],
@@ -7073,41 +7086,41 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "body": [
         "schema",
-        "model_id",
+        "modelId",
         "version",
         "state",
-        "artifact_sha256",
+        "artifactSha256",
         "runtime",
-        "input_features",
-        "output_feature",
-        "training_data_refs",
-        "validation_report_ref",
+        "inputFeatures",
+        "outputFeature",
+        "trainingDataRefs",
+        "validationReportRef",
         "calibration",
         "limitations",
-        "created_at",
-        "approval_ids"
+        "createdAt",
+        "approvalIds"
       ],
       "forbiddenBody": [],
       "requiredBody": [
         "schema",
-        "model_id",
+        "modelId",
         "version",
         "state",
-        "artifact_sha256",
+        "artifactSha256",
         "runtime",
-        "input_features",
-        "output_feature",
-        "training_data_refs",
-        "validation_report_ref",
+        "inputFeatures",
+        "outputFeature",
+        "trainingDataRefs",
+        "validationReportRef",
         "calibration",
         "limitations",
-        "created_at",
-        "approval_ids"
+        "createdAt",
+        "approvalIds"
       ],
       "bodyDefaults": {},
       "requestBodyKind": "json",
       "requestContentType": "application/json",
-      "scope": null,
+      "scope": "risk:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
@@ -7118,8 +7131,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "ingestModelScore",
       "method": "POST",
       "path": "/v1/projects/{project}/modelScores:ingest",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project"
       ],
@@ -7135,7 +7148,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "body": [
         "schema",
         "algorithm",
-        "key_id",
+        "keyId",
         "score",
         "signature"
       ],
@@ -7143,14 +7156,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredBody": [
         "schema",
         "algorithm",
-        "key_id",
+        "keyId",
         "score",
         "signature"
       ],
       "bodyDefaults": {},
       "requestBodyKind": "json",
       "requestContentType": "application/json",
-      "scope": null,
+      "scope": "risk:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
@@ -7161,8 +7174,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "createApproval",
       "method": "POST",
       "path": "/v1/projects/{project}/approvals",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project"
       ],
@@ -7183,7 +7196,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "json",
       "requestContentType": "application/json",
-      "scope": null,
+      "scope": "risk:review",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
@@ -7194,8 +7207,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "deployPolicy",
       "method": "POST",
       "path": "/v1/projects/{project}/policyDeployments",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project"
       ],
@@ -7205,28 +7218,28 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "headers": [],
       "requiredHeaders": [],
       "body": [
-        "deployment_id",
-        "policy_id",
-        "policy_version",
+        "deploymentId",
+        "policyId",
+        "policyVersion",
         "mode",
-        "traffic_percent",
-        "effective_at",
-        "approval_ids"
+        "trafficPercent",
+        "effectiveAt",
+        "approvalIds"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "deployment_id",
-        "policy_id",
-        "policy_version",
+        "deploymentId",
+        "policyId",
+        "policyVersion",
         "mode",
-        "traffic_percent",
-        "effective_at",
-        "approval_ids"
+        "trafficPercent",
+        "effectiveAt",
+        "approvalIds"
       ],
       "bodyDefaults": {},
       "requestBodyKind": "json",
       "requestContentType": "application/json",
-      "scope": null,
+      "scope": "risk:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
@@ -7237,8 +7250,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "createDecision",
       "method": "POST",
       "path": "/v1/projects/{project}/decisions",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project"
       ],
@@ -7249,30 +7262,30 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredHeaders": [],
       "body": [
         "schema",
-        "request_id",
-        "subject_id",
-        "event_id",
-        "use_case",
+        "requestId",
+        "subjectId",
+        "eventId",
+        "useCase",
         "segment",
         "features",
-        "model_versions",
-        "evidence_refs",
-        "as_of",
-        "available_as_of",
-        "execution_mode"
+        "modelVersions",
+        "evidenceRefs",
+        "asOf",
+        "availableAsOf",
+        "executionMode"
       ],
       "forbiddenBody": [],
       "requiredBody": [
         "schema",
-        "request_id",
-        "subject_id",
-        "use_case",
-        "as_of"
+        "requestId",
+        "subjectId",
+        "useCase",
+        "asOf"
       ],
       "bodyDefaults": {},
       "requestBodyKind": "json",
       "requestContentType": "application/json",
-      "scope": null,
+      "scope": "risk:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
@@ -7283,8 +7296,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "getDecision",
       "method": "GET",
       "path": "/v1/projects/{project}/decisions/{decisionId}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project",
         "decisionId"
@@ -7300,7 +7313,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "none",
       "requestContentType": null,
-      "scope": null,
+      "scope": "risk:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "read",
@@ -7311,8 +7324,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "recordOutcome",
       "method": "POST",
       "path": "/v1/projects/{project}/outcomes",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project"
       ],
@@ -7331,7 +7344,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "json",
       "requestContentType": "application/json",
-      "scope": null,
+      "scope": "risk:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
@@ -7342,8 +7355,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "createScreening",
       "method": "POST",
       "path": "/v1/projects/{project}/screenings",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project"
       ],
@@ -7353,24 +7366,24 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "headers": [],
       "requiredHeaders": [],
       "body": [
-        "index_name",
+        "indexName",
         "subject",
-        "permissible_purpose",
-        "case_id",
+        "permissiblePurpose",
+        "caseId",
         "threshold",
-        "max_candidates"
+        "maxCandidates"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "index_name",
+        "indexName",
         "subject",
-        "permissible_purpose",
-        "case_id"
+        "permissiblePurpose",
+        "caseId"
       ],
       "bodyDefaults": {},
       "requestBodyKind": "json",
       "requestContentType": "application/json",
-      "scope": null,
+      "scope": "risk:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
@@ -7381,13 +7394,16 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "listCases",
       "method": "GET",
       "path": "/v1/projects/{project}/cases",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project"
       ],
       "pathParamTemplates": {},
-      "query": [],
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
       "requiredQuery": [],
       "headers": [],
       "requiredHeaders": [],
@@ -7397,7 +7413,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "none",
       "requestContentType": null,
-      "scope": null,
+      "scope": "risk:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "read",
@@ -7408,8 +7424,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "createCase",
       "method": "POST",
       "path": "/v1/projects/{project}/cases",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project"
       ],
@@ -7424,33 +7440,33 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "body": [
         "schema",
-        "case_id",
-        "case_type",
+        "caseId",
+        "caseType",
         "state",
-        "subject_ids",
-        "alert_ids",
-        "assigned_to",
+        "subjectIds",
+        "alertIds",
+        "assignedTo",
         "disposition",
-        "evidence_refs",
+        "evidenceRefs",
         "attributes"
       ],
       "forbiddenBody": [],
       "requiredBody": [
         "schema",
-        "case_id",
-        "case_type",
+        "caseId",
+        "caseType",
         "state",
-        "subject_ids",
-        "alert_ids",
-        "assigned_to",
+        "subjectIds",
+        "alertIds",
+        "assignedTo",
         "disposition",
-        "evidence_refs",
+        "evidenceRefs",
         "attributes"
       ],
       "bodyDefaults": {},
       "requestBodyKind": "json",
       "requestContentType": "application/json",
-      "scope": null,
+      "scope": "risk:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
@@ -7461,8 +7477,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "getCase",
       "method": "GET",
       "path": "/v1/projects/{project}/cases/{caseId}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project",
         "caseId"
@@ -7478,7 +7494,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "none",
       "requestContentType": null,
-      "scope": null,
+      "scope": "risk:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "read",
@@ -7489,8 +7505,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "getCaseDossier",
       "method": "GET",
       "path": "/v1/projects/{project}/cases/{caseId}/dossier",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project",
         "caseId"
@@ -7506,7 +7522,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "none",
       "requestContentType": null,
-      "scope": null,
+      "scope": "risk:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "read",
@@ -7517,8 +7533,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "createAccessGrant",
       "method": "POST",
       "path": "/v1/projects/{project}/accessGrants",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project"
       ],
@@ -7533,41 +7549,41 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "body": [
         "schema",
-        "grant_id",
-        "case_id",
-        "subject_ids",
-        "actor_ids",
-        "permissible_purpose",
-        "allowed_fields",
-        "allowed_providers",
-        "third_party_disclosure_allowed",
-        "valid_from",
-        "expires_at",
-        "created_by",
-        "approval_ids",
-        "change_ticket"
+        "grantId",
+        "caseId",
+        "subjectIds",
+        "actorIds",
+        "permissiblePurpose",
+        "allowedFields",
+        "allowedProviders",
+        "thirdPartyDisclosureAllowed",
+        "validFrom",
+        "expiresAt",
+        "createdBy",
+        "approvalIds",
+        "changeTicket"
       ],
       "forbiddenBody": [],
       "requiredBody": [
         "schema",
-        "grant_id",
-        "case_id",
-        "subject_ids",
-        "actor_ids",
-        "permissible_purpose",
-        "allowed_fields",
-        "allowed_providers",
-        "third_party_disclosure_allowed",
-        "valid_from",
-        "expires_at",
-        "created_by",
-        "approval_ids",
-        "change_ticket"
+        "grantId",
+        "caseId",
+        "subjectIds",
+        "actorIds",
+        "permissiblePurpose",
+        "allowedFields",
+        "allowedProviders",
+        "thirdPartyDisclosureAllowed",
+        "validFrom",
+        "expiresAt",
+        "createdBy",
+        "approvalIds",
+        "changeTicket"
       ],
       "bodyDefaults": {},
       "requestBodyKind": "json",
       "requestContentType": "application/json",
-      "scope": null,
+      "scope": "risk:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
@@ -7578,8 +7594,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "revokeAccessGrant",
       "method": "POST",
       "path": "/v1/projects/{project}/accessGrants/{grantId}/revoke",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project",
         "grantId"
@@ -7599,7 +7615,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "json",
       "requestContentType": "application/json",
-      "scope": null,
+      "scope": "risk:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
@@ -7610,8 +7626,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "createPeopleDirectoryProfile",
       "method": "POST",
       "path": "/v1/projects/{project}/peopleDirectoryProfiles",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project"
       ],
@@ -7626,38 +7642,38 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "body": [
         "schema",
-        "profile_id",
-        "subject_id",
-        "entity_kind",
+        "profileId",
+        "subjectId",
+        "entityKind",
         "anchors",
         "attributes",
-        "source_ids",
-        "evidence_refs",
-        "valid_from",
-        "valid_to",
-        "recorded_at",
-        "retention_expires_at",
-        "non_decisional"
+        "sourceIds",
+        "evidenceRefs",
+        "validFrom",
+        "validTo",
+        "recordedAt",
+        "retentionExpiresAt",
+        "nonDecisional"
       ],
       "forbiddenBody": [],
       "requiredBody": [
         "schema",
-        "profile_id",
-        "subject_id",
-        "entity_kind",
+        "profileId",
+        "subjectId",
+        "entityKind",
         "anchors",
         "attributes",
-        "source_ids",
-        "evidence_refs",
-        "valid_from",
-        "valid_to",
-        "recorded_at",
-        "retention_expires_at"
+        "sourceIds",
+        "evidenceRefs",
+        "validFrom",
+        "validTo",
+        "recordedAt",
+        "retentionExpiresAt"
       ],
       "bodyDefaults": {},
       "requestBodyKind": "json",
       "requestContentType": "application/json",
-      "scope": null,
+      "scope": "risk:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
@@ -7668,8 +7684,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "searchPeople",
       "method": "POST",
       "path": "/v1/projects/{project}/people/search",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project"
       ],
@@ -7680,37 +7696,37 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredHeaders": [],
       "body": [
         "schema",
-        "query_id",
-        "subject_id",
-        "access_grant_id",
-        "case_id",
-        "permissible_purpose",
-        "entity_kind",
+        "queryId",
+        "subjectId",
+        "accessGrantId",
+        "caseId",
+        "permissiblePurpose",
+        "entityKind",
         "anchors",
         "attributes",
-        "max_candidates",
-        "as_of",
-        "known_at"
+        "maxCandidates",
+        "asOf",
+        "knownAt"
       ],
       "forbiddenBody": [],
       "requiredBody": [
         "schema",
-        "query_id",
-        "subject_id",
-        "access_grant_id",
-        "case_id",
-        "permissible_purpose",
-        "entity_kind",
+        "queryId",
+        "subjectId",
+        "accessGrantId",
+        "caseId",
+        "permissiblePurpose",
+        "entityKind",
         "anchors",
         "attributes",
-        "max_candidates",
-        "as_of",
-        "known_at"
+        "maxCandidates",
+        "asOf",
+        "knownAt"
       ],
       "bodyDefaults": {},
       "requestBodyKind": "json",
       "requestContentType": "application/json",
-      "scope": null,
+      "scope": "risk:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
@@ -7721,13 +7737,16 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "listSourcePacks",
       "method": "GET",
       "path": "/v1/projects/{project}/sourcePacks",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project"
       ],
       "pathParamTemplates": {},
-      "query": [],
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
       "requiredQuery": [],
       "headers": [],
       "requiredHeaders": [],
@@ -7737,7 +7756,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "none",
       "requestContentType": null,
-      "scope": null,
+      "scope": "risk:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "read",
@@ -7748,8 +7767,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "getSourcePack",
       "method": "GET",
       "path": "/v1/projects/{project}/sourcePacks/{sourcePackId}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project",
         "sourcePackId"
@@ -7765,7 +7784,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "none",
       "requestContentType": null,
-      "scope": null,
+      "scope": "risk:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "read",
@@ -7776,8 +7795,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "getSourceCoverage",
       "method": "GET",
       "path": "/v1/projects/{project}/sourceCoverage/{sourcePackId}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project",
         "sourcePackId"
@@ -7793,7 +7812,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "none",
       "requestContentType": null,
-      "scope": null,
+      "scope": "risk:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "read",
@@ -7804,8 +7823,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "createResearchJob",
       "method": "POST",
       "path": "/v1/projects/{project}/researchJobs",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project"
       ],
@@ -7822,39 +7841,39 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "subject",
         "question",
         "purpose",
-        "permissible_purpose",
-        "output_schema",
+        "permissiblePurpose",
+        "outputSchema",
         "budgets",
-        "source_policy",
-        "case_id",
-        "access_grant_id",
-        "actor_id",
-        "retention_policy_id",
-        "human_review_required",
-        "candidate_binding",
-        "provider_plan",
-        "investigation_profile",
-        "source_pack_ids",
-        "continuation_of_job_id"
+        "sourcePolicy",
+        "caseId",
+        "accessGrantId",
+        "actorId",
+        "retentionPolicyId",
+        "humanReviewRequired",
+        "candidateBinding",
+        "providerPlan",
+        "investigationProfile",
+        "sourcePackIds",
+        "continuationOfJobId"
       ],
       "forbiddenBody": [],
       "requiredBody": [
         "subject",
         "question",
         "purpose",
-        "permissible_purpose",
-        "output_schema",
+        "permissiblePurpose",
+        "outputSchema",
         "budgets",
-        "source_policy",
-        "case_id",
-        "actor_id",
-        "retention_policy_id",
-        "human_review_required"
+        "sourcePolicy",
+        "caseId",
+        "actorId",
+        "retentionPolicyId",
+        "humanReviewRequired"
       ],
       "bodyDefaults": {},
       "requestBodyKind": "json",
       "requestContentType": "application/json",
-      "scope": null,
+      "scope": "risk:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
@@ -7865,8 +7884,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "getResearchJob",
       "method": "GET",
       "path": "/v1/projects/{project}/researchJobs/{jobId}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project",
         "jobId"
@@ -7882,7 +7901,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "none",
       "requestContentType": null,
-      "scope": null,
+      "scope": "risk:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "read",
@@ -7893,8 +7912,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "streamResearchJobEvents",
       "method": "GET",
       "path": "/v1/projects/{project}/researchJobs/{jobId}/events:stream",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project",
         "jobId"
@@ -7913,7 +7932,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "none",
       "requestContentType": null,
-      "scope": null,
+      "scope": "risk:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "read",
@@ -7924,8 +7943,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "getResearchJobResult",
       "method": "GET",
       "path": "/v1/projects/{project}/researchJobs/{jobId}/result",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project",
         "jobId"
@@ -7941,7 +7960,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "none",
       "requestContentType": null,
-      "scope": null,
+      "scope": "risk:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "read",
@@ -7952,8 +7971,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "listResearchJobEvents",
       "method": "GET",
       "path": "/v1/projects/{project}/researchJobs/{jobId}/events",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project",
         "jobId"
@@ -7961,7 +7980,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParamTemplates": {},
       "query": [
         "afterSequence",
-        "pageSize"
+        "pageSize",
+        "pageToken"
       ],
       "requiredQuery": [],
       "headers": [],
@@ -7972,7 +7992,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "none",
       "requestContentType": null,
-      "scope": null,
+      "scope": "risk:read",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "read",
@@ -7983,8 +8003,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "cancelResearchJob",
       "method": "POST",
       "path": "/v1/projects/{project}/researchJobs/{jobId}:cancel",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project",
         "jobId"
@@ -8004,7 +8024,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "json",
       "requestContentType": "application/json",
-      "scope": null,
+      "scope": "risk:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
@@ -8015,8 +8035,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "reviewResearchJob",
       "method": "POST",
       "path": "/v1/projects/{project}/researchJobs/{jobId}:review",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project",
         "jobId"
@@ -8038,7 +8058,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "json",
       "requestContentType": "application/json",
-      "scope": null,
+      "scope": "risk:review",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
@@ -8049,8 +8069,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "verifyRiskClearingEvidenceLive",
       "method": "POST",
       "path": "/v1/projects/{project}/riskClearingEvidence:verifyLive",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project"
       ],
@@ -8069,7 +8089,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "json",
       "requestContentType": "application/json",
-      "scope": null,
+      "scope": "risk:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
@@ -8080,8 +8100,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "abortRiskClearingReservation",
       "method": "POST",
       "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:abort",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project",
         "reservationId"
@@ -8107,7 +8127,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "json",
       "requestContentType": "application/json",
-      "scope": null,
+      "scope": "risk:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
@@ -8118,8 +8138,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "markRiskClearingOutcomeUnknown",
       "method": "POST",
       "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:markOutcomeUnknown",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project",
         "reservationId"
@@ -8145,7 +8165,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "json",
       "requestContentType": "application/json",
-      "scope": null,
+      "scope": "risk:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
@@ -8156,8 +8176,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "openRiskClearingExposure",
       "method": "POST",
       "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:open",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project",
         "reservationId"
@@ -8183,7 +8203,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "json",
       "requestContentType": "application/json",
-      "scope": null,
+      "scope": "risk:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
@@ -8194,8 +8214,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "recordRiskClearingProvisionalOutcome",
       "method": "POST",
       "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:recordProvisionalOutcome",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project",
         "reservationId"
@@ -8221,7 +8241,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "json",
       "requestContentType": "application/json",
-      "scope": null,
+      "scope": "risk:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
@@ -8232,8 +8252,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "recordRiskClearingCompensation",
       "method": "POST",
       "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:recordCompensation",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project",
         "reservationId"
@@ -8259,7 +8279,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "json",
       "requestContentType": "application/json",
-      "scope": null,
+      "scope": "risk:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
@@ -8270,8 +8290,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "disputeRiskClearingExposure",
       "method": "POST",
       "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:dispute",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project",
         "reservationId"
@@ -8297,7 +8317,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "json",
       "requestContentType": "application/json",
-      "scope": null,
+      "scope": "risk:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
@@ -8308,8 +8328,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "settleRiskClearingExposure",
       "method": "POST",
       "path": "/v1/projects/{project}/riskClearingReservations/{reservationId}:settle",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project",
         "reservationId"
@@ -8337,7 +8357,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "json",
       "requestContentType": "application/json",
-      "scope": null,
+      "scope": "risk:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
@@ -8348,11 +8368,36 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "exportAudit",
       "method": "GET",
       "path": "/v1/projects/{project}/audit:export",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
       "pathParams": [
         "project"
       ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "risk:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Call GET /v1/projects/{project}/audit:export."
+    },
+    {
+      "id": "getOpenApi",
+      "upstreamOperationId": "getOpenApi",
+      "method": "GET",
+      "path": "/openapi.json",
+      "auth": "none",
+      "authAudience": null,
+      "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
       "requiredQuery": [],
@@ -8368,7 +8413,34 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "read",
-      "description": "Call GET /v1/projects/{project}/audit:export."
+      "description": "Call GET /openapi.json."
+    },
+    {
+      "id": "ingestPaymentObservation",
+      "upstreamOperationId": "ingestPaymentObservation",
+      "method": "POST",
+      "path": "/v1/projects/{project}/paymentObservations:ingest",
+      "auth": "oauthResource",
+      "authAudience": "tempera-risk",
+      "pathParams": [
+        "project"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "risk:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Ingest one provider-owned payment observation as a trusted event."
     }
   ],
   "temperaWorkflows": [
@@ -9725,6 +9797,56 @@ export const TEMPERA_OPERATIONS = Object.freeze(
   ],
   "temperaBio": [
     {
+      "id": "getBioHealth",
+      "upstreamOperationId": "getBioHealth",
+      "method": "GET",
+      "path": "/healthz",
+      "auth": "none",
+      "authAudience": null,
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Liveness probe."
+    },
+    {
+      "id": "getBioOpenapiDocument",
+      "upstreamOperationId": "getBioOpenapiDocument",
+      "method": "GET",
+      "path": "/openapi.json",
+      "auth": "none",
+      "authAudience": null,
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Serve this document."
+    },
+    {
       "id": "deriveCampaignState",
       "upstreamOperationId": "deriveCampaignState",
       "method": "POST",
@@ -10146,7 +10268,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "getPaymentsHealth",
       "upstreamOperationId": "getPaymentsHealth",
       "method": "GET",
-      "path": "/v1/health",
+      "path": "/healthz",
       "auth": "none",
       "authAudience": null,
       "pathParams": [],
@@ -10165,13 +10287,13 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "read",
-      "description": "Call GET /v1/health."
+      "description": "Report that the process is reachable."
     },
     {
       "id": "createPaymentIntent",
       "upstreamOperationId": "createPaymentIntent",
       "method": "POST",
-      "path": "/v1/payment_intents",
+      "path": "/v1/paymentIntents",
       "auth": "oauthResource",
       "authAudience": "tempera-payments",
       "pathParams": [],
@@ -10185,23 +10307,23 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "Idempotency-Key"
       ],
       "body": [
-        "tenant_id",
-        "merchant_id",
-        "risk_subject_id",
+        "tenantId",
+        "merchantId",
+        "riskSubjectId",
         "recipient",
         "asset",
         "amount",
-        "expires_in_seconds"
+        "expiresInSeconds"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "tenant_id",
-        "merchant_id",
-        "risk_subject_id",
+        "tenantId",
+        "merchantId",
+        "riskSubjectId",
         "recipient",
         "asset",
         "amount",
-        "expires_in_seconds"
+        "expiresInSeconds"
       ],
       "bodyDefaults": {},
       "requestBodyKind": "json",
@@ -10216,18 +10338,18 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "getPaymentIntent",
       "upstreamOperationId": "getPaymentIntent",
       "method": "GET",
-      "path": "/v1/payment_intents/{payment_intent_id}",
+      "path": "/v1/paymentIntents/{paymentIntentId}",
       "auth": "oauthResource",
       "authAudience": "tempera-payments",
       "pathParams": [
-        "payment_intent_id"
+        "paymentIntentId"
       ],
       "pathParamTemplates": {},
       "query": [
-        "tenant_id"
+        "tenantId"
       ],
       "requiredQuery": [
-        "tenant_id"
+        "tenantId"
       ],
       "headers": [],
       "requiredHeaders": [],
@@ -10247,18 +10369,18 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "getPaymentSettlementReceipt",
       "upstreamOperationId": "getPaymentSettlementReceipt",
       "method": "GET",
-      "path": "/v1/payment_intents/{payment_intent_id}/receipt",
+      "path": "/v1/paymentIntents/{paymentIntentId}/receipt",
       "auth": "oauthResource",
       "authAudience": "tempera-payments",
       "pathParams": [
-        "payment_intent_id"
+        "paymentIntentId"
       ],
       "pathParamTemplates": {},
       "query": [
-        "tenant_id"
+        "tenantId"
       ],
       "requiredQuery": [
-        "tenant_id"
+        "tenantId"
       ],
       "headers": [],
       "requiredHeaders": [],
@@ -10278,11 +10400,11 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "createStripeCheckout",
       "upstreamOperationId": "createStripeCheckout",
       "method": "POST",
-      "path": "/v1/payment_intents/{payment_intent_id}/stripe_checkout",
+      "path": "/v1/paymentIntents/{paymentIntentId}/stripeCheckout",
       "auth": "oauthResource",
       "authAudience": "tempera-payments",
       "pathParams": [
-        "payment_intent_id"
+        "paymentIntentId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -10294,25 +10416,25 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "Idempotency-Key"
       ],
       "body": [
-        "tenant_id",
+        "tenantId",
         "currency",
-        "product_name",
-        "success_url",
-        "cancel_url"
+        "productName",
+        "successUrl",
+        "cancelUrl"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "tenant_id",
+        "tenantId",
         "currency",
-        "product_name",
-        "success_url",
-        "cancel_url"
+        "productName",
+        "successUrl",
+        "cancelUrl"
       ],
       "bodyDefaults": {},
       "requestBodyKind": "json",
       "requestContentType": "application/json",
       "scope": "payments:intents:write",
-      "physicalAction": false,
+      "physicalAction": true,
       "prepareCommitRequired": false,
       "safeRetry": "none",
       "description": "Create an idempotent hosted Stripe Checkout session for a fiat payment intent."
@@ -10321,11 +10443,11 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "createCardSession",
       "upstreamOperationId": "createCardSession",
       "method": "POST",
-      "path": "/v1/payment_intents/{payment_intent_id}/card_session",
+      "path": "/v1/paymentIntents/{paymentIntentId}/cardSession",
       "auth": "oauthResource",
       "authAudience": "tempera-payments",
       "pathParams": [
-        "payment_intent_id"
+        "paymentIntentId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -10337,25 +10459,25 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "Idempotency-Key"
       ],
       "body": [
-        "tenant_id",
+        "tenantId",
         "acquirer",
-        "success_url",
-        "failure_url",
+        "successUrl",
+        "failureUrl",
         "billing"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "tenant_id",
+        "tenantId",
         "acquirer",
-        "success_url",
-        "failure_url",
+        "successUrl",
+        "failureUrl",
         "billing"
       ],
       "bodyDefaults": {},
       "requestBodyKind": "json",
       "requestContentType": "application/json",
       "scope": "payments:intents:write",
-      "physicalAction": false,
+      "physicalAction": true,
       "prepareCommitRequired": false,
       "safeRetry": "none",
       "description": "Create a hosted/tokenizing card session with the selected configured acquirer."
@@ -10395,10 +10517,10 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
-        "tenant_id"
+        "tenantId"
       ],
       "requiredQuery": [
-        "tenant_id"
+        "tenantId"
       ],
       "headers": [],
       "requiredHeaders": [],
@@ -10432,14 +10554,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "Idempotency-Key"
       ],
       "body": [
-        "tenant_id",
+        "tenantId",
         "country",
         "currency",
         "category"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "tenant_id",
+        "tenantId",
         "country",
         "currency",
         "category"
@@ -10457,18 +10579,18 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "getMerchant",
       "upstreamOperationId": "getMerchant",
       "method": "GET",
-      "path": "/v1/merchants/{merchant_id}",
+      "path": "/v1/merchants/{merchantId}",
       "auth": "oauthResource",
       "authAudience": "tempera-payments",
       "pathParams": [
-        "merchant_id"
+        "merchantId"
       ],
       "pathParamTemplates": {},
       "query": [
-        "tenant_id"
+        "tenantId"
       ],
       "requiredQuery": [
-        "tenant_id"
+        "tenantId"
       ],
       "headers": [],
       "requiredHeaders": [],
@@ -10488,11 +10610,11 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "refreshMerchantEligibility",
       "upstreamOperationId": "refreshMerchantEligibility",
       "method": "POST",
-      "path": "/v1/merchants/{merchant_id}/refresh",
+      "path": "/v1/merchants/{merchantId}/refresh",
       "auth": "oauthResource",
       "authAudience": "tempera-payments",
       "pathParams": [
-        "merchant_id"
+        "merchantId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -10500,11 +10622,11 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "headers": [],
       "requiredHeaders": [],
       "body": [
-        "tenant_id"
+        "tenantId"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "tenant_id"
+        "tenantId"
       ],
       "bodyDefaults": {},
       "requestBodyKind": "json",
@@ -10519,11 +10641,11 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "createMerchantOnboardingLink",
       "upstreamOperationId": "createMerchantOnboardingLink",
       "method": "POST",
-      "path": "/v1/merchants/{merchant_id}/onboarding",
+      "path": "/v1/merchants/{merchantId}/onboarding",
       "auth": "oauthResource",
       "authAudience": "tempera-payments",
       "pathParams": [
-        "merchant_id"
+        "merchantId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -10535,17 +10657,17 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "Idempotency-Key"
       ],
       "body": [
-        "tenant_id"
+        "tenantId"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "tenant_id"
+        "tenantId"
       ],
       "bodyDefaults": {},
       "requestBodyKind": "json",
       "requestContentType": "application/json",
       "scope": "payments:merchants:write",
-      "physicalAction": false,
+      "physicalAction": true,
       "prepareCommitRequired": false,
       "safeRetry": "none",
       "description": "Create a short-lived Stripe-hosted merchant onboarding link."
@@ -10554,7 +10676,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "receiveStripeWebhook",
       "upstreamOperationId": "receiveStripeWebhook",
       "method": "POST",
-      "path": "/v1/webhooks/stripe",
+      "path": "/v1/webhooks/stripe/callback",
       "auth": "none",
       "authAudience": null,
       "pathParams": [],
@@ -10585,8 +10707,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "healthGet",
       "upstreamOperationId": "health.get",
       "method": "GET",
-      "path": "/v1/health",
-      "auth": "product",
+      "path": "/healthz",
+      "auth": "none",
       "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
@@ -10610,11 +10732,11 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "documentsCreate",
       "upstreamOperationId": "documents.create",
       "method": "POST",
-      "path": "/v1/projects/{project_id}/documents",
+      "path": "/v1/projects/{projectId}/documents",
       "auth": "oauthResource",
       "authAudience": "tempera-document",
       "pathParams": [
-        "project_id"
+        "projectId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -10641,12 +10763,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "documentsGet",
       "upstreamOperationId": "documents.get",
       "method": "GET",
-      "path": "/v1/projects/{project_id}/documents/{document_id}",
+      "path": "/v1/projects/{projectId}/documents/{documentId}",
       "auth": "oauthResource",
       "authAudience": "tempera-document",
       "pathParams": [
-        "project_id",
-        "document_id"
+        "projectId",
+        "documentId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -10666,15 +10788,49 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Get a document."
     },
     {
-      "id": "documentsExtract",
-      "upstreamOperationId": "documents.extract",
+      "id": "documentsExportEvidence",
+      "upstreamOperationId": "documents.exportEvidence",
       "method": "POST",
-      "path": "/v1/projects/{project_id}/documents/{document_id}/extractions",
+      "path": "/v1/projects/{projectId}/documents/{documentId}/evidenceExports",
       "auth": "oauthResource",
       "authAudience": "tempera-document",
       "pathParams": [
-        "project_id",
-        "document_id"
+        "projectId",
+        "documentId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [
+        "extraction",
+        "metadata"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "extraction",
+        "metadata"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "document:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Export validated extraction from a completed stored source for Data admission."
+    },
+    {
+      "id": "documentsExtract",
+      "upstreamOperationId": "documents.extract",
+      "method": "POST",
+      "path": "/v1/projects/{projectId}/documents/{documentId}/extractions",
+      "auth": "oauthResource",
+      "authAudience": "tempera-document",
+      "pathParams": [
+        "projectId",
+        "documentId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -10683,14 +10839,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "requiredHeaders": [],
       "body": [
         "instructions",
-        "max_output_tokens",
+        "maxOutputTokens",
         "schema",
-        "schema_name",
-        "unit_indexes"
+        "schemaName",
+        "unitIndexes"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "schema_name",
+        "schemaName",
         "schema",
         "instructions"
       ],
@@ -10707,12 +10863,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "documentsGetGraph",
       "upstreamOperationId": "documents.getGraph",
       "method": "GET",
-      "path": "/v1/projects/{project_id}/documents/{document_id}/graph",
+      "path": "/v1/projects/{projectId}/documents/{documentId}/graph",
       "auth": "oauthResource",
       "authAudience": "tempera-document",
       "pathParams": [
-        "project_id",
-        "document_id"
+        "projectId",
+        "documentId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -10735,12 +10891,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "documentsPrepareRetrieval",
       "upstreamOperationId": "documents.prepareRetrieval",
       "method": "POST",
-      "path": "/v1/projects/{project_id}/documents/{document_id}/retrievalIndexes",
+      "path": "/v1/projects/{projectId}/documents/{documentId}/retrievalIndexes",
       "auth": "oauthResource",
       "authAudience": "tempera-document",
       "pathParams": [
-        "project_id",
-        "document_id"
+        "projectId",
+        "documentId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -10765,12 +10921,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "documentsSearch",
       "upstreamOperationId": "documents.search",
       "method": "POST",
-      "path": "/v1/projects/{project_id}/documents/{document_id}/searches",
+      "path": "/v1/projects/{projectId}/documents/{documentId}/searches",
       "auth": "oauthResource",
       "authAudience": "tempera-document",
       "pathParams": [
-        "project_id",
-        "document_id"
+        "projectId",
+        "documentId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -10780,7 +10936,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "body": [
         "query",
         "strategy",
-        "top_k"
+        "topK"
       ],
       "forbiddenBody": [],
       "requiredBody": [
@@ -10799,17 +10955,17 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "documentUnitsList",
       "upstreamOperationId": "documentUnits.list",
       "method": "GET",
-      "path": "/v1/projects/{project_id}/documents/{document_id}/units",
+      "path": "/v1/projects/{projectId}/documents/{documentId}/units",
       "auth": "oauthResource",
       "authAudience": "tempera-document",
       "pathParams": [
-        "project_id",
-        "document_id"
+        "projectId",
+        "documentId"
       ],
       "pathParamTemplates": {},
       "query": [
-        "page_size",
-        "page_token"
+        "pageSize",
+        "pageToken"
       ],
       "requiredQuery": [],
       "headers": [],
@@ -10830,12 +10986,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "documentsProcess",
       "upstreamOperationId": "documents.process",
       "method": "POST",
-      "path": "/v1/projects/{project_id}/documents/{document_id}:process",
+      "path": "/v1/projects/{projectId}/documents/{documentId}:process",
       "auth": "oauthResource",
       "authAudience": "tempera-document",
       "pathParams": [
-        "project_id",
-        "document_id"
+        "projectId",
+        "documentId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -10862,12 +11018,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "operationsGet",
       "upstreamOperationId": "operations.get",
       "method": "GET",
-      "path": "/v1/projects/{project_id}/operations/{operation_id}",
+      "path": "/v1/projects/{projectId}/operations/{operationId}",
       "auth": "oauthResource",
       "authAudience": "tempera-document",
       "pathParams": [
-        "project_id",
-        "operation_id"
+        "projectId",
+        "operationId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -10890,11 +11046,11 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "uploadsCreate",
       "upstreamOperationId": "uploads.create",
       "method": "POST",
-      "path": "/v1/projects/{project_id}/uploads",
+      "path": "/v1/projects/{projectId}/uploads",
       "auth": "oauthResource",
       "authAudience": "tempera-document",
       "pathParams": [
-        "project_id"
+        "projectId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -10902,13 +11058,13 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "headers": [],
       "requiredHeaders": [],
       "body": [
-        "expected_byte_length",
-        "expected_sha256",
-        "media_type"
+        "expectedByteLength",
+        "expectedSha256",
+        "mediaType"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "media_type"
+        "mediaType"
       ],
       "bodyDefaults": {},
       "requestBodyKind": "json",
@@ -10923,12 +11079,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "uploadsGet",
       "upstreamOperationId": "uploads.get",
       "method": "GET",
-      "path": "/v1/projects/{project_id}/uploads/{upload_id}",
+      "path": "/v1/projects/{projectId}/uploads/{uploadId}",
       "auth": "oauthResource",
       "authAudience": "tempera-document",
       "pathParams": [
-        "project_id",
-        "upload_id"
+        "projectId",
+        "uploadId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -10950,16 +11106,18 @@ export const TEMPERA_OPERATIONS = Object.freeze(
     {
       "id": "uploadsWrite",
       "upstreamOperationId": "uploads.write",
-      "method": "PUT",
-      "path": "/v1/projects/{project_id}/uploads/{upload_id}/content",
+      "method": "PATCH",
+      "path": "/v1/projects/{projectId}/uploads/{uploadId}/content",
       "auth": "oauthResource",
       "authAudience": "tempera-document",
       "pathParams": [
-        "project_id",
-        "upload_id"
+        "projectId",
+        "uploadId"
       ],
       "pathParamTemplates": {},
-      "query": [],
+      "query": [
+        "updateMask"
+      ],
       "requiredQuery": [],
       "headers": [],
       "requiredHeaders": [],
@@ -10979,12 +11137,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "uploadsComplete",
       "upstreamOperationId": "uploads.complete",
       "method": "POST",
-      "path": "/v1/projects/{project_id}/uploads/{upload_id}:complete",
+      "path": "/v1/projects/{projectId}/uploads/{uploadId}:complete",
       "auth": "oauthResource",
       "authAudience": "tempera-document",
       "pathParams": [
-        "project_id",
-        "upload_id"
+        "projectId",
+        "uploadId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -10992,7 +11150,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "headers": [],
       "requiredHeaders": [],
       "body": [
-        "byte_length",
+        "byteLength",
         "sha256"
       ],
       "forbiddenBody": [],
@@ -11650,7 +11808,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "none",
       "requestContentType": null,
-      "scope": null,
+      "scope": "admin",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "read",
@@ -11675,7 +11833,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "none",
       "requestContentType": null,
-      "scope": null,
+      "scope": "admin",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "read",
@@ -11700,7 +11858,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "none",
       "requestContentType": null,
-      "scope": null,
+      "scope": "admin",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "read",
@@ -11725,7 +11883,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "none",
       "requestContentType": null,
-      "scope": null,
+      "scope": "admin",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "read",
@@ -11753,7 +11911,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "none",
       "requestContentType": null,
-      "scope": null,
+      "scope": "admin",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "read",
@@ -11789,9 +11947,9 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "text"
       ],
       "bodyDefaults": {},
-      "requestBodyKind": "none",
-      "requestContentType": null,
-      "scope": null,
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "admin",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "idempotent",
@@ -11816,9 +11974,9 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
-      "requestBodyKind": "none",
-      "requestContentType": null,
-      "scope": null,
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "admin",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
@@ -11853,9 +12011,9 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "scope"
       ],
       "bodyDefaults": {},
-      "requestBodyKind": "none",
-      "requestContentType": null,
-      "scope": null,
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "admin",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
@@ -11883,9 +12041,9 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "forbiddenBody": [],
       "requiredBody": [],
       "bodyDefaults": {},
-      "requestBodyKind": "none",
-      "requestContentType": null,
-      "scope": null,
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "admin",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
@@ -11897,7 +12055,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "health",
       "upstreamOperationId": "health.get",
       "method": "GET",
-      "path": "/v1/health",
+      "path": "/healthz",
       "auth": "none",
       "authAudience": null,
       "pathParams": [],
@@ -11923,8 +12081,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.useCases.list",
       "method": "GET",
       "path": "/v1/{parent}/use-cases",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -11955,8 +12113,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.useCases.get",
       "method": "GET",
       "path": "/v1/{parent}/use-cases/{useCaseId}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "useCaseId"
@@ -11985,8 +12143,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.artifacts.ingest",
       "method": "POST",
       "path": "/v1/{parent}/artifacts:ingest",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -12022,8 +12180,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.connectorEvidence.ingest",
       "method": "POST",
       "path": "/v1/{parent}/connectorEvidence:ingest",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -12059,8 +12217,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.web.ingest",
       "method": "POST",
       "path": "/v1/{parent}/web:ingest",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -12099,8 +12257,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.campaigns.create",
       "method": "POST",
       "path": "/v1/{parent}/campaigns",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -12142,8 +12300,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.campaigns.list",
       "method": "GET",
       "path": "/v1/{parent}/campaigns",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -12174,8 +12332,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.campaigns.transition",
       "method": "POST",
       "path": "/v1/{parent}/campaigns/{campaignId}:transition",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "campaignId"
@@ -12213,8 +12371,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.reviewerQualifications.get",
       "method": "GET",
       "path": "/v1/{parent}/campaigns/{campaignId}/reviewer-qualification",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "campaignId"
@@ -12243,8 +12401,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.pipelines.runUseCase",
       "method": "POST",
       "path": "/v1/{parent}/pipelines:runUseCase",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -12286,8 +12444,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.expertTasks.list",
       "method": "GET",
       "path": "/v1/{parent}/expert-tasks",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -12321,8 +12479,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.reviewQualificationTasks.create",
       "method": "POST",
       "path": "/v1/{parent}/review-qualification-tasks",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -12360,8 +12518,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.reviewerRevocations.create",
       "method": "POST",
       "path": "/v1/{parent}/reviewer-revocations",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -12397,8 +12555,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.expertTasks.resolve",
       "method": "POST",
       "path": "/v1/{parent}/expert-tasks/{expertTaskId}:resolve",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "expertTaskId"
@@ -12444,8 +12602,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.expertTasks.appeal",
       "method": "POST",
       "path": "/v1/{parent}/expert-tasks/{expertTaskId}:appeal",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "expertTaskId"
@@ -12483,8 +12641,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.expertTaskAssignments.claim",
       "method": "POST",
       "path": "/v1/{parent}/expert-tasks/{expertTaskId}:claim",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "expertTaskId"
@@ -12520,8 +12678,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.expertTaskAssignments.renew",
       "method": "POST",
       "path": "/v1/{parent}/expert-tasks/{expertTaskId}:renew",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "expertTaskId"
@@ -12557,8 +12715,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.expertTaskAssignments.release",
       "method": "POST",
       "path": "/v1/{parent}/expert-tasks/{expertTaskId}:release",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "expertTaskId"
@@ -12593,8 +12751,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.expertTaskAssignments.saveDraft",
       "method": "POST",
       "path": "/v1/{parent}/expert-tasks/{expertTaskId}:saveDraft",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "expertTaskId"
@@ -12633,8 +12791,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.reviewerSessions.record",
       "method": "POST",
       "path": "/v1/{parent}/reviewer-sessions:record",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -12668,8 +12826,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.reviewOperations.get",
       "method": "GET",
       "path": "/v1/{parent}/review-operations",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -12700,8 +12858,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.metrics.get",
       "method": "GET",
       "path": "/v1/{parent}/metrics",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -12729,8 +12887,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.labelQuality.get",
       "method": "GET",
       "path": "/v1/{parent}/label-quality",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -12758,8 +12916,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.ecosystem.readiness.get",
       "method": "GET",
       "path": "/v1/{parent}/ecosystem/readiness",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -12787,8 +12945,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.artifacts.list",
       "method": "GET",
       "path": "/v1/{parent}/artifacts",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -12820,8 +12978,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.artifacts.get",
       "method": "GET",
       "path": "/v1/{parent}/artifacts/{artifactId}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "artifactId"
@@ -12852,8 +13010,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.artifacts.labels.list",
       "method": "GET",
       "path": "/v1/{parent}/artifacts/{artifactId}/labels",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "artifactId"
@@ -12885,8 +13043,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.datasets.profile",
       "method": "POST",
       "path": "/v1/{parent}/datasets:profile",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -12919,8 +13077,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.jobs.create",
       "method": "POST",
       "path": "/v1/{parent}/jobs",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -12960,8 +13118,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.jobs.get",
       "method": "GET",
       "path": "/v1/{parent}/jobs/{jobId}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "jobId"
@@ -12990,8 +13148,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.jobs.results.list",
       "method": "GET",
       "path": "/v1/{parent}/jobs/{jobId}/results",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "jobId"
@@ -13023,8 +13181,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.products.get",
       "method": "GET",
       "path": "/v1/{parent}/products/{productId}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "productId"
@@ -13053,8 +13211,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.products.validate",
       "method": "POST",
       "path": "/v1/{parent}/products/{productId}:validate",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "productId"
@@ -13085,8 +13243,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.products.checkLeakage",
       "method": "POST",
       "path": "/v1/{parent}/products:checkLeakage",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -13120,8 +13278,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.products.manifest.get",
       "method": "GET",
       "path": "/v1/{parent}/products/{productId}/manifest",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "productId"
@@ -13150,8 +13308,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.trainingReleases.admit",
       "method": "POST",
       "path": "/v1/{parent}/training-releases:admit",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -13189,8 +13347,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.trainingReleases.get",
       "method": "GET",
       "path": "/v1/{parent}/training-releases/{releaseId}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "releaseId"
@@ -13219,8 +13377,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.products.derive",
       "method": "POST",
       "path": "/v1/{parent}/products/{productId}:derive",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "productId"
@@ -13260,8 +13418,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.products.emitEval",
       "method": "POST",
       "path": "/v1/{parent}/products:emitEval",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -13295,8 +13453,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.sourceDefinitions.create",
       "method": "POST",
       "path": "/v1/{parent}/sourceDefinitions",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -13343,8 +13501,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.sourceDefinitions.list",
       "method": "GET",
       "path": "/v1/{parent}/sourceDefinitions",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -13375,8 +13533,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.sourceDefinitions.get",
       "method": "GET",
       "path": "/v1/{parent}/sourceDefinitions/{sourceDefinitionId}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "sourceDefinitionId"
@@ -13405,8 +13563,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.sourceDefinitions.patch",
       "method": "PATCH",
       "path": "/v1/{parent}/sourceDefinitions/{sourceDefinitionId}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "sourceDefinitionId"
@@ -13451,8 +13609,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.sourceDefinitions.run",
       "method": "POST",
       "path": "/v1/{parent}/sourceDefinitions/{sourceDefinitionId}:run",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "sourceDefinitionId"
@@ -13489,8 +13647,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.connectorRuns.list",
       "method": "GET",
       "path": "/v1/{parent}/connectorRuns",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -13521,8 +13679,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.connectorRuns.get",
       "method": "GET",
       "path": "/v1/{parent}/connectorRuns/{connectorRunId}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "connectorRunId"
@@ -13551,8 +13709,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.sources.extract",
       "method": "POST",
       "path": "/v1/{parent}/sources:extract",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -13600,8 +13758,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.connectors.list",
       "method": "GET",
       "path": "/v1/{parent}/connectors",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -13632,8 +13790,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.tools.create",
       "method": "POST",
       "path": "/v1/{parent}/tools",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -13675,8 +13833,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.tools.list",
       "method": "GET",
       "path": "/v1/{parent}/tools",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -13707,8 +13865,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.tools.get",
       "method": "GET",
       "path": "/v1/{parent}/tools/{toolName}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "toolName"
@@ -13737,8 +13895,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.tools.delete",
       "method": "DELETE",
       "path": "/v1/{parent}/tools/{toolName}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "toolName"
@@ -13767,8 +13925,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.tools.invoke",
       "method": "POST",
       "path": "/v1/{parent}/tools/{toolName}:invoke",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "toolName"
@@ -13801,8 +13959,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.discoveryReleases.commit",
       "method": "POST",
       "path": "/v1/{parent}/discoveryReleases:commit",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -13854,8 +14012,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.discoveryReleases.get",
       "method": "GET",
       "path": "/v1/{parent}/discoveryReleases/{discoveryReleaseId}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "discoveryReleaseId"
@@ -13884,8 +14042,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.evidenceRecords.create",
       "method": "POST",
       "path": "/v1/{parent}/evidenceRecords",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -13933,8 +14091,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.evidenceRecords.list",
       "method": "GET",
       "path": "/v1/{parent}/evidenceRecords",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -13966,8 +14124,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.evidenceRecords.get",
       "method": "GET",
       "path": "/v1/{parent}/evidenceRecords/{evidenceRecordId}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "evidenceRecordId"
@@ -13996,8 +14154,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.episodes.create",
       "method": "POST",
       "path": "/v1/{parent}/episodes",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -14051,8 +14209,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.episodes.list",
       "method": "GET",
       "path": "/v1/{parent}/episodes",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -14084,8 +14242,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.episodes.get",
       "method": "GET",
       "path": "/v1/{parent}/episodes/{episodeId}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "episodeId"
@@ -14114,8 +14272,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "query_research_retrieval",
       "method": "POST",
       "path": "/v1/{parent}/researchRetrieval:query",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -14159,8 +14317,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.researchCatalogEntries.create",
       "method": "POST",
       "path": "/v1/{parent}/researchCatalogEntries",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -14202,8 +14360,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.researchCatalogEntries.list",
       "method": "GET",
       "path": "/v1/{parent}/researchCatalogEntries",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent"
       ],
@@ -14234,8 +14392,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "projects.researchCatalogEntries.get",
       "method": "GET",
       "path": "/v1/{parent}/researchCatalogEntries/{entryId}",
-      "auth": "product",
-      "authAudience": null,
+      "auth": "oauthResource",
+      "authAudience": "data-engine",
       "pathParams": [
         "parent",
         "entryId"
@@ -14262,6 +14420,56 @@ export const TEMPERA_OPERATIONS = Object.freeze(
   ],
   "humanData": [
     {
+      "id": "getHumanDataHealth",
+      "upstreamOperationId": "getHumanDataHealth",
+      "method": "GET",
+      "path": "/healthz",
+      "auth": "none",
+      "authAudience": null,
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Liveness probe."
+    },
+    {
+      "id": "getHumanDataOpenapiDocument",
+      "upstreamOperationId": "getHumanDataOpenapiDocument",
+      "method": "GET",
+      "path": "/openapi.json",
+      "auth": "none",
+      "authAudience": null,
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Serve this document."
+    },
+    {
       "id": "computeQualification",
       "upstreamOperationId": "computeQualification",
       "method": "GET",
@@ -14286,7 +14494,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "bodyDefaults": {},
       "requestBodyKind": "none",
       "requestContentType": null,
-      "scope": null,
+      "scope": "training:publish",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "read",
@@ -14345,27 +14553,66 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Readiness."
     },
     {
-      "id": "resolveVoiceAction",
-      "upstreamOperationId": "resolveVoiceAction",
-      "method": "POST",
-      "path": "/v1/actions/{action_id}:resolve",
+      "id": "getVoiceCapabilities",
+      "upstreamOperationId": "getVoiceCapabilities",
+      "method": "GET",
+      "path": "/v1/capabilities",
       "auth": "oauthResource",
       "authAudience": "tempera-voice",
-      "pathParams": [
-        "action_id"
-      ],
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "voice:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Capabilities."
+    },
+    {
+      "id": "createVoiceAgent",
+      "upstreamOperationId": "createVoiceAgent",
+      "method": "POST",
+      "path": "/v1/agents",
+      "auth": "oauthResource",
+      "authAudience": "tempera-voice",
+      "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
       "requiredQuery": [],
       "headers": [],
       "requiredHeaders": [],
       "body": [
-        "approved",
-        "note"
+        "id",
+        "name",
+        "useCase",
+        "instructions",
+        "provider",
+        "model",
+        "voice",
+        "language",
+        "outputModality",
+        "inputAudioFormat",
+        "outputAudioFormat",
+        "transcriptionModel",
+        "turnDetection",
+        "tools",
+        "retention",
+        "limits",
+        "metadata"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "approved"
+        "name",
+        "instructions"
       ],
       "bodyDefaults": {},
       "requestBodyKind": "json",
@@ -14374,7 +14621,7 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
-      "description": "Resolve Action."
+      "description": "Create Agent."
     },
     {
       "id": "listVoiceAgents",
@@ -14386,7 +14633,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
-        "limit"
+        "pageSize",
+        "pageToken"
       ],
       "requiredQuery": [],
       "headers": [],
@@ -14404,36 +14652,40 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "List Agents."
     },
     {
-      "id": "createVoiceAgent",
-      "upstreamOperationId": "createVoiceAgent",
-      "method": "POST",
-      "path": "/v1/agents",
+      "id": "updateVoiceAgent",
+      "upstreamOperationId": "updateVoiceAgent",
+      "method": "PATCH",
+      "path": "/v1/agents/{agentId}",
       "auth": "oauthResource",
       "authAudience": "tempera-voice",
-      "pathParams": [],
+      "pathParams": [
+        "agentId"
+      ],
       "pathParamTemplates": {},
-      "query": [],
+      "query": [
+        "updateMask"
+      ],
       "requiredQuery": [],
       "headers": [],
       "requiredHeaders": [],
       "body": [
         "id",
-        "input_audio_format",
-        "instructions",
-        "language",
-        "limits",
-        "metadata",
-        "model",
         "name",
-        "output_audio_format",
-        "output_modality",
+        "useCase",
+        "instructions",
         "provider",
-        "retention",
+        "model",
+        "voice",
+        "language",
+        "outputModality",
+        "inputAudioFormat",
+        "outputAudioFormat",
+        "transcriptionModel",
+        "turnDetection",
         "tools",
-        "transcription_model",
-        "turn_detection",
-        "use_case",
-        "voice"
+        "retention",
+        "limits",
+        "metadata"
       ],
       "forbiddenBody": [],
       "requiredBody": [
@@ -14447,17 +14699,17 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
-      "description": "Create Agent."
+      "description": "Update Agent."
     },
     {
       "id": "getVoiceAgent",
       "upstreamOperationId": "getVoiceAgent",
       "method": "GET",
-      "path": "/v1/agents/{agent_id}",
+      "path": "/v1/agents/{agentId}",
       "auth": "oauthResource",
       "authAudience": "tempera-voice",
       "pathParams": [
-        "agent_id"
+        "agentId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -14477,43 +14729,31 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Get Agent."
     },
     {
-      "id": "upsertVoiceAgent",
-      "upstreamOperationId": "upsertVoiceAgent",
-      "method": "PUT",
-      "path": "/v1/agents/{agent_id}",
+      "id": "createVoiceSession",
+      "upstreamOperationId": "createVoiceSession",
+      "method": "POST",
+      "path": "/v1/sessions",
       "auth": "oauthResource",
       "authAudience": "tempera-voice",
-      "pathParams": [
-        "agent_id"
-      ],
+      "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
       "requiredQuery": [],
       "headers": [],
       "requiredHeaders": [],
       "body": [
-        "id",
-        "input_audio_format",
-        "instructions",
-        "language",
-        "limits",
-        "metadata",
-        "model",
-        "name",
-        "output_audio_format",
-        "output_modality",
-        "provider",
-        "retention",
-        "tools",
-        "transcription_model",
-        "turn_detection",
-        "use_case",
-        "voice"
+        "agentId",
+        "channel",
+        "externalId",
+        "safetyIdentifier",
+        "profileRef",
+        "goalRef",
+        "siteId",
+        "metadata"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "name",
-        "instructions"
+        "agentId"
       ],
       "bodyDefaults": {},
       "requestBodyKind": "json",
@@ -14522,7 +14762,37 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
-      "description": "Upsert Agent."
+      "description": "Create Session."
+    },
+    {
+      "id": "listVoiceSessions",
+      "upstreamOperationId": "listVoiceSessions",
+      "method": "GET",
+      "path": "/v1/sessions",
+      "auth": "oauthResource",
+      "authAudience": "tempera-voice",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [
+        "agentId",
+        "profileRef",
+        "pageSize",
+        "pageToken"
+      ],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "voice:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "List Sessions."
     },
     {
       "id": "getDefaultVoiceAgent",
@@ -14550,375 +14820,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Get Default Agent."
     },
     {
-      "id": "downloadVoiceArtifact",
-      "upstreamOperationId": "downloadVoiceArtifact",
-      "method": "GET",
-      "path": "/v1/artifacts/{reference}",
-      "auth": "oauthResource",
-      "authAudience": "tempera-voice",
-      "pathParams": [
-        "reference"
-      ],
-      "pathParamTemplates": {},
-      "query": [],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "requestBodyKind": "none",
-      "requestContentType": null,
-      "scope": "voice:read",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "read",
-      "description": "Download Artifact."
-    },
-    {
-      "id": "uploadVoiceArtifact",
-      "upstreamOperationId": "uploadVoiceArtifact",
-      "method": "POST",
-      "path": "/v1/artifacts:upload",
-      "auth": "oauthResource",
-      "authAudience": "tempera-voice",
-      "pathParams": [],
-      "pathParamTemplates": {},
-      "query": [],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [
-        "classification",
-        "content_base64",
-        "media_type",
-        "name"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "name",
-        "content_base64"
-      ],
-      "bodyDefaults": {},
-      "requestBodyKind": "json",
-      "requestContentType": "application/json",
-      "scope": "voice:write",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "none",
-      "description": "Upload Artifact."
-    },
-    {
-      "id": "getVoiceCapabilities",
-      "upstreamOperationId": "getVoiceCapabilities",
-      "method": "GET",
-      "path": "/v1/capabilities",
-      "auth": "oauthResource",
-      "authAudience": "tempera-voice",
-      "pathParams": [],
-      "pathParamTemplates": {},
-      "query": [],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "requestBodyKind": "none",
-      "requestContentType": null,
-      "scope": "voice:read",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "read",
-      "description": "Capabilities."
-    },
-    {
-      "id": "listVoiceEvalProfiles",
-      "upstreamOperationId": "listVoiceEvalProfiles",
-      "method": "GET",
-      "path": "/v1/eval-profiles",
-      "auth": "oauthResource",
-      "authAudience": "tempera-voice",
-      "pathParams": [],
-      "pathParamTemplates": {},
-      "query": [],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "requestBodyKind": "none",
-      "requestContentType": null,
-      "scope": "eval:run",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "read",
-      "description": "List Eval Profiles."
-    },
-    {
-      "id": "buildVoiceEvalBundle",
-      "upstreamOperationId": "buildVoiceEvalBundle",
-      "method": "POST",
-      "path": "/v1/evals/bundles:build",
-      "auth": "oauthResource",
-      "authAudience": "tempera-voice",
-      "pathParams": [],
-      "pathParamTemplates": {},
-      "query": [],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [
-        "adapter_import_path",
-        "adapter_import_public_key_path",
-        "adapter_import_signature_path",
-        "bundle_id",
-        "created_at",
-        "exposure_ledger_path",
-        "guardrails_path",
-        "preregistration_path",
-        "profile_id",
-        "redaction_policy_path",
-        "release_evidence_path"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "profile_id",
-        "adapter_import_path",
-        "adapter_import_signature_path",
-        "adapter_import_public_key_path",
-        "release_evidence_path",
-        "exposure_ledger_path",
-        "redaction_policy_path",
-        "guardrails_path",
-        "preregistration_path",
-        "bundle_id"
-      ],
-      "bodyDefaults": {},
-      "requestBodyKind": "json",
-      "requestContentType": "application/json",
-      "scope": "eval:run",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "none",
-      "description": "Build Eval Bundle."
-    },
-    {
-      "id": "createVoicePaletteHandoff",
-      "upstreamOperationId": "createVoicePaletteHandoff",
-      "method": "POST",
-      "path": "/v1/evals/palette-handoffs:create",
-      "auth": "oauthResource",
-      "authAudience": "tempera-voice",
-      "pathParams": [],
-      "pathParamTemplates": {},
-      "query": [],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [
-        "ab_plan_path",
-        "evidence_path",
-        "kind",
-        "profile_id",
-        "project_id",
-        "public_key_path",
-        "signature_path",
-        "tenant_id"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "profile_id",
-        "evidence_path",
-        "kind",
-        "signature_path",
-        "public_key_path",
-        "tenant_id",
-        "project_id"
-      ],
-      "bodyDefaults": {},
-      "requestBodyKind": "json",
-      "requestContentType": "application/json",
-      "scope": "eval:run",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "none",
-      "description": "Create Palette Handoff."
-    },
-    {
-      "id": "publishVoicePaletteHandoff",
-      "upstreamOperationId": "publishVoicePaletteHandoff",
-      "method": "POST",
-      "path": "/v1/evals/palette-handoffs:publish",
-      "auth": "oauthResource",
-      "authAudience": "tempera-voice",
-      "pathParams": [],
-      "pathParamTemplates": {},
-      "query": [],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [
-        "handoff_path"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "handoff_path"
-      ],
-      "bodyDefaults": {},
-      "requestBodyKind": "json",
-      "requestContentType": "application/json",
-      "scope": "eval:run",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "none",
-      "description": "Publish Palette Handoff."
-    },
-    {
-      "id": "importVoiceEvalResult",
-      "upstreamOperationId": "importVoiceEvalResult",
-      "method": "POST",
-      "path": "/v1/evals/results:import",
-      "auth": "oauthResource",
-      "authAudience": "tempera-voice",
-      "pathParams": [],
-      "pathParamTemplates": {},
-      "query": [],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [
-        "artifacts",
-        "attestation_path",
-        "attestation_public_key_path",
-        "attestation_signature_path",
-        "profile_id",
-        "sealed_result_path"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "profile_id",
-        "sealed_result_path",
-        "artifacts"
-      ],
-      "bodyDefaults": {},
-      "requestBodyKind": "json",
-      "requestContentType": "application/json",
-      "scope": "eval:run",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "none",
-      "description": "Import Eval Result."
-    },
-    {
-      "id": "sealVoiceEvalResult",
-      "upstreamOperationId": "sealVoiceEvalResult",
-      "method": "POST",
-      "path": "/v1/evals/results:seal",
-      "auth": "oauthResource",
-      "authAudience": "tempera-voice",
-      "pathParams": [],
-      "pathParamTemplates": {},
-      "query": [],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [
-        "draft",
-        "profile_id"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "profile_id",
-        "draft"
-      ],
-      "bodyDefaults": {},
-      "requestBodyKind": "json",
-      "requestContentType": "application/json",
-      "scope": "eval:run",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "none",
-      "description": "Seal Eval Result."
-    },
-    {
-      "id": "listVoiceSessions",
-      "upstreamOperationId": "listVoiceSessions",
-      "method": "GET",
-      "path": "/v1/sessions",
-      "auth": "oauthResource",
-      "authAudience": "tempera-voice",
-      "pathParams": [],
-      "pathParamTemplates": {},
-      "query": [
-        "agent_id",
-        "profile_ref",
-        "limit"
-      ],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "requestBodyKind": "none",
-      "requestContentType": null,
-      "scope": "voice:read",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "read",
-      "description": "List Sessions."
-    },
-    {
-      "id": "createVoiceSession",
-      "upstreamOperationId": "createVoiceSession",
-      "method": "POST",
-      "path": "/v1/sessions",
-      "auth": "oauthResource",
-      "authAudience": "tempera-voice",
-      "pathParams": [],
-      "pathParamTemplates": {},
-      "query": [],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [
-        "agent_id",
-        "channel",
-        "external_id",
-        "goal_ref",
-        "metadata",
-        "profile_ref",
-        "safety_identifier",
-        "site_id"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "agent_id"
-      ],
-      "bodyDefaults": {},
-      "requestBodyKind": "json",
-      "requestContentType": "application/json",
-      "scope": "voice:write",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "none",
-      "description": "Create Session."
-    },
-    {
       "id": "getVoiceSession",
       "upstreamOperationId": "getVoiceSession",
       "method": "GET",
-      "path": "/v1/sessions/{session_id}",
+      "path": "/v1/sessions/{sessionId}",
       "auth": "oauthResource",
       "authAudience": "tempera-voice",
       "pathParams": [
-        "session_id"
+        "sessionId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -14938,50 +14847,20 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Get Session."
     },
     {
-      "id": "listVoiceSessionActions",
-      "upstreamOperationId": "listVoiceSessionActions",
-      "method": "GET",
-      "path": "/v1/sessions/{session_id}/actions",
-      "auth": "oauthResource",
-      "authAudience": "tempera-voice",
-      "pathParams": [
-        "session_id"
-      ],
-      "pathParamTemplates": {},
-      "query": [
-        "status",
-        "limit",
-        "after"
-      ],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "requestBodyKind": "none",
-      "requestContentType": null,
-      "scope": "voice:read",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "read",
-      "description": "List Actions."
-    },
-    {
       "id": "listVoiceSessionEvents",
       "upstreamOperationId": "listVoiceSessionEvents",
       "method": "GET",
-      "path": "/v1/sessions/{session_id}/events",
+      "path": "/v1/sessions/{sessionId}/events",
       "auth": "oauthResource",
       "authAudience": "tempera-voice",
       "pathParams": [
-        "session_id"
+        "sessionId"
       ],
       "pathParamTemplates": {},
       "query": [
-        "after_sequence",
-        "limit"
+        "afterSequence",
+        "pageSize",
+        "pageToken"
       ],
       "requiredQuery": [],
       "headers": [],
@@ -14999,14 +14878,77 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "List Events."
     },
     {
-      "id": "endVoiceSession",
-      "upstreamOperationId": "endVoiceSession",
-      "method": "POST",
-      "path": "/v1/sessions/{session_id}:end",
+      "id": "listVoiceSessionActions",
+      "upstreamOperationId": "listVoiceSessionActions",
+      "method": "GET",
+      "path": "/v1/sessions/{sessionId}/actions",
       "auth": "oauthResource",
       "authAudience": "tempera-voice",
       "pathParams": [
-        "session_id"
+        "sessionId"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "status",
+        "pageSize",
+        "pageToken"
+      ],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "voice:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "List Actions."
+    },
+    {
+      "id": "resolveVoiceAction",
+      "upstreamOperationId": "resolveVoiceAction",
+      "method": "POST",
+      "path": "/v1/actions/{actionId}:resolve",
+      "auth": "oauthResource",
+      "authAudience": "tempera-voice",
+      "pathParams": [
+        "actionId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [
+        "approved",
+        "note"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "approved"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "voice:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Resolve Action."
+    },
+    {
+      "id": "endVoiceSession",
+      "upstreamOperationId": "endVoiceSession",
+      "method": "POST",
+      "path": "/v1/sessions/{sessionId}:end",
+      "auth": "oauthResource",
+      "authAudience": "tempera-voice",
+      "pathParams": [
+        "sessionId"
       ],
       "pathParamTemplates": {},
       "query": [],
@@ -15041,11 +14983,11 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "headers": [],
       "requiredHeaders": [],
       "body": [
-        "session_ids"
+        "sessionIds"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "session_ids"
+        "sessionIds"
       ],
       "bodyDefaults": {},
       "requestBodyKind": "json",
@@ -15055,16 +14997,290 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "prepareCommitRequired": false,
       "safeRetry": "none",
       "description": "Export Sessions."
+    },
+    {
+      "id": "uploadVoiceArtifact",
+      "upstreamOperationId": "uploadVoiceArtifact",
+      "method": "POST",
+      "path": "/v1/artifacts:upload",
+      "auth": "oauthResource",
+      "authAudience": "tempera-voice",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [
+        "name",
+        "contentBase64",
+        "mediaType",
+        "classification"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "name",
+        "contentBase64"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "voice:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Upload Artifact."
+    },
+    {
+      "id": "downloadVoiceArtifact",
+      "upstreamOperationId": "downloadVoiceArtifact",
+      "method": "GET",
+      "path": "/v1/artifacts/{reference}",
+      "auth": "oauthResource",
+      "authAudience": "tempera-voice",
+      "pathParams": [
+        "reference"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "voice:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Download Artifact."
+    },
+    {
+      "id": "listVoiceEvalProfiles",
+      "upstreamOperationId": "listVoiceEvalProfiles",
+      "method": "GET",
+      "path": "/v1/eval-profiles",
+      "auth": "oauthResource",
+      "authAudience": "tempera-voice",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "eval:run",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "List Eval Profiles."
+    },
+    {
+      "id": "sealVoiceEvalResult",
+      "upstreamOperationId": "sealVoiceEvalResult",
+      "method": "POST",
+      "path": "/v1/evals/results:seal",
+      "auth": "oauthResource",
+      "authAudience": "tempera-voice",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [
+        "profileId",
+        "draft"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "profileId",
+        "draft"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "eval:run",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Seal Eval Result."
+    },
+    {
+      "id": "importVoiceEvalResult",
+      "upstreamOperationId": "importVoiceEvalResult",
+      "method": "POST",
+      "path": "/v1/evals/results:import",
+      "auth": "oauthResource",
+      "authAudience": "tempera-voice",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [
+        "profileId",
+        "sealedResultPath",
+        "artifacts",
+        "attestationPath",
+        "attestationSignaturePath",
+        "attestationPublicKeyPath"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "profileId",
+        "sealedResultPath",
+        "artifacts"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "eval:run",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Import Eval Result."
+    },
+    {
+      "id": "buildVoiceEvalBundle",
+      "upstreamOperationId": "buildVoiceEvalBundle",
+      "method": "POST",
+      "path": "/v1/evals/bundles:build",
+      "auth": "oauthResource",
+      "authAudience": "tempera-voice",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [
+        "profileId",
+        "adapterImportPath",
+        "adapterImportSignaturePath",
+        "adapterImportPublicKeyPath",
+        "releaseEvidencePath",
+        "exposureLedgerPath",
+        "redactionPolicyPath",
+        "guardrailsPath",
+        "preregistrationPath",
+        "bundleId",
+        "createdAt"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "profileId",
+        "adapterImportPath",
+        "adapterImportSignaturePath",
+        "adapterImportPublicKeyPath",
+        "releaseEvidencePath",
+        "exposureLedgerPath",
+        "redactionPolicyPath",
+        "guardrailsPath",
+        "preregistrationPath",
+        "bundleId"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "eval:run",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Build Eval Bundle."
+    },
+    {
+      "id": "createVoicePaletteHandoff",
+      "upstreamOperationId": "createVoicePaletteHandoff",
+      "method": "POST",
+      "path": "/v1/evals/palette-handoffs:create",
+      "auth": "oauthResource",
+      "authAudience": "tempera-voice",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [
+        "profileId",
+        "evidencePath",
+        "kind",
+        "signaturePath",
+        "publicKeyPath",
+        "tenantId",
+        "projectId",
+        "abPlanPath"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "profileId",
+        "evidencePath",
+        "kind",
+        "signaturePath",
+        "publicKeyPath",
+        "tenantId",
+        "projectId"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "eval:run",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Create Palette Handoff."
+    },
+    {
+      "id": "publishVoicePaletteHandoff",
+      "upstreamOperationId": "publishVoicePaletteHandoff",
+      "method": "POST",
+      "path": "/v1/evals/palette-handoffs:publish",
+      "auth": "oauthResource",
+      "authAudience": "tempera-voice",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [
+        "handoffPath"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "handoffPath"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "eval:run",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Publish Palette Handoff."
     }
   ],
   "temperaDropshipping": [
     {
-      "id": "updateBusinessWorkspace",
-      "upstreamOperationId": "updateBusinessWorkspace",
+      "id": "createStore",
+      "upstreamOperationId": "createStore",
       "method": "POST",
-      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces",
-      "auth": "oauthResource",
-      "authAudience": "tempera-dropshipping",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/stores",
+      "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "organization",
         "project",
@@ -15077,16 +15293,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "headers": [],
       "requiredHeaders": [],
       "body": [
-        "expected_revision",
-        "idempotency_key",
-        "profile_ref",
-        "profile_revision"
+        "id",
+        "displayName",
+        "channel"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "expected_revision",
-        "profile_ref",
-        "profile_revision"
+        "id",
+        "displayName"
       ],
       "bodyDefaults": {},
       "requestBodyKind": "json",
@@ -15094,18 +15308,51 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "scope": "orders:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
-      "safeRetry": "idempotent",
-      "description": "Put Workspace."
+      "safeRetry": "none",
+      "description": "Create Store."
     },
     {
-      "id": "getBusinessWorkspace",
-      "upstreamOperationId": "getBusinessWorkspace",
+      "id": "listStores",
+      "upstreamOperationId": "listStores",
       "method": "GET",
-      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspace_id}",
-      "auth": "oauthResource",
-      "authAudience": "tempera-dropshipping",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/stores",
+      "auth": "product",
+      "authAudience": null,
       "pathParams": [
-        "workspace_id",
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "pageToken",
+        "pageSize"
+      ],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "orders:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "List Stores."
+    },
+    {
+      "id": "getStore",
+      "upstreamOperationId": "getStore",
+      "method": "GET",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/stores/{storeId}",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "storeId",
         "organization",
         "project",
         "environment",
@@ -15126,18 +15373,16 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "read",
-      "description": "Get Workspace."
+      "description": "Get Store."
     },
     {
-      "id": "recordBusinessTaskReceipt",
-      "upstreamOperationId": "recordBusinessTaskReceipt",
+      "id": "createCatalogOffer",
+      "upstreamOperationId": "createCatalogOffer",
       "method": "POST",
-      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspace_id}/tasks/{task_id}/declared-receipts",
-      "auth": "oauthResource",
-      "authAudience": "tempera-dropshipping",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/catalog/offers",
+      "auth": "product",
+      "authAudience": null,
       "pathParams": [
-        "workspace_id",
-        "task_id",
         "organization",
         "project",
         "environment",
@@ -15146,145 +15391,47 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "pathParamTemplates": {},
       "query": [],
       "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
+      "headers": [
+        "Idempotency-Key"
+      ],
+      "requiredHeaders": [
+        "Idempotency-Key"
+      ],
       "body": [
-        "expected_revision",
-        "receipt"
+        "merchantId",
+        "productClassification",
+        "name",
+        "description",
+        "photoUrl",
+        "currency",
+        "unitAmountMinor",
+        "expiresAt"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "expected_revision",
-        "receipt"
+        "merchantId",
+        "productClassification",
+        "name",
+        "description",
+        "currency",
+        "unitAmountMinor"
       ],
       "bodyDefaults": {},
       "requestBodyKind": "json",
       "requestContentType": "application/json",
-      "scope": "orders:write",
+      "scope": "orders:commerce:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
-      "description": "Record Task Receipt."
-    },
-    {
-      "id": "prepareBusinessTask",
-      "upstreamOperationId": "prepareBusinessTask",
-      "method": "POST",
-      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspace_id}/tasks/{task_id}:prepare",
-      "auth": "oauthResource",
-      "authAudience": "tempera-dropshipping",
-      "pathParams": [
-        "workspace_id",
-        "task_id",
-        "organization",
-        "project",
-        "environment",
-        "site"
-      ],
-      "pathParamTemplates": {},
-      "query": [],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [
-        "draft",
-        "expected_revision"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "expected_revision",
-        "draft"
-      ],
-      "bodyDefaults": {},
-      "requestBodyKind": "json",
-      "requestContentType": "application/json",
-      "scope": "orders:write",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "none",
-      "description": "Prepare Task."
-    },
-    {
-      "id": "prepareBusinessBrowserTask",
-      "upstreamOperationId": "prepareBusinessBrowserTask",
-      "method": "POST",
-      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspace_id}/tasks/{task_id}:prepareBrowser",
-      "auth": "oauthResource",
-      "authAudience": "tempera-dropshipping",
-      "pathParams": [
-        "workspace_id",
-        "task_id",
-        "organization",
-        "project",
-        "environment",
-        "site"
-      ],
-      "pathParamTemplates": {},
-      "query": [],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [
-        "expected_revision"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "expected_revision"
-      ],
-      "bodyDefaults": {},
-      "requestBodyKind": "json",
-      "requestContentType": "application/json",
-      "scope": "orders:write",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "none",
-      "description": "Browser Task."
-    },
-    {
-      "id": "reviewBusinessTask",
-      "upstreamOperationId": "reviewBusinessTask",
-      "method": "POST",
-      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspace_id}/tasks/{task_id}:review",
-      "auth": "oauthResource",
-      "authAudience": "tempera-dropshipping",
-      "pathParams": [
-        "workspace_id",
-        "task_id",
-        "organization",
-        "project",
-        "environment",
-        "site"
-      ],
-      "pathParamTemplates": {},
-      "query": [],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [
-        "expected_revision",
-        "review"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "expected_revision",
-        "review"
-      ],
-      "bodyDefaults": {},
-      "requestBodyKind": "json",
-      "requestContentType": "application/json",
-      "scope": "orders:approve",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "none",
-      "description": "Review Task."
+      "description": "Create Catalog Offer."
     },
     {
       "id": "listCatalogOffers",
       "upstreamOperationId": "listCatalogOffers",
       "method": "GET",
       "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/catalog/offers",
-      "auth": "oauthResource",
-      "authAudience": "tempera-dropshipping",
+      "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "organization",
         "project",
@@ -15293,8 +15440,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [
-        "after",
-        "limit"
+        "pageToken",
+        "pageSize"
       ],
       "requiredQuery": [],
       "headers": [],
@@ -15312,64 +15459,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "List Catalog Offers."
     },
     {
-      "id": "createCatalogOffer",
-      "upstreamOperationId": "createCatalogOffer",
-      "method": "POST",
-      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/catalog/offers",
-      "auth": "oauthResource",
-      "authAudience": "tempera-dropshipping",
-      "pathParams": [
-        "organization",
-        "project",
-        "environment",
-        "site"
-      ],
-      "pathParamTemplates": {},
-      "query": [],
-      "requiredQuery": [],
-      "headers": [
-        "Idempotency-Key"
-      ],
-      "requiredHeaders": [
-        "Idempotency-Key"
-      ],
-      "body": [
-        "currency",
-        "description",
-        "expires_at",
-        "merchant_id",
-        "name",
-        "photo_url",
-        "product_classification",
-        "unit_amount_minor"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "merchant_id",
-        "product_classification",
-        "name",
-        "description",
-        "currency",
-        "unit_amount_minor"
-      ],
-      "bodyDefaults": {},
-      "requestBodyKind": "json",
-      "requestContentType": "application/json",
-      "scope": "orders:commerce:write",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "none",
-      "description": "Create Catalog Offer."
-    },
-    {
       "id": "getCatalogOffer",
       "upstreamOperationId": "getCatalogOffer",
       "method": "GET",
-      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/catalog/offers/{offer_id}",
-      "auth": "oauthResource",
-      "authAudience": "tempera-dropshipping",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/catalog/offers/{offerId}",
+      "auth": "product",
+      "authAudience": null,
       "pathParams": [
-        "offer_id",
+        "offerId",
         "organization",
         "project",
         "environment",
@@ -15393,12 +15490,54 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Get Catalog Offer."
     },
     {
-      "id": "listOrderEventProjections",
-      "upstreamOperationId": "listOrderEventProjections",
+      "id": "createSaleOrder",
+      "upstreamOperationId": "createSaleOrder",
+      "method": "POST",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [
+        "Idempotency-Key"
+      ],
+      "requiredHeaders": [
+        "Idempotency-Key"
+      ],
+      "body": [
+        "offerId",
+        "offerRevision",
+        "quantity"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "offerId",
+        "offerRevision",
+        "quantity"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "orders:commerce:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Create Sale Order."
+    },
+    {
+      "id": "listSaleOrders",
+      "upstreamOperationId": "listSaleOrders",
       "method": "GET",
-      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/event-projections",
-      "auth": "oauthResource",
-      "authAudience": "tempera-dropshipping",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders",
+      "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "organization",
         "project",
@@ -15407,8 +15546,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [
-        "cursor",
-        "limit"
+        "pageToken",
+        "pageSize"
       ],
       "requiredQuery": [],
       "headers": [],
@@ -15423,15 +15562,46 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "read",
-      "description": "List Event Projections."
+      "description": "List Sale Orders."
+    },
+    {
+      "id": "getSaleOrder",
+      "upstreamOperationId": "getSaleOrder",
+      "method": "GET",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders/{orderId}",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "orderId",
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "orders:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Get Sale Order."
     },
     {
       "id": "listEvents",
       "upstreamOperationId": "listEvents",
       "method": "GET",
       "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/events",
-      "auth": "oauthResource",
-      "authAudience": "tempera-dropshipping",
+      "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "organization",
         "project",
@@ -15440,8 +15610,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [
-        "after",
-        "limit"
+        "pageToken",
+        "pageSize"
       ],
       "requiredQuery": [],
       "headers": [],
@@ -15459,12 +15629,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "List Events."
     },
     {
-      "id": "listInbox",
-      "upstreamOperationId": "listInbox",
+      "id": "listOrderEventProjections",
+      "upstreamOperationId": "listOrderEventProjections",
       "method": "GET",
-      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/inbox",
-      "auth": "oauthResource",
-      "authAudience": "tempera-dropshipping",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/event-projections",
+      "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "organization",
         "project",
@@ -15473,8 +15643,109 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       ],
       "pathParamTemplates": {},
       "query": [
-        "after",
-        "limit"
+        "pageToken",
+        "pageSize"
+      ],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "orders:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "List Event Projections."
+    },
+    {
+      "id": "listOrders",
+      "upstreamOperationId": "listOrders",
+      "method": "GET",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "pageToken",
+        "pageSize"
+      ],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "orders:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "List Orders."
+    },
+    {
+      "id": "createOrder",
+      "upstreamOperationId": "createOrder",
+      "method": "POST",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [
+        "expectedRevision",
+        "record"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "record"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "orders:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Create Order."
+    },
+    {
+      "id": "listInbox",
+      "upstreamOperationId": "listInbox",
+      "method": "GET",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/inbox",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "pageToken",
+        "pageSize"
       ],
       "requiredQuery": [],
       "headers": [],
@@ -15496,8 +15767,8 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "upstreamOperationId": "getBusinessSummary",
       "method": "GET",
       "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/operating-summary",
-      "auth": "oauthResource",
-      "authAudience": "tempera-dropshipping",
+      "auth": "product",
+      "authAudience": null,
       "pathParams": [
         "organization",
         "project",
@@ -15522,82 +15793,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Operating Summary."
     },
     {
-      "id": "listOrders",
-      "upstreamOperationId": "listOrders",
-      "method": "GET",
-      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders",
-      "auth": "oauthResource",
-      "authAudience": "tempera-dropshipping",
-      "pathParams": [
-        "organization",
-        "project",
-        "environment",
-        "site"
-      ],
-      "pathParamTemplates": {},
-      "query": [
-        "after",
-        "limit"
-      ],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "requestBodyKind": "none",
-      "requestContentType": null,
-      "scope": "orders:read",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "read",
-      "description": "List Orders."
-    },
-    {
-      "id": "createOrder",
-      "upstreamOperationId": "createOrder",
-      "method": "POST",
-      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders",
-      "auth": "oauthResource",
-      "authAudience": "tempera-dropshipping",
-      "pathParams": [
-        "organization",
-        "project",
-        "environment",
-        "site"
-      ],
-      "pathParamTemplates": {},
-      "query": [],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [
-        "expected_revision",
-        "record"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "record"
-      ],
-      "bodyDefaults": {},
-      "requestBodyKind": "json",
-      "requestContentType": "application/json",
-      "scope": "orders:write",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "none",
-      "description": "Create Order."
-    },
-    {
       "id": "getOrder",
       "upstreamOperationId": "getOrder",
       "method": "GET",
-      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{order_id}",
-      "auth": "oauthResource",
-      "authAudience": "tempera-dropshipping",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{orderId}",
+      "auth": "product",
+      "authAudience": null,
       "pathParams": [
-        "order_id",
+        "orderId",
         "organization",
         "project",
         "environment",
@@ -15624,28 +15827,30 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "updateOrder",
       "upstreamOperationId": "updateOrder",
       "method": "PATCH",
-      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{order_id}",
-      "auth": "oauthResource",
-      "authAudience": "tempera-dropshipping",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{orderId}",
+      "auth": "product",
+      "authAudience": null,
       "pathParams": [
-        "order_id",
+        "orderId",
         "organization",
         "project",
         "environment",
         "site"
       ],
       "pathParamTemplates": {},
-      "query": [],
+      "query": [
+        "updateMask"
+      ],
       "requiredQuery": [],
       "headers": [],
       "requiredHeaders": [],
       "body": [
-        "expected_revision",
+        "expectedRevision",
         "record"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "expected_revision",
+        "expectedRevision",
         "record"
       ],
       "bodyDefaults": {},
@@ -15658,85 +15863,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Update Order."
     },
     {
-      "id": "listOrderAuditEvents",
-      "upstreamOperationId": "listOrderAuditEvents",
-      "method": "GET",
-      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{order_id}/audit",
-      "auth": "oauthResource",
-      "authAudience": "tempera-dropshipping",
-      "pathParams": [
-        "order_id",
-        "organization",
-        "project",
-        "environment",
-        "site"
-      ],
-      "pathParamTemplates": {},
-      "query": [
-        "after",
-        "limit"
-      ],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "requestBodyKind": "none",
-      "requestContentType": null,
-      "scope": "orders:read",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "read",
-      "description": "Audit."
-    },
-    {
-      "id": "prepareProposal",
-      "upstreamOperationId": "prepareProposal",
-      "method": "POST",
-      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{order_id}/proposals",
-      "auth": "oauthResource",
-      "authAudience": "tempera-dropshipping",
-      "pathParams": [
-        "order_id",
-        "organization",
-        "project",
-        "environment",
-        "site"
-      ],
-      "pathParamTemplates": {},
-      "query": [],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [
-        "expected_revision",
-        "quote_id"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "expected_revision",
-        "quote_id"
-      ],
-      "bodyDefaults": {},
-      "requestBodyKind": "json",
-      "requestContentType": "application/json",
-      "scope": "orders:write",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "none",
-      "description": "Prepare."
-    },
-    {
       "id": "evaluateOrder",
       "upstreamOperationId": "evaluateOrder",
       "method": "POST",
-      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{order_id}:evaluate",
-      "auth": "oauthResource",
-      "authAudience": "tempera-dropshipping",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{orderId}:evaluate",
+      "auth": "product",
+      "authAudience": null,
       "pathParams": [
-        "order_id",
+        "orderId",
         "organization",
         "project",
         "environment",
@@ -15748,11 +15882,11 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "headers": [],
       "requiredHeaders": [],
       "body": [
-        "expected_revision"
+        "expectedRevision"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "expected_revision"
+        "expectedRevision"
       ],
       "bodyDefaults": {},
       "requestBodyKind": "json",
@@ -15764,14 +15898,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Evaluate Order."
     },
     {
-      "id": "reconcileOrder",
-      "upstreamOperationId": "reconcileOrder",
+      "id": "prepareProposal",
+      "upstreamOperationId": "prepareProposal",
       "method": "POST",
-      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{order_id}:reconcile",
-      "auth": "oauthResource",
-      "authAudience": "tempera-dropshipping",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{orderId}/proposals",
+      "auth": "product",
+      "authAudience": null,
       "pathParams": [
-        "order_id",
+        "orderId",
         "organization",
         "project",
         "environment",
@@ -15783,34 +15917,32 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "headers": [],
       "requiredHeaders": [],
       "body": [
-        "evidence_ref",
-        "expected_revision",
-        "purchase_state"
+        "expectedRevision",
+        "quoteId"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "expected_revision",
-        "purchase_state",
-        "evidence_ref"
+        "expectedRevision",
+        "quoteId"
       ],
       "bodyDefaults": {},
       "requestBodyKind": "json",
       "requestContentType": "application/json",
-      "scope": "orders:approve",
+      "scope": "orders:write",
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
-      "description": "Reconcile."
+      "description": "Prepare."
     },
     {
       "id": "getProposal",
       "upstreamOperationId": "getProposal",
       "method": "GET",
-      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/proposals/{proposal_id}",
-      "auth": "oauthResource",
-      "authAudience": "tempera-dropshipping",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/proposals/{proposalId}",
+      "auth": "product",
+      "authAudience": null,
       "pathParams": [
-        "proposal_id",
+        "proposalId",
         "organization",
         "project",
         "environment",
@@ -15834,55 +15966,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Get Proposal."
     },
     {
-      "id": "recordManualOutcome",
-      "upstreamOperationId": "recordManualOutcome",
-      "method": "POST",
-      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/proposals/{proposal_id}/manual-outcome",
-      "auth": "oauthResource",
-      "authAudience": "tempera-dropshipping",
-      "pathParams": [
-        "proposal_id",
-        "organization",
-        "project",
-        "environment",
-        "site"
-      ],
-      "pathParamTemplates": {},
-      "query": [],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [
-        "evidence_ref",
-        "expected_revision",
-        "outcome",
-        "proposal_digest"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "expected_revision",
-        "proposal_digest",
-        "outcome",
-        "evidence_ref"
-      ],
-      "bodyDefaults": {},
-      "requestBodyKind": "json",
-      "requestContentType": "application/json",
-      "scope": "orders:write",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "none",
-      "description": "Outcome."
-    },
-    {
       "id": "approveProposal",
       "upstreamOperationId": "approveProposal",
       "method": "POST",
-      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/proposals/{proposal_id}:approve",
-      "auth": "oauthResource",
-      "authAudience": "tempera-dropshipping",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/proposals/{proposalId}:approve",
+      "auth": "product",
+      "authAudience": null,
       "pathParams": [
-        "proposal_id",
+        "proposalId",
         "organization",
         "project",
         "environment",
@@ -15894,13 +15985,13 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "headers": [],
       "requiredHeaders": [],
       "body": [
-        "expected_revision",
-        "proposal_digest"
+        "expectedRevision",
+        "proposalDigest"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "expected_revision",
-        "proposal_digest"
+        "expectedRevision",
+        "proposalDigest"
       ],
       "bodyDefaults": {},
       "requestBodyKind": "json",
@@ -15915,11 +16006,11 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "executeProposal",
       "upstreamOperationId": "executeProposal",
       "method": "POST",
-      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/proposals/{proposal_id}:execute",
-      "auth": "oauthResource",
-      "authAudience": "tempera-dropshipping",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/proposals/{proposalId}:execute",
+      "auth": "product",
+      "authAudience": null,
       "pathParams": [
-        "proposal_id",
+        "proposalId",
         "organization",
         "project",
         "environment",
@@ -15931,13 +16022,13 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "headers": [],
       "requiredHeaders": [],
       "body": [
-        "expected_revision",
-        "proposal_digest"
+        "expectedRevision",
+        "proposalDigest"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "expected_revision",
-        "proposal_digest"
+        "expectedRevision",
+        "proposalDigest"
       ],
       "bodyDefaults": {},
       "requestBodyKind": "json",
@@ -15949,152 +16040,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Execute."
     },
     {
-      "id": "listSaleOrders",
-      "upstreamOperationId": "listSaleOrders",
-      "method": "GET",
-      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders",
-      "auth": "oauthResource",
-      "authAudience": "tempera-dropshipping",
-      "pathParams": [
-        "organization",
-        "project",
-        "environment",
-        "site"
-      ],
-      "pathParamTemplates": {},
-      "query": [
-        "after",
-        "limit"
-      ],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "requestBodyKind": "none",
-      "requestContentType": null,
-      "scope": "orders:read",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "read",
-      "description": "List Sale Orders."
-    },
-    {
-      "id": "createSaleOrder",
-      "upstreamOperationId": "createSaleOrder",
+      "id": "recordManualOutcome",
+      "upstreamOperationId": "recordManualOutcome",
       "method": "POST",
-      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders",
-      "auth": "oauthResource",
-      "authAudience": "tempera-dropshipping",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/proposals/{proposalId}/manual-outcome",
+      "auth": "product",
+      "authAudience": null,
       "pathParams": [
-        "organization",
-        "project",
-        "environment",
-        "site"
-      ],
-      "pathParamTemplates": {},
-      "query": [],
-      "requiredQuery": [],
-      "headers": [
-        "Idempotency-Key"
-      ],
-      "requiredHeaders": [
-        "Idempotency-Key"
-      ],
-      "body": [
-        "offer_id",
-        "offer_revision",
-        "quantity"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "offer_id",
-        "offer_revision",
-        "quantity"
-      ],
-      "bodyDefaults": {},
-      "requestBodyKind": "json",
-      "requestContentType": "application/json",
-      "scope": "orders:commerce:write",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "none",
-      "description": "Create Sale Order."
-    },
-    {
-      "id": "getSaleOrder",
-      "upstreamOperationId": "getSaleOrder",
-      "method": "GET",
-      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders/{order_id}",
-      "auth": "oauthResource",
-      "authAudience": "tempera-dropshipping",
-      "pathParams": [
-        "order_id",
-        "organization",
-        "project",
-        "environment",
-        "site"
-      ],
-      "pathParamTemplates": {},
-      "query": [],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "requestBodyKind": "none",
-      "requestContentType": null,
-      "scope": "orders:read",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "read",
-      "description": "Get Sale Order."
-    },
-    {
-      "id": "listStores",
-      "upstreamOperationId": "listStores",
-      "method": "GET",
-      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/stores",
-      "auth": "oauthResource",
-      "authAudience": "tempera-dropshipping",
-      "pathParams": [
-        "organization",
-        "project",
-        "environment",
-        "site"
-      ],
-      "pathParamTemplates": {},
-      "query": [
-        "after",
-        "limit"
-      ],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "requestBodyKind": "none",
-      "requestContentType": null,
-      "scope": "orders:read",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "read",
-      "description": "List Stores."
-    },
-    {
-      "id": "createStore",
-      "upstreamOperationId": "createStore",
-      "method": "POST",
-      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/stores",
-      "auth": "oauthResource",
-      "authAudience": "tempera-dropshipping",
-      "pathParams": [
+        "proposalId",
         "organization",
         "project",
         "environment",
@@ -16106,14 +16059,17 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "headers": [],
       "requiredHeaders": [],
       "body": [
-        "channel",
-        "display_name",
-        "id"
+        "expectedRevision",
+        "proposalDigest",
+        "outcome",
+        "evidenceRef"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "id",
-        "display_name"
+        "expectedRevision",
+        "proposalDigest",
+        "outcome",
+        "evidenceRef"
       ],
       "bodyDefaults": {},
       "requestBodyKind": "json",
@@ -16122,17 +16078,243 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "none",
-      "description": "Create Store."
+      "description": "Outcome."
     },
     {
-      "id": "getStore",
-      "upstreamOperationId": "getStore",
-      "method": "GET",
-      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/stores/{store_id}",
-      "auth": "oauthResource",
-      "authAudience": "tempera-dropshipping",
+      "id": "reconcileOrder",
+      "upstreamOperationId": "reconcileOrder",
+      "method": "POST",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{orderId}:reconcile",
+      "auth": "product",
+      "authAudience": null,
       "pathParams": [
-        "store_id",
+        "orderId",
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [
+        "expectedRevision",
+        "purchaseState",
+        "evidenceRef"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "expectedRevision",
+        "purchaseState",
+        "evidenceRef"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "orders:approve",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Reconcile."
+    },
+    {
+      "id": "listOrderAuditEvents",
+      "upstreamOperationId": "listOrderAuditEvents",
+      "method": "GET",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{orderId}/audit",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "orderId",
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "pageToken",
+        "pageSize"
+      ],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "orders:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Audit."
+    },
+    {
+      "id": "updateBusinessWorkspace",
+      "upstreamOperationId": "updateBusinessWorkspace",
+      "method": "POST",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [
+        "expectedRevision",
+        "profileRef",
+        "profileRevision",
+        "idempotencyKey"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "expectedRevision",
+        "profileRef",
+        "profileRevision"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "orders:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
+      "description": "Put Workspace."
+    },
+    {
+      "id": "prepareBusinessTask",
+      "upstreamOperationId": "prepareBusinessTask",
+      "method": "POST",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspaceId}/tasks/{taskId}:prepare",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "workspaceId",
+        "taskId",
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [
+        "expectedRevision",
+        "draft"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "expectedRevision",
+        "draft"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "orders:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Prepare Task."
+    },
+    {
+      "id": "reviewBusinessTask",
+      "upstreamOperationId": "reviewBusinessTask",
+      "method": "POST",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspaceId}/tasks/{taskId}:review",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "workspaceId",
+        "taskId",
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [
+        "expectedRevision",
+        "review"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "expectedRevision",
+        "review"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "orders:approve",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Review Task."
+    },
+    {
+      "id": "recordBusinessTaskReceipt",
+      "upstreamOperationId": "recordBusinessTaskReceipt",
+      "method": "POST",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspaceId}/tasks/{taskId}/declared-receipts",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "workspaceId",
+        "taskId",
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [
+        "expectedRevision",
+        "receipt"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "expectedRevision",
+        "receipt"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "orders:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Record Task Receipt."
+    },
+    {
+      "id": "getBusinessWorkspace",
+      "upstreamOperationId": "getBusinessWorkspace",
+      "method": "GET",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspaceId}",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "workspaceId",
         "organization",
         "project",
         "environment",
@@ -16153,17 +16335,343 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "physicalAction": false,
       "prepareCommitRequired": false,
       "safeRetry": "read",
-      "description": "Get Store."
+      "description": "Get Workspace."
+    },
+    {
+      "id": "prepareBusinessBrowserTask",
+      "upstreamOperationId": "prepareBusinessBrowserTask",
+      "method": "POST",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspaceId}/tasks/{taskId}:prepareBrowser",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "workspaceId",
+        "taskId",
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [
+        "expectedRevision"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "expectedRevision"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "orders:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Browser Task."
     }
   ],
   "temperaBusiness": [
     {
+      "id": "businessCapabilities",
+      "upstreamOperationId": "business.capabilities",
+      "method": "GET",
+      "path": "/v1/capabilities",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "business:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Capabilities."
+    },
+    {
+      "id": "businessCasesCreate",
+      "upstreamOperationId": "business.cases.create",
+      "method": "POST",
+      "path": "/v1/cases",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [
+        "idempotencyKey",
+        "intake",
+        "profileRef"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "idempotencyKey",
+        "intake"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "business:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
+      "description": "Create."
+    },
+    {
+      "id": "businessCasesList",
+      "upstreamOperationId": "business.cases.list",
+      "method": "GET",
+      "path": "/v1/cases",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [
+        "pageToken",
+        "pageSize"
+      ],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "business:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Listing."
+    },
+    {
+      "id": "businessCasesGet",
+      "upstreamOperationId": "business.cases.get",
+      "method": "GET",
+      "path": "/v1/cases/{caseId}",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "caseId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "business:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Get Case."
+    },
+    {
+      "id": "businessCasesUpdateIntake",
+      "upstreamOperationId": "business.cases.updateIntake",
+      "method": "POST",
+      "path": "/v1/cases/{caseId}:updateIntake",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "caseId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [
+        "idempotencyKey",
+        "expectedRevision",
+        "intake"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "idempotencyKey",
+        "expectedRevision",
+        "intake"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "business:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
+      "description": "Update."
+    },
+    {
+      "id": "businessCasesPrepareDraft",
+      "upstreamOperationId": "business.cases.prepareDraft",
+      "method": "POST",
+      "path": "/v1/cases/{caseId}:prepareDraft",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "caseId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [
+        "idempotencyKey",
+        "expectedRevision",
+        "draft"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "idempotencyKey",
+        "expectedRevision",
+        "draft"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "business:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
+      "description": "Prepare."
+    },
+    {
+      "id": "businessCasesReviewDraft",
+      "upstreamOperationId": "business.cases.reviewDraft",
+      "method": "POST",
+      "path": "/v1/cases/{caseId}:reviewDraft",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "caseId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [
+        "idempotencyKey",
+        "expectedRevision",
+        "preparationDigest",
+        "decision"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "idempotencyKey",
+        "expectedRevision",
+        "preparationDigest",
+        "decision"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "business:review",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
+      "description": "Review."
+    },
+    {
+      "id": "businessCasesRecordDeclaredReceipt",
+      "upstreamOperationId": "business.cases.recordDeclaredReceipt",
+      "method": "POST",
+      "path": "/v1/cases/{caseId}/declaredReceipts",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "caseId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [
+        "idempotencyKey",
+        "expectedRevision",
+        "preparationDigest",
+        "receiptRef",
+        "owner",
+        "reportedOutcome"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "idempotencyKey",
+        "expectedRevision",
+        "preparationDigest",
+        "receiptRef",
+        "owner",
+        "reportedOutcome"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "business:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
+      "description": "Receipt."
+    },
+    {
+      "id": "businessCasesAudit",
+      "upstreamOperationId": "business.cases.auditEvents.list",
+      "method": "GET",
+      "path": "/v1/cases/{caseId}/audit",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "caseId"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "pageToken",
+        "pageSize"
+      ],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "business:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Audit."
+    },
+    {
       "id": "businessProfileGet",
       "upstreamOperationId": "business.profile.get",
       "method": "GET",
-      "path": "/v1/business-profile",
-      "auth": "oauthResource",
-      "authAudience": "tempera-business",
+      "path": "/v1/businessProfile",
+      "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -16183,17 +16691,83 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Profile."
     },
     {
-      "id": "businessProfileHistory",
-      "upstreamOperationId": "business.profile.history",
+      "id": "businessProfileInitialize",
+      "upstreamOperationId": "business.profile.initialize",
+      "method": "POST",
+      "path": "/v1/businessProfile:initialize",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [
+        "idempotencyKey",
+        "facts",
+        "references",
+        "availableServices"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "idempotencyKey"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "business:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
+      "description": "Initialize."
+    },
+    {
+      "id": "businessProfilePatch",
+      "upstreamOperationId": "business.profile.patch",
+      "method": "POST",
+      "path": "/v1/businessProfile:patch",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [
+        "idempotencyKey",
+        "expectedRevision",
+        "facts",
+        "references",
+        "availableServices"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "idempotencyKey",
+        "expectedRevision"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "business:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
+      "description": "Patch."
+    },
+    {
+      "id": "businessProfileHistoryList",
+      "upstreamOperationId": "business.profile.history.list",
       "method": "GET",
-      "path": "/v1/business-profile/history",
-      "auth": "oauthResource",
-      "authAudience": "tempera-business",
+      "path": "/v1/businessProfile/history",
+      "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [
-        "after",
-        "limit"
+        "pageToken",
+        "pageSize"
       ],
       "requiredQuery": [],
       "headers": [],
@@ -16214,9 +16788,9 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "id": "businessProfileClear",
       "upstreamOperationId": "business.profile.clear",
       "method": "POST",
-      "path": "/v1/business-profile:clear",
-      "auth": "oauthResource",
-      "authAudience": "tempera-business",
+      "path": "/v1/businessProfile:clear",
+      "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -16224,14 +16798,14 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "headers": [],
       "requiredHeaders": [],
       "body": [
-        "expected_revision",
-        "idempotency_key",
+        "idempotencyKey",
+        "expectedRevision",
         "reason"
       ],
       "forbiddenBody": [],
       "requiredBody": [
-        "idempotency_key",
-        "expected_revision"
+        "idempotencyKey",
+        "expectedRevision"
       ],
       "bodyDefaults": {},
       "requestBodyKind": "json",
@@ -16243,368 +16817,12 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Clear."
     },
     {
-      "id": "businessProfileInitialize",
-      "upstreamOperationId": "business.profile.initialize",
-      "method": "POST",
-      "path": "/v1/business-profile:initialize",
-      "auth": "oauthResource",
-      "authAudience": "tempera-business",
-      "pathParams": [],
-      "pathParamTemplates": {},
-      "query": [],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [
-        "available_services",
-        "facts",
-        "idempotency_key",
-        "references"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "idempotency_key"
-      ],
-      "bodyDefaults": {},
-      "requestBodyKind": "json",
-      "requestContentType": "application/json",
-      "scope": "business:write",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "idempotent",
-      "description": "Initialize."
-    },
-    {
-      "id": "businessProfilePatch",
-      "upstreamOperationId": "business.profile.patch",
-      "method": "POST",
-      "path": "/v1/business-profile:patch",
-      "auth": "oauthResource",
-      "authAudience": "tempera-business",
-      "pathParams": [],
-      "pathParamTemplates": {},
-      "query": [],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [
-        "available_services",
-        "expected_revision",
-        "facts",
-        "idempotency_key",
-        "references"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "idempotency_key",
-        "expected_revision"
-      ],
-      "bodyDefaults": {},
-      "requestBodyKind": "json",
-      "requestContentType": "application/json",
-      "scope": "business:write",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "idempotent",
-      "description": "Patch."
-    },
-    {
-      "id": "businessCapabilities",
-      "upstreamOperationId": "business.capabilities",
-      "method": "GET",
-      "path": "/v1/capabilities",
-      "auth": "oauthResource",
-      "authAudience": "tempera-business",
-      "pathParams": [],
-      "pathParamTemplates": {},
-      "query": [],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "requestBodyKind": "none",
-      "requestContentType": null,
-      "scope": "business:read",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "read",
-      "description": "Capabilities."
-    },
-    {
-      "id": "businessCasesList",
-      "upstreamOperationId": "business.cases.list",
-      "method": "GET",
-      "path": "/v1/cases",
-      "auth": "oauthResource",
-      "authAudience": "tempera-business",
-      "pathParams": [],
-      "pathParamTemplates": {},
-      "query": [
-        "after",
-        "limit"
-      ],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "requestBodyKind": "none",
-      "requestContentType": null,
-      "scope": "business:read",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "read",
-      "description": "Listing."
-    },
-    {
-      "id": "businessCasesCreate",
-      "upstreamOperationId": "business.cases.create",
-      "method": "POST",
-      "path": "/v1/cases",
-      "auth": "oauthResource",
-      "authAudience": "tempera-business",
-      "pathParams": [],
-      "pathParamTemplates": {},
-      "query": [],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [
-        "idempotency_key",
-        "intake",
-        "profile_ref"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "idempotency_key",
-        "intake"
-      ],
-      "bodyDefaults": {},
-      "requestBodyKind": "json",
-      "requestContentType": "application/json",
-      "scope": "business:write",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "idempotent",
-      "description": "Create."
-    },
-    {
-      "id": "businessCasesGet",
-      "upstreamOperationId": "business.cases.get",
-      "method": "GET",
-      "path": "/v1/cases/{case_id}",
-      "auth": "oauthResource",
-      "authAudience": "tempera-business",
-      "pathParams": [
-        "case_id"
-      ],
-      "pathParamTemplates": {},
-      "query": [],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "requestBodyKind": "none",
-      "requestContentType": null,
-      "scope": "business:read",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "read",
-      "description": "Get Case."
-    },
-    {
-      "id": "businessCasesAudit",
-      "upstreamOperationId": "business.cases.audit",
-      "method": "GET",
-      "path": "/v1/cases/{case_id}/audit",
-      "auth": "oauthResource",
-      "authAudience": "tempera-business",
-      "pathParams": [
-        "case_id"
-      ],
-      "pathParamTemplates": {},
-      "query": [
-        "after",
-        "limit"
-      ],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [],
-      "forbiddenBody": [],
-      "requiredBody": [],
-      "bodyDefaults": {},
-      "requestBodyKind": "none",
-      "requestContentType": null,
-      "scope": "business:read",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "read",
-      "description": "Audit."
-    },
-    {
-      "id": "businessCasesRecordDeclaredReceipt",
-      "upstreamOperationId": "business.cases.recordDeclaredReceipt",
-      "method": "POST",
-      "path": "/v1/cases/{case_id}/declared-receipts",
-      "auth": "oauthResource",
-      "authAudience": "tempera-business",
-      "pathParams": [
-        "case_id"
-      ],
-      "pathParamTemplates": {},
-      "query": [],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [
-        "expected_revision",
-        "idempotency_key",
-        "owner",
-        "preparation_digest",
-        "receipt_ref",
-        "reported_outcome"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "idempotency_key",
-        "expected_revision",
-        "preparation_digest",
-        "receipt_ref",
-        "owner",
-        "reported_outcome"
-      ],
-      "bodyDefaults": {},
-      "requestBodyKind": "json",
-      "requestContentType": "application/json",
-      "scope": "business:write",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "idempotent",
-      "description": "Receipt."
-    },
-    {
-      "id": "businessCasesPrepareDraft",
-      "upstreamOperationId": "business.cases.prepareDraft",
-      "method": "POST",
-      "path": "/v1/cases/{case_id}:prepareDraft",
-      "auth": "oauthResource",
-      "authAudience": "tempera-business",
-      "pathParams": [
-        "case_id"
-      ],
-      "pathParamTemplates": {},
-      "query": [],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [
-        "draft",
-        "expected_revision",
-        "idempotency_key"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "idempotency_key",
-        "expected_revision",
-        "draft"
-      ],
-      "bodyDefaults": {},
-      "requestBodyKind": "json",
-      "requestContentType": "application/json",
-      "scope": "business:write",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "idempotent",
-      "description": "Prepare."
-    },
-    {
-      "id": "businessCasesReviewDraft",
-      "upstreamOperationId": "business.cases.reviewDraft",
-      "method": "POST",
-      "path": "/v1/cases/{case_id}:reviewDraft",
-      "auth": "oauthResource",
-      "authAudience": "tempera-business",
-      "pathParams": [
-        "case_id"
-      ],
-      "pathParamTemplates": {},
-      "query": [],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [
-        "decision",
-        "expected_revision",
-        "idempotency_key",
-        "preparation_digest"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "idempotency_key",
-        "expected_revision",
-        "preparation_digest",
-        "decision"
-      ],
-      "bodyDefaults": {},
-      "requestBodyKind": "json",
-      "requestContentType": "application/json",
-      "scope": "business:review",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "idempotent",
-      "description": "Review."
-    },
-    {
-      "id": "businessCasesUpdateIntake",
-      "upstreamOperationId": "business.cases.updateIntake",
-      "method": "POST",
-      "path": "/v1/cases/{case_id}:updateIntake",
-      "auth": "oauthResource",
-      "authAudience": "tempera-business",
-      "pathParams": [
-        "case_id"
-      ],
-      "pathParamTemplates": {},
-      "query": [],
-      "requiredQuery": [],
-      "headers": [],
-      "requiredHeaders": [],
-      "body": [
-        "expected_revision",
-        "idempotency_key",
-        "intake"
-      ],
-      "forbiddenBody": [],
-      "requiredBody": [
-        "idempotency_key",
-        "expected_revision",
-        "intake"
-      ],
-      "bodyDefaults": {},
-      "requestBodyKind": "json",
-      "requestContentType": "application/json",
-      "scope": "business:write",
-      "physicalAction": false,
-      "prepareCommitRequired": false,
-      "safeRetry": "idempotent",
-      "description": "Update."
-    },
-    {
       "id": "businessOperatingState",
       "upstreamOperationId": "business.operatingState",
       "method": "GET",
-      "path": "/v1/operating-state",
-      "auth": "oauthResource",
-      "authAudience": "tempera-business",
+      "path": "/v1/operatingState",
+      "auth": "product",
+      "authAudience": null,
       "pathParams": [],
       "pathParamTemplates": {},
       "query": [],
@@ -16622,6 +16840,253 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "prepareCommitRequired": false,
       "safeRetry": "read",
       "description": "Operating State."
+    }
+  ],
+  "temperaConnectors": [
+    {
+      "id": "healthCheck",
+      "upstreamOperationId": "health.check",
+      "method": "GET",
+      "path": "/healthz",
+      "auth": "none",
+      "authAudience": null,
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Read-only service liveness endpoint."
+    },
+    {
+      "id": "connectionsList",
+      "upstreamOperationId": "connections.list",
+      "method": "GET",
+      "path": "/v1/connections",
+      "auth": "oauthResource",
+      "authAudience": "tempera-connectors",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [
+        "state",
+        "pageSize",
+        "pageToken"
+      ],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "connection:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "List the authenticated workspace's redacted connector connections."
+    },
+    {
+      "id": "connectionsCreate",
+      "upstreamOperationId": "connections.create",
+      "method": "POST",
+      "path": "/v1/connections",
+      "auth": "oauthResource",
+      "authAudience": "tempera-connectors",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [
+        "authScheme",
+        "baseUrl",
+        "connectorId",
+        "connectorRevision",
+        "credentialName",
+        "displayName",
+        "operations",
+        "specificationArtifactRef",
+        "specificationDigest"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "connectorId",
+        "displayName"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "connection:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Create a draft tenant-scoped connection from the catalog or a manual manifest."
+    },
+    {
+      "id": "connectionsGet",
+      "upstreamOperationId": "connections.get",
+      "method": "GET",
+      "path": "/v1/connections/{id}",
+      "auth": "oauthResource",
+      "authAudience": "tempera-connectors",
+      "pathParams": [
+        "id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "connection:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Get one tenant-scoped connection without exposing secret material."
+    },
+    {
+      "id": "connectionsInvoke",
+      "upstreamOperationId": "connections.invoke",
+      "method": "POST",
+      "path": "/v1/connections/{id}:invoke",
+      "auth": "oauthResource",
+      "authAudience": "tempera-connectors",
+      "pathParams": [
+        "id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [
+        "idempotencyKey",
+        "input",
+        "operationId"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "operationId"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "connection:invoke",
+      "physicalAction": true,
+      "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
+      "description": "Execute an active declared operation with a revision-pinned receipt."
+    },
+    {
+      "id": "connectionsTest",
+      "upstreamOperationId": "connections.test",
+      "method": "POST",
+      "path": "/v1/connections/{id}:test",
+      "auth": "oauthResource",
+      "authAudience": "tempera-connectors",
+      "pathParams": [
+        "id"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [
+        "operationId"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "connection:write",
+      "physicalAction": true,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Safely test one declared read-only operation and activate/degrade the connection."
+    },
+    {
+      "id": "connectionsImportOpenApi",
+      "upstreamOperationId": "connections.importOpenApi",
+      "method": "POST",
+      "path": "/v1/connections:importOpenApi",
+      "auth": "oauthResource",
+      "authAudience": "tempera-connectors",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [
+        "authScheme",
+        "baseUrl",
+        "connectorId",
+        "credentialName",
+        "displayName",
+        "document",
+        "sourceUrl"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "displayName",
+        "authScheme"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "connection:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Normalize a caller-supplied OpenAPI 3 document into a draft connection."
+    },
+    {
+      "id": "connectorsList",
+      "upstreamOperationId": "connectors.list",
+      "method": "GET",
+      "path": "/v1/connectors",
+      "auth": "oauthResource",
+      "authAudience": "tempera-connectors",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [
+        "pageSize",
+        "pageToken"
+      ],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "connection:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "List the reviewed, read-only connector catalog."
     }
   ]
 }

@@ -54,7 +54,7 @@ class AipConformanceTest(unittest.TestCase):
                 },
             },
         }
-        violations = MODULE.discover_violations({"test": spec})
+        violations = MODULE.discover_violations({"test": spec}, MODULE.SDK_EXEMPTIONS)
         rules = {value["rule"] for value in violations.values()}
         self.assertEqual(
             rules,
@@ -116,7 +116,7 @@ class AipConformanceTest(unittest.TestCase):
                 }
             },
         }
-        violations = MODULE.discover_violations({"test": spec})
+        violations = MODULE.discover_violations({"test": spec}, MODULE.SDK_EXEMPTIONS)
         key = "test|POST|/v1/widgets|aip-127-lower-camel-json-fields"
         self.assertEqual(
             violations[key]["observed"],
@@ -148,7 +148,7 @@ class AipConformanceTest(unittest.TestCase):
                 }
             },
         }
-        violations = MODULE.discover_violations({"controlPlane": spec})
+        violations = MODULE.discover_violations({"controlPlane": spec}, MODULE.SDK_EXEMPTIONS)
         self.assertNotIn(
             "controlPlane|POST|/oauth/token|aip-127-lower-camel-json-fields",
             violations,
@@ -194,7 +194,7 @@ class AipConformanceTest(unittest.TestCase):
                 }
             },
         }
-        violations = MODULE.discover_violations({"test": spec})
+        violations = MODULE.discover_violations({"test": spec}, MODULE.SDK_EXEMPTIONS)
         key = "test|GET|/v1/widgets/{name}|aip-193-standard-errors"
         self.assertEqual(
             violations[key]["observed"],
@@ -250,33 +250,33 @@ class AipConformanceTest(unittest.TestCase):
                 }
             },
         }
-        violations = MODULE.discover_violations({"test": spec})
+        violations = MODULE.discover_violations({"test": spec}, MODULE.SDK_EXEMPTIONS)
         self.assertNotIn(
             "test|GET|/v1/widgets/{name}|aip-193-standard-errors",
             violations,
         )
 
     def test_protocol_routes_are_explicitly_exempt(self) -> None:
-        self.assertTrue(MODULE.is_protocol_exception("tempo", "/mcp"))
+        self.assertTrue(MODULE.SDK_EXEMPTIONS.covers_path("tempo", "/mcp"))
         self.assertTrue(
-            MODULE.is_protocol_exception("controlPlane", "/github/callback")
+            MODULE.SDK_EXEMPTIONS.covers_path("controlPlane", "/github/callback")
         )
         self.assertTrue(
-            MODULE.is_protocol_exception("tempo", "/.well-known/agent-card.json")
+            MODULE.SDK_EXEMPTIONS.covers_path("tempo", "/.well-known/agent-card.json")
         )
-        self.assertTrue(MODULE.is_protocol_exception("remi", "/readyz"))
-        self.assertTrue(MODULE.is_protocol_exception("temperaLlm", "/readyz"))
+        self.assertTrue(MODULE.SDK_EXEMPTIONS.covers_path("remi", "/readyz"))
+        self.assertTrue(MODULE.SDK_EXEMPTIONS.covers_path("temperaLlm", "/readyz"))
         self.assertTrue(
-            MODULE.is_protocol_exception("temperaLlm", "/v1/chat/completions")
+            MODULE.SDK_EXEMPTIONS.covers_path("temperaLlm", "/v1/chat/completions")
         )
-        self.assertTrue(MODULE.is_protocol_exception("temperaLlm", "/v1/models"))
+        self.assertTrue(MODULE.SDK_EXEMPTIONS.covers_path("temperaLlm", "/v1/models"))
         self.assertTrue(
-            MODULE.is_protocol_exception("temperaLlm", "/v1/responses")
+            MODULE.SDK_EXEMPTIONS.covers_path("temperaLlm", "/v1/responses")
         )
         self.assertTrue(
-            MODULE.is_protocol_exception("palette", "/v1/otlp/t/p/e/v1/traces")
+            MODULE.SDK_EXEMPTIONS.covers_path("palette", "/v1/otlp/t/p/e/v1/traces")
         )
-        self.assertFalse(MODULE.is_protocol_exception("tempo", "/v1/sessions"))
+        self.assertFalse(MODULE.SDK_EXEMPTIONS.covers_path("tempo", "/v1/sessions"))
 
     def test_list_detection_handles_common_operation_id_styles(self) -> None:
         for operation_id in ("listWidgets", "projects.widgets.list", "widgets-list"):
@@ -305,7 +305,7 @@ class AipConformanceTest(unittest.TestCase):
                 }
             },
         }
-        violations = MODULE.discover_violations({"test": spec})
+        violations = MODULE.discover_violations({"test": spec}, MODULE.SDK_EXEMPTIONS)
         self.assertNotIn(
             "test|GET|/v1/widgets|aip-158-list-pagination",
             violations,
@@ -350,7 +350,7 @@ class AipConformanceTest(unittest.TestCase):
                 }
             ],
         }
-        violations = MODULE.discover_violations({"test": manifest})
+        violations = MODULE.discover_violations({"test": manifest}, MODULE.SDK_EXEMPTIONS)
         self.assertNotIn(
             "test|GET|/v1/widgets|aip-158-list-pagination",
             violations,
@@ -382,7 +382,7 @@ class AipConformanceTest(unittest.TestCase):
                 }
             ],
         }
-        violations = MODULE.discover_violations({"test": manifest})
+        violations = MODULE.discover_violations({"test": manifest}, MODULE.SDK_EXEMPTIONS)
         json_key = (
             "test|POST|/v1/widgets|aip-127-lower-camel-json-fields"
         )
@@ -440,7 +440,7 @@ class AipConformanceTest(unittest.TestCase):
                 }
             },
         }
-        self.assertEqual(MODULE.discover_violations({"controlPlane": spec}), {})
+        self.assertEqual(MODULE.discover_violations({"controlPlane": spec}, MODULE.SDK_EXEMPTIONS), {})
 
     def test_embedded_oauth_response_only_exempts_json_spelling(self) -> None:
         spec = {
@@ -467,7 +467,7 @@ class AipConformanceTest(unittest.TestCase):
                 }
             },
         }
-        violations = MODULE.discover_violations({"controlPlane": spec})
+        violations = MODULE.discover_violations({"controlPlane": spec}, MODULE.SDK_EXEMPTIONS)
         self.assertNotIn(
             "controlPlane|POST|/v1/sessions|aip-127-lower-camel-json-fields",
             violations,

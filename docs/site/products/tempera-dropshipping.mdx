@@ -29,17 +29,16 @@ Anything this page does not cover is reachable through the raw passthrough:
 
 ## Operations
 
-### updateBusinessWorkspace
+### createStore
 
-`POST /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces`
+`POST /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/stores`
 
-Put Workspace.
+Create Store.
 
-- **Producer operationId:** `updateBusinessWorkspace`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-dropshipping`.
+- **Producer operationId:** `createStore`
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:write` scope.
 - **Scope:** `orders:write`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
-- **Call as:** TypeScript `client.temperaDropshipping.updateBusinessWorkspace()` · Python `client.tempera_dropshipping.update_business_workspace()` · Rust `build_request("tempera_dropshipping", "update_business_workspace", params)`
+- **Call as:** TypeScript `client.temperaDropshipping.createStore()` · Python `client.tempera_dropshipping.create_store()` · Rust `build_request("tempera_dropshipping", "create_store", params)`
 
 **Path parameters**
 
@@ -54,46 +53,45 @@ Put Workspace.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `expected_revision` | yes | — |
-| `idempotency_key` | no | — |
-| `profile_ref` | yes | — |
-| `profile_revision` | yes | — |
+| `id` | yes | — |
+| `displayName` | yes | — |
+| `channel` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.temperaDropshipping.updateBusinessWorkspace({
+const result = await client.temperaDropshipping.createStore({
   organization: "<organization>",
   project: "<project>",
   environment: "<environment>",
   site: "<site>",
-  expected_revision: "<expected_revision>",
-  profile_ref: "<profile_ref>",
-  profile_revision: "<profile_revision>",
+  id: "<id>",
+  displayName: "<displayName>",
+  channel: "<channel>",
 });
 ```
 
 ```python Python
-result = client.tempera_dropshipping.update_business_workspace({
+result = client.tempera_dropshipping.create_store({
     "organization": "<organization>",
     "project": "<project>",
     "environment": "<environment>",
     "site": "<site>",
-    "expected_revision": "<expected_revision>",
-    "profile_ref": "<profile_ref>",
-    "profile_revision": "<profile_revision>",
+    "id": "<id>",
+    "displayName": "<displayName>",
+    "channel": "<channel>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("tempera_dropshipping", "update_business_workspace", &[
+let spec = client.build_request("tempera_dropshipping", "create_store", &[
     ("organization", "<organization>".into()),
     ("project", "<project>".into()),
     ("environment", "<environment>".into()),
     ("site", "<site>".into()),
-    ("expected_revision", "<expected_revision>".into()),
-    ("profile_ref", "<profile_ref>".into()),
-    ("profile_revision", "<profile_revision>".into()),
+    ("id", "<id>".into()),
+    ("displayName", "<displayName>".into()),
+    ("channel", "<channel>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -101,369 +99,16 @@ let spec = client.build_request("tempera_dropshipping", "update_business_workspa
 
 </CodeGroup>
 
-### getBusinessWorkspace
+### listStores
 
-`GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspace_id}`
+`GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/stores`
 
-Get Workspace.
+List Stores.
 
-- **Producer operationId:** `getBusinessWorkspace`
+- **Producer operationId:** `listStores`
 - **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:read` scope.
 - **Scope:** `orders:read`
-- **Call as:** TypeScript `client.temperaDropshipping.getBusinessWorkspace()` · Python `client.tempera_dropshipping.get_business_workspace()` · Rust `build_request("tempera_dropshipping", "get_business_workspace", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `workspace_id` | yes | Substituted into the URL path (percent-encoded). |
-| `organization` | yes | Substituted into the URL path (percent-encoded). |
-| `project` | yes | Substituted into the URL path (percent-encoded). |
-| `environment` | yes | Substituted into the URL path (percent-encoded). |
-| `site` | yes | Substituted into the URL path (percent-encoded). |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaDropshipping.getBusinessWorkspace({
-  workspace_id: "<workspace_id>",
-  organization: "<organization>",
-  project: "<project>",
-  environment: "<environment>",
-  site: "<site>",
-});
-```
-
-```python Python
-result = client.tempera_dropshipping.get_business_workspace({
-    "workspace_id": "<workspace_id>",
-    "organization": "<organization>",
-    "project": "<project>",
-    "environment": "<environment>",
-    "site": "<site>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_dropshipping", "get_business_workspace", &[
-    ("workspace_id", "<workspace_id>".into()),
-    ("organization", "<organization>".into()),
-    ("project", "<project>".into()),
-    ("environment", "<environment>".into()),
-    ("site", "<site>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### recordBusinessTaskReceipt
-
-`POST /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspace_id}/tasks/{task_id}/declared-receipts`
-
-Record Task Receipt.
-
-- **Producer operationId:** `recordBusinessTaskReceipt`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-dropshipping`.
-- **Scope:** `orders:write`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
-- **Call as:** TypeScript `client.temperaDropshipping.recordBusinessTaskReceipt()` · Python `client.tempera_dropshipping.record_business_task_receipt()` · Rust `build_request("tempera_dropshipping", "record_business_task_receipt", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `workspace_id` | yes | Substituted into the URL path (percent-encoded). |
-| `task_id` | yes | Substituted into the URL path (percent-encoded). |
-| `organization` | yes | Substituted into the URL path (percent-encoded). |
-| `project` | yes | Substituted into the URL path (percent-encoded). |
-| `environment` | yes | Substituted into the URL path (percent-encoded). |
-| `site` | yes | Substituted into the URL path (percent-encoded). |
-
-**Body parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `expected_revision` | yes | — |
-| `receipt` | yes | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaDropshipping.recordBusinessTaskReceipt({
-  workspace_id: "<workspace_id>",
-  task_id: "<task_id>",
-  organization: "<organization>",
-  project: "<project>",
-  environment: "<environment>",
-  site: "<site>",
-  expected_revision: "<expected_revision>",
-  receipt: "<receipt>",
-});
-```
-
-```python Python
-result = client.tempera_dropshipping.record_business_task_receipt({
-    "workspace_id": "<workspace_id>",
-    "task_id": "<task_id>",
-    "organization": "<organization>",
-    "project": "<project>",
-    "environment": "<environment>",
-    "site": "<site>",
-    "expected_revision": "<expected_revision>",
-    "receipt": "<receipt>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_dropshipping", "record_business_task_receipt", &[
-    ("workspace_id", "<workspace_id>".into()),
-    ("task_id", "<task_id>".into()),
-    ("organization", "<organization>".into()),
-    ("project", "<project>".into()),
-    ("environment", "<environment>".into()),
-    ("site", "<site>".into()),
-    ("expected_revision", "<expected_revision>".into()),
-    ("receipt", "<receipt>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### prepareBusinessTask
-
-`POST /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspace_id}/tasks/{task_id}:prepare`
-
-Prepare Task.
-
-- **Producer operationId:** `prepareBusinessTask`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-dropshipping`.
-- **Scope:** `orders:write`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
-- **Call as:** TypeScript `client.temperaDropshipping.prepareBusinessTask()` · Python `client.tempera_dropshipping.prepare_business_task()` · Rust `build_request("tempera_dropshipping", "prepare_business_task", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `workspace_id` | yes | Substituted into the URL path (percent-encoded). |
-| `task_id` | yes | Substituted into the URL path (percent-encoded). |
-| `organization` | yes | Substituted into the URL path (percent-encoded). |
-| `project` | yes | Substituted into the URL path (percent-encoded). |
-| `environment` | yes | Substituted into the URL path (percent-encoded). |
-| `site` | yes | Substituted into the URL path (percent-encoded). |
-
-**Body parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `draft` | yes | — |
-| `expected_revision` | yes | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaDropshipping.prepareBusinessTask({
-  workspace_id: "<workspace_id>",
-  task_id: "<task_id>",
-  organization: "<organization>",
-  project: "<project>",
-  environment: "<environment>",
-  site: "<site>",
-  draft: "<draft>",
-  expected_revision: "<expected_revision>",
-});
-```
-
-```python Python
-result = client.tempera_dropshipping.prepare_business_task({
-    "workspace_id": "<workspace_id>",
-    "task_id": "<task_id>",
-    "organization": "<organization>",
-    "project": "<project>",
-    "environment": "<environment>",
-    "site": "<site>",
-    "draft": "<draft>",
-    "expected_revision": "<expected_revision>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_dropshipping", "prepare_business_task", &[
-    ("workspace_id", "<workspace_id>".into()),
-    ("task_id", "<task_id>".into()),
-    ("organization", "<organization>".into()),
-    ("project", "<project>".into()),
-    ("environment", "<environment>".into()),
-    ("site", "<site>".into()),
-    ("draft", "<draft>".into()),
-    ("expected_revision", "<expected_revision>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### prepareBusinessBrowserTask
-
-`POST /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspace_id}/tasks/{task_id}:prepareBrowser`
-
-Browser Task.
-
-- **Producer operationId:** `prepareBusinessBrowserTask`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-dropshipping`.
-- **Scope:** `orders:write`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
-- **Call as:** TypeScript `client.temperaDropshipping.prepareBusinessBrowserTask()` · Python `client.tempera_dropshipping.prepare_business_browser_task()` · Rust `build_request("tempera_dropshipping", "prepare_business_browser_task", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `workspace_id` | yes | Substituted into the URL path (percent-encoded). |
-| `task_id` | yes | Substituted into the URL path (percent-encoded). |
-| `organization` | yes | Substituted into the URL path (percent-encoded). |
-| `project` | yes | Substituted into the URL path (percent-encoded). |
-| `environment` | yes | Substituted into the URL path (percent-encoded). |
-| `site` | yes | Substituted into the URL path (percent-encoded). |
-
-**Body parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `expected_revision` | yes | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaDropshipping.prepareBusinessBrowserTask({
-  workspace_id: "<workspace_id>",
-  task_id: "<task_id>",
-  organization: "<organization>",
-  project: "<project>",
-  environment: "<environment>",
-  site: "<site>",
-  expected_revision: "<expected_revision>",
-});
-```
-
-```python Python
-result = client.tempera_dropshipping.prepare_business_browser_task({
-    "workspace_id": "<workspace_id>",
-    "task_id": "<task_id>",
-    "organization": "<organization>",
-    "project": "<project>",
-    "environment": "<environment>",
-    "site": "<site>",
-    "expected_revision": "<expected_revision>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_dropshipping", "prepare_business_browser_task", &[
-    ("workspace_id", "<workspace_id>".into()),
-    ("task_id", "<task_id>".into()),
-    ("organization", "<organization>".into()),
-    ("project", "<project>".into()),
-    ("environment", "<environment>".into()),
-    ("site", "<site>".into()),
-    ("expected_revision", "<expected_revision>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### reviewBusinessTask
-
-`POST /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspace_id}/tasks/{task_id}:review`
-
-Review Task.
-
-- **Producer operationId:** `reviewBusinessTask`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-dropshipping`.
-- **Scope:** `orders:approve`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
-- **Call as:** TypeScript `client.temperaDropshipping.reviewBusinessTask()` · Python `client.tempera_dropshipping.review_business_task()` · Rust `build_request("tempera_dropshipping", "review_business_task", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `workspace_id` | yes | Substituted into the URL path (percent-encoded). |
-| `task_id` | yes | Substituted into the URL path (percent-encoded). |
-| `organization` | yes | Substituted into the URL path (percent-encoded). |
-| `project` | yes | Substituted into the URL path (percent-encoded). |
-| `environment` | yes | Substituted into the URL path (percent-encoded). |
-| `site` | yes | Substituted into the URL path (percent-encoded). |
-
-**Body parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `expected_revision` | yes | — |
-| `review` | yes | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaDropshipping.reviewBusinessTask({
-  workspace_id: "<workspace_id>",
-  task_id: "<task_id>",
-  organization: "<organization>",
-  project: "<project>",
-  environment: "<environment>",
-  site: "<site>",
-  expected_revision: "<expected_revision>",
-  review: "<review>",
-});
-```
-
-```python Python
-result = client.tempera_dropshipping.review_business_task({
-    "workspace_id": "<workspace_id>",
-    "task_id": "<task_id>",
-    "organization": "<organization>",
-    "project": "<project>",
-    "environment": "<environment>",
-    "site": "<site>",
-    "expected_revision": "<expected_revision>",
-    "review": "<review>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_dropshipping", "review_business_task", &[
-    ("workspace_id", "<workspace_id>".into()),
-    ("task_id", "<task_id>".into()),
-    ("organization", "<organization>".into()),
-    ("project", "<project>".into()),
-    ("environment", "<environment>".into()),
-    ("site", "<site>".into()),
-    ("expected_revision", "<expected_revision>".into()),
-    ("review", "<review>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### listCatalogOffers
-
-`GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/catalog/offers`
-
-List Catalog Offers.
-
-- **Producer operationId:** `listCatalogOffers`
-- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:read` scope.
-- **Scope:** `orders:read`
-- **Call as:** TypeScript `client.temperaDropshipping.listCatalogOffers()` · Python `client.tempera_dropshipping.list_catalog_offers()` · Rust `build_request("tempera_dropshipping", "list_catalog_offers", params)`
+- **Call as:** TypeScript `client.temperaDropshipping.listStores()` · Python `client.tempera_dropshipping.list_stores()` · Rust `build_request("tempera_dropshipping", "list_stores", params)`
 
 **Path parameters**
 
@@ -478,41 +123,98 @@ List Catalog Offers.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `after` | no | — |
-| `limit` | no | — |
+| `pageToken` | no | — |
+| `pageSize` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.temperaDropshipping.listCatalogOffers({
+const result = await client.temperaDropshipping.listStores({
   organization: "<organization>",
   project: "<project>",
   environment: "<environment>",
   site: "<site>",
-  after: "<after>",
-  limit: "<limit>",
+  pageToken: "<pageToken>",
+  pageSize: "<pageSize>",
 });
 ```
 
 ```python Python
-result = client.tempera_dropshipping.list_catalog_offers({
+result = client.tempera_dropshipping.list_stores({
     "organization": "<organization>",
     "project": "<project>",
     "environment": "<environment>",
     "site": "<site>",
-    "after": "<after>",
-    "limit": "<limit>",
+    "pageToken": "<pageToken>",
+    "pageSize": "<pageSize>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("tempera_dropshipping", "list_catalog_offers", &[
+let spec = client.build_request("tempera_dropshipping", "list_stores", &[
     ("organization", "<organization>".into()),
     ("project", "<project>".into()),
     ("environment", "<environment>".into()),
     ("site", "<site>".into()),
-    ("after", "<after>".into()),
-    ("limit", "<limit>".into()),
+    ("pageToken", "<pageToken>".into()),
+    ("pageSize", "<pageSize>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getStore
+
+`GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/stores/{storeId}`
+
+Get Store.
+
+- **Producer operationId:** `getStore`
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:read` scope.
+- **Scope:** `orders:read`
+- **Call as:** TypeScript `client.temperaDropshipping.getStore()` · Python `client.tempera_dropshipping.get_store()` · Rust `build_request("tempera_dropshipping", "get_store", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `storeId` | yes | Substituted into the URL path (percent-encoded). |
+| `organization` | yes | Substituted into the URL path (percent-encoded). |
+| `project` | yes | Substituted into the URL path (percent-encoded). |
+| `environment` | yes | Substituted into the URL path (percent-encoded). |
+| `site` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaDropshipping.getStore({
+  storeId: "<storeId>",
+  organization: "<organization>",
+  project: "<project>",
+  environment: "<environment>",
+  site: "<site>",
+});
+```
+
+```python Python
+result = client.tempera_dropshipping.get_store({
+    "storeId": "<storeId>",
+    "organization": "<organization>",
+    "project": "<project>",
+    "environment": "<environment>",
+    "site": "<site>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_dropshipping", "get_store", &[
+    ("storeId", "<storeId>".into()),
+    ("organization", "<organization>".into()),
+    ("project", "<project>".into()),
+    ("environment", "<environment>".into()),
+    ("site", "<site>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -544,14 +246,14 @@ Create Catalog Offer.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `currency` | yes | — |
-| `description` | yes | — |
-| `expires_at` | no | — |
-| `merchant_id` | yes | — |
+| `merchantId` | yes | — |
+| `productClassification` | yes | — |
 | `name` | yes | — |
-| `photo_url` | no | — |
-| `product_classification` | yes | — |
-| `unit_amount_minor` | yes | — |
+| `description` | yes | — |
+| `photoUrl` | no | — |
+| `currency` | yes | — |
+| `unitAmountMinor` | yes | — |
+| `expiresAt` | no | — |
 
 <CodeGroup>
 
@@ -561,12 +263,12 @@ const result = await client.temperaDropshipping.createCatalogOffer({
   project: "<project>",
   environment: "<environment>",
   site: "<site>",
-  currency: "<currency>",
-  description: "<description>",
-  merchant_id: "<merchant_id>",
+  merchantId: "<merchantId>",
+  productClassification: "<productClassification>",
   name: "<name>",
-  product_classification: "<product_classification>",
-  unit_amount_minor: "<unit_amount_minor>",
+  description: "<description>",
+  currency: "<currency>",
+  unitAmountMinor: "<unitAmountMinor>",
 });
 ```
 
@@ -576,12 +278,12 @@ result = client.tempera_dropshipping.create_catalog_offer({
     "project": "<project>",
     "environment": "<environment>",
     "site": "<site>",
-    "currency": "<currency>",
-    "description": "<description>",
-    "merchant_id": "<merchant_id>",
+    "merchantId": "<merchantId>",
+    "productClassification": "<productClassification>",
     "name": "<name>",
-    "product_classification": "<product_classification>",
-    "unit_amount_minor": "<unit_amount_minor>",
+    "description": "<description>",
+    "currency": "<currency>",
+    "unitAmountMinor": "<unitAmountMinor>",
 })
 ```
 
@@ -591,12 +293,12 @@ let spec = client.build_request("tempera_dropshipping", "create_catalog_offer", 
     ("project", "<project>".into()),
     ("environment", "<environment>".into()),
     ("site", "<site>".into()),
-    ("currency", "<currency>".into()),
-    ("description", "<description>".into()),
-    ("merchant_id", "<merchant_id>".into()),
+    ("merchantId", "<merchantId>".into()),
+    ("productClassification", "<productClassification>".into()),
     ("name", "<name>".into()),
-    ("product_classification", "<product_classification>".into()),
-    ("unit_amount_minor", "<unit_amount_minor>".into()),
+    ("description", "<description>".into()),
+    ("currency", "<currency>".into()),
+    ("unitAmountMinor", "<unitAmountMinor>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -604,73 +306,16 @@ let spec = client.build_request("tempera_dropshipping", "create_catalog_offer", 
 
 </CodeGroup>
 
-### getCatalogOffer
+### listCatalogOffers
 
-`GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/catalog/offers/{offer_id}`
+`GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/catalog/offers`
 
-Get Catalog Offer.
+List Catalog Offers.
 
-- **Producer operationId:** `getCatalogOffer`
+- **Producer operationId:** `listCatalogOffers`
 - **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:read` scope.
 - **Scope:** `orders:read`
-- **Call as:** TypeScript `client.temperaDropshipping.getCatalogOffer()` · Python `client.tempera_dropshipping.get_catalog_offer()` · Rust `build_request("tempera_dropshipping", "get_catalog_offer", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `offer_id` | yes | Substituted into the URL path (percent-encoded). |
-| `organization` | yes | Substituted into the URL path (percent-encoded). |
-| `project` | yes | Substituted into the URL path (percent-encoded). |
-| `environment` | yes | Substituted into the URL path (percent-encoded). |
-| `site` | yes | Substituted into the URL path (percent-encoded). |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaDropshipping.getCatalogOffer({
-  offer_id: "<offer_id>",
-  organization: "<organization>",
-  project: "<project>",
-  environment: "<environment>",
-  site: "<site>",
-});
-```
-
-```python Python
-result = client.tempera_dropshipping.get_catalog_offer({
-    "offer_id": "<offer_id>",
-    "organization": "<organization>",
-    "project": "<project>",
-    "environment": "<environment>",
-    "site": "<site>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_dropshipping", "get_catalog_offer", &[
-    ("offer_id", "<offer_id>".into()),
-    ("organization", "<organization>".into()),
-    ("project", "<project>".into()),
-    ("environment", "<environment>".into()),
-    ("site", "<site>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### listOrderEventProjections
-
-`GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/event-projections`
-
-List Event Projections.
-
-- **Producer operationId:** `listOrderEventProjections`
-- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:read` scope.
-- **Scope:** `orders:read`
-- **Call as:** TypeScript `client.temperaDropshipping.listOrderEventProjections()` · Python `client.tempera_dropshipping.list_order_event_projections()` · Rust `build_request("tempera_dropshipping", "list_order_event_projections", params)`
+- **Call as:** TypeScript `client.temperaDropshipping.listCatalogOffers()` · Python `client.tempera_dropshipping.list_catalog_offers()` · Rust `build_request("tempera_dropshipping", "list_catalog_offers", params)`
 
 **Path parameters**
 
@@ -685,41 +330,291 @@ List Event Projections.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `cursor` | no | — |
-| `limit` | no | — |
+| `pageToken` | no | — |
+| `pageSize` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.temperaDropshipping.listOrderEventProjections({
+const result = await client.temperaDropshipping.listCatalogOffers({
   organization: "<organization>",
   project: "<project>",
   environment: "<environment>",
   site: "<site>",
-  cursor: "<cursor>",
-  limit: "<limit>",
+  pageToken: "<pageToken>",
+  pageSize: "<pageSize>",
 });
 ```
 
 ```python Python
-result = client.tempera_dropshipping.list_order_event_projections({
+result = client.tempera_dropshipping.list_catalog_offers({
     "organization": "<organization>",
     "project": "<project>",
     "environment": "<environment>",
     "site": "<site>",
-    "cursor": "<cursor>",
-    "limit": "<limit>",
+    "pageToken": "<pageToken>",
+    "pageSize": "<pageSize>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("tempera_dropshipping", "list_order_event_projections", &[
+let spec = client.build_request("tempera_dropshipping", "list_catalog_offers", &[
     ("organization", "<organization>".into()),
     ("project", "<project>".into()),
     ("environment", "<environment>".into()),
     ("site", "<site>".into()),
-    ("cursor", "<cursor>".into()),
-    ("limit", "<limit>".into()),
+    ("pageToken", "<pageToken>".into()),
+    ("pageSize", "<pageSize>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getCatalogOffer
+
+`GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/catalog/offers/{offerId}`
+
+Get Catalog Offer.
+
+- **Producer operationId:** `getCatalogOffer`
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:read` scope.
+- **Scope:** `orders:read`
+- **Call as:** TypeScript `client.temperaDropshipping.getCatalogOffer()` · Python `client.tempera_dropshipping.get_catalog_offer()` · Rust `build_request("tempera_dropshipping", "get_catalog_offer", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `offerId` | yes | Substituted into the URL path (percent-encoded). |
+| `organization` | yes | Substituted into the URL path (percent-encoded). |
+| `project` | yes | Substituted into the URL path (percent-encoded). |
+| `environment` | yes | Substituted into the URL path (percent-encoded). |
+| `site` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaDropshipping.getCatalogOffer({
+  offerId: "<offerId>",
+  organization: "<organization>",
+  project: "<project>",
+  environment: "<environment>",
+  site: "<site>",
+});
+```
+
+```python Python
+result = client.tempera_dropshipping.get_catalog_offer({
+    "offerId": "<offerId>",
+    "organization": "<organization>",
+    "project": "<project>",
+    "environment": "<environment>",
+    "site": "<site>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_dropshipping", "get_catalog_offer", &[
+    ("offerId", "<offerId>".into()),
+    ("organization", "<organization>".into()),
+    ("project", "<project>".into()),
+    ("environment", "<environment>".into()),
+    ("site", "<site>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### createSaleOrder
+
+`POST /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders`
+
+Create Sale Order.
+
+- **Producer operationId:** `createSaleOrder`
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:commerce:write` scope.
+- **Scope:** `orders:commerce:write`
+- **Call as:** TypeScript `client.temperaDropshipping.createSaleOrder()` · Python `client.tempera_dropshipping.create_sale_order()` · Rust `build_request("tempera_dropshipping", "create_sale_order", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `organization` | yes | Substituted into the URL path (percent-encoded). |
+| `project` | yes | Substituted into the URL path (percent-encoded). |
+| `environment` | yes | Substituted into the URL path (percent-encoded). |
+| `site` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `offerId` | yes | — |
+| `offerRevision` | yes | — |
+| `quantity` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaDropshipping.createSaleOrder({
+  organization: "<organization>",
+  project: "<project>",
+  environment: "<environment>",
+  site: "<site>",
+  offerId: "<offerId>",
+  offerRevision: "<offerRevision>",
+  quantity: "<quantity>",
+});
+```
+
+```python Python
+result = client.tempera_dropshipping.create_sale_order({
+    "organization": "<organization>",
+    "project": "<project>",
+    "environment": "<environment>",
+    "site": "<site>",
+    "offerId": "<offerId>",
+    "offerRevision": "<offerRevision>",
+    "quantity": "<quantity>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_dropshipping", "create_sale_order", &[
+    ("organization", "<organization>".into()),
+    ("project", "<project>".into()),
+    ("environment", "<environment>".into()),
+    ("site", "<site>".into()),
+    ("offerId", "<offerId>".into()),
+    ("offerRevision", "<offerRevision>".into()),
+    ("quantity", "<quantity>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listSaleOrders
+
+`GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders`
+
+List Sale Orders.
+
+- **Producer operationId:** `listSaleOrders`
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:read` scope.
+- **Scope:** `orders:read`
+- **Call as:** TypeScript `client.temperaDropshipping.listSaleOrders()` · Python `client.tempera_dropshipping.list_sale_orders()` · Rust `build_request("tempera_dropshipping", "list_sale_orders", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `organization` | yes | Substituted into the URL path (percent-encoded). |
+| `project` | yes | Substituted into the URL path (percent-encoded). |
+| `environment` | yes | Substituted into the URL path (percent-encoded). |
+| `site` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageToken` | no | — |
+| `pageSize` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaDropshipping.listSaleOrders({
+  organization: "<organization>",
+  project: "<project>",
+  environment: "<environment>",
+  site: "<site>",
+  pageToken: "<pageToken>",
+  pageSize: "<pageSize>",
+});
+```
+
+```python Python
+result = client.tempera_dropshipping.list_sale_orders({
+    "organization": "<organization>",
+    "project": "<project>",
+    "environment": "<environment>",
+    "site": "<site>",
+    "pageToken": "<pageToken>",
+    "pageSize": "<pageSize>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_dropshipping", "list_sale_orders", &[
+    ("organization", "<organization>".into()),
+    ("project", "<project>".into()),
+    ("environment", "<environment>".into()),
+    ("site", "<site>".into()),
+    ("pageToken", "<pageToken>".into()),
+    ("pageSize", "<pageSize>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getSaleOrder
+
+`GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders/{orderId}`
+
+Get Sale Order.
+
+- **Producer operationId:** `getSaleOrder`
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:read` scope.
+- **Scope:** `orders:read`
+- **Call as:** TypeScript `client.temperaDropshipping.getSaleOrder()` · Python `client.tempera_dropshipping.get_sale_order()` · Rust `build_request("tempera_dropshipping", "get_sale_order", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `orderId` | yes | Substituted into the URL path (percent-encoded). |
+| `organization` | yes | Substituted into the URL path (percent-encoded). |
+| `project` | yes | Substituted into the URL path (percent-encoded). |
+| `environment` | yes | Substituted into the URL path (percent-encoded). |
+| `site` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaDropshipping.getSaleOrder({
+  orderId: "<orderId>",
+  organization: "<organization>",
+  project: "<project>",
+  environment: "<environment>",
+  site: "<site>",
+});
+```
+
+```python Python
+result = client.tempera_dropshipping.get_sale_order({
+    "orderId": "<orderId>",
+    "organization": "<organization>",
+    "project": "<project>",
+    "environment": "<environment>",
+    "site": "<site>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_dropshipping", "get_sale_order", &[
+    ("orderId", "<orderId>".into()),
+    ("organization", "<organization>".into()),
+    ("project", "<project>".into()),
+    ("environment", "<environment>".into()),
+    ("site", "<site>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -751,8 +646,8 @@ List Events.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `after` | no | — |
-| `limit` | no | — |
+| `pageToken` | no | — |
+| `pageSize` | no | — |
 
 <CodeGroup>
 
@@ -762,8 +657,8 @@ const result = await client.temperaDropshipping.listEvents({
   project: "<project>",
   environment: "<environment>",
   site: "<site>",
-  after: "<after>",
-  limit: "<limit>",
+  pageToken: "<pageToken>",
+  pageSize: "<pageSize>",
 });
 ```
 
@@ -773,8 +668,8 @@ result = client.tempera_dropshipping.list_events({
     "project": "<project>",
     "environment": "<environment>",
     "site": "<site>",
-    "after": "<after>",
-    "limit": "<limit>",
+    "pageToken": "<pageToken>",
+    "pageSize": "<pageSize>",
 })
 ```
 
@@ -784,8 +679,206 @@ let spec = client.build_request("tempera_dropshipping", "list_events", &[
     ("project", "<project>".into()),
     ("environment", "<environment>".into()),
     ("site", "<site>".into()),
-    ("after", "<after>".into()),
-    ("limit", "<limit>".into()),
+    ("pageToken", "<pageToken>".into()),
+    ("pageSize", "<pageSize>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listOrderEventProjections
+
+`GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/event-projections`
+
+List Event Projections.
+
+- **Producer operationId:** `listOrderEventProjections`
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:read` scope.
+- **Scope:** `orders:read`
+- **Call as:** TypeScript `client.temperaDropshipping.listOrderEventProjections()` · Python `client.tempera_dropshipping.list_order_event_projections()` · Rust `build_request("tempera_dropshipping", "list_order_event_projections", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `organization` | yes | Substituted into the URL path (percent-encoded). |
+| `project` | yes | Substituted into the URL path (percent-encoded). |
+| `environment` | yes | Substituted into the URL path (percent-encoded). |
+| `site` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageToken` | no | — |
+| `pageSize` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaDropshipping.listOrderEventProjections({
+  organization: "<organization>",
+  project: "<project>",
+  environment: "<environment>",
+  site: "<site>",
+  pageToken: "<pageToken>",
+  pageSize: "<pageSize>",
+});
+```
+
+```python Python
+result = client.tempera_dropshipping.list_order_event_projections({
+    "organization": "<organization>",
+    "project": "<project>",
+    "environment": "<environment>",
+    "site": "<site>",
+    "pageToken": "<pageToken>",
+    "pageSize": "<pageSize>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_dropshipping", "list_order_event_projections", &[
+    ("organization", "<organization>".into()),
+    ("project", "<project>".into()),
+    ("environment", "<environment>".into()),
+    ("site", "<site>".into()),
+    ("pageToken", "<pageToken>".into()),
+    ("pageSize", "<pageSize>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listOrders
+
+`GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders`
+
+List Orders.
+
+- **Producer operationId:** `listOrders`
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:read` scope.
+- **Scope:** `orders:read`
+- **Call as:** TypeScript `client.temperaDropshipping.listOrders()` · Python `client.tempera_dropshipping.list_orders()` · Rust `build_request("tempera_dropshipping", "list_orders", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `organization` | yes | Substituted into the URL path (percent-encoded). |
+| `project` | yes | Substituted into the URL path (percent-encoded). |
+| `environment` | yes | Substituted into the URL path (percent-encoded). |
+| `site` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageToken` | no | — |
+| `pageSize` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaDropshipping.listOrders({
+  organization: "<organization>",
+  project: "<project>",
+  environment: "<environment>",
+  site: "<site>",
+  pageToken: "<pageToken>",
+  pageSize: "<pageSize>",
+});
+```
+
+```python Python
+result = client.tempera_dropshipping.list_orders({
+    "organization": "<organization>",
+    "project": "<project>",
+    "environment": "<environment>",
+    "site": "<site>",
+    "pageToken": "<pageToken>",
+    "pageSize": "<pageSize>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_dropshipping", "list_orders", &[
+    ("organization", "<organization>".into()),
+    ("project", "<project>".into()),
+    ("environment", "<environment>".into()),
+    ("site", "<site>".into()),
+    ("pageToken", "<pageToken>".into()),
+    ("pageSize", "<pageSize>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### createOrder
+
+`POST /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders`
+
+Create Order.
+
+- **Producer operationId:** `createOrder`
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:write` scope.
+- **Scope:** `orders:write`
+- **Call as:** TypeScript `client.temperaDropshipping.createOrder()` · Python `client.tempera_dropshipping.create_order()` · Rust `build_request("tempera_dropshipping", "create_order", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `organization` | yes | Substituted into the URL path (percent-encoded). |
+| `project` | yes | Substituted into the URL path (percent-encoded). |
+| `environment` | yes | Substituted into the URL path (percent-encoded). |
+| `site` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `expectedRevision` | no | — |
+| `record` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaDropshipping.createOrder({
+  organization: "<organization>",
+  project: "<project>",
+  environment: "<environment>",
+  site: "<site>",
+  record: "<record>",
+  expectedRevision: "<expectedRevision>",
+});
+```
+
+```python Python
+result = client.tempera_dropshipping.create_order({
+    "organization": "<organization>",
+    "project": "<project>",
+    "environment": "<environment>",
+    "site": "<site>",
+    "record": "<record>",
+    "expectedRevision": "<expectedRevision>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_dropshipping", "create_order", &[
+    ("organization", "<organization>".into()),
+    ("project", "<project>".into()),
+    ("environment", "<environment>".into()),
+    ("site", "<site>".into()),
+    ("record", "<record>".into()),
+    ("expectedRevision", "<expectedRevision>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -817,8 +910,8 @@ Inbox.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `after` | no | — |
-| `limit` | no | — |
+| `pageToken` | no | — |
+| `pageSize` | no | — |
 
 <CodeGroup>
 
@@ -828,8 +921,8 @@ const result = await client.temperaDropshipping.listInbox({
   project: "<project>",
   environment: "<environment>",
   site: "<site>",
-  after: "<after>",
-  limit: "<limit>",
+  pageToken: "<pageToken>",
+  pageSize: "<pageSize>",
 });
 ```
 
@@ -839,8 +932,8 @@ result = client.tempera_dropshipping.list_inbox({
     "project": "<project>",
     "environment": "<environment>",
     "site": "<site>",
-    "after": "<after>",
-    "limit": "<limit>",
+    "pageToken": "<pageToken>",
+    "pageSize": "<pageSize>",
 })
 ```
 
@@ -850,8 +943,8 @@ let spec = client.build_request("tempera_dropshipping", "list_inbox", &[
     ("project", "<project>".into()),
     ("environment", "<environment>".into()),
     ("site", "<site>".into()),
-    ("after", "<after>".into()),
-    ("limit", "<limit>".into()),
+    ("pageToken", "<pageToken>".into()),
+    ("pageSize", "<pageSize>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -912,142 +1005,9 @@ let spec = client.build_request("tempera_dropshipping", "get_business_summary", 
 
 </CodeGroup>
 
-### listOrders
-
-`GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders`
-
-List Orders.
-
-- **Producer operationId:** `listOrders`
-- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:read` scope.
-- **Scope:** `orders:read`
-- **Call as:** TypeScript `client.temperaDropshipping.listOrders()` · Python `client.tempera_dropshipping.list_orders()` · Rust `build_request("tempera_dropshipping", "list_orders", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `organization` | yes | Substituted into the URL path (percent-encoded). |
-| `project` | yes | Substituted into the URL path (percent-encoded). |
-| `environment` | yes | Substituted into the URL path (percent-encoded). |
-| `site` | yes | Substituted into the URL path (percent-encoded). |
-
-**Query parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `after` | no | — |
-| `limit` | no | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaDropshipping.listOrders({
-  organization: "<organization>",
-  project: "<project>",
-  environment: "<environment>",
-  site: "<site>",
-  after: "<after>",
-  limit: "<limit>",
-});
-```
-
-```python Python
-result = client.tempera_dropshipping.list_orders({
-    "organization": "<organization>",
-    "project": "<project>",
-    "environment": "<environment>",
-    "site": "<site>",
-    "after": "<after>",
-    "limit": "<limit>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_dropshipping", "list_orders", &[
-    ("organization", "<organization>".into()),
-    ("project", "<project>".into()),
-    ("environment", "<environment>".into()),
-    ("site", "<site>".into()),
-    ("after", "<after>".into()),
-    ("limit", "<limit>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### createOrder
-
-`POST /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders`
-
-Create Order.
-
-- **Producer operationId:** `createOrder`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-dropshipping`.
-- **Scope:** `orders:write`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
-- **Call as:** TypeScript `client.temperaDropshipping.createOrder()` · Python `client.tempera_dropshipping.create_order()` · Rust `build_request("tempera_dropshipping", "create_order", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `organization` | yes | Substituted into the URL path (percent-encoded). |
-| `project` | yes | Substituted into the URL path (percent-encoded). |
-| `environment` | yes | Substituted into the URL path (percent-encoded). |
-| `site` | yes | Substituted into the URL path (percent-encoded). |
-
-**Body parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `expected_revision` | no | — |
-| `record` | yes | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaDropshipping.createOrder({
-  organization: "<organization>",
-  project: "<project>",
-  environment: "<environment>",
-  site: "<site>",
-  record: "<record>",
-  expected_revision: "<expected_revision>",
-});
-```
-
-```python Python
-result = client.tempera_dropshipping.create_order({
-    "organization": "<organization>",
-    "project": "<project>",
-    "environment": "<environment>",
-    "site": "<site>",
-    "record": "<record>",
-    "expected_revision": "<expected_revision>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_dropshipping", "create_order", &[
-    ("organization", "<organization>".into()),
-    ("project", "<project>".into()),
-    ("environment", "<environment>".into()),
-    ("site", "<site>".into()),
-    ("record", "<record>".into()),
-    ("expected_revision", "<expected_revision>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
 ### getOrder
 
-`GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{order_id}`
+`GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{orderId}`
 
 Get Order.
 
@@ -1060,7 +1020,7 @@ Get Order.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `order_id` | yes | Substituted into the URL path (percent-encoded). |
+| `orderId` | yes | Substituted into the URL path (percent-encoded). |
 | `organization` | yes | Substituted into the URL path (percent-encoded). |
 | `project` | yes | Substituted into the URL path (percent-encoded). |
 | `environment` | yes | Substituted into the URL path (percent-encoded). |
@@ -1070,7 +1030,7 @@ Get Order.
 
 ```typescript TypeScript
 const result = await client.temperaDropshipping.getOrder({
-  order_id: "<order_id>",
+  orderId: "<orderId>",
   organization: "<organization>",
   project: "<project>",
   environment: "<environment>",
@@ -1080,7 +1040,7 @@ const result = await client.temperaDropshipping.getOrder({
 
 ```python Python
 result = client.tempera_dropshipping.get_order({
-    "order_id": "<order_id>",
+    "orderId": "<orderId>",
     "organization": "<organization>",
     "project": "<project>",
     "environment": "<environment>",
@@ -1090,7 +1050,7 @@ result = client.tempera_dropshipping.get_order({
 
 ```rust Rust
 let spec = client.build_request("tempera_dropshipping", "get_order", &[
-    ("order_id", "<order_id>".into()),
+    ("orderId", "<orderId>".into()),
     ("organization", "<organization>".into()),
     ("project", "<project>".into()),
     ("environment", "<environment>".into()),
@@ -1104,91 +1064,20 @@ let spec = client.build_request("tempera_dropshipping", "get_order", &[
 
 ### updateOrder
 
-`PATCH /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{order_id}`
+`PATCH /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{orderId}`
 
 Update Order.
 
 - **Producer operationId:** `updateOrder`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-dropshipping`.
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:write` scope.
 - **Scope:** `orders:write`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaDropshipping.updateOrder()` · Python `client.tempera_dropshipping.update_order()` · Rust `build_request("tempera_dropshipping", "update_order", params)`
 
 **Path parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `order_id` | yes | Substituted into the URL path (percent-encoded). |
-| `organization` | yes | Substituted into the URL path (percent-encoded). |
-| `project` | yes | Substituted into the URL path (percent-encoded). |
-| `environment` | yes | Substituted into the URL path (percent-encoded). |
-| `site` | yes | Substituted into the URL path (percent-encoded). |
-
-**Body parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `expected_revision` | yes | — |
-| `record` | yes | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaDropshipping.updateOrder({
-  order_id: "<order_id>",
-  organization: "<organization>",
-  project: "<project>",
-  environment: "<environment>",
-  site: "<site>",
-  expected_revision: "<expected_revision>",
-  record: "<record>",
-});
-```
-
-```python Python
-result = client.tempera_dropshipping.update_order({
-    "order_id": "<order_id>",
-    "organization": "<organization>",
-    "project": "<project>",
-    "environment": "<environment>",
-    "site": "<site>",
-    "expected_revision": "<expected_revision>",
-    "record": "<record>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_dropshipping", "update_order", &[
-    ("order_id", "<order_id>".into()),
-    ("organization", "<organization>".into()),
-    ("project", "<project>".into()),
-    ("environment", "<environment>".into()),
-    ("site", "<site>".into()),
-    ("expected_revision", "<expected_revision>".into()),
-    ("record", "<record>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### listOrderAuditEvents
-
-`GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{order_id}/audit`
-
-Audit.
-
-- **Producer operationId:** `listOrderAuditEvents`
-- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:read` scope.
-- **Scope:** `orders:read`
-- **Call as:** TypeScript `client.temperaDropshipping.listOrderAuditEvents()` · Python `client.tempera_dropshipping.list_order_audit_events()` · Rust `build_request("tempera_dropshipping", "list_order_audit_events", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `order_id` | yes | Substituted into the URL path (percent-encoded). |
+| `orderId` | yes | Substituted into the URL path (percent-encoded). |
 | `organization` | yes | Substituted into the URL path (percent-encoded). |
 | `project` | yes | Substituted into the URL path (percent-encoded). |
 | `environment` | yes | Substituted into the URL path (percent-encoded). |
@@ -1198,115 +1087,50 @@ Audit.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `after` | no | — |
-| `limit` | no | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaDropshipping.listOrderAuditEvents({
-  order_id: "<order_id>",
-  organization: "<organization>",
-  project: "<project>",
-  environment: "<environment>",
-  site: "<site>",
-  after: "<after>",
-  limit: "<limit>",
-});
-```
-
-```python Python
-result = client.tempera_dropshipping.list_order_audit_events({
-    "order_id": "<order_id>",
-    "organization": "<organization>",
-    "project": "<project>",
-    "environment": "<environment>",
-    "site": "<site>",
-    "after": "<after>",
-    "limit": "<limit>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_dropshipping", "list_order_audit_events", &[
-    ("order_id", "<order_id>".into()),
-    ("organization", "<organization>".into()),
-    ("project", "<project>".into()),
-    ("environment", "<environment>".into()),
-    ("site", "<site>".into()),
-    ("after", "<after>".into()),
-    ("limit", "<limit>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### prepareProposal
-
-`POST /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{order_id}/proposals`
-
-Prepare.
-
-- **Producer operationId:** `prepareProposal`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-dropshipping`.
-- **Scope:** `orders:write`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
-- **Call as:** TypeScript `client.temperaDropshipping.prepareProposal()` · Python `client.tempera_dropshipping.prepare_proposal()` · Rust `build_request("tempera_dropshipping", "prepare_proposal", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `order_id` | yes | Substituted into the URL path (percent-encoded). |
-| `organization` | yes | Substituted into the URL path (percent-encoded). |
-| `project` | yes | Substituted into the URL path (percent-encoded). |
-| `environment` | yes | Substituted into the URL path (percent-encoded). |
-| `site` | yes | Substituted into the URL path (percent-encoded). |
+| `updateMask` | no | — |
 
 **Body parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `expected_revision` | yes | — |
-| `quote_id` | yes | — |
+| `expectedRevision` | yes | — |
+| `record` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.temperaDropshipping.prepareProposal({
-  order_id: "<order_id>",
+const result = await client.temperaDropshipping.updateOrder({
+  orderId: "<orderId>",
   organization: "<organization>",
   project: "<project>",
   environment: "<environment>",
   site: "<site>",
-  expected_revision: "<expected_revision>",
-  quote_id: "<quote_id>",
+  expectedRevision: "<expectedRevision>",
+  record: "<record>",
 });
 ```
 
 ```python Python
-result = client.tempera_dropshipping.prepare_proposal({
-    "order_id": "<order_id>",
+result = client.tempera_dropshipping.update_order({
+    "orderId": "<orderId>",
     "organization": "<organization>",
     "project": "<project>",
     "environment": "<environment>",
     "site": "<site>",
-    "expected_revision": "<expected_revision>",
-    "quote_id": "<quote_id>",
+    "expectedRevision": "<expectedRevision>",
+    "record": "<record>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("tempera_dropshipping", "prepare_proposal", &[
-    ("order_id", "<order_id>".into()),
+let spec = client.build_request("tempera_dropshipping", "update_order", &[
+    ("orderId", "<orderId>".into()),
     ("organization", "<organization>".into()),
     ("project", "<project>".into()),
     ("environment", "<environment>".into()),
     ("site", "<site>".into()),
-    ("expected_revision", "<expected_revision>".into()),
-    ("quote_id", "<quote_id>".into()),
+    ("expectedRevision", "<expectedRevision>".into()),
+    ("record", "<record>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1316,7 +1140,7 @@ let spec = client.build_request("tempera_dropshipping", "prepare_proposal", &[
 
 ### evaluateOrder
 
-`POST /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{order_id}:evaluate`
+`POST /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{orderId}:evaluate`
 
 Evaluate Order.
 
@@ -1329,7 +1153,7 @@ Evaluate Order.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `order_id` | yes | Substituted into the URL path (percent-encoded). |
+| `orderId` | yes | Substituted into the URL path (percent-encoded). |
 | `organization` | yes | Substituted into the URL path (percent-encoded). |
 | `project` | yes | Substituted into the URL path (percent-encoded). |
 | `environment` | yes | Substituted into the URL path (percent-encoded). |
@@ -1339,40 +1163,40 @@ Evaluate Order.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `expected_revision` | yes | — |
+| `expectedRevision` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaDropshipping.evaluateOrder({
-  order_id: "<order_id>",
+  orderId: "<orderId>",
   organization: "<organization>",
   project: "<project>",
   environment: "<environment>",
   site: "<site>",
-  expected_revision: "<expected_revision>",
+  expectedRevision: "<expectedRevision>",
 });
 ```
 
 ```python Python
 result = client.tempera_dropshipping.evaluate_order({
-    "order_id": "<order_id>",
+    "orderId": "<orderId>",
     "organization": "<organization>",
     "project": "<project>",
     "environment": "<environment>",
     "site": "<site>",
-    "expected_revision": "<expected_revision>",
+    "expectedRevision": "<expectedRevision>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_dropshipping", "evaluate_order", &[
-    ("order_id", "<order_id>".into()),
+    ("orderId", "<orderId>".into()),
     ("organization", "<organization>".into()),
     ("project", "<project>".into()),
     ("environment", "<environment>".into()),
     ("site", "<site>".into()),
-    ("expected_revision", "<expected_revision>".into()),
+    ("expectedRevision", "<expectedRevision>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1380,23 +1204,22 @@ let spec = client.build_request("tempera_dropshipping", "evaluate_order", &[
 
 </CodeGroup>
 
-### reconcileOrder
+### prepareProposal
 
-`POST /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{order_id}:reconcile`
+`POST /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{orderId}/proposals`
 
-Reconcile.
+Prepare.
 
-- **Producer operationId:** `reconcileOrder`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-dropshipping`.
-- **Scope:** `orders:approve`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
-- **Call as:** TypeScript `client.temperaDropshipping.reconcileOrder()` · Python `client.tempera_dropshipping.reconcile_order()` · Rust `build_request("tempera_dropshipping", "reconcile_order", params)`
+- **Producer operationId:** `prepareProposal`
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:write` scope.
+- **Scope:** `orders:write`
+- **Call as:** TypeScript `client.temperaDropshipping.prepareProposal()` · Python `client.tempera_dropshipping.prepare_proposal()` · Rust `build_request("tempera_dropshipping", "prepare_proposal", params)`
 
 **Path parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `order_id` | yes | Substituted into the URL path (percent-encoded). |
+| `orderId` | yes | Substituted into the URL path (percent-encoded). |
 | `organization` | yes | Substituted into the URL path (percent-encoded). |
 | `project` | yes | Substituted into the URL path (percent-encoded). |
 | `environment` | yes | Substituted into the URL path (percent-encoded). |
@@ -1406,48 +1229,44 @@ Reconcile.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `evidence_ref` | yes | — |
-| `expected_revision` | yes | — |
-| `purchase_state` | yes | — |
+| `expectedRevision` | yes | — |
+| `quoteId` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.temperaDropshipping.reconcileOrder({
-  order_id: "<order_id>",
+const result = await client.temperaDropshipping.prepareProposal({
+  orderId: "<orderId>",
   organization: "<organization>",
   project: "<project>",
   environment: "<environment>",
   site: "<site>",
-  evidence_ref: "<evidence_ref>",
-  expected_revision: "<expected_revision>",
-  purchase_state: "<purchase_state>",
+  expectedRevision: "<expectedRevision>",
+  quoteId: "<quoteId>",
 });
 ```
 
 ```python Python
-result = client.tempera_dropshipping.reconcile_order({
-    "order_id": "<order_id>",
+result = client.tempera_dropshipping.prepare_proposal({
+    "orderId": "<orderId>",
     "organization": "<organization>",
     "project": "<project>",
     "environment": "<environment>",
     "site": "<site>",
-    "evidence_ref": "<evidence_ref>",
-    "expected_revision": "<expected_revision>",
-    "purchase_state": "<purchase_state>",
+    "expectedRevision": "<expectedRevision>",
+    "quoteId": "<quoteId>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("tempera_dropshipping", "reconcile_order", &[
-    ("order_id", "<order_id>".into()),
+let spec = client.build_request("tempera_dropshipping", "prepare_proposal", &[
+    ("orderId", "<orderId>".into()),
     ("organization", "<organization>".into()),
     ("project", "<project>".into()),
     ("environment", "<environment>".into()),
     ("site", "<site>".into()),
-    ("evidence_ref", "<evidence_ref>".into()),
-    ("expected_revision", "<expected_revision>".into()),
-    ("purchase_state", "<purchase_state>".into()),
+    ("expectedRevision", "<expectedRevision>".into()),
+    ("quoteId", "<quoteId>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1457,7 +1276,7 @@ let spec = client.build_request("tempera_dropshipping", "reconcile_order", &[
 
 ### getProposal
 
-`GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/proposals/{proposal_id}`
+`GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/proposals/{proposalId}`
 
 Get Proposal.
 
@@ -1470,7 +1289,7 @@ Get Proposal.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `proposal_id` | yes | Substituted into the URL path (percent-encoded). |
+| `proposalId` | yes | Substituted into the URL path (percent-encoded). |
 | `organization` | yes | Substituted into the URL path (percent-encoded). |
 | `project` | yes | Substituted into the URL path (percent-encoded). |
 | `environment` | yes | Substituted into the URL path (percent-encoded). |
@@ -1480,7 +1299,7 @@ Get Proposal.
 
 ```typescript TypeScript
 const result = await client.temperaDropshipping.getProposal({
-  proposal_id: "<proposal_id>",
+  proposalId: "<proposalId>",
   organization: "<organization>",
   project: "<project>",
   environment: "<environment>",
@@ -1490,7 +1309,7 @@ const result = await client.temperaDropshipping.getProposal({
 
 ```python Python
 result = client.tempera_dropshipping.get_proposal({
-    "proposal_id": "<proposal_id>",
+    "proposalId": "<proposalId>",
     "organization": "<organization>",
     "project": "<project>",
     "environment": "<environment>",
@@ -1500,90 +1319,11 @@ result = client.tempera_dropshipping.get_proposal({
 
 ```rust Rust
 let spec = client.build_request("tempera_dropshipping", "get_proposal", &[
-    ("proposal_id", "<proposal_id>".into()),
+    ("proposalId", "<proposalId>".into()),
     ("organization", "<organization>".into()),
     ("project", "<project>".into()),
     ("environment", "<environment>".into()),
     ("site", "<site>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### recordManualOutcome
-
-`POST /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/proposals/{proposal_id}/manual-outcome`
-
-Outcome.
-
-- **Producer operationId:** `recordManualOutcome`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-dropshipping`.
-- **Scope:** `orders:write`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
-- **Call as:** TypeScript `client.temperaDropshipping.recordManualOutcome()` · Python `client.tempera_dropshipping.record_manual_outcome()` · Rust `build_request("tempera_dropshipping", "record_manual_outcome", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `proposal_id` | yes | Substituted into the URL path (percent-encoded). |
-| `organization` | yes | Substituted into the URL path (percent-encoded). |
-| `project` | yes | Substituted into the URL path (percent-encoded). |
-| `environment` | yes | Substituted into the URL path (percent-encoded). |
-| `site` | yes | Substituted into the URL path (percent-encoded). |
-
-**Body parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `evidence_ref` | yes | — |
-| `expected_revision` | yes | — |
-| `outcome` | yes | — |
-| `proposal_digest` | yes | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaDropshipping.recordManualOutcome({
-  proposal_id: "<proposal_id>",
-  organization: "<organization>",
-  project: "<project>",
-  environment: "<environment>",
-  site: "<site>",
-  evidence_ref: "<evidence_ref>",
-  expected_revision: "<expected_revision>",
-  outcome: "<outcome>",
-  proposal_digest: "<proposal_digest>",
-});
-```
-
-```python Python
-result = client.tempera_dropshipping.record_manual_outcome({
-    "proposal_id": "<proposal_id>",
-    "organization": "<organization>",
-    "project": "<project>",
-    "environment": "<environment>",
-    "site": "<site>",
-    "evidence_ref": "<evidence_ref>",
-    "expected_revision": "<expected_revision>",
-    "outcome": "<outcome>",
-    "proposal_digest": "<proposal_digest>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_dropshipping", "record_manual_outcome", &[
-    ("proposal_id", "<proposal_id>".into()),
-    ("organization", "<organization>".into()),
-    ("project", "<project>".into()),
-    ("environment", "<environment>".into()),
-    ("site", "<site>".into()),
-    ("evidence_ref", "<evidence_ref>".into()),
-    ("expected_revision", "<expected_revision>".into()),
-    ("outcome", "<outcome>".into()),
-    ("proposal_digest", "<proposal_digest>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1593,21 +1333,20 @@ let spec = client.build_request("tempera_dropshipping", "record_manual_outcome",
 
 ### approveProposal
 
-`POST /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/proposals/{proposal_id}:approve`
+`POST /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/proposals/{proposalId}:approve`
 
 Approve.
 
 - **Producer operationId:** `approveProposal`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-dropshipping`.
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:approve` scope.
 - **Scope:** `orders:approve`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaDropshipping.approveProposal()` · Python `client.tempera_dropshipping.approve_proposal()` · Rust `build_request("tempera_dropshipping", "approve_proposal", params)`
 
 **Path parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `proposal_id` | yes | Substituted into the URL path (percent-encoded). |
+| `proposalId` | yes | Substituted into the URL path (percent-encoded). |
 | `organization` | yes | Substituted into the URL path (percent-encoded). |
 | `project` | yes | Substituted into the URL path (percent-encoded). |
 | `environment` | yes | Substituted into the URL path (percent-encoded). |
@@ -1617,44 +1356,44 @@ Approve.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `expected_revision` | yes | — |
-| `proposal_digest` | yes | — |
+| `expectedRevision` | yes | — |
+| `proposalDigest` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaDropshipping.approveProposal({
-  proposal_id: "<proposal_id>",
+  proposalId: "<proposalId>",
   organization: "<organization>",
   project: "<project>",
   environment: "<environment>",
   site: "<site>",
-  expected_revision: "<expected_revision>",
-  proposal_digest: "<proposal_digest>",
+  expectedRevision: "<expectedRevision>",
+  proposalDigest: "<proposalDigest>",
 });
 ```
 
 ```python Python
 result = client.tempera_dropshipping.approve_proposal({
-    "proposal_id": "<proposal_id>",
+    "proposalId": "<proposalId>",
     "organization": "<organization>",
     "project": "<project>",
     "environment": "<environment>",
     "site": "<site>",
-    "expected_revision": "<expected_revision>",
-    "proposal_digest": "<proposal_digest>",
+    "expectedRevision": "<expectedRevision>",
+    "proposalDigest": "<proposalDigest>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_dropshipping", "approve_proposal", &[
-    ("proposal_id", "<proposal_id>".into()),
+    ("proposalId", "<proposalId>".into()),
     ("organization", "<organization>".into()),
     ("project", "<project>".into()),
     ("environment", "<environment>".into()),
     ("site", "<site>".into()),
-    ("expected_revision", "<expected_revision>".into()),
-    ("proposal_digest", "<proposal_digest>".into()),
+    ("expectedRevision", "<expectedRevision>".into()),
+    ("proposalDigest", "<proposalDigest>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1664,21 +1403,20 @@ let spec = client.build_request("tempera_dropshipping", "approve_proposal", &[
 
 ### executeProposal
 
-`POST /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/proposals/{proposal_id}:execute`
+`POST /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/proposals/{proposalId}:execute`
 
 Execute.
 
 - **Producer operationId:** `executeProposal`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-dropshipping`.
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:approve` scope.
 - **Scope:** `orders:approve`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaDropshipping.executeProposal()` · Python `client.tempera_dropshipping.execute_proposal()` · Rust `build_request("tempera_dropshipping", "execute_proposal", params)`
 
 **Path parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `proposal_id` | yes | Substituted into the URL path (percent-encoded). |
+| `proposalId` | yes | Substituted into the URL path (percent-encoded). |
 | `organization` | yes | Substituted into the URL path (percent-encoded). |
 | `project` | yes | Substituted into the URL path (percent-encoded). |
 | `environment` | yes | Substituted into the URL path (percent-encoded). |
@@ -1688,44 +1426,44 @@ Execute.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `expected_revision` | yes | — |
-| `proposal_digest` | yes | — |
+| `expectedRevision` | yes | — |
+| `proposalDigest` | yes | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
 const result = await client.temperaDropshipping.executeProposal({
-  proposal_id: "<proposal_id>",
+  proposalId: "<proposalId>",
   organization: "<organization>",
   project: "<project>",
   environment: "<environment>",
   site: "<site>",
-  expected_revision: "<expected_revision>",
-  proposal_digest: "<proposal_digest>",
+  expectedRevision: "<expectedRevision>",
+  proposalDigest: "<proposalDigest>",
 });
 ```
 
 ```python Python
 result = client.tempera_dropshipping.execute_proposal({
-    "proposal_id": "<proposal_id>",
+    "proposalId": "<proposalId>",
     "organization": "<organization>",
     "project": "<project>",
     "environment": "<environment>",
     "site": "<site>",
-    "expected_revision": "<expected_revision>",
-    "proposal_digest": "<proposal_digest>",
+    "expectedRevision": "<expectedRevision>",
+    "proposalDigest": "<proposalDigest>",
 })
 ```
 
 ```rust Rust
 let spec = client.build_request("tempera_dropshipping", "execute_proposal", &[
-    ("proposal_id", "<proposal_id>".into()),
+    ("proposalId", "<proposalId>".into()),
     ("organization", "<organization>".into()),
     ("project", "<project>".into()),
     ("environment", "<environment>".into()),
     ("site", "<site>".into()),
-    ("expected_revision", "<expected_revision>".into()),
-    ("proposal_digest", "<proposal_digest>".into()),
+    ("expectedRevision", "<expectedRevision>".into()),
+    ("proposalDigest", "<proposalDigest>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -1733,276 +1471,238 @@ let spec = client.build_request("tempera_dropshipping", "execute_proposal", &[
 
 </CodeGroup>
 
-### listSaleOrders
+### recordManualOutcome
 
-`GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders`
+`POST /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/proposals/{proposalId}/manual-outcome`
 
-List Sale Orders.
+Outcome.
 
-- **Producer operationId:** `listSaleOrders`
-- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:read` scope.
-- **Scope:** `orders:read`
-- **Call as:** TypeScript `client.temperaDropshipping.listSaleOrders()` · Python `client.tempera_dropshipping.list_sale_orders()` · Rust `build_request("tempera_dropshipping", "list_sale_orders", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `organization` | yes | Substituted into the URL path (percent-encoded). |
-| `project` | yes | Substituted into the URL path (percent-encoded). |
-| `environment` | yes | Substituted into the URL path (percent-encoded). |
-| `site` | yes | Substituted into the URL path (percent-encoded). |
-
-**Query parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `after` | no | — |
-| `limit` | no | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaDropshipping.listSaleOrders({
-  organization: "<organization>",
-  project: "<project>",
-  environment: "<environment>",
-  site: "<site>",
-  after: "<after>",
-  limit: "<limit>",
-});
-```
-
-```python Python
-result = client.tempera_dropshipping.list_sale_orders({
-    "organization": "<organization>",
-    "project": "<project>",
-    "environment": "<environment>",
-    "site": "<site>",
-    "after": "<after>",
-    "limit": "<limit>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_dropshipping", "list_sale_orders", &[
-    ("organization", "<organization>".into()),
-    ("project", "<project>".into()),
-    ("environment", "<environment>".into()),
-    ("site", "<site>".into()),
-    ("after", "<after>".into()),
-    ("limit", "<limit>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### createSaleOrder
-
-`POST /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders`
-
-Create Sale Order.
-
-- **Producer operationId:** `createSaleOrder`
-- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:commerce:write` scope.
-- **Scope:** `orders:commerce:write`
-- **Call as:** TypeScript `client.temperaDropshipping.createSaleOrder()` · Python `client.tempera_dropshipping.create_sale_order()` · Rust `build_request("tempera_dropshipping", "create_sale_order", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `organization` | yes | Substituted into the URL path (percent-encoded). |
-| `project` | yes | Substituted into the URL path (percent-encoded). |
-| `environment` | yes | Substituted into the URL path (percent-encoded). |
-| `site` | yes | Substituted into the URL path (percent-encoded). |
-
-**Body parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `offer_id` | yes | — |
-| `offer_revision` | yes | — |
-| `quantity` | yes | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaDropshipping.createSaleOrder({
-  organization: "<organization>",
-  project: "<project>",
-  environment: "<environment>",
-  site: "<site>",
-  offer_id: "<offer_id>",
-  offer_revision: "<offer_revision>",
-  quantity: "<quantity>",
-});
-```
-
-```python Python
-result = client.tempera_dropshipping.create_sale_order({
-    "organization": "<organization>",
-    "project": "<project>",
-    "environment": "<environment>",
-    "site": "<site>",
-    "offer_id": "<offer_id>",
-    "offer_revision": "<offer_revision>",
-    "quantity": "<quantity>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_dropshipping", "create_sale_order", &[
-    ("organization", "<organization>".into()),
-    ("project", "<project>".into()),
-    ("environment", "<environment>".into()),
-    ("site", "<site>".into()),
-    ("offer_id", "<offer_id>".into()),
-    ("offer_revision", "<offer_revision>".into()),
-    ("quantity", "<quantity>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### getSaleOrder
-
-`GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders/{order_id}`
-
-Get Sale Order.
-
-- **Producer operationId:** `getSaleOrder`
-- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:read` scope.
-- **Scope:** `orders:read`
-- **Call as:** TypeScript `client.temperaDropshipping.getSaleOrder()` · Python `client.tempera_dropshipping.get_sale_order()` · Rust `build_request("tempera_dropshipping", "get_sale_order", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `order_id` | yes | Substituted into the URL path (percent-encoded). |
-| `organization` | yes | Substituted into the URL path (percent-encoded). |
-| `project` | yes | Substituted into the URL path (percent-encoded). |
-| `environment` | yes | Substituted into the URL path (percent-encoded). |
-| `site` | yes | Substituted into the URL path (percent-encoded). |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaDropshipping.getSaleOrder({
-  order_id: "<order_id>",
-  organization: "<organization>",
-  project: "<project>",
-  environment: "<environment>",
-  site: "<site>",
-});
-```
-
-```python Python
-result = client.tempera_dropshipping.get_sale_order({
-    "order_id": "<order_id>",
-    "organization": "<organization>",
-    "project": "<project>",
-    "environment": "<environment>",
-    "site": "<site>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_dropshipping", "get_sale_order", &[
-    ("order_id", "<order_id>".into()),
-    ("organization", "<organization>".into()),
-    ("project", "<project>".into()),
-    ("environment", "<environment>".into()),
-    ("site", "<site>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### listStores
-
-`GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/stores`
-
-List Stores.
-
-- **Producer operationId:** `listStores`
-- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:read` scope.
-- **Scope:** `orders:read`
-- **Call as:** TypeScript `client.temperaDropshipping.listStores()` · Python `client.tempera_dropshipping.list_stores()` · Rust `build_request("tempera_dropshipping", "list_stores", params)`
-
-**Path parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `organization` | yes | Substituted into the URL path (percent-encoded). |
-| `project` | yes | Substituted into the URL path (percent-encoded). |
-| `environment` | yes | Substituted into the URL path (percent-encoded). |
-| `site` | yes | Substituted into the URL path (percent-encoded). |
-
-**Query parameters**
-
-| Parameter | Required | Notes |
-|---|---|---|
-| `after` | no | — |
-| `limit` | no | — |
-
-<CodeGroup>
-
-```typescript TypeScript
-const result = await client.temperaDropshipping.listStores({
-  organization: "<organization>",
-  project: "<project>",
-  environment: "<environment>",
-  site: "<site>",
-  after: "<after>",
-  limit: "<limit>",
-});
-```
-
-```python Python
-result = client.tempera_dropshipping.list_stores({
-    "organization": "<organization>",
-    "project": "<project>",
-    "environment": "<environment>",
-    "site": "<site>",
-    "after": "<after>",
-    "limit": "<limit>",
-})
-```
-
-```rust Rust
-let spec = client.build_request("tempera_dropshipping", "list_stores", &[
-    ("organization", "<organization>".into()),
-    ("project", "<project>".into()),
-    ("environment", "<environment>".into()),
-    ("site", "<site>".into()),
-    ("after", "<after>".into()),
-    ("limit", "<limit>".into()),
-])?;
-// Send spec.method / spec.full_url() / spec.headers / spec.body_json
-// with your own HTTP client.
-```
-
-</CodeGroup>
-
-### createStore
-
-`POST /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/stores`
-
-Create Store.
-
-- **Producer operationId:** `createStore`
-- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-dropshipping`.
+- **Producer operationId:** `recordManualOutcome`
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:write` scope.
 - **Scope:** `orders:write`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
-- **Call as:** TypeScript `client.temperaDropshipping.createStore()` · Python `client.tempera_dropshipping.create_store()` · Rust `build_request("tempera_dropshipping", "create_store", params)`
+- **Call as:** TypeScript `client.temperaDropshipping.recordManualOutcome()` · Python `client.tempera_dropshipping.record_manual_outcome()` · Rust `build_request("tempera_dropshipping", "record_manual_outcome", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `proposalId` | yes | Substituted into the URL path (percent-encoded). |
+| `organization` | yes | Substituted into the URL path (percent-encoded). |
+| `project` | yes | Substituted into the URL path (percent-encoded). |
+| `environment` | yes | Substituted into the URL path (percent-encoded). |
+| `site` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `expectedRevision` | yes | — |
+| `proposalDigest` | yes | — |
+| `outcome` | yes | — |
+| `evidenceRef` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaDropshipping.recordManualOutcome({
+  proposalId: "<proposalId>",
+  organization: "<organization>",
+  project: "<project>",
+  environment: "<environment>",
+  site: "<site>",
+  expectedRevision: "<expectedRevision>",
+  proposalDigest: "<proposalDigest>",
+  outcome: "<outcome>",
+  evidenceRef: "<evidenceRef>",
+});
+```
+
+```python Python
+result = client.tempera_dropshipping.record_manual_outcome({
+    "proposalId": "<proposalId>",
+    "organization": "<organization>",
+    "project": "<project>",
+    "environment": "<environment>",
+    "site": "<site>",
+    "expectedRevision": "<expectedRevision>",
+    "proposalDigest": "<proposalDigest>",
+    "outcome": "<outcome>",
+    "evidenceRef": "<evidenceRef>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_dropshipping", "record_manual_outcome", &[
+    ("proposalId", "<proposalId>".into()),
+    ("organization", "<organization>".into()),
+    ("project", "<project>".into()),
+    ("environment", "<environment>".into()),
+    ("site", "<site>".into()),
+    ("expectedRevision", "<expectedRevision>".into()),
+    ("proposalDigest", "<proposalDigest>".into()),
+    ("outcome", "<outcome>".into()),
+    ("evidenceRef", "<evidenceRef>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### reconcileOrder
+
+`POST /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{orderId}:reconcile`
+
+Reconcile.
+
+- **Producer operationId:** `reconcileOrder`
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:approve` scope.
+- **Scope:** `orders:approve`
+- **Call as:** TypeScript `client.temperaDropshipping.reconcileOrder()` · Python `client.tempera_dropshipping.reconcile_order()` · Rust `build_request("tempera_dropshipping", "reconcile_order", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `orderId` | yes | Substituted into the URL path (percent-encoded). |
+| `organization` | yes | Substituted into the URL path (percent-encoded). |
+| `project` | yes | Substituted into the URL path (percent-encoded). |
+| `environment` | yes | Substituted into the URL path (percent-encoded). |
+| `site` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `expectedRevision` | yes | — |
+| `purchaseState` | yes | — |
+| `evidenceRef` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaDropshipping.reconcileOrder({
+  orderId: "<orderId>",
+  organization: "<organization>",
+  project: "<project>",
+  environment: "<environment>",
+  site: "<site>",
+  expectedRevision: "<expectedRevision>",
+  purchaseState: "<purchaseState>",
+  evidenceRef: "<evidenceRef>",
+});
+```
+
+```python Python
+result = client.tempera_dropshipping.reconcile_order({
+    "orderId": "<orderId>",
+    "organization": "<organization>",
+    "project": "<project>",
+    "environment": "<environment>",
+    "site": "<site>",
+    "expectedRevision": "<expectedRevision>",
+    "purchaseState": "<purchaseState>",
+    "evidenceRef": "<evidenceRef>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_dropshipping", "reconcile_order", &[
+    ("orderId", "<orderId>".into()),
+    ("organization", "<organization>".into()),
+    ("project", "<project>".into()),
+    ("environment", "<environment>".into()),
+    ("site", "<site>".into()),
+    ("expectedRevision", "<expectedRevision>".into()),
+    ("purchaseState", "<purchaseState>".into()),
+    ("evidenceRef", "<evidenceRef>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listOrderAuditEvents
+
+`GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/orders/{orderId}/audit`
+
+Audit.
+
+- **Producer operationId:** `listOrderAuditEvents`
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:read` scope.
+- **Scope:** `orders:read`
+- **Call as:** TypeScript `client.temperaDropshipping.listOrderAuditEvents()` · Python `client.tempera_dropshipping.list_order_audit_events()` · Rust `build_request("tempera_dropshipping", "list_order_audit_events", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `orderId` | yes | Substituted into the URL path (percent-encoded). |
+| `organization` | yes | Substituted into the URL path (percent-encoded). |
+| `project` | yes | Substituted into the URL path (percent-encoded). |
+| `environment` | yes | Substituted into the URL path (percent-encoded). |
+| `site` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageToken` | no | — |
+| `pageSize` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaDropshipping.listOrderAuditEvents({
+  orderId: "<orderId>",
+  organization: "<organization>",
+  project: "<project>",
+  environment: "<environment>",
+  site: "<site>",
+  pageToken: "<pageToken>",
+  pageSize: "<pageSize>",
+});
+```
+
+```python Python
+result = client.tempera_dropshipping.list_order_audit_events({
+    "orderId": "<orderId>",
+    "organization": "<organization>",
+    "project": "<project>",
+    "environment": "<environment>",
+    "site": "<site>",
+    "pageToken": "<pageToken>",
+    "pageSize": "<pageSize>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_dropshipping", "list_order_audit_events", &[
+    ("orderId", "<orderId>".into()),
+    ("organization", "<organization>".into()),
+    ("project", "<project>".into()),
+    ("environment", "<environment>".into()),
+    ("site", "<site>".into()),
+    ("pageToken", "<pageToken>".into()),
+    ("pageSize", "<pageSize>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### updateBusinessWorkspace
+
+`POST /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces`
+
+Put Workspace.
+
+- **Producer operationId:** `updateBusinessWorkspace`
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:write` scope.
+- **Scope:** `orders:write`
+- **Call as:** TypeScript `client.temperaDropshipping.updateBusinessWorkspace()` · Python `client.tempera_dropshipping.update_business_workspace()` · Rust `build_request("tempera_dropshipping", "update_business_workspace", params)`
 
 **Path parameters**
 
@@ -2017,45 +1717,46 @@ Create Store.
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `channel` | no | — |
-| `display_name` | yes | — |
-| `id` | yes | — |
+| `expectedRevision` | yes | — |
+| `profileRef` | yes | — |
+| `profileRevision` | yes | — |
+| `idempotencyKey` | no | — |
 
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.temperaDropshipping.createStore({
+const result = await client.temperaDropshipping.updateBusinessWorkspace({
   organization: "<organization>",
   project: "<project>",
   environment: "<environment>",
   site: "<site>",
-  display_name: "<display_name>",
-  id: "<id>",
-  channel: "<channel>",
+  expectedRevision: "<expectedRevision>",
+  profileRef: "<profileRef>",
+  profileRevision: "<profileRevision>",
 });
 ```
 
 ```python Python
-result = client.tempera_dropshipping.create_store({
+result = client.tempera_dropshipping.update_business_workspace({
     "organization": "<organization>",
     "project": "<project>",
     "environment": "<environment>",
     "site": "<site>",
-    "display_name": "<display_name>",
-    "id": "<id>",
-    "channel": "<channel>",
+    "expectedRevision": "<expectedRevision>",
+    "profileRef": "<profileRef>",
+    "profileRevision": "<profileRevision>",
 })
 ```
 
 ```rust Rust
-let spec = client.build_request("tempera_dropshipping", "create_store", &[
+let spec = client.build_request("tempera_dropshipping", "update_business_workspace", &[
     ("organization", "<organization>".into()),
     ("project", "<project>".into()),
     ("environment", "<environment>".into()),
     ("site", "<site>".into()),
-    ("display_name", "<display_name>".into()),
-    ("id", "<id>".into()),
-    ("channel", "<channel>".into()),
+    ("expectedRevision", "<expectedRevision>".into()),
+    ("profileRef", "<profileRef>".into()),
+    ("profileRevision", "<profileRevision>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -2063,22 +1764,244 @@ let spec = client.build_request("tempera_dropshipping", "create_store", &[
 
 </CodeGroup>
 
-### getStore
+### prepareBusinessTask
 
-`GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/stores/{store_id}`
+`POST /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspaceId}/tasks/{taskId}:prepare`
 
-Get Store.
+Prepare Task.
 
-- **Producer operationId:** `getStore`
-- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:read` scope.
-- **Scope:** `orders:read`
-- **Call as:** TypeScript `client.temperaDropshipping.getStore()` · Python `client.tempera_dropshipping.get_store()` · Rust `build_request("tempera_dropshipping", "get_store", params)`
+- **Producer operationId:** `prepareBusinessTask`
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:write` scope.
+- **Scope:** `orders:write`
+- **Call as:** TypeScript `client.temperaDropshipping.prepareBusinessTask()` · Python `client.tempera_dropshipping.prepare_business_task()` · Rust `build_request("tempera_dropshipping", "prepare_business_task", params)`
 
 **Path parameters**
 
 | Parameter | Required | Notes |
 |---|---|---|
-| `store_id` | yes | Substituted into the URL path (percent-encoded). |
+| `workspaceId` | yes | Substituted into the URL path (percent-encoded). |
+| `taskId` | yes | Substituted into the URL path (percent-encoded). |
+| `organization` | yes | Substituted into the URL path (percent-encoded). |
+| `project` | yes | Substituted into the URL path (percent-encoded). |
+| `environment` | yes | Substituted into the URL path (percent-encoded). |
+| `site` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `expectedRevision` | yes | — |
+| `draft` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaDropshipping.prepareBusinessTask({
+  workspaceId: "<workspaceId>",
+  taskId: "<taskId>",
+  organization: "<organization>",
+  project: "<project>",
+  environment: "<environment>",
+  site: "<site>",
+  expectedRevision: "<expectedRevision>",
+  draft: "<draft>",
+});
+```
+
+```python Python
+result = client.tempera_dropshipping.prepare_business_task({
+    "workspaceId": "<workspaceId>",
+    "taskId": "<taskId>",
+    "organization": "<organization>",
+    "project": "<project>",
+    "environment": "<environment>",
+    "site": "<site>",
+    "expectedRevision": "<expectedRevision>",
+    "draft": "<draft>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_dropshipping", "prepare_business_task", &[
+    ("workspaceId", "<workspaceId>".into()),
+    ("taskId", "<taskId>".into()),
+    ("organization", "<organization>".into()),
+    ("project", "<project>".into()),
+    ("environment", "<environment>".into()),
+    ("site", "<site>".into()),
+    ("expectedRevision", "<expectedRevision>".into()),
+    ("draft", "<draft>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### reviewBusinessTask
+
+`POST /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspaceId}/tasks/{taskId}:review`
+
+Review Task.
+
+- **Producer operationId:** `reviewBusinessTask`
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:approve` scope.
+- **Scope:** `orders:approve`
+- **Call as:** TypeScript `client.temperaDropshipping.reviewBusinessTask()` · Python `client.tempera_dropshipping.review_business_task()` · Rust `build_request("tempera_dropshipping", "review_business_task", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `workspaceId` | yes | Substituted into the URL path (percent-encoded). |
+| `taskId` | yes | Substituted into the URL path (percent-encoded). |
+| `organization` | yes | Substituted into the URL path (percent-encoded). |
+| `project` | yes | Substituted into the URL path (percent-encoded). |
+| `environment` | yes | Substituted into the URL path (percent-encoded). |
+| `site` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `expectedRevision` | yes | — |
+| `review` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaDropshipping.reviewBusinessTask({
+  workspaceId: "<workspaceId>",
+  taskId: "<taskId>",
+  organization: "<organization>",
+  project: "<project>",
+  environment: "<environment>",
+  site: "<site>",
+  expectedRevision: "<expectedRevision>",
+  review: "<review>",
+});
+```
+
+```python Python
+result = client.tempera_dropshipping.review_business_task({
+    "workspaceId": "<workspaceId>",
+    "taskId": "<taskId>",
+    "organization": "<organization>",
+    "project": "<project>",
+    "environment": "<environment>",
+    "site": "<site>",
+    "expectedRevision": "<expectedRevision>",
+    "review": "<review>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_dropshipping", "review_business_task", &[
+    ("workspaceId", "<workspaceId>".into()),
+    ("taskId", "<taskId>".into()),
+    ("organization", "<organization>".into()),
+    ("project", "<project>".into()),
+    ("environment", "<environment>".into()),
+    ("site", "<site>".into()),
+    ("expectedRevision", "<expectedRevision>".into()),
+    ("review", "<review>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### recordBusinessTaskReceipt
+
+`POST /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspaceId}/tasks/{taskId}/declared-receipts`
+
+Record Task Receipt.
+
+- **Producer operationId:** `recordBusinessTaskReceipt`
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:write` scope.
+- **Scope:** `orders:write`
+- **Call as:** TypeScript `client.temperaDropshipping.recordBusinessTaskReceipt()` · Python `client.tempera_dropshipping.record_business_task_receipt()` · Rust `build_request("tempera_dropshipping", "record_business_task_receipt", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `workspaceId` | yes | Substituted into the URL path (percent-encoded). |
+| `taskId` | yes | Substituted into the URL path (percent-encoded). |
+| `organization` | yes | Substituted into the URL path (percent-encoded). |
+| `project` | yes | Substituted into the URL path (percent-encoded). |
+| `environment` | yes | Substituted into the URL path (percent-encoded). |
+| `site` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `expectedRevision` | yes | — |
+| `receipt` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaDropshipping.recordBusinessTaskReceipt({
+  workspaceId: "<workspaceId>",
+  taskId: "<taskId>",
+  organization: "<organization>",
+  project: "<project>",
+  environment: "<environment>",
+  site: "<site>",
+  expectedRevision: "<expectedRevision>",
+  receipt: "<receipt>",
+});
+```
+
+```python Python
+result = client.tempera_dropshipping.record_business_task_receipt({
+    "workspaceId": "<workspaceId>",
+    "taskId": "<taskId>",
+    "organization": "<organization>",
+    "project": "<project>",
+    "environment": "<environment>",
+    "site": "<site>",
+    "expectedRevision": "<expectedRevision>",
+    "receipt": "<receipt>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_dropshipping", "record_business_task_receipt", &[
+    ("workspaceId", "<workspaceId>".into()),
+    ("taskId", "<taskId>".into()),
+    ("organization", "<organization>".into()),
+    ("project", "<project>".into()),
+    ("environment", "<environment>".into()),
+    ("site", "<site>".into()),
+    ("expectedRevision", "<expectedRevision>".into()),
+    ("receipt", "<receipt>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getBusinessWorkspace
+
+`GET /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspaceId}`
+
+Get Workspace.
+
+- **Producer operationId:** `getBusinessWorkspace`
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:read` scope.
+- **Scope:** `orders:read`
+- **Call as:** TypeScript `client.temperaDropshipping.getBusinessWorkspace()` · Python `client.tempera_dropshipping.get_business_workspace()` · Rust `build_request("tempera_dropshipping", "get_business_workspace", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `workspaceId` | yes | Substituted into the URL path (percent-encoded). |
 | `organization` | yes | Substituted into the URL path (percent-encoded). |
 | `project` | yes | Substituted into the URL path (percent-encoded). |
 | `environment` | yes | Substituted into the URL path (percent-encoded). |
@@ -2087,8 +2010,8 @@ Get Store.
 <CodeGroup>
 
 ```typescript TypeScript
-const result = await client.temperaDropshipping.getStore({
-  store_id: "<store_id>",
+const result = await client.temperaDropshipping.getBusinessWorkspace({
+  workspaceId: "<workspaceId>",
   organization: "<organization>",
   project: "<project>",
   environment: "<environment>",
@@ -2097,8 +2020,8 @@ const result = await client.temperaDropshipping.getStore({
 ```
 
 ```python Python
-result = client.tempera_dropshipping.get_store({
-    "store_id": "<store_id>",
+result = client.tempera_dropshipping.get_business_workspace({
+    "workspaceId": "<workspaceId>",
     "organization": "<organization>",
     "project": "<project>",
     "environment": "<environment>",
@@ -2107,12 +2030,82 @@ result = client.tempera_dropshipping.get_store({
 ```
 
 ```rust Rust
-let spec = client.build_request("tempera_dropshipping", "get_store", &[
-    ("store_id", "<store_id>".into()),
+let spec = client.build_request("tempera_dropshipping", "get_business_workspace", &[
+    ("workspaceId", "<workspaceId>".into()),
     ("organization", "<organization>".into()),
     ("project", "<project>".into()),
     ("environment", "<environment>".into()),
     ("site", "<site>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### prepareBusinessBrowserTask
+
+`POST /v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/business-workspaces/{workspaceId}/tasks/{taskId}:prepareBrowser`
+
+Browser Task.
+
+- **Producer operationId:** `prepareBusinessBrowserTask`
+- **Auth:** OAuth access token for audience `tempera-dropshipping`. Central `tp_` API keys cannot carry the required `orders:write` scope.
+- **Scope:** `orders:write`
+- **Call as:** TypeScript `client.temperaDropshipping.prepareBusinessBrowserTask()` · Python `client.tempera_dropshipping.prepare_business_browser_task()` · Rust `build_request("tempera_dropshipping", "prepare_business_browser_task", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `workspaceId` | yes | Substituted into the URL path (percent-encoded). |
+| `taskId` | yes | Substituted into the URL path (percent-encoded). |
+| `organization` | yes | Substituted into the URL path (percent-encoded). |
+| `project` | yes | Substituted into the URL path (percent-encoded). |
+| `environment` | yes | Substituted into the URL path (percent-encoded). |
+| `site` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `expectedRevision` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaDropshipping.prepareBusinessBrowserTask({
+  workspaceId: "<workspaceId>",
+  taskId: "<taskId>",
+  organization: "<organization>",
+  project: "<project>",
+  environment: "<environment>",
+  site: "<site>",
+  expectedRevision: "<expectedRevision>",
+});
+```
+
+```python Python
+result = client.tempera_dropshipping.prepare_business_browser_task({
+    "workspaceId": "<workspaceId>",
+    "taskId": "<taskId>",
+    "organization": "<organization>",
+    "project": "<project>",
+    "environment": "<environment>",
+    "site": "<site>",
+    "expectedRevision": "<expectedRevision>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_dropshipping", "prepare_business_browser_task", &[
+    ("workspaceId", "<workspaceId>".into()),
+    ("taskId", "<taskId>".into()),
+    ("organization", "<organization>".into()),
+    ("project", "<project>".into()),
+    ("environment", "<environment>".into()),
+    ("site", "<site>".into()),
+    ("expectedRevision", "<expectedRevision>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.

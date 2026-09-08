@@ -1,4 +1,5 @@
 {
+  "$comment": "Empty by design. Every vendored producer is now verified by the generated upstream-exact-source matrix in .github/workflows/test.yml. A gap here is an admission that some contract is trusted without reproduction, so it must stay empty; check-exact-source-gaps.py refuses a gap for any repository the matrix already covers.",
   "schema_version": 1,
   "gaps": []
 }

@@ -5,21 +5,21 @@ import XCTest
 
 final class CommerceModelsTests: XCTestCase {
     private let scope = """
-        {"organization_id":"merchant-a","project_id":"orders","environment":"test","site_id":"store-a"}
+        {"organizationId":"merchant-a","projectId":"orders","environment":"test","siteId":"store-a"}
         """
     private let merchant = "018f3b2a-cc59-7b60-9c18-836c07d1f9d9"
 
     private func offer(_ changes: String = "") -> Data {
         Data(
             """
-            {"id":"offer-1","revision":1,"scope":\(scope),"merchant_id":"\(merchant)","product_classification":"physical_goods","name":"Widget","description":"Declared offer","photo_url":null,"currency":"USD","unit_amount_minor":1200,"created_at":"2026-09-05T12:00:00Z","expires_at":null\(changes)}
+            {"id":"offer-1","revision":1,"scope":\(scope),"merchantId":"\(merchant)","productClassification":"physical_goods","name":"Widget","description":"Declared offer","photoUrl":null,"currency":"USD","unitAmountMinor":1200,"createdAt":"2026-09-05T12:00:00Z","expiresAt":null\(changes)}
             """.utf8)
     }
 
     private func sale(_ changes: String = "") -> Data {
         Data(
             """
-            {"id":"sale-1","revision":1,"scope":\(scope),"offer_id":"offer-1","offer_revision":1,"variant_id":"offer-1","merchant_id":"\(merchant)","product_classification":"physical_goods","quantity":2,"currency":"USD","unit_amount_minor":1200,"amount_minor":2400,"amount_source":"catalog_offer_revision","created_at":"2026-09-05T12:00:00Z"\(changes)}
+            {"id":"sale-1","revision":1,"scope":\(scope),"offerId":"offer-1","offerRevision":1,"variantId":"offer-1","merchantId":"\(merchant)","productClassification":"physical_goods","quantity":2,"currency":"USD","unitAmountMinor":1200,"amountMinor":2400,"amountSource":"catalog_offer_revision","createdAt":"2026-09-05T12:00:00Z"\(changes)}
             """.utf8)
     }
 
@@ -58,10 +58,10 @@ final class CommerceModelsTests: XCTestCase {
     func testPagesRequireItemsAndPreserveNullableCursor() throws {
         let decoder = JSONDecoder()
         let offerJSON = String(data: offer(), encoding: .utf8)!
-        let pageJSON = "{\"items\":[\(offerJSON)],\"next_cursor\":null}"
+        let pageJSON = "{\"items\":[\(offerJSON)],\"nextPageToken\":null}"
         let page = try decoder.decode(CatalogOfferPage.self, from: Data(pageJSON.utf8))
         XCTAssertEqual(page.items.count, 1)
-        XCTAssertNil(page.nextCursor)
+        XCTAssertNil(page.nextPageToken)
         XCTAssertThrowsError(try decoder.decode(CatalogOfferPage.self, from: Data("{}".utf8)))
     }
 
@@ -73,7 +73,7 @@ final class CommerceModelsTests: XCTestCase {
             try decoder.decode(
                 CatalogOffer.self,
                 from: changed(
-                    offer(), "\"photo_url\":null", "\"photo_url\":\"http://example.test/p.png\"")))
+                    offer(), "\"photoUrl\":null", "\"photoUrl\":\"http://example.test/p.png\"")))
     }
 
     func testRejectsMerchantAndResourceAndScopeViolations() throws {
@@ -97,11 +97,11 @@ final class CommerceModelsTests: XCTestCase {
         XCTAssertThrowsError(
             try decoder.decode(
                 SaleOrder.self,
-                from: changed(sale(), "\"amount_minor\":2400", "\"amount_minor\":2401")))
+                from: changed(sale(), "\"amountMinor\":2400", "\"amountMinor\":2401")))
         XCTAssertThrowsError(
             try decoder.decode(
                 SaleOrder.self,
-                from: changed(sale(), "\"variant_id\":\"offer-1\"", "\"variant_id\":\"different\""))
+                from: changed(sale(), "\"variantId\":\"offer-1\"", "\"variantId\":\"different\""))
         )
         XCTAssertThrowsError(
             try decoder.decode(
@@ -112,12 +112,12 @@ final class CommerceModelsTests: XCTestCase {
         let decoder = JSONDecoder()
         for (old, new) in [
             ("\"revision\":1", "\"revision\":true"),
-            ("\"unit_amount_minor\":1200", "\"unit_amount_minor\":1200.5"),
-            ("\"unit_amount_minor\":1200", "\"unit_amount_minor\":9999999999999999999999"),
+            ("\"unitAmountMinor\":1200", "\"unitAmountMinor\":1200.5"),
+            ("\"unitAmountMinor\":1200", "\"unitAmountMinor\":9999999999999999999999"),
             ("\"name\":\"Widget\"", "\"name\":\" \""),
             ("\"description\":\"Declared offer\"", "\"description\":\"\""),
-            ("\"photo_url\":null,", ""),
-            ("\"expires_at\":null", "\"expires_at\":\"2026-09-04T00:00:00Z\""),
+            ("\"photoUrl\":null,", ""),
+            ("\"expiresAt\":null", "\"expiresAt\":\"2026-09-04T00:00:00Z\""),
             ("2026-09-05T12:00:00Z", "2026-09-05T12:00:00Zjunk"),
             ("2026-09-05T12:00:00Z", "2026-02-30T12:00:00Z"),
             ("offer-1", "offer-1\\n"),
@@ -130,13 +130,13 @@ final class CommerceModelsTests: XCTestCase {
         XCTAssertThrowsError(try decoder.decode(SaleOrder.self, from: sale(",\"extra\":true")))
         XCTAssertThrowsError(
             try decoder.decode(
-                CatalogOfferPage.self, from: Data("{\"items\":[],\"next_cursor\":\"../bad\"}".utf8))
+                CatalogOfferPage.self, from: Data("{\"items\":[],\"nextPageToken\":\"../bad\"}".utf8))
         )
         XCTAssertThrowsError(
             try decoder.decode(
                 OrdersWorkspaceScope.self,
                 from: Data(
-                    "{\"organization_id\":\"a\",\"project_id\":\"b\",\"environment\":\"test\",\"site_id\":\"c\",\"extra\":true}"
+                    "{\"organizationId\":\"a\",\"projectId\":\"b\",\"environment\":\"test\",\"siteId\":\"c\",\"extra\":true}"
                         .utf8)))
     }
 }

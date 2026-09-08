@@ -22,6 +22,7 @@ import type {
   TemperaDocumentClient,
   TemperaDropshippingClient,
   TemperaBusinessClient,
+  TemperaConnectorsClient,
   TemperaAudience,
   TemperaEnvironment,
   TemperaProductKey,
@@ -174,6 +175,7 @@ export type TemperaClient = {
   temperaDocument: TemperaDocumentClient;
   temperaDropshipping: TemperaDropshippingClient;
   temperaBusiness: TemperaBusinessClient;
+  temperaConnectors: TemperaConnectorsClient;
   temperaPayments: TemperaPaymentsClient;
   cradle: CradleClient;
   remi: RemiClient;

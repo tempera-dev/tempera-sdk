@@ -1,0 +1,13 @@
+{
+  "generated_path": "specs/tempera-connectors-api.json",
+  "generated_sha256": "87b3c23e7df7161245563b24c2c03cd0b47a4a2debd79ed0c56f37edd33105ee",
+  "generated_with": "source_lock.py@1+verbatim-openapi-copy",
+  "schema_version": 1,
+  "source_blob_sha": "1cc3b9eee38eb6bc81011bf9a23572560489c52d",
+  "source_branch": "main",
+  "source_commit": "ef0c381166b19a8c72326b68fa7999916a207ca3",
+  "source_mode": "100644",
+  "source_path": "contracts/openapi/connectors.openapi.json",
+  "source_repo": "tempera-dev/tempera-connectors-runtime",
+  "source_sha256": "87b3c23e7df7161245563b24c2c03cd0b47a4a2debd79ed0c56f37edd33105ee"
+}

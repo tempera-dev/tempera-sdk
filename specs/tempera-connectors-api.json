@@ -1,0 +1,1023 @@
+{
+  "components": {
+    "responses": {
+      "Error": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Status"
+            }
+          }
+        },
+        "description": "A google.rpc.Status error envelope."
+      }
+    },
+    "schemas": {
+      "AuthScheme": {
+        "enum": [
+          "none",
+          "bearer",
+          "api_key",
+          "oauth2",
+          "basic",
+          "mtls",
+          "service_account"
+        ],
+        "type": "string"
+      },
+      "CatalogReason": {
+        "description": "Typed reasons attached as `details[].reason` to catalog-related errors.",
+        "enum": [
+          "CONNECTOR_NOT_FOUND",
+          "CATALOG_CONNECTOR_IS_IMMUTABLE",
+          "BASE_URL_REQUIRED",
+          "BASE_URL_MISMATCH",
+          "PROBE_OPERATION_ONLY"
+        ],
+        "type": "string"
+      },
+      "Connection": {
+        "additionalProperties": false,
+        "properties": {
+          "authScheme": {
+            "$ref": "#/components/schemas/AuthScheme"
+          },
+          "baseUrl": {
+            "type": "string"
+          },
+          "connectorId": {
+            "type": "string"
+          },
+          "connectorRevision": {
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "credentialName": {
+            "nullable": true,
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "etag": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "operations": {
+            "items": {
+              "$ref": "#/components/schemas/Operation"
+            },
+            "type": "array"
+          },
+          "revision": {
+            "format": "int64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "specificationArtifactRef": {
+            "nullable": true,
+            "type": "string"
+          },
+          "specificationDigest": {
+            "nullable": true,
+            "type": "string"
+          },
+          "state": {
+            "$ref": "#/components/schemas/ConnectionState"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "connectorId",
+          "connectorRevision",
+          "displayName",
+          "baseUrl",
+          "authScheme",
+          "operations",
+          "state",
+          "revision",
+          "etag",
+          "createdAt",
+          "updatedAt"
+        ],
+        "type": "object"
+      },
+      "ConnectionList": {
+        "properties": {
+          "connections": {
+            "items": {
+              "$ref": "#/components/schemas/Connection"
+            },
+            "type": "array"
+          },
+          "nextPageToken": {
+            "description": "AIP-158 continuation token. Opaque to the caller and absent on the\nlast page.",
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "connections"
+        ],
+        "type": "object"
+      },
+      "ConnectionState": {
+        "enum": [
+          "draft",
+          "testing",
+          "active",
+          "degraded",
+          "suspended",
+          "revoked"
+        ],
+        "type": "string"
+      },
+      "ConnectorList": {
+        "properties": {
+          "connectors": {
+            "items": {
+              "$ref": "#/components/schemas/ConnectorSummary"
+            },
+            "type": "array"
+          },
+          "nextPageToken": {
+            "description": "AIP-158 continuation token. Opaque to the caller and absent on the\nlast page.",
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "connectors"
+        ],
+        "type": "object"
+      },
+      "ConnectorOperationSummary": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "method": {
+            "type": "string"
+          },
+          "sideEffect": {
+            "$ref": "#/components/schemas/SideEffect"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "sideEffect"
+        ],
+        "type": "object"
+      },
+      "ConnectorSummary": {
+        "description": "Redacted catalog listing entry: no request schemas, headers, or secrets.",
+        "properties": {
+          "authScheme": {
+            "$ref": "#/components/schemas/AuthScheme"
+          },
+          "currentRevision": {
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "hosts": {
+            "description": "Reviewed upstream host templates; `{name}` marks a tenant-specific\nlabel the caller supplies through `baseUrl`.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "id": {
+            "type": "string"
+          },
+          "operations": {
+            "items": {
+              "$ref": "#/components/schemas/ConnectorOperationSummary"
+            },
+            "type": "array"
+          },
+          "probeOperationId": {
+            "description": "The single declared read operation `connections.test` exercises.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "displayName",
+          "currentRevision",
+          "authScheme",
+          "hosts",
+          "probeOperationId",
+          "operations"
+        ],
+        "type": "object"
+      },
+      "CreateConnectionRequest": {
+        "additionalProperties": false,
+        "description": "Create a connection either from the reviewed connector catalog or from a\nmanual operation manifest.\n\nCatalog shape: `connectorId` names a catalog entry and `operations`,\n`connectorRevision`, `authScheme`, and the specification fields are\nomitted; the connection is created from the definition's current\nrevision. `baseUrl` is required only when the definition's host template\nhas a tenant placeholder (for example `https://{shop}.myshopify.com`) and\nmust match it exactly. A catalog id combined with any manifest field is\nrejected with 400 and an unknown id without `operations` is 404 with a\ntyped `reason` detail.\n\nManual shape (unchanged): `operations`, `connectorRevision`, `baseUrl`,\nand `authScheme` are all supplied by the caller.",
+        "properties": {
+          "authScheme": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AuthScheme"
+              }
+            ],
+            "nullable": true
+          },
+          "baseUrl": {
+            "nullable": true,
+            "type": "string"
+          },
+          "connectorId": {
+            "type": "string"
+          },
+          "connectorRevision": {
+            "format": "int32",
+            "minimum": 0,
+            "nullable": true,
+            "type": "integer"
+          },
+          "credentialName": {
+            "nullable": true,
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "operations": {
+            "items": {
+              "$ref": "#/components/schemas/Operation"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "specificationArtifactRef": {
+            "description": "Immutable Data Engine artifact backing an imported specification. Manual\nand catalog connections intentionally have neither source field.",
+            "nullable": true,
+            "type": "string"
+          },
+          "specificationDigest": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "connectorId",
+          "displayName"
+        ],
+        "type": "object"
+      },
+      "HealthResponse": {
+        "properties": {
+          "status": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "type": "object"
+      },
+      "IdempotencyPolicy": {
+        "enum": [
+          "unsupported",
+          "optional",
+          "required"
+        ],
+        "type": "string"
+      },
+      "ImportOpenApiRequest": {
+        "additionalProperties": false,
+        "description": "Import an OpenAPI 3 document into the same normalized connection manifest\nused by manual setup.  Remote URL retrieval is intentionally absent here:\nit must be performed by Data Engine under provenance and egress controls.",
+        "properties": {
+          "authScheme": {
+            "$ref": "#/components/schemas/AuthScheme"
+          },
+          "baseUrl": {
+            "nullable": true,
+            "type": "string"
+          },
+          "connectorId": {
+            "nullable": true,
+            "type": "string"
+          },
+          "credentialName": {
+            "nullable": true,
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "document": {
+            "nullable": true
+          },
+          "sourceUrl": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "displayName",
+          "authScheme"
+        ],
+        "type": "object"
+      },
+      "InvocationReceipt": {
+        "properties": {
+          "attemptCount": {
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "connectionName": {
+            "type": "string"
+          },
+          "connectionRevision": {
+            "format": "int64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "connectorRevision": {
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "credentialRevision": {
+            "description": "The Auth Hub credential version pinned at invocation start. This is\nintentionally absent only for unauthenticated connections; credential\nids and secret-store references never leave the credential boundary.",
+            "format": "int64",
+            "minimum": 0,
+            "nullable": true,
+            "type": "integer"
+          },
+          "operationId": {
+            "type": "string"
+          },
+          "requestDigest": {
+            "type": "string"
+          },
+          "statusCode": {
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "traceId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "connectionName",
+          "connectionRevision",
+          "connectorRevision",
+          "credentialRevision",
+          "operationId",
+          "requestDigest",
+          "statusCode",
+          "attemptCount",
+          "traceId"
+        ],
+        "type": "object"
+      },
+      "InvocationResponse": {
+        "properties": {
+          "data": {},
+          "receipt": {
+            "$ref": "#/components/schemas/InvocationReceipt"
+          }
+        },
+        "required": [
+          "data",
+          "receipt"
+        ],
+        "type": "object"
+      },
+      "InvokeOperationRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "idempotencyKey": {
+            "nullable": true,
+            "type": "string"
+          },
+          "input": {},
+          "operationId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "operationId"
+        ],
+        "type": "object"
+      },
+      "Operation": {
+        "additionalProperties": false,
+        "properties": {
+          "displayName": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "idempotency": {
+            "$ref": "#/components/schemas/IdempotencyPolicy"
+          },
+          "method": {
+            "type": "string"
+          },
+          "pagination": {
+            "nullable": true
+          },
+          "path": {
+            "type": "string"
+          },
+          "rateLimit": {
+            "nullable": true
+          },
+          "requestSchema": {},
+          "responseSchema": {},
+          "sideEffect": {
+            "$ref": "#/components/schemas/SideEffect"
+          }
+        },
+        "required": [
+          "id",
+          "displayName",
+          "method",
+          "path",
+          "sideEffect",
+          "idempotency",
+          "requestSchema",
+          "responseSchema"
+        ],
+        "type": "object"
+      },
+      "SideEffect": {
+        "enum": [
+          "read_only",
+          "idempotent_write",
+          "unsafe"
+        ],
+        "type": "string"
+      },
+      "Status": {
+        "additionalProperties": false,
+        "description": "The google.rpc.Status error envelope required of every Tempera API (AIP-193).",
+        "properties": {
+          "error": {
+            "additionalProperties": false,
+            "properties": {
+              "code": {
+                "description": "The HTTP status code, repeated in the body so the envelope is self-describing.",
+                "type": "integer"
+              },
+              "details": {
+                "description": "Structured error details. Present but empty when there are none.",
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "message": {
+                "description": "A developer-facing description that is safe to log and safe to show.",
+                "type": "string"
+              },
+              "requestId": {
+                "description": "The server-assigned request identifier, mirrored from the x-request-id response header.",
+                "type": "string"
+              },
+              "status": {
+                "description": "The canonical google.rpc.Code name, for example INVALID_ARGUMENT.",
+                "enum": [
+                  "CANCELLED",
+                  "UNKNOWN",
+                  "INVALID_ARGUMENT",
+                  "DEADLINE_EXCEEDED",
+                  "NOT_FOUND",
+                  "ALREADY_EXISTS",
+                  "PERMISSION_DENIED",
+                  "UNAUTHENTICATED",
+                  "RESOURCE_EXHAUSTED",
+                  "FAILED_PRECONDITION",
+                  "ABORTED",
+                  "OUT_OF_RANGE",
+                  "UNIMPLEMENTED",
+                  "INTERNAL",
+                  "UNAVAILABLE",
+                  "DATA_LOSS"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "code",
+              "status",
+              "message"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "type": "object"
+      },
+      "TestConnectionRequest": {
+        "additionalProperties": false,
+        "description": "`operationId` is required for manual/imported connections and must be a\ndeclared GET/HEAD read-only operation. For a catalog connection it may be\nomitted (or must equal the definition's probe operation): the test always\nruns exactly that one declared read with the definition's bounded input.",
+        "properties": {
+          "operationId": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "TestConnectionResponse": {
+        "properties": {
+          "connection": {
+            "$ref": "#/components/schemas/Connection"
+          },
+          "receipt": {
+            "$ref": "#/components/schemas/InvocationReceipt"
+          }
+        },
+        "required": [
+          "connection",
+          "receipt"
+        ],
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "Tempera's tenant-scoped external API connection control plane and bounded invocation runtime.",
+    "license": {
+      "name": "MIT"
+    },
+    "title": "tempera-connectors",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/healthz": {
+      "get": {
+        "operationId": "health.check",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            },
+            "description": "Service is live"
+          }
+        },
+        "summary": "Read-only service liveness endpoint.",
+        "tags": [
+          "health"
+        ],
+        "x-tempera-auth-kind": "none"
+      }
+    },
+    "/v1/connections": {
+      "get": {
+        "description": "Ordered newest-updated first and paged per AIP-158: pass the returned\n`nextPageToken` back as `pageToken` until it is absent.",
+        "operationId": "connections.list",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "state",
+            "required": false,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/ConnectionState"
+                }
+              ],
+              "nullable": true
+            }
+          },
+          {
+            "description": "Maximum connections to return. Defaults to 50; values above 200 are\nrejected rather than silently clamped, so a caller never believes it\nasked for more than it received.",
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "format": "int32",
+              "minimum": 0,
+              "nullable": true,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "The `nextPageToken` of the previous page. Opaque; do not construct one.",
+            "in": "query",
+            "name": "pageToken",
+            "required": false,
+            "schema": {
+              "nullable": true,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionList"
+                }
+              }
+            },
+            "description": "Environment-scoped connections"
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "summary": "List the authenticated workspace's redacted connector connections.",
+        "tags": [
+          "connections"
+        ],
+        "x-tempera-auth-audience": "tempera-connectors",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "connection:read"
+      },
+      "post": {
+        "description": "Credential names are opaque references.\n\nErrors carry a typed `error.details[].reason`: `CATALOG_CONNECTOR_IS_IMMUTABLE`\nwhen a catalog `connectorId` is combined with a manual manifest,\n`BASE_URL_REQUIRED` or `BASE_URL_MISMATCH` when the reviewed host template\nis not satisfied (all 400), and `CONNECTOR_NOT_FOUND` when `connectorId`\nis unknown and no `operations` were supplied (404).",
+        "operationId": "connections.create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateConnectionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Connection"
+                }
+              }
+            },
+            "description": "Draft connection"
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "summary": "Create a draft tenant-scoped connection from the catalog or a manual manifest.",
+        "tags": [
+          "connections"
+        ],
+        "x-tempera-auth-audience": "tempera-connectors",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "connection:write"
+      }
+    },
+    "/v1/connections/{id}": {
+      "get": {
+        "operationId": "connections.get",
+        "parameters": [
+          {
+            "description": "Connection id, for example conn_abc",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Connection"
+                }
+              }
+            },
+            "description": "Connection"
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "summary": "Get one tenant-scoped connection without exposing secret material.",
+        "tags": [
+          "connections"
+        ],
+        "x-tempera-auth-audience": "tempera-connectors",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "connection:read",
+        "x-tempera-resource-pattern": {
+          "id": "connections/*"
+        }
+      }
+    },
+    "/v1/connections/{id}:invoke": {
+      "post": {
+        "operationId": "connections.invoke",
+        "parameters": [
+          {
+            "description": "Connection id",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvokeOperationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvocationResponse"
+                }
+              }
+            },
+            "description": "Normalized result and receipt"
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "412": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "summary": "Execute an active declared operation with a revision-pinned receipt.",
+        "tags": [
+          "invocations"
+        ],
+        "x-tempera-auth-audience": "tempera-connectors",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-physical-action": true,
+        "x-tempera-required-scope": "connection:invoke",
+        "x-tempera-resource-pattern": {
+          "id": "connections/*"
+        }
+      }
+    },
+    "/v1/connections/{id}:test": {
+      "post": {
+        "description": "A catalog connection always exercises exactly its definition's probe\noperation with the definition's bounded input.\n\nA catalog connection asked to test anything but its probe is rejected with\n400 and `error.details[].reason = PROBE_OPERATION_ONLY`.",
+        "operationId": "connections.test",
+        "parameters": [
+          {
+            "description": "Connection id",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TestConnectionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TestConnectionResponse"
+                }
+              }
+            },
+            "description": "Test succeeded and connection is active"
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "412": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "summary": "Safely test one declared read-only operation and activate/degrade the connection.",
+        "tags": [
+          "connections"
+        ],
+        "x-tempera-auth-audience": "tempera-connectors",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-physical-action": true,
+        "x-tempera-required-scope": "connection:write",
+        "x-tempera-resource-pattern": {
+          "id": "connections/*"
+        }
+      }
+    },
+    "/v1/connections:importOpenApi": {
+      "post": {
+        "description": "URL-based acquisition is intentionally not accepted here: Data Engine must\nfirst fetch and attest any remote source under its egress policy.",
+        "operationId": "connections.importOpenApi",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportOpenApiRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Connection"
+                }
+              }
+            },
+            "description": "Draft connection from normalized OpenAPI operations"
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "summary": "Normalize a caller-supplied OpenAPI 3 document into a draft connection.",
+        "tags": [
+          "connections"
+        ],
+        "x-tempera-auth-audience": "tempera-connectors",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "connection:write"
+      }
+    },
+    "/v1/connectors": {
+      "get": {
+        "description": "The listing is redacted to ids, names, revisions, hosts, and operation\nids/methods; it is identical for every workspace and contains no\ncredential or request detail.",
+        "operationId": "connectors.list",
+        "parameters": [
+          {
+            "description": "Maximum connectors to return. Defaults to 50; values above 200 are\nrejected.",
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "format": "int32",
+              "minimum": 0,
+              "nullable": true,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "The `nextPageToken` of the previous page. Opaque; do not construct one.",
+            "in": "query",
+            "name": "pageToken",
+            "required": false,
+            "schema": {
+              "nullable": true,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectorList"
+                }
+              }
+            },
+            "description": "Reviewed read-only connector definitions"
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "summary": "List the reviewed, read-only connector catalog.",
+        "tags": [
+          "connectors"
+        ],
+        "x-tempera-auth-audience": "tempera-connectors",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "connection:read"
+      }
+    }
+  },
+  "tags": [
+    {
+      "description": "Service liveness",
+      "name": "health"
+    },
+    {
+      "description": "Tenant-scoped external API connections; credentials are opaque references",
+      "name": "connections"
+    },
+    {
+      "description": "Reviewed, immutable, read-only connector catalog embedded in the runtime",
+      "name": "connectors"
+    },
+    {
+      "description": "Bounded generic API invocation with revision-pinned receipts",
+      "name": "invocations"
+    }
+  ],
+  "x-tempera-protocol-routes": [
+    "/healthz"
+  ]
+}

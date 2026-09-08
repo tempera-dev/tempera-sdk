@@ -22,11 +22,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "dataset:read",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "6a69cc1eaca80238e1453052688e1365596878ef0da0de7f34846dad1e1af59e",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "88a1198be73d1cedefc9933469013ada54492929ae59dcdaaa0286f01ff8695a",
         "mcp_input_schema_sha256": "50abc3d683d6a8f72c3cf8f183a02e7296da66ff2ec1c993ee89b3ebf117cf86",
         "mcp_output_schema_sha256": "4e58fca700b2b6900eff8ee976044a42d105969860aa3103ce959ad6b92fb5ef",
-        "output_sha256": "0c529ee2e2a8d2a6d4ecf0fb89a67690e6ce1d56728aa3b73787fb9effea0bb1"
+        "output_sha256": "60bc12ee95f08649c0c711144c6337c12a127958b73295042b7ec891bbb3cd79"
       }
     },
     {
@@ -51,11 +51,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "dataset:write",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "e3b6891c76bfa063f5216160f6e8727f643374dd76e8e6ff4c8cc638ff000f44",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "dee9c2bcd53c038cb49c87710126e701149dc07f58659ce37d0169996bc86084",
         "mcp_input_schema_sha256": "3b8c189ffc5ead0ffc9e31dfe12e2de7465890c0d417cdeab65edf00e40d6af9",
         "mcp_output_schema_sha256": "943ec0331ed081fc1f53451df8fdca14f8c414654fe76399ebbfa3e3458072cd",
-        "output_sha256": "9b0548b4b6da37d5cefaab3e966f77737ec9931d05d6bc6df221c13ea3eacab4"
+        "output_sha256": "5b093ca4e9d67018c749cb2e38f041a10584448da3123a53933c0f3b359c7689"
       }
     },
     {
@@ -80,11 +80,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "dataset:read",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "144ffffbb70c12c939b25980574e5173228d37aee4c31c9481a5c2eaf7d665fa",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "b23e88adb1d2f247f32de5f73aa613bd9e7d7f5afa2019b761da79e4f39b5a26",
         "mcp_input_schema_sha256": "6bfb183d03b53ce14f79c7c5375431496d7b450dc03e362d129b7eebc1f279dd",
         "mcp_output_schema_sha256": "e43d728be7df358e871ec0dadf9e19291c1739116ddcb68518af8971a03f8934",
-        "output_sha256": "0285cfea25113af4fee5e8a583070489bb29cfd1fec64b360a9e4003f19cf24b"
+        "output_sha256": "fa5e54f4c1b97ec0b2cf4a2b7da457cd1d21c0cf2a00f1cdc18899c186723b34"
       }
     },
     {
@@ -109,11 +109,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "dataset:read",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "054c27632844873c4dcd5f06e01a77388549ef0863e2a8993ed86731356b0d65",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "1670370c99ef26699f163f6eb433380b8f84ddb7d6a1209aa079531a4c7e3ff5",
         "mcp_input_schema_sha256": "a438742019650b3d5ca8c159eb608eb92dd2ae8ce6b35936d4f6c6a73e5f349c",
         "mcp_output_schema_sha256": "dad4d4e5fb91fa51d177f63b5df8ff177416f40a612ea8fb67c6cc77a02fe069",
-        "output_sha256": "7fd41c23b1c4ec62db63e94652881aa395e3d40fb747fbadd0b0f14e2589f453"
+        "output_sha256": "e37230df1d61bf71ec389bc16a09590f1a7478ca16b9ec9616eba807ecafc457"
       }
     },
     {
@@ -138,11 +138,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "dataset:write",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "5553fd25ac32291b94a9553ec05f0af24db15d8398df274e955e8bec67669466",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "4a31d15fedc4485b86540e67ef5cc772f1da4cf27876ca080bd777b2bd1ece04",
         "mcp_input_schema_sha256": "2c5bac8015fb2e40c2a409179ce55dd3d3c7e7a3f1774b5f6d63e88900787abb",
         "mcp_output_schema_sha256": "33698b7e673586dd0bbed5acf4dcf0e45962782260a784d16c4aad3590f0b3ce",
-        "output_sha256": "8dcfc13b16a10553bead8dde011699a1b7e3534289a9e065224eb4cdc3fbbbcd"
+        "output_sha256": "25ad70374e52e2a8f2e6aefc298f7c12090a3f1c3452fe43ecb114675e73f5de"
       }
     },
     {
@@ -167,11 +167,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "dataset:read",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "88f49fcf37b5ce9faf3a0dbba21d00ff624537b2fa0b7046552aeb1db2c3c42a",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "0691ec0048c6db76bae1e49bf38ce05a12326a07b5cf4177bdcbec169fb5c55c",
         "mcp_input_schema_sha256": "a438742019650b3d5ca8c159eb608eb92dd2ae8ce6b35936d4f6c6a73e5f349c",
         "mcp_output_schema_sha256": "d62328b7e05585f220a5d500723cffbea09de8c42b79fb69bb6c9e516688bfc1",
-        "output_sha256": "73fa1c4bcdfba25822662147601bc0c27c64587144d50ff7f7f1fd5cab5cf963"
+        "output_sha256": "a0f8c9101267f8580547f64cb7a82cb069352402c9cff95761f0a6ea9e8bffa7"
       }
     },
     {
@@ -197,11 +197,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "dataset:write",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "529503a76e9947b57b3e530efdda550e239ad8e485a97ef3b89c54c59f58ad9f",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "2bfb1c411d667bdb6103b3d5e58ddfefdc08defda477dbe19e9b6e7eb9821416",
         "mcp_input_schema_sha256": "3cb5789c9de8fa63be15bfe1ca1642e96d6c789d49ca271b0184e30404b4cb77",
         "mcp_output_schema_sha256": "e6339fa14e3aeedc64a1f6b00705c317c9a5374d2e8ad34bfdb98c5902a6c86c",
-        "output_sha256": "af3a7c1c2badb28338e157997325be0ab028704f77da310d48bfdb95c8afbf17"
+        "output_sha256": "7a86f70a0688fe601f2cd523845092c47c31d79b915b2541e615a74e38b6a943"
       }
     },
     {
@@ -220,11 +220,11 @@
       "reason": "Signed high-volume source evidence admission remains a producer-orchestrated REST handoff.",
       "required_scope": "dataset:write",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "f9e81cfdde916d68b8e1251440a40abe49f746ec11467b1bffff0aab9754dc79",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "dd4cdff1ce429762e84eacbc786ac2962278c60504ded3c5fcadbf5b92154778",
         "mcp_input_schema_sha256": null,
         "mcp_output_schema_sha256": null,
-        "output_sha256": "34bf2c3dc9ce3a33fa8d4a4f2578a9aad81ee4ff36a12a3e9a5c49597428e086"
+        "output_sha256": "c43d9559ad6481a8515522bff17cfc4c9158a283bbb930c69f9c3c3c03a97091"
       }
     },
     {
@@ -249,11 +249,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "connector:read",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "f3600797d20f7bcda4335a3b10ee2ead8c1c4c04dc5df45690b8d0cb8950fa5d",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "fac491c7c5399f7cd7df0f9fc51420e97ed199b11624318e3191199777beebac",
         "mcp_input_schema_sha256": "ff51ba99286d3f26921f78c8328af5be29ba9455e4c3e5049cd2b95add7fd834",
         "mcp_output_schema_sha256": "44079518ce48cfbad962ba4510f52dd63d3ff8f2c0834b8368bb67d2b6b9a4f4",
-        "output_sha256": "7069d135651dfab17efa402c2293091133b53e6dfec5e26743ec2871deee00e1"
+        "output_sha256": "31769ed0529ee9dc425fbc79e5256aec3b23d2b8bf316cbd95e7d723b0ac5454"
       }
     },
     {
@@ -272,11 +272,11 @@
       "reason": "Connector-run enumeration remains an operator application surface; models may retrieve a known run.",
       "required_scope": "connector:read",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "747fcebbd36378039c276053df86803edf341f5ee9196b1ba4bc1718a3ee2a0a",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "7dd2da8eb1ee69e3954642b0e0b1b297622f43136cc644b12c3a3fdd64ee7aaf",
         "mcp_input_schema_sha256": null,
         "mcp_output_schema_sha256": null,
-        "output_sha256": "8722e2fdd538dfe7b353e50d5611107c78087a168150d5299b22a405866473b6"
+        "output_sha256": "7f5381f3773e5aa6ed48a0a60580942a9c9c09db94a5af0daf7c0c452bc54a4a"
       }
     },
     {
@@ -301,11 +301,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "connector:read",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "e01e26bb2408fa91cb407f579359bd42ab52277317fe4cda7e3f521c7de91cf2",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "5939330a0d1c2fe5a2cbee622270827f04a04977e7538e099f1935a9d4d21152",
         "mcp_input_schema_sha256": "a438742019650b3d5ca8c159eb608eb92dd2ae8ce6b35936d4f6c6a73e5f349c",
         "mcp_output_schema_sha256": "e777a4d704aa38f91f5b6c9014798944a79a236f19f9d49bcf1369b6a434d235",
-        "output_sha256": "dda8c9339f82d270d321e8c89b7217feec9ee82e71d738f59830549889fe427a"
+        "output_sha256": "61d5b5f3b7b6af2c3955d8a29b5aedbcc53b8e6b485dcd7c910ec49c44c2abf9"
       }
     },
     {
@@ -330,11 +330,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "dataset:write",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "54783f79987cb82acc6e24bab55fbc24a52799f5f3672588dd223e9e8b0fdf1a",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "0b68c2e384c6cc2202a26adaf4bf279f5d8d73e0cf0113fa8a931f0dcaf37022",
         "mcp_input_schema_sha256": "84dded942212d6afa19e5eb5f547894c34f82abf3047a0ee29bc5337a85b099f",
         "mcp_output_schema_sha256": "40b70d85fa33d4162434dcdddb2e08f4e064cf183e2a1e99e2b4a29419618cf2",
-        "output_sha256": "87669930ae232a22e22a749c390684da9e1455786cabc1a6948706b2cbb1cc08"
+        "output_sha256": "5ddc6698b3a859b9f2251d53697aa5659fcbc2144fe7e064b159c91e460fd23e"
       }
     },
     {
@@ -353,11 +353,11 @@
       "reason": "Discovery release admission is an application-orchestrated, policy-gated REST operation.",
       "required_scope": "eval:run",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "c9c3edf2b5231f5673b370b383a535fcc6a1a57004218eb8ee8673ec6f2c5e74",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "40e276eac0126fb23402133e6724692c17c2726148f1840eb44b8f0b6e9e6798",
         "mcp_input_schema_sha256": null,
         "mcp_output_schema_sha256": null,
-        "output_sha256": "dd780873f1458001050c74ada9ddfdcb14ed968f117d21f75f04e46ee95ddfb1"
+        "output_sha256": "ef5aee0adcf6434f6e0b7b32b835306d7561943f21f2836746f87d9ce0032e9c"
       }
     },
     {
@@ -376,11 +376,11 @@
       "reason": "Discovery release retrieval remains an application-owned REST surface until its model-facing projection is security reviewed.",
       "required_scope": "dataset:read",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "1df10c91e816ef70afd8700aa3e7d3447d716878f1cc87f1ffedf8ebfae80049",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "4e5b2b4991a46d4df85a3df06d9039078711d5304079ec95471de1c974e3a0d8",
         "mcp_input_schema_sha256": null,
         "mcp_output_schema_sha256": null,
-        "output_sha256": "97bb838dbb191b94e366d0fc76ab1a589924e4dd7fb3f874fa054a5aee8a218e"
+        "output_sha256": "9771404cd353c28eb98c0b2782603a350f6ec09bab0a369a8b808d33dd5a1b7d"
       }
     },
     {
@@ -405,11 +405,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "dataset:read",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "578122b108d4e85d0d02b459b16aabf287892487731b45cea1d2a6ed2caffa8a",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "0e8df7b4fc9a853d8d18c10d4b9317897767e7a1b38cb4d8cd3057372c5bfee9",
         "mcp_input_schema_sha256": "a4fda775d65a27505830d6be51a85bbc937d2c3677371f8fb95bf0fd02a65d8f",
         "mcp_output_schema_sha256": "e612636b6fb8f4206e763099b05812af08c68eaaf68a6e235fdd8556b4ff42b9",
-        "output_sha256": "ffd057ef8b015243b1c83fac955797b14836b841071000debd3f2f310f794517"
+        "output_sha256": "f9288d4ebb2c5c7f10c7d1e4662dc9e247e5e82c6fb416e51bb69a185990ea29"
       }
     },
     {
@@ -428,11 +428,11 @@
       "reason": "Durable episode writes remain application-orchestrated REST operations.",
       "required_scope": "eval:run",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "6fa562ee1ffd1e284b6b4cd1694662c4e25d11c4e5a06feba7dda95a4e046f15",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "560425268714a5192860a02304908d80f878f14e3aef8bf0c4ff9803e060f5ee",
         "mcp_input_schema_sha256": null,
         "mcp_output_schema_sha256": null,
-        "output_sha256": "df34459e7b166bffa322fe849fed46cec5725412242674a0992c4d69d6fd1994"
+        "output_sha256": "51eb599f3025932705d3f09ddcd95f734169bcbedbe214272f278de16c305c6d"
       }
     },
     {
@@ -451,11 +451,11 @@
       "reason": "Episode retrieval remains an application-owned REST surface.",
       "required_scope": "dataset:read",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "ebed45bbdcdb62b80193ddc33027f52bdd830ba1833501552d7202f7bc74e2db",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "3010afe354fc81d7e90f09fedb4dc26cedd5b38ce2ff44291155f2d5e91db910",
         "mcp_input_schema_sha256": null,
         "mcp_output_schema_sha256": null,
-        "output_sha256": "75ad46d91a6cde2a2958fd659274b8aee69b9f08f14c0504c7491b82e17b4dd9"
+        "output_sha256": "da23e5b0b0b1bfd1ed06d811da787ef958ca97e2cb9ac70e74178148e57816b7"
       }
     },
     {
@@ -474,11 +474,11 @@
       "reason": "Episode enumeration remains an application-owned REST surface.",
       "required_scope": "dataset:read",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "967d9c2ca0f0e8b1d0a410afc8c8a594509eed03de18638fb40951170ee722c2",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "ff2b13e3c6809288d1be01d375659f22c5f63140c2e299c5d2f4d63c51a3c40b",
         "mcp_input_schema_sha256": null,
         "mcp_output_schema_sha256": null,
-        "output_sha256": "3e5afb7a406fccd109e221c2aa8d68f0528996939edd08d513bdb9269444b7a8"
+        "output_sha256": "303d2ff07ff74b25d3b6a5fab7f47cded01d387c46850d844153238b68303661"
       }
     },
     {
@@ -497,11 +497,11 @@
       "reason": "Durable evidence writes remain application-orchestrated REST operations.",
       "required_scope": "eval:run",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "3c9b9bfb73e67ede70270bf2a9949feb669202f9443e23be52bdd9962812d41b",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "a211a3918a2769303a644142f1e415e56758b070b96825986cda80372d65b05c",
         "mcp_input_schema_sha256": null,
         "mcp_output_schema_sha256": null,
-        "output_sha256": "98cf4e6687d65f0048dd438ccc055d38a599f60c12c36090c60e3365a8976225"
+        "output_sha256": "cc02ee1c438448f9307f2e9d66f6d2bef369f58093ca26165632deee7126493e"
       }
     },
     {
@@ -520,11 +520,11 @@
       "reason": "Evidence retrieval remains an application-owned REST surface.",
       "required_scope": "dataset:read",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "335f61ee12220a79b6cd0f5d04f14870b2c062d62780a8f6272f41209e2b82de",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "718e4432821023c75ed6ce44be7df21e1c2579d141787fd423bc0912d2df9466",
         "mcp_input_schema_sha256": null,
         "mcp_output_schema_sha256": null,
-        "output_sha256": "5fc848aea05c79c7d5d2110a42f8f41bc30815a3015298b8ed423625ab8d52a9"
+        "output_sha256": "9a00e0db19a5a64745c1b005d4b586a45c43457c2587c948c558b29ab747bcb5"
       }
     },
     {
@@ -543,11 +543,11 @@
       "reason": "Evidence enumeration remains an application-owned REST surface.",
       "required_scope": "dataset:read",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "8d62ffff418c4fe03001a0ac280a3e98a133242ded21b3ed78b6af73cc9755a9",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "1a1ac435cbe917aaf1df0cd69a039248a80051838b31b3c3191a7bdb086b8ef0",
         "mcp_input_schema_sha256": null,
         "mcp_output_schema_sha256": null,
-        "output_sha256": "c47f5d1b44e564fab133b263cdfe5f1e36177827ffbe6f4645dff71a431f9e23"
+        "output_sha256": "d5dfd0eb70f5ee2a3c11f753ec2ec48951a6df7f18dfff807806517d5da72500"
       }
     },
     {
@@ -566,11 +566,11 @@
       "reason": "Lease acquisition is reviewer-session orchestration, not a general model tool.",
       "required_scope": "review:resolve",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "aed758a658bce9fbd4fd56ba49e11c51b99719f43a673c4eceff4271ddded1f7",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "55fe8929ab8aa99644929069a192bf7e9193b96842b6b77e3caebebb16d9faf2",
         "mcp_input_schema_sha256": null,
         "mcp_output_schema_sha256": null,
-        "output_sha256": "4a908cdd6ee45acce59f53e7a1842c6a4b936fe3fc780e6b5f6b14ceef4c7aa5"
+        "output_sha256": "79fbc22480d7e88036b92241bc63c497e9f914333c4871cecab579394d4fac3d"
       }
     },
     {
@@ -589,11 +589,11 @@
       "reason": "Lease release is reviewer-session orchestration, not a general model tool.",
       "required_scope": "review:resolve",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "ce9346f8e1e6326724d38a1ef4aaf781b7bed469fd4930945e3c792b3751f7b1",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "400ee656070740652b2eaf5bd9e38a3eeb7fadd0a569552eefbdfc6025023321",
         "mcp_input_schema_sha256": null,
         "mcp_output_schema_sha256": null,
-        "output_sha256": "be90e8a5a081d3fb6c9cf4617037dd2c148311463d340ed608a45ea7c6603578"
+        "output_sha256": "31c304afd210bf81fcbc74dfd6fe6483b15f5c9968830a934f47edd844f7f5f8"
       }
     },
     {
@@ -612,11 +612,11 @@
       "reason": "Lease renewal is reviewer-session orchestration, not a general model tool.",
       "required_scope": "review:resolve",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "67ecb92b69aec3b13ecdb8fe19065adc75acddee9fa23ce8eed1f107445af1c4",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "de1a3c2637b6fe81f821225a3401019fe11e0debe4a01dfba47d2207bc6e5894",
         "mcp_input_schema_sha256": null,
         "mcp_output_schema_sha256": null,
-        "output_sha256": "2928aac30df8be612bdb912a8c14a34d6a2640c4ad76ce2da25f75afdc4829b4"
+        "output_sha256": "a90bbf55ec1b7b479040ddc8f6edb54c5b36315a1acaa9d3b493539c9317198b"
       }
     },
     {
@@ -635,11 +635,11 @@
       "reason": "Reviewer draft persistence remains a human-review application surface.",
       "required_scope": "review:resolve",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "b52dacbf1f61b2f275087000c57933e4df9fee7111dc59cde7c35c97e56c4ed5",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "dbf20295d7b149a3bfbfb06e36d790313b85b789c8f718cdbc51a004739c571a",
         "mcp_input_schema_sha256": null,
         "mcp_output_schema_sha256": null,
-        "output_sha256": "23a011a70aa4caa4d45474b0c407a3ff9f651b6382c0e43759d035bdfac5f49e"
+        "output_sha256": "447b63d8b7ed9e31649939605d4db585bbb8cbde53b5f5ec5b438aa5cf36ac03"
       }
     },
     {
@@ -658,11 +658,11 @@
       "reason": "Appeals are caller-bound human-review receipts and adjudication handoffs, not model tools.",
       "required_scope": "review:resolve",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "0d980bb6f9290f4f2b915474a56c41fae7f52cbbb3a31bff259d03022840b108",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "5b71baa881fe1996808a76ed3cfbbc3f7ef0d95b6ae91f6d8d2ba3e6f6fbbd74",
         "mcp_input_schema_sha256": null,
         "mcp_output_schema_sha256": null,
-        "output_sha256": "3736b1fb4bf9403934b2786b2e1e5d75f0b919f13d8ffb3934bd802efbf2976e"
+        "output_sha256": "aaba0a7b13ab403138913bb0d068e1fa3043fea7aa59eb199884860d9883ba39"
       }
     },
     {
@@ -687,11 +687,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "dataset:read",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "1da88bc20880c0719a63b6549e481a841a9e8addccb5e50467a29489f30bc514",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "14c7c8ff205d4e1f770a3ec9ec3e2f3ae4071d0214dab6db5d5f0590547b3853",
         "mcp_input_schema_sha256": "9cbfb77bc1781fb12e05f346b5c3bf65c051f34177ea85d2850f24dc89e9712a",
         "mcp_output_schema_sha256": "7791afb60828f649aebe5455ad5dc6e52b8b38e3ecf8d36a05d8214aa291b09d",
-        "output_sha256": "8c6f9abc1928c37c74332b4d283052eabe6a8d9b998891db896fbcc62f80647e"
+        "output_sha256": "aedb07cd0468b57ba1bb8d34c5de7ab262034b8765c8104a03e92d697dd7a3e5"
       }
     },
     {
@@ -716,11 +716,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "review:resolve",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "2e40a61f458a24efbf79badecc9d6e621955caf8b26013d1642813c867a3c48b",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "bddca869432d36e4484ea76d3b3b4e4a64df49fbce7a55afaa01d1f6a33fbccc",
         "mcp_input_schema_sha256": "51e0faa01e8a99da04c99815f267fee7dd59b34c32625469377db65295a60698",
         "mcp_output_schema_sha256": "98e330b080d93c7c437df8dc12ea019c52f84011ca3dd8b0612fbb95de934d39",
-        "output_sha256": "ed79ede40473e7c18141d5187d04a8a99a724c70bb9a9feb5854b3e174d012d1"
+        "output_sha256": "5a602cfd1532b53892592e514d1e93fd9eec33a9e3487492584ac400742b86ec"
       }
     },
     {
@@ -746,11 +746,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "eval:run",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "885c0ec0989537d507b72b937203b563d42e4619f483620daa015216f5bc5e98",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "58d254143a4fe13e280526a77409a667ff0a3b39ef88326214ae5f34fd5fb041",
         "mcp_input_schema_sha256": "906089e39e3b1cc62379de724fb912291c97bbf189225f5d9b755b232d9090b5",
         "mcp_output_schema_sha256": "50308b5ded496199a0ba9f3f50761dc579d99b6a3cbe693bef9e13fec3701afe",
-        "output_sha256": "1fae1f10de430c85b79d86d0845c45a47bc4ebcbcd0330266fde753ba388a65a"
+        "output_sha256": "14e45a2fe56b09e2f414f3f5d2794692dd1fcef8b84d891d0cf9744111b7d89e"
       }
     },
     {
@@ -775,11 +775,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "dataset:read",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "bef400c6f1b2158e9b7c2a5ceea48af61e548a120b4d9e3dd48093bc74e9fa25",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "b3e7b1dbb7a7001f164a603ed2cdb94be6b98998dd24d97f2b8ae1a309fed423",
         "mcp_input_schema_sha256": "d30bdba78392d7bde772740c643b54de6f662f3904b739a13b1aa42d32d6904c",
         "mcp_output_schema_sha256": "3a50da6b1422ba463b100b604959e1991f645984d1af75a9cdaa21c422d4446a",
-        "output_sha256": "6a6f9698f15f51ab39f29f84a2f7731cf0d866cb884aebf34714e5bf6f8c2619"
+        "output_sha256": "c748e3c3fd658a9107d313b966fb6939dbb7a44f8f0748a4154ad024265ffbc1"
       }
     },
     {
@@ -804,11 +804,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "dataset:read",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "baee70062abe32a1ab3e03cfd9ec16b502cc48adfc1b5f09ce021b2d22dd49bd",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "72b7d1e67d324dff28da580cc3e689e8226402259e038468ae75c9489b7a4d11",
         "mcp_input_schema_sha256": "41e76722ff0e7ebe1f58f9927bec98cb210a20bbeb604586418814990c39f1c8",
         "mcp_output_schema_sha256": "b496c0cb352216e0e5e8ec017c544d355f837505ffb9f9f1a5ebf2827af68c68",
-        "output_sha256": "24082f5692a54c4bc67ce573e91020c6e52358ef30a9c30644ea56fc375fd313"
+        "output_sha256": "4e5192d3a740cb95767fbee7bb7f125fa167eef6c752606366d969039ea5194f"
       }
     },
     {
@@ -833,11 +833,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "dataset:read",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "19bdbeac3a34a8f0f9517d6df74befa558c117ca4b9144d9666988a31a15384c",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "ea2f9fd70afb6d5c32f84cf423ce473241ff60a2fc5330d37aa93fec1e32f96f",
         "mcp_input_schema_sha256": "a4fda775d65a27505830d6be51a85bbc937d2c3677371f8fb95bf0fd02a65d8f",
         "mcp_output_schema_sha256": "657f28793766ef3c0cd0646c0199acbe5897a9d935845bf9bf12a5b50806d7df",
-        "output_sha256": "d769412bc844848baa77b9e980bc4e6abae2276edc12e23a2bd49440afc890b2"
+        "output_sha256": "382cc91544db426f87d3d3db09d69c0fd0a3b064b894bc7cb8bb8fc6c06fa999"
       }
     },
     {
@@ -862,11 +862,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "dataset:read",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "c1851171270d813392f67ef55be17fda2b5235d8d7e801508716c225952b6018",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "93e8872ad14f73536833fcb475ad36b1fa3fd86629b3d298c2d7520f74037425",
         "mcp_input_schema_sha256": "a4fda775d65a27505830d6be51a85bbc937d2c3677371f8fb95bf0fd02a65d8f",
         "mcp_output_schema_sha256": "52e595e1347882b4f65eef9c2cb2698aaa7dac8ebaa50ed70c691891d57b236b",
-        "output_sha256": "102f58f0b3f8c6c087e4c9fc57589eea2db784f6fcda8ac092408b34472e1752"
+        "output_sha256": "8dd0925159f889acba3040221b5917a26b9cbc2ab4ae6da48bc90ddee248fefb"
       }
     },
     {
@@ -892,11 +892,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "eval:run",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "549dd5e3acd9e76634df4f1aa1644df7f86a9feeec087059891604929faf55e2",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "7d45a9017c235ba2b6b249a7466c9edc300c94d88cfbde4a3a977cef7fe88ab8",
         "mcp_input_schema_sha256": "6e6632bc06d9f81b43b96cccadb0e627ef55c84194b20aca169818cc89c20f83",
         "mcp_output_schema_sha256": "7b43771461c8130aafb969ebf56619e0de1abc4e7f547810f9d8224e7eaf2bd1",
-        "output_sha256": "d23697ff898511d20b3e7aff854bda121ff3bdf40be337b16585e6eef6107c61"
+        "output_sha256": "bddbeb3b73f20df5c98738eb769d1e6dbf76e85968cc93253b901a915fc916b1"
       }
     },
     {
@@ -921,11 +921,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "dataset:write",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "026fe59f40a1af58464c52a8ad6310c530aec0b27c3cb174f4762c6f2148a496",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "4207681d6f5de5c3108b7dca158a21f271e63d80971ad65821cf9c84dcaff761",
         "mcp_input_schema_sha256": "2aaf3215f383ee4bca52e65864a8b969d9751f9d5ce9d6ce2b3842af5871d9cc",
         "mcp_output_schema_sha256": "1c7901dddd3c5a80737988e516f7b2c6b70c811dc56c7936dba96656ebf76e10",
-        "output_sha256": "cdf4a2f71c55cab22cd0b423eb1cd109e1c2a80f6fb802d609df2364c33be2db"
+        "output_sha256": "59f62316c2954b0e29ddd6bd49376bc7204b4dbcd1e64e8f74bb81679744b665"
       }
     },
     {
@@ -950,11 +950,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "eval:run",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "a78391de2e743dd5c6ec9101eb942c2143b8e71707e834edbeba700a2f066032",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "5101ceab3d1e9c29a2388853f923e525938e66b063b9c3d1c0b357699d105413",
         "mcp_input_schema_sha256": "afaec740bdf4d65112cfdafb35ab96b700ab7abd0e78523f92ce858b1cc86fb9",
         "mcp_output_schema_sha256": "77efac734dfd18417313606fe8062966dc12e79cf4f1f0f66e15c921dd22b6ca",
-        "output_sha256": "353d430f858b26a1cc8cd62e18fd921cb5f6837792c684c5f4223242b30e626b"
+        "output_sha256": "3932d389055d1a7fb1e95e53e3eea80c138206ea78660459fd1a2074db94ebae"
       }
     },
     {
@@ -979,11 +979,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "eval:run",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "1703021cf81a2f51a113f7066c53160b2d4b2da8cea534b8dea62d9defaae09b",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "280a7805af5186dbe84e6bba5d056078fd56fd92d751086b759f43a85ca8894b",
         "mcp_input_schema_sha256": "4384ea91b62a35aac518e08bcb65e363bed0d898111629bae8ec658e9161b7b6",
         "mcp_output_schema_sha256": "a9d28ed99f13c0c298d263c4fb443e99296f2603eb0617c670c24082d05129ee",
-        "output_sha256": "2cdb1e087aa810eb6fc954a7a4ab1f4e3ee4184b3575a0ec94dc642dec0e416a"
+        "output_sha256": "379da6e502d472467510d0dd08979df1d0d6be1d94b7f263eab87be5066c9eb4"
       }
     },
     {
@@ -1008,11 +1008,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "dataset:read",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "efae8dd7765275c6d5f5fbc874450446ff89f62115234d8a52cfa59b9e3b5586",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "0f09965ab738e68ed1deae3545d723dc99aed72ab943447849302b510a6fb7ae",
         "mcp_input_schema_sha256": "30dff1030a0bb41b2a0984d8b7dc79be50f5ce29789a2401fe6766f4c8404590",
         "mcp_output_schema_sha256": "fd3f6e6bebb3aa51dc21d71b80dbb2585ab60e0124f88c93b27bd482040d4fa3",
-        "output_sha256": "84fb37ab9eaf3b9a8300ca0be8749033d79f903b0aad43fd99f7be0a8bc68998"
+        "output_sha256": "ca627a8d3a3f33762909707b0f8bd24472455f9a4a0ab40aa4cc77f01bd56f9f"
       }
     },
     {
@@ -1037,11 +1037,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "dataset:read",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "05e211ab1e0526fff02a41657f6513215407087f2abbf4e86ca7efbe2f8437f7",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "5d25546e812e048931db77de4ec72d07a1bbe06e1c057e7aebcb1d41f2060873",
         "mcp_input_schema_sha256": "30dff1030a0bb41b2a0984d8b7dc79be50f5ce29789a2401fe6766f4c8404590",
         "mcp_output_schema_sha256": "a95efce9ffb0eee2f2f85c98503a85c7f5c9d3b16dbbdd3a37964af005e5b9d1",
-        "output_sha256": "c228c7a15642e3625ab1fdbb2fa26876b0c2417aa77c05caf6ba03c8cf3cfcf6"
+        "output_sha256": "981f92573889c0c182a27e57101b35615cc03fe50884b6f83fea5230cd0d6a1d"
       }
     },
     {
@@ -1066,11 +1066,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "dataset:write",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "2c671ada8a7dc4d6939031f26e944e07ada7d0bf337f7c0a5cda6826ce54402d",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "a7c137cd208e4df8e141490509dfce44d3392d716e365adb5b0076d2410d2982",
         "mcp_input_schema_sha256": "30dff1030a0bb41b2a0984d8b7dc79be50f5ce29789a2401fe6766f4c8404590",
         "mcp_output_schema_sha256": "ebbe559808c85cc11f28680cf45653ad816157116b7466de68b16dd23f366463",
-        "output_sha256": "e96a338157a1ab43bc0939643e01c72e7d4d129090e623e5478c20a60317eefd"
+        "output_sha256": "00c91995584f0be9a98d6b3140f25e2090aaa9a2df507e7384945b68c8096600"
       }
     },
     {
@@ -1089,11 +1089,11 @@
       "reason": "Research catalog publication requires producer workflow controls outside MCP.",
       "required_scope": "dataset:write",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "c9e95b887815729491b814d9d444fec58e14d6dd6e4a99596c434217597dc593",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "406fcb1c87d3f4144f4466e92064f899e4f4627e0f9a73ecd0ef640839660709",
         "mcp_input_schema_sha256": null,
         "mcp_output_schema_sha256": null,
-        "output_sha256": "ccd477cce27960bf123d939f48138546f5aed13fd1c8a4f96ac529392aa01c03"
+        "output_sha256": "372f80ce54884a9ce1a1c211c4e00f18cf5951c24d9f423ca0437d769ac86c16"
       }
     },
     {
@@ -1112,11 +1112,11 @@
       "reason": "Raw catalog entry retrieval remains an application surface; use curated research retrieval.",
       "required_scope": "dataset:read",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "b76b8fac3db9b06da6d56d4d66634ac0e5166dd0e9c70eb26de78d774c464a0e",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "e7a846879dc6f344183582f4135fdd85b9ec69425fb957e0bd2267932900837c",
         "mcp_input_schema_sha256": null,
         "mcp_output_schema_sha256": null,
-        "output_sha256": "246da8e36ba75594abcbff8481be3fd684cccc29ac6a737ffb04950ef59d75a6"
+        "output_sha256": "35222241b6173706246c3832a18f2f3af3672cf3bfc0921d4c8eda5294c6ffdc"
       }
     },
     {
@@ -1135,11 +1135,11 @@
       "reason": "Raw catalog enumeration remains an application surface; use curated research retrieval.",
       "required_scope": "dataset:read",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "20bb1b63bb5450eb34e6e7fe144a73177865863ecbe25e539ddf5798bbdfb7c0",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "7b2bccc468fbf9e7ea1f6fb77d6e167a264204376e83edf012fb64175ed39d9f",
         "mcp_input_schema_sha256": null,
         "mcp_output_schema_sha256": null,
-        "output_sha256": "d63b42e81d8419503c8bb93b923ee827d4dd955a770c7255621271569b214d6d"
+        "output_sha256": "9f333809ac0bb3478b4344ca810e2f625f97e85d7b43cc01516b25e9b62f98ed"
       }
     },
     {
@@ -1158,11 +1158,11 @@
       "reason": "Review-operation state is consumed by the human-review application, not exposed as a model tool.",
       "required_scope": "review:resolve",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "81b3fe8dbf5b05152eeb74d75026acdd74e916cc7fbe36e9101667dee7173640",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "95104d8ab91d3921f824c22609247841ab1793c3a3d1a31b00dbaa849bbec31d",
         "mcp_input_schema_sha256": null,
         "mcp_output_schema_sha256": null,
-        "output_sha256": "3f230fdf697dc5a1a8d52acdbb61b87361334c453862680800be7f8e0a128b8a"
+        "output_sha256": "e5590db4361bf850c410ea8adbf77ff46a603f84bf676bac01d54de98b482e0b"
       }
     },
     {
@@ -1181,11 +1181,11 @@
       "reason": "Gold-task creation requires dedicated administrative controls and remains REST-only.",
       "required_scope": "review:gold:manage",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "20fbbb3e8f0e69d8cc60fdc1bae028d5af4b4e06ed51a6d7017e7a1be1ae5955",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "4bb5cc245b79f450a077a4c65294cd7e4f24901fd7aaa83ade01e896679c1520",
         "mcp_input_schema_sha256": null,
         "mcp_output_schema_sha256": null,
-        "output_sha256": "b5ca9b68aa63ea726ba63b88526ae94e15657931469c49e3c101c9962900950f"
+        "output_sha256": "867ca2bc499365c92b813f35c629bf4d93541b24b732f5736bb0fee038d5ddf0"
       }
     },
     {
@@ -1204,11 +1204,11 @@
       "reason": "Reviewer qualification is caller-bound human-review application state, not a model tool.",
       "required_scope": "review:resolve",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "9097cc63724f8dc426f1647b0f9576b9b21dd4004b456094499ccfccd403fc78",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "9e6fc23355d470da7bf20ed1935997be780cabb7a8c4a038ca76946b47af55a2",
         "mcp_input_schema_sha256": null,
         "mcp_output_schema_sha256": null,
-        "output_sha256": "2fe56d5aa806aefb1f98436c54b806800921edad7e2fb7006bcdd95f6ed68b00"
+        "output_sha256": "af2b0211b1c72cdf4f109ba024a8ea864d191cf6e5e5bb1f90c39a1a072cdbbe"
       }
     },
     {
@@ -1227,11 +1227,11 @@
       "reason": "Reviewer revocation is a dedicated quality-operator control and remains REST-only.",
       "required_scope": "review:gold:manage",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "cb8fb9643164d54f901d0146a6f1c896546b11f4a4d3bb1f096366bd83316766",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "e2247c1b9df63675dd4e1dc0476483e11527bf0c9bb891886e639410086af117",
         "mcp_input_schema_sha256": null,
         "mcp_output_schema_sha256": null,
-        "output_sha256": "3aed4ef1c0b9ce5f0874b4d8374be74c3a9badc0ea2300e0c192f42c510354d3"
+        "output_sha256": "1d8b800dee8a40ceeda2ec1fd1916e140e0143b7e858fe85b602df06ff1afafd"
       }
     },
     {
@@ -1250,11 +1250,11 @@
       "reason": "Cookie-session evidence is human-review application telemetry, not a model tool.",
       "required_scope": "review:resolve",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "7ae5be3cc1e930d7896668369a127be6e7fcdaeab99bcf54b9489e056eff1909",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "e761832bf64aa4beab3f61354e2ff5e5a67a7e6bea17e318bdc45d51ea765473",
         "mcp_input_schema_sha256": null,
         "mcp_output_schema_sha256": null,
-        "output_sha256": "f469d1688aa9c6d40f62efeaaaca5b3ce87b1d0a492c7f756cb53cc440b1f4e4"
+        "output_sha256": "8c525f709bc2ea41de9c0c2a0a903394fe79bea2f8b00fb9913fdb81f50c1424"
       }
     },
     {
@@ -1273,11 +1273,11 @@
       "reason": "Source-definition creation requires an operator-reviewed credential and query binding.",
       "required_scope": "connector:manage",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "21b00150b67f35bcc2bb81393522b90febde5479b474b1a8caef6086893be413",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "b3539fa056878c0fe40f8786783c51e642ec646be1bcf616cfd4b32e0420ce24",
         "mcp_input_schema_sha256": null,
         "mcp_output_schema_sha256": null,
-        "output_sha256": "8b54292edff2f119e6b6d84387ded1809446b49ffd3bca22552239c3e6e55adb"
+        "output_sha256": "cc2750c0e22c3ee88c8ab8e9780e892ea831f435a87bc3cbe053538127fb5d73"
       }
     },
     {
@@ -1296,11 +1296,11 @@
       "reason": "Source definitions contain fixed provider coordinates and remain an operator application surface.",
       "required_scope": "connector:read",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "84c3c1fa615191bf56c56276fc8abe9b7199da416c1e7d31862ac49c4f4e5d9f",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "0f5f452bfba4df39ae5d75b0f0456c8873ba246486dcf3d339c50897b04d27cb",
         "mcp_input_schema_sha256": null,
         "mcp_output_schema_sha256": null,
-        "output_sha256": "a60a7f449a36dc70f9ff4ff2ff38e7b96f82016f0fca3ffeb397f96c2987a30d"
+        "output_sha256": "55ef7e48b244f826add354472ee1e25ee1dc2126f3d88ae27dd006cf8550ece5"
       }
     },
     {
@@ -1319,11 +1319,11 @@
       "reason": "Source-definition enumeration remains an operator application surface.",
       "required_scope": "connector:read",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "60a15bc9cba00d185860478a41604fa96a2a21f78e08114a2d425e07f9ced1a2",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "558a68aa2701e1f923f5120d1e46448f67e7dddcb115c12bf50ec4ee6a212831",
         "mcp_input_schema_sha256": null,
         "mcp_output_schema_sha256": null,
-        "output_sha256": "d8b1e828202c70496dd258b3a8c9be56b46d1286690516d7b0607d21b79ed511"
+        "output_sha256": "92627618b579d07872021249ecfcd21fe2b99dff44ae7a00267e54175bfb5bc6"
       }
     },
     {
@@ -1342,11 +1342,11 @@
       "reason": "Source-definition version changes require operator review and optimistic concurrency.",
       "required_scope": "connector:manage",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "a0f2fbaec1ddc8ed3ac63f3ee7468f85bd35883cd093803061b3c7b16cef838d",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "683635dc643f6197a2382c24c6c4789bcb7a085325dc2368c8d6a565a74f7ac0",
         "mcp_input_schema_sha256": null,
         "mcp_output_schema_sha256": null,
-        "output_sha256": "6549a96bf73b605af04cc8643358bd9bc20b51e95deb490e4f3846c43cbe3837"
+        "output_sha256": "886e26396d65fce3b043b1b9390489cce3fe2456abe46b756f2b87e7f5455b68"
       }
     },
     {
@@ -1372,11 +1372,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "connector:run",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "f1f9fe999704989709a38a12c914e47dea09250d62878c34b77da77fbd872a24",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "9345fc350b3ad65b508ece6843320f2c1c186f688f2439d6097228afb71a8ebe",
         "mcp_input_schema_sha256": "6ff8beacb1c5bbb083c318622c1bf91ca43e85b1c9db1a476b90ad4d0e33a541",
         "mcp_output_schema_sha256": "44079518ce48cfbad962ba4510f52dd63d3ff8f2c0834b8368bb67d2b6b9a4f4",
-        "output_sha256": "ed7e9267b05326a7b31ac8b4ebd7c6782aaba562f494e2a79a483137935c5515"
+        "output_sha256": "422a08d877af698ba131562df5fca1a7b27f4cad5550583bd0f56d6f71e530b7"
       }
     },
     {
@@ -1395,11 +1395,11 @@
       "reason": "Arbitrary connector parameters can expose external data or execute caller-supplied queries; use a reviewed source definition and connector run.",
       "required_scope": "connector:manage",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "118b915f01e30061643b9d34532a2b1c022bf47c689bc3fd7fe8f390cf887376",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "8d3c8bdd9c7ff0645f4b80a578d998e3eb03ec33bd2aa1107a23080ba0373dcb",
         "mcp_input_schema_sha256": null,
         "mcp_output_schema_sha256": null,
-        "output_sha256": "aaaa0ab0600fc283de465173a993ef3140d5a3aac8561a8e8434960f32c48061"
+        "output_sha256": "c2c54c40c296815e2582ba00d82c5615eaa39e84b0614f8cce4822b7f7d84bbe"
       }
     },
     {
@@ -1424,11 +1424,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "dataset:write",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "f3636a6fb358c6b176b1d80fe7e5adde98d83c862809b556222f6170549afb99",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "97ece1bd6c8306bc4e32cac308be29d9fefc056d40e6cacafe908ccaee8abae4",
         "mcp_input_schema_sha256": "73054143c5470f88a58a22a776ee4364585aa998b6c8991e5634d23c8319944f",
         "mcp_output_schema_sha256": "157615b10597fc7e0aa8aef2ad4b4b947c36e85bcd3a30393890bb5f109888c9",
-        "output_sha256": "5c5577167e199a87c5ea175acb116994a1753cf1701bf2a94e9b75950922db21"
+        "output_sha256": "d7e6a6633c37c1d2aeb79d2304dbc3099bb7c15cfb423ea7e395d9b152635ec1"
       }
     },
     {
@@ -1454,11 +1454,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "dataset:write",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "99bdc2fcabbe62d1933f5cf0db37fe0bd696556d4be6578ba1c4bc8f3a602ce8",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "834d2f1667b7ecc4bb4e38b4d9f0fc9afd4bc9345b9b4382b5e9c430bd16e33c",
         "mcp_input_schema_sha256": "10e042af7359279770163b493c7314cd25ce44efb8d8c648f3451da484006454",
         "mcp_output_schema_sha256": "342a40ee9fd7a18344de33d3a7ad7098f5158fdcd851f47733ba287c5b5f6c6f",
-        "output_sha256": "f3f4f553f9dde1c92016b12a876192f809d2c00f4c2214eb3bdd976cd452bd39"
+        "output_sha256": "91fa29c5e5c75cf415611ee2c02fa2dac3f0d59b9c6da1894c0cc5bad017c3d9"
       }
     },
     {
@@ -1483,11 +1483,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "dataset:read",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "6a6ba3db2551553f84e64864328305900ef779112d412e8cc71731a98bf75e40",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "d6071b5f650c4efa91a6432196e5285da30db35b226a33040371927f63553dc2",
         "mcp_input_schema_sha256": "10e042af7359279770163b493c7314cd25ce44efb8d8c648f3451da484006454",
         "mcp_output_schema_sha256": "157615b10597fc7e0aa8aef2ad4b4b947c36e85bcd3a30393890bb5f109888c9",
-        "output_sha256": "ef1c62691491f6ee39d4fef0ad4df07f591cc0669afbb5c10617128c473e929a"
+        "output_sha256": "e4f94df335ce69e77cc92bfabe50740f515a24a580a16f4862b56e12d7ccce20"
       }
     },
     {
@@ -1512,11 +1512,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "dataset:write",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "336e7e3dbddd7e7d5d31427707c1868ef2482af7c96a6af2392cc97cbf964b31",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "053834c5a3f0a4a03095a5bff6557cfd9bfc6ee722d5b7fc72a230bf64026473",
         "mcp_input_schema_sha256": "7e976dbf9f5a16b983d215fd06e25ce400f0ee8fce0c8ae7be85def0dacc225e",
         "mcp_output_schema_sha256": "cd9d433ece9175e0dc1e66307f5c298fcdf7203d7bb55e890d355acd60c4c09a",
-        "output_sha256": "7b72a2313fd99b3caa9ec640ab76ad0413799277909a85ad1896f50e71ec415c"
+        "output_sha256": "a5157a2476944fb0df2b272620df26d1dc6f5107fd4fca3a8a81f9f554f8c12e"
       }
     },
     {
@@ -1541,11 +1541,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "dataset:read",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "40320ac45cb89bdc7a116fcbf311e0403cec6df5c5df5a1fbf3c7f6eec8a9e8b",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "356dda3fe800093852ba6e3931445fc9477542155ceaa0d2c6146943f13f82ee",
         "mcp_input_schema_sha256": "a438742019650b3d5ca8c159eb608eb92dd2ae8ce6b35936d4f6c6a73e5f349c",
         "mcp_output_schema_sha256": "1bf8403a5700e3e221aae257386a7b22907348784b5ef453c3f7c214bb1ff094",
-        "output_sha256": "3a4f0b10f82657dc8753d3449af4628bdc1f8e9508eb890710d805a0dea737f6"
+        "output_sha256": "da17cc42ea8c67cfa863101710419b8e3056017e350ba1fd4b7f593d3c3a071b"
       }
     },
     {
@@ -1570,11 +1570,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "training:publish",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "083f80ba31cc811f01471c1a6dcd8ecf471c4a5cb6d9294cae00d840ec541614",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "d157fa7cf579d2181f7e4b1158b7df882eec48e6b19b7b7e2cd7476aa5bd8ce6",
         "mcp_input_schema_sha256": "0f0dbd7c6c5b6fc5fbdae4eb26696f7b2217e9c604d9b95deab1b7fd4e072e17",
         "mcp_output_schema_sha256": "0fcc8e95c1ef0b55cee3282886da3e232c9904827ba9de3d8241ee5c2eb5b7ff",
-        "output_sha256": "fbebc351a6780b94610dc7d05f2b57e61e59106fe2e0aeefcf031aeb67353eb9"
+        "output_sha256": "790ae691e2151049bb1368361c4434496fcbec46b4b4508105c312d2f82621b1"
       }
     },
     {
@@ -1599,11 +1599,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "training:publish",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "879275c6c1a95ee5beaaaa87a7b66fe5a4187549a289058e2ad62a0b1d37e7f4",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "154a56f17a720e1c57f7d4714fe258560294960cdd04c87bb4b62990eb110f2a",
         "mcp_input_schema_sha256": "5796784f1074871c0189e571ae5fa38c988480fc550cd4a6d435bc51ccb07cc5",
         "mcp_output_schema_sha256": "0fcc8e95c1ef0b55cee3282886da3e232c9904827ba9de3d8241ee5c2eb5b7ff",
-        "output_sha256": "e2da1650eb8d0168db1285f7972dd95b29c6bdb4f8fbedd9630e7669395e5ab1"
+        "output_sha256": "d87341ac35dcc92e5fcb67ee7bd508d02a1575cb1721f6f2bf8457f3aa1c6e13"
       }
     },
     {
@@ -1628,11 +1628,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "dataset:read",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "9833e9c8001e77200c558694f51a193ab10d3c7ce617c7c48b443cddb2a932f8",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "3009f1a0f118c19d6d095bf539f3aa96aee10de75928918eea051d3ea6873d24",
         "mcp_input_schema_sha256": "d7ee44cbc8d529732ffbcd13de803ce67b16a304d3eac7f7d465157de062a1cf",
         "mcp_output_schema_sha256": "62e8b792531c17ba87304efd1c8a5740ef9c2fe7f1fdb1d4d2a69a222add7dc8",
-        "output_sha256": "9c2f73cb597aafbbd4ef8805e7db3466bb53589bb26712dd8b441365cbd1df11"
+        "output_sha256": "d6d3d035a893c7cd3ad91eab10591d644fb93f28b569ae97027f3bcea6d0aff4"
       }
     },
     {
@@ -1657,11 +1657,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "dataset:read",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "cc6998ea15d8b40566f48bfc6c4fd001cc0366dfdc4af2af16adcaa3aed8e2d2",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "10e21c5e4d62fc9d3f6c6783801a9f557135aef9702dd8b54899fe08d765382c",
         "mcp_input_schema_sha256": "a438742019650b3d5ca8c159eb608eb92dd2ae8ce6b35936d4f6c6a73e5f349c",
         "mcp_output_schema_sha256": "08b2ced46499cf11dc6dafb3554c18da7f242e04782299f97fd6ee4e622f4b48",
-        "output_sha256": "376a640d4dc86dd115d665321d144f4ba3a858e0c51660ca3f1c25ce440beb74"
+        "output_sha256": "68fadb347c66e7671a4aee5c80f7dc2229615101b2808b77478d22eb6c05adda"
       }
     },
     {
@@ -1687,11 +1687,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "dataset:write",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "8af0f7f99e9c0efec2d342ba09d3adea044e6a213fee2cf9c08e0b8a3b016c23",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "3cd86f656a617d781419da7b87c016e7fa4564366dac36d94f94404810508c03",
         "mcp_input_schema_sha256": "140ff8f6ff3152eb10deb53b3d203f46db274591ad5a481b3907c57fbe0f28bd",
         "mcp_output_schema_sha256": "943ec0331ed081fc1f53451df8fdca14f8c414654fe76399ebbfa3e3458072cd",
-        "output_sha256": "c3620c79d03e2c74fbfb5f353c3e7947dfb9e5b9ae9e19a8ef431d63a7c4a700"
+        "output_sha256": "cf2d5810a538f0f991d7802ae0ce962855cab5dcd6e1afc40dd8af93b07b239f"
       }
     },
     {
@@ -1716,11 +1716,11 @@
       "reason": "Explicitly projected through the canonical REST route and runtime authorization path.",
       "required_scope": "dataset:read",
       "schema_fixtures": {
-        "format": "openapi-operation-block.v1",
-        "input_sha256": "c11c80c0f6c6065e256b6272f78a7cfcdb89b7930cdb04d8a46c9817731d69c8",
+        "format": "openapi-operation-json.v1",
+        "input_sha256": "808b1f9a41f7563b487b050bab6b2a9acb6b0e2e5339037abd9cfb8700f01065",
         "mcp_input_schema_sha256": "347a34e762bbb1373ea07d293fda11237a867a83e773f108f549162439edd418",
         "mcp_output_schema_sha256": "cd4a703dbcccf5f188881bebbd8d07e722d312c444148eaaafa6b623fd275784",
-        "output_sha256": "e72bf14b7af6c6dbc187bee6a8902efd19ff932cba47452cc2a4623aed59ba15"
+        "output_sha256": "87ce4f107c957031fa6f02038aa5ed2bd01a57038dee612dcd202eec441537f0"
       }
     }
   ],
@@ -1734,19 +1734,19 @@
     "exposed_count": 37,
     "mcp_tools_artifact": {
       "path": "api/mcp-tools.json",
-      "sha256": "58aadf0cc8f6a9392cbafd73bade004e238fd408a2e860e38361c2b688b8750f"
+      "sha256": "c98b7bbe5c181e6c9a1eabc48863456bc24a02787f87b0a4fa1ccc4057b4896b"
     },
     "promotion_requirement": "producer security review"
   },
   "producer": "data-engine",
   "schema": "data-engine.mcp-admission.v1",
   "source": {
-    "commit": "9ad352af58cc88ccba5691159e0e54b3b912b98b",
+    "commit": "041a7e1044d85c230feba1671e0092b8958fd798",
     "files": [
       {
-        "git_blob": "08d8a7a1368bff30140ab431ede9a9dfd500c6aa",
-        "path": "api/openapi.yaml",
-        "sha256": "a6c9bd5dc523e6ce4044a960f12ff08c888d5833e2d917c42dd7831c1ffa01ca"
+        "git_blob": "0b3be446c7ff93baba7f2294ea3c2f0de860d123",
+        "path": "contracts/openapi/data-engine.openapi.json",
+        "sha256": "5cb5e6b3c1a12c975018e9059b4aae7ba6f399915549b89786d43b079d14ab31"
       },
       {
         "git_blob": "691ff70da5862eb5e3b23899b0162623ecbc2ac3",
@@ -1754,9 +1754,9 @@
         "sha256": "1ca7518518d04c84af2f577bc305edddd638eb41b7cbfceee489f61224c7df84"
       },
       {
-        "git_blob": "77e52cbd3e3d538e6e9c5399add3674b87d70b9e",
+        "git_blob": "2e877c3a11aaa8e6cf7374dd7df9668be2d10485",
         "path": "src/data_engine/app.py",
-        "sha256": "7b3454b5863ee30cf96f88f97720072cdc54522c7a9823ff564f77d52446210f"
+        "sha256": "9ec7c70bf1162aac265a83382c8554d7c675179b5a44c13c59b6a0ea10cb4287"
       },
       {
         "git_blob": "341cd1063cd400c8c30bd0b8c86d83c4b7b1a53b",
@@ -1764,9 +1764,9 @@
         "sha256": "11ecf62e3ae9c247dd0f50c6279771c9a656bc17b047c8a679b4cefaab1f7206"
       },
       {
-        "git_blob": "3a262100e85b64dc7b7903d700a73c96f85fcf92",
+        "git_blob": "45d4412370d14b0927bbad91ef936aa19afdca69",
         "path": "src/data_engine/mcp_admission.py",
-        "sha256": "e9303f609e4b0dc2c4e5043cfc76ca44f480c24ce98aa00a32ac215ac1853c56"
+        "sha256": "304e8640da0f44abf73cd8e19d22259694da0ed963eff64058725ab12f75b921"
       }
     ],
     "repository": "tempera-dev/data-engine"

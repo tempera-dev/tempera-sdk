@@ -22,6 +22,14 @@ SOURCE_LOCK_SCRIPT = (
 )
 
 PRODUCTS: dict[str, dict[str, str]] = {
+    "temperaConnectors": {
+        "source_repo": "tempera-dev/tempera-connectors-runtime",
+        "source_branch": "main",
+        "source_path": "contracts/openapi/connectors.openapi.json",
+        "generated_path": "specs/tempera-connectors-api.json",
+        "generated_with": "source_lock.py@1+verbatim-openapi-copy",
+        "transform": "verbatim",
+    },
     "temperaPayments": {
         "source_repo": "tempera-dev/tempera-payments",
         "source_branch": "main",
@@ -33,15 +41,15 @@ PRODUCTS: dict[str, dict[str, str]] = {
     "dataEngine": {
         "source_repo": "tempera-dev/data-engine",
         "source_branch": "main",
-        "source_path": "api/openapi.yaml",
+        "source_path": "contracts/openapi/data-engine.openapi.json",
         "generated_path": "specs/data-engine-openapi.json",
-        "generated_with": "sync-vendored-openapi.py@2+PyYAML@6.0.3+source-pinned-local-json-bundle",
-        "transform": "yaml-json-local-bundle",
+        "generated_with": "sync-vendored-openapi.py@1+verbatim-openapi-copy",
+        "transform": "verbatim",
     },
     "humanData": {
         "source_repo": "tempera-dev/human-data",
         "source_branch": "main",
-        "source_path": "api/openapi.json",
+        "source_path": "contracts/openapi/human-data.openapi.json",
         "generated_path": "specs/human-data-openapi.json",
         "generated_with": "source_lock.py@1+verbatim-openapi-copy",
         "transform": "verbatim",
@@ -65,7 +73,7 @@ PRODUCTS: dict[str, dict[str, str]] = {
     "temperaDocument": {
         "source_repo": "tempera-dev/tempera-document",
         "source_branch": "main",
-        "source_path": "sdks/openapi/tempera-document-api.json",
+        "source_path": "contracts/openapi/document.openapi.json",
         "generated_path": "specs/tempera-document-api.json",
         "generated_with": "source_lock.py@1+verbatim-openapi-copy",
         "transform": "verbatim",
@@ -73,15 +81,15 @@ PRODUCTS: dict[str, dict[str, str]] = {
     "temperaGym": {
         "source_repo": "tempera-dev/tempera-gym",
         "source_branch": "main",
-        "source_path": "contracts/gym-api.openapi.yaml",
+        "source_path": "contracts/openapi/gym.openapi.json",
         "generated_path": "specs/tempera-gym-api.json",
-        "generated_with": "source_lock.py@1+PyYAML@6.0.3+json.dumps-indent-2",
-        "transform": "yaml-json",
+        "generated_with": "source_lock.py@1+verbatim-openapi-copy",
+        "transform": "verbatim",
     },
     "temperaBio": {
         "source_repo": "tempera-dev/tempera-bio",
         "source_branch": "main",
-        "source_path": "openapi/tempera-bio-discovery-v1.openapi.json",
+        "source_path": "contracts/openapi/bio.openapi.json",
         "generated_path": "specs/tempera-bio-api.json",
         "generated_with": "source_lock.py@1+verbatim-openapi-copy",
         "transform": "verbatim",
@@ -89,7 +97,7 @@ PRODUCTS: dict[str, dict[str, str]] = {
     "temperaLlm": {
         "source_repo": "tempera-dev/tempera-llm",
         "source_branch": "main",
-        "source_path": "sdks/openapi/tempera-llm-api.json",
+        "source_path": "contracts/openapi/llm.openapi.json",
         "generated_path": "specs/tempera-llm-api.json",
         "generated_with": "source_lock.py@1+verbatim-openapi-copy",
         "transform": "verbatim",
@@ -97,7 +105,7 @@ PRODUCTS: dict[str, dict[str, str]] = {
     "temperaVoice": {
         "source_repo": "tempera-dev/tempera-voice",
         "source_branch": "main",
-        "source_path": "contracts/voice-api.openapi.json",
+        "source_path": "contracts/openapi/voice.openapi.json",
         "generated_path": "specs/tempera-voice-api.json",
         "generated_with": "source_lock.py@1+verbatim-openapi-copy",
         "transform": "verbatim",
@@ -105,10 +113,10 @@ PRODUCTS: dict[str, dict[str, str]] = {
     "temperaRisk": {
         "source_repo": "tempera-dev/tempera-risk",
         "source_branch": "main",
-        "source_path": "api/openapi.yaml",
+        "source_path": "contracts/openapi/risk.openapi.json",
         "generated_path": "specs/tempera-risk-api.json",
-        "generated_with": "sync-vendored-openapi.py@1+PyYAML@6.0.3+json.dumps-indent-2",
-        "transform": "yaml-json",
+        "generated_with": "sync-vendored-openapi.py@1+verbatim-openapi-copy",
+        "transform": "verbatim",
     },
     "temperaWorkflows": {
         "source_repo": "tempera-dev/tempera-workflows",
@@ -121,9 +129,9 @@ PRODUCTS: dict[str, dict[str, str]] = {
     "remi": {
         "source_repo": "tempera-dev/remi",
         "source_branch": "main",
-        "source_path": "docs/public-http-contract.json",
+        "source_path": "contracts/openapi/remi.openapi.json",
         "generated_path": "specs/remi-http-contract.json",
-        "generated_with": "sync-vendored-openapi.py@1+verbatim-contract-copy",
+        "generated_with": "sync-vendored-openapi.py@1+verbatim-openapi-copy",
         "transform": "verbatim",
     },
     "tempo": {
@@ -134,10 +142,14 @@ PRODUCTS: dict[str, dict[str, str]] = {
         "generated_with": "sync-vendored-openapi.py@1+verbatim-openapi-copy",
         "transform": "verbatim",
     },
+    # Staged producers. Their canonical contracts still live on unmerged
+    # feature branches, so the vendored locks below deliberately record a
+    # non-main source_branch and are admitted only through the explicit,
+    # expiring ledger in contracts/sdk-staged-sources.json.
     "temperaDropshipping": {
         "source_repo": "tempera-dev/tempera-dropshipping",
         "source_branch": "main",
-        "source_path": "contracts/dropshipping.openapi.json",
+        "source_path": "contracts/openapi/dropshipping.openapi.json",
         "generated_path": "specs/tempera-dropshipping-api.json",
         "generated_with": "sync-vendored-openapi.py@1+verbatim-openapi-copy",
         "transform": "verbatim",
@@ -145,7 +157,7 @@ PRODUCTS: dict[str, dict[str, str]] = {
     "temperaBusiness": {
         "source_repo": "tempera-dev/tempera-business",
         "source_branch": "main",
-        "source_path": "contracts/tempera-business.openapi.json",
+        "source_path": "contracts/openapi/business.openapi.json",
         "generated_path": "specs/tempera-business-api.json",
         "generated_with": "sync-vendored-openapi.py@1+verbatim-openapi-copy",
         "transform": "verbatim",

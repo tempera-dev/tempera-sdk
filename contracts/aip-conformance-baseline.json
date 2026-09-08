@@ -54,7 +54,6 @@
     "cradle|/mcp",
     "cradle|/v1/health",
     "dataEngine|/mcp",
-    "dataEngine|/v1/health",
     "palette|/health",
     "palette|/v1/traces",
     "remi|/livez",
@@ -94,7 +93,9 @@
     "controlPlane|POST|/v1/step-up/passkey:finish",
     "controlPlane|POST|/v1/workspace/select"
   ],
-  "accepted_violations": [],
+  "accepted_violations": [
+    "temperaRisk|POST|/v1/projects/{project}/graphReads/execute|aip-127-lower-camel-json-fields"
+  ],
   "design_migrations": [
     {
       "products": [

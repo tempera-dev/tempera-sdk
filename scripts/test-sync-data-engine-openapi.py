@@ -94,14 +94,21 @@ class SourceLockTest(unittest.TestCase):
 
     def test_extracts_canonical_auth_metadata(self) -> None:
         operations = sync.extract_operations_text(
-            """paths:
-  /v1/{parent}/things:
-    get:
-      operationId: projects.things.list
-      x-tempera-audience: data-engine
-      x-tempera-required-scope: dataset:read
-      responses: {}
-""",
+            json.dumps(
+                {
+                    "openapi": "3.1.0",
+                    "paths": {
+                        "/v1/{parent}/things": {
+                            "get": {
+                                "operationId": "projects.things.list",
+                                "x-tempera-auth-audience": "data-engine",
+                                "x-tempera-required-scope": "dataset:read",
+                                "responses": {},
+                            }
+                        }
+                    },
+                }
+            ),
             "fixture",
         )
         self.assertEqual(
@@ -120,14 +127,54 @@ class SourceLockTest(unittest.TestCase):
     def test_missing_canonical_auth_metadata_is_rejected(self) -> None:
         with self.assertRaisesRegex(ValueError, "lacks canonical auth metadata"):
             sync.extract_operations_text(
-                """paths:
-  /v1/{parent}/things:
-    get:
-      operationId: projects.things.list
-      responses: {}
-""",
+                json.dumps(
+                    {
+                        "openapi": "3.1.0",
+                        "paths": {
+                            "/v1/{parent}/things": {
+                                "get": {
+                                    "operationId": "projects.things.list",
+                                    "responses": {},
+                                }
+                            }
+                        },
+                    }
+                ),
                 "fixture",
             )
+
+    def test_protocol_routes_need_no_auth_metadata(self) -> None:
+        """A route that takes no credential must not be forced to claim one."""
+        operations = sync.extract_operations_text(
+            json.dumps(
+                {
+                    "openapi": "3.1.0",
+                    "x-tempera-protocol-routes": ["/healthz"],
+                    "paths": {
+                        "/healthz": {
+                            "get": {"operationId": "health.get", "responses": {}}
+                        }
+                    },
+                }
+            ),
+            "fixture",
+        )
+        self.assertEqual(
+            operations,
+            [
+                {
+                    "operationId": "health.get",
+                    "method": "GET",
+                    "path": "/healthz",
+                    "audience": None,
+                    "requiredScope": None,
+                }
+            ],
+        )
+
+    def test_non_json_source_is_rejected(self) -> None:
+        with self.assertRaisesRegex(ValueError, "not valid JSON"):
+            sync.extract_operations_text("openapi: 3.1.0\npaths: {}\n", "fixture")
 
     def test_route_identity_ignores_parameter_spelling(self) -> None:
         self.assertEqual(

@@ -105,11 +105,11 @@ class NativeTransportTests(unittest.TestCase):
                         'let a = "/v1/merchants"',
                         "// tempera-transport: temperaPayments.createMerchant POST /v1/merchants",
                         'let b = "/v1/merchants"',
-                        "// tempera-transport: temperaPayments.getMerchant GET /v1/merchants/{merchant_id}",
+                        "// tempera-transport: temperaPayments.getMerchant GET /v1/merchants/{merchantId}",
                         'let c = "/v1/merchants/\\(id)"',
-                        "// tempera-transport: temperaPayments.refreshMerchantEligibility POST /v1/merchants/{merchant_id}/refresh",
+                        "// tempera-transport: temperaPayments.refreshMerchantEligibility POST /v1/merchants/{merchantId}/refresh",
                         'let d = "/v1/merchants/\\(id)/refresh"',
-                        "// tempera-transport: temperaPayments.createMerchantOnboardingLink POST /v1/merchants/{merchant_id}/onboarding",
+                        "// tempera-transport: temperaPayments.createMerchantOnboardingLink POST /v1/merchants/{merchantId}/onboarding",
                         'let e = "/v1/merchants/\\(id)/onboarding"',
                     ]
                 )
@@ -128,7 +128,7 @@ class NativeTransportTests(unittest.TestCase):
 
             wrong_method = root / "WrongMethod.swift"
             wrong_method.write_text(
-                "// tempera-transport: temperaPayments.getMerchant POST /v1/merchants/{merchant_id}\n"
+                "// tempera-transport: temperaPayments.getMerchant POST /v1/merchants/{merchantId}\n"
                 'let route = "/v1/merchants/\\(id)"\n'
             )
             self.assertTrue(

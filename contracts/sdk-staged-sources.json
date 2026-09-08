@@ -1,5 +1,6 @@
 {
   "schema_version": 1,
   "policy": "A vendored producer contract may be pinned to an unmerged producer branch only while it is listed here. The entry names the exact producer branch and commit, the producer-published contract digest, an owner, a migration back to a trusted main lock, and an expiry. Nothing here claims that the pinned commit is merged, released, or deployed.",
-  "staged_sources": []
+  "staged_sources": [],
+  "$comment": "Empty by design. Every vendored producer now pins its own main. A staged pin means the SDK ships a contract that is not released, so it must name an owner, a migration, and an expiry -- and be retired the moment the producer branch merges."
 }

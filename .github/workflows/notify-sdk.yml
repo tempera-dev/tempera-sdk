@@ -1,0 +1,141 @@
+name: Notify the SDK of a contract change
+
+# One identical file in every producer repository, distributed by the auth-hub
+# agent kit. When a merge to main changes the published contract, this fires a
+# `tempera-contract-updated` repository_dispatch at tempera-dev/tempera-sdk,
+# whose `contract-updated.yml` re-vendors at this exact commit, regenerates
+# every language surface, runs the gates, and opens a pull request. Nobody
+# copies a spec between repositories by hand.
+#
+# THE CREDENTIAL DOES NOT EXIST YET. Sending a repository_dispatch needs a
+# token with write access to tempera-dev/tempera-sdk, and the only GitHub App
+# installed org-wide -- tempera-contract-reader -- is read-only by design. So
+# the mint step below references organization secrets an administrator must
+# still create, and the preflight step skips the whole job with an explanation
+# when they are absent. A producer that cannot notify is not a producer with a
+# broken build: until the credential exists the SDK's three-hourly sweep in
+# contract-updated.yml re-vendors from main anyway, and propagation is merely
+# delayed rather than lost. The moment the secrets appear, every producer that
+# already has this file becomes immediate with no further change here.
+#
+# See .codex/skills/tempera-aip-sdk-contract/SKILL.md for the one-time
+# administrator action this is waiting on.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "contracts/openapi/**"
+
+# Only the dispatch is privileged, and that privilege comes from the minted app
+# token rather than from GITHUB_TOKEN. This workflow never needs to write here.
+permissions:
+  contents: read
+
+concurrency:
+  # Contract pushes land in order; a superseded notification is noise, because
+  # the SDK always re-vendors at the newest commit it is told about.
+  group: notify-sdk-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  notify:
+    name: Dispatch tempera-contract-updated
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # Secrets are read into env rather than interpolated into the script, so
+      # nothing secret-shaped is ever expanded into a shell command line.
+      - name: Check for the notifier credential
+        id: credential
+        env:
+          CLIENT_ID: ${{ secrets.TEMPERA_CONTRACT_NOTIFIER_CLIENT_ID }}
+          PRIVATE_KEY: ${{ secrets.TEMPERA_CONTRACT_NOTIFIER_PRIVATE_KEY }}
+        run: |
+          if [ -n "$CLIENT_ID" ] && [ -n "$PRIVATE_KEY" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "available=false" >> "$GITHUB_OUTPUT"
+          {
+            echo "### SDK notification skipped"
+            echo
+            echo "This repository has no credential able to send a"
+            echo "\`repository_dispatch\` to \`tempera-dev/tempera-sdk\`, so the"
+            echo "contract change in \`${GITHUB_SHA}\` was **not** pushed to the SDK."
+            echo
+            echo "This is expected today and is **not a failure of this build**."
+            echo "The org-wide \`tempera-contract-reader\` app is read-only; a"
+            echo "write-capable app has not been created yet. Until it is, the"
+            echo "SDK's three-hourly sweep in \`contract-updated.yml\` re-vendors"
+            echo "this contract from \`main\` on its own, so propagation is"
+            echo "delayed by at most three hours rather than lost."
+            echo
+            echo "To make propagation immediate, an organization administrator"
+            echo "creates a GitHub App with **Contents: read and write** (the"
+            echo "permission the dispatches endpoint requires) scoped to"
+            echo "\`tempera-dev/tempera-sdk\` alone, installs it org-wide, and"
+            echo "publishes its client id and PEM private key as"
+            echo "the organization secrets"
+            echo "\`TEMPERA_CONTRACT_NOTIFIER_CLIENT_ID\` and"
+            echo "\`TEMPERA_CONTRACT_NOTIFIER_PRIVATE_KEY\`. No producer repository"
+            echo "changes when that happens."
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "notice::SDK notification skipped: notifier credential is not configured (see the job summary)"
+
+      # The SDK product key is a lowerCamel identifier that is usually just the
+      # repository name in camel case, so the same file works everywhere. The
+      # handful of repositories whose SDK key does not follow from their name
+      # -- auth-hub publishes as `controlPlane` -- set the repository variable
+      # TEMPERA_SDK_PRODUCT_KEY, which keeps this workflow byte-identical.
+      - name: Resolve the SDK product key
+        id: product
+        if: steps.credential.outputs.available == 'true'
+        env:
+          OVERRIDE: ${{ vars.TEMPERA_SDK_PRODUCT_KEY }}
+        run: |
+          set -euo pipefail
+          key="$OVERRIDE"
+          if [ -z "$key" ]; then
+            key="$(printf '%s' "${GITHUB_REPOSITORY#*/}" | awk -F- '{
+              printf "%s", $1
+              for (i = 2; i <= NF; i++) printf "%s%s", toupper(substr($i, 1, 1)), substr($i, 2)
+            }')"
+          fi
+          # The SDK validates this against its committed registry and refuses an
+          # unknown product, but an obviously malformed key should not travel.
+          if ! printf '%s' "$key" | grep -Eq '^[a-z][A-Za-z0-9]*$'; then
+            echo "::error::resolved product key '$key' is not lowerCamelCase; set the TEMPERA_SDK_PRODUCT_KEY repository variable"
+            exit 1
+          fi
+          echo "key=$key" >> "$GITHUB_OUTPUT"
+          echo "notifying tempera-sdk that $key changed at $GITHUB_SHA"
+
+      - name: Mint a notifier token
+        id: notifier
+        if: steps.credential.outputs.available == 'true'
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ secrets.TEMPERA_CONTRACT_NOTIFIER_CLIENT_ID }}
+          private-key: ${{ secrets.TEMPERA_CONTRACT_NOTIFIER_PRIVATE_KEY }}
+          owner: tempera-dev
+          repositories: tempera-sdk
+
+      - name: Fire tempera-contract-updated
+        if: steps.credential.outputs.available == 'true'
+        env:
+          GH_TOKEN: ${{ steps.notifier.outputs.token }}
+          PRODUCT: ${{ steps.product.outputs.key }}
+        run: |
+          set -euo pipefail
+          # jq builds the payload so the product key and commit are JSON values,
+          # never fragments spliced into a hand-written JSON string.
+          payload="$(jq -nc --arg product "$PRODUCT" --arg commit "$GITHUB_SHA" \
+            '{event_type: "tempera-contract-updated", client_payload: {product: $product, commit: $commit}}')"
+          printf '%s\n' "$payload"
+          printf '%s' "$payload" | gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            /repos/tempera-dev/tempera-sdk/dispatches \
+            --input -
+          echo "dispatched $PRODUCT@$GITHUB_SHA to tempera-dev/tempera-sdk" >> "$GITHUB_STEP_SUMMARY"

@@ -27,15 +27,15 @@ public struct OrdersWorkspaceScope: Codable, Equatable, Hashable, Sendable {
     }
 
     enum CodingKeys: String, CodingKey, CaseIterable {
-        case organizationID = "organization_id"
-        case projectID = "project_id"
+        case organizationID = "organizationId"
+        case projectID = "projectId"
         case environment
-        case siteID = "site_id"
+        case siteID = "siteId"
     }
 
     public init(from decoder: any Decoder) throws {
         try CommerceCoding.exactKeys(
-            decoder, ["organization_id", "project_id", "environment", "site_id"])
+            decoder, ["organizationId", "projectId", "environment", "siteId"])
         let values = try decoder.container(keyedBy: CodingKeys.self)
         try self.init(
             organizationID: values.decode(String.self, forKey: .organizationID),
@@ -186,23 +186,23 @@ public struct CatalogOffer: Decodable, Equatable, Sendable {
 
     enum CodingKeys: String, CodingKey, CaseIterable {
         case id, revision, scope
-        case merchantID = "merchant_id"
-        case productClassification = "product_classification"
+        case merchantID = "merchantId"
+        case productClassification = "productClassification"
         case name, description
-        case photoURL = "photo_url"
+        case photoURL = "photoUrl"
         case currency
-        case unitAmountMinor = "unit_amount_minor"
-        case createdAt = "created_at"
-        case expiresAt = "expires_at"
+        case unitAmountMinor = "unitAmountMinor"
+        case createdAt = "createdAt"
+        case expiresAt = "expiresAt"
     }
 
     public init(from decoder: any Decoder) throws {
         try CommerceCoding.exactKeys(
             decoder,
             [
-                "id", "revision", "scope", "merchant_id", "product_classification", "name",
-                "description", "photo_url", "currency", "unit_amount_minor", "created_at",
-                "expires_at",
+                "id", "revision", "scope", "merchantId", "productClassification", "name",
+                "description", "photoUrl", "currency", "unitAmountMinor", "createdAt",
+                "expiresAt",
             ])
         let v = try decoder.container(keyedBy: CodingKeys.self)
         id = try CommerceCoding.resource(v.decode(String.self, forKey: .id))
@@ -248,25 +248,25 @@ public struct SaleOrder: Decodable, Equatable, Sendable {
 
     enum CodingKeys: String, CodingKey, CaseIterable {
         case id, revision, scope
-        case offerID = "offer_id"
-        case offerRevision = "offer_revision"
-        case variantID = "variant_id"
-        case merchantID = "merchant_id"
-        case productClassification = "product_classification"
+        case offerID = "offerId"
+        case offerRevision = "offerRevision"
+        case variantID = "variantId"
+        case merchantID = "merchantId"
+        case productClassification = "productClassification"
         case quantity, currency
-        case unitAmountMinor = "unit_amount_minor"
-        case amountMinor = "amount_minor"
-        case amountSource = "amount_source"
-        case createdAt = "created_at"
+        case unitAmountMinor = "unitAmountMinor"
+        case amountMinor = "amountMinor"
+        case amountSource = "amountSource"
+        case createdAt = "createdAt"
     }
 
     public init(from decoder: any Decoder) throws {
         try CommerceCoding.exactKeys(
             decoder,
             [
-                "id", "revision", "scope", "offer_id", "offer_revision", "variant_id",
-                "merchant_id", "product_classification", "quantity", "currency",
-                "unit_amount_minor", "amount_minor", "amount_source", "created_at",
+                "id", "revision", "scope", "offerId", "offerRevision", "variantId",
+                "merchantId", "productClassification", "quantity", "currency",
+                "unitAmountMinor", "amountMinor", "amountSource", "createdAt",
             ])
         let v = try decoder.container(keyedBy: CodingKeys.self)
         id = try CommerceCoding.resource(v.decode(String.self, forKey: .id))
@@ -296,36 +296,36 @@ public struct SaleOrder: Decodable, Equatable, Sendable {
 
 public struct CatalogOfferPage: Decodable, Equatable, Sendable {
     public let items: [CatalogOffer]
-    public let nextCursor: String?
+    public let nextPageToken: String?
 
     enum CodingKeys: String, CodingKey, CaseIterable {
         case items
-        case nextCursor = "next_cursor"
+        case nextPageToken
     }
 
     public init(from decoder: any Decoder) throws {
-        try CommerceCoding.exactKeys(decoder, ["items", "next_cursor"])
+        try CommerceCoding.exactKeys(decoder, ["items", "nextPageToken"])
         let values = try decoder.container(keyedBy: CodingKeys.self)
         items = try values.decode([CatalogOffer].self, forKey: .items)
-        nextCursor = try values.decodeIfPresent(String.self, forKey: .nextCursor).map(
+        nextPageToken = try values.decodeIfPresent(String.self, forKey: .nextPageToken).map(
             CommerceCoding.resource)
     }
 }
 
 public struct SaleOrderPage: Decodable, Equatable, Sendable {
     public let items: [SaleOrder]
-    public let nextCursor: String?
+    public let nextPageToken: String?
 
     enum CodingKeys: String, CodingKey, CaseIterable {
         case items
-        case nextCursor = "next_cursor"
+        case nextPageToken
     }
 
     public init(from decoder: any Decoder) throws {
-        try CommerceCoding.exactKeys(decoder, ["items", "next_cursor"])
+        try CommerceCoding.exactKeys(decoder, ["items", "nextPageToken"])
         let values = try decoder.container(keyedBy: CodingKeys.self)
         items = try values.decode([SaleOrder].self, forKey: .items)
-        nextCursor = try values.decodeIfPresent(String.self, forKey: .nextCursor).map(
+        nextPageToken = try values.decodeIfPresent(String.self, forKey: .nextPageToken).map(
             CommerceCoding.resource)
     }
 }

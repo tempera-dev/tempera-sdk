@@ -92,7 +92,7 @@ let spec = client.build_request("tempera_llm", "readiness_check", &[])?;
 Create a non-streaming OpenAI-compatible chat completion through the tempera-llm gateway.
 
 - **Producer operationId:** `chatCompletions.create`
-- **Auth:** Product bearer — an access token minted for audience `tempera-llm`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-llm`.
 - **Scope:** `model:invoke`
 - **Call as:** TypeScript `client.temperaLlm.createChatCompletion()` · Python `client.tempera_llm.create_chat_completion()` · Rust `build_request("tempera_llm", "create_chat_completion", params)`
 
@@ -147,7 +147,7 @@ let spec = client.build_request("tempera_llm", "create_chat_completion", &[
 List the configured model catalog the gateway can route to.
 
 - **Producer operationId:** `models.list`
-- **Auth:** Product bearer — an access token minted for audience `tempera-llm`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-llm`.
 - **Scope:** `model:read`
 - **Call as:** TypeScript `client.temperaLlm.listModels()` · Python `client.tempera_llm.list_models()` · Rust `build_request("tempera_llm", "list_models", params)`
 
@@ -192,7 +192,7 @@ let spec = client.build_request("tempera_llm", "list_models", &[
 Create a non-streaming OpenAI Responses-style inference request through the tempera-llm gateway.
 
 - **Producer operationId:** `responses.create`
-- **Auth:** Product bearer — an access token minted for audience `tempera-llm`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-llm`.
 - **Scope:** `model:invoke`
 - **Call as:** TypeScript `client.temperaLlm.createResponse()` · Python `client.tempera_llm.create_response()` · Rust `build_request("tempera_llm", "create_response", params)`
 

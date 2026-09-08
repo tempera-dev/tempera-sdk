@@ -24,12 +24,15 @@
       "bearerAuth": []
     }
   ],
+  "x-tempera-protocol-routes": [
+    "/healthz",
+    "/mcp"
+  ],
   "paths": {
-    "/v1/health": {
+    "/healthz": {
       "get": {
         "operationId": "health.get",
-        "x-tempera-audience": null,
-        "x-tempera-required-scope": null,
+        "x-tempera-auth-kind": "none",
         "summary": "Health check",
         "security": [],
         "responses": {
@@ -54,8 +57,8 @@
     "/mcp": {
       "post": {
         "operationId": "mcp.jsonrpc",
-        "x-tempera-audience": "data-engine",
-        "x-tempera-required-scope": null,
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "summary": "MCP JSON-RPC 2.0 endpoint projecting the REST operations as tools",
         "description": "Stateless JSON-RPC 2.0 endpoint (initialize, ping, tools/list, tools/call). Tools are projected from the REST operations; a tools/call dispatches through the same bearer auth (static or central introspection, audience data-engine) and route code path as REST. Notifications (requests without an id) are acknowledged with 202 and no body; non-POST methods return 405 with Allow: POST. Tool application failures are JSON-RPC results with isError true and the canonical REST error envelope in structuredContent. structuredContent is authoritative; text content is a bounded summary rather than a duplicate payload. JSON-RPC error is reserved for parse, protocol, parameter, and dispatch failures. The server negotiates MCP protocol version 2025-06-18. Every request after initialize must send MCP-Protocol-Version: 2025-06-18. Browser requests with Origin are accepted only when the exact origin appears in DATA_ENGINE_MCP_ALLOWED_ORIGINS; non-browser clients may omit Origin. The global wire ceiling is 17 MiB. Control methods are capped at 4 KiB, initialize and read-tool calls at 64 KiB, and write tools at the REST route body limit plus a 16 KiB envelope allowance.",
         "parameters": [
@@ -98,19 +101,19 @@
             "description": "Notification accepted (no body)"
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "405": {
             "description": "Method not allowed (only POST is supported)"
           },
           "413": {
-            "$ref": "#/components/responses/PayloadTooLarge"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -118,7 +121,8 @@
     "/v1/{parent}/use-cases": {
       "get": {
         "operationId": "projects.useCases.list",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:read",
         "summary": "List MVP data products and pipeline templates",
         "parameters": [
@@ -134,10 +138,10 @@
         ],
         "responses": {
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "200": {
             "description": "Use-case templates",
@@ -150,7 +154,7 @@
             }
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -158,7 +162,8 @@
     "/v1/{parent}/use-cases/{useCaseId}": {
       "get": {
         "operationId": "projects.useCases.get",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:read",
         "summary": "Get one MVP use-case template",
         "parameters": [
@@ -171,7 +176,7 @@
         ],
         "responses": {
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "200": {
             "description": "Use-case template",
@@ -184,10 +189,10 @@
             }
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -195,7 +200,8 @@
     "/v1/{parent}/artifacts:ingest": {
       "post": {
         "operationId": "projects.artifacts.ingest",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:write",
         "summary": "Ingest one or many artifacts",
         "parameters": [
@@ -232,7 +238,7 @@
         },
         "responses": {
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "200": {
             "description": "Async operation started",
@@ -255,19 +261,19 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/Conflict"
+            "$ref": "#/components/responses/Error"
           },
           "413": {
-            "$ref": "#/components/responses/PayloadTooLarge"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           },
           "500": {
-            "$ref": "#/components/responses/DataLoss"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -275,7 +281,8 @@
     "/v1/{parent}/connectorEvidence:ingest": {
       "post": {
         "operationId": "projects.connectorEvidence.ingest",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:write",
         "summary": "Verify and retain signed Tempera Connectors source evidence",
         "description": "Verifies an Ed25519-signed public or credential-isolated source-acquisition envelope and its exact base64 artifact bytes against the receiver's pinned public-key, source, build, rights, and policy allowlist. The resulting immutable artifact remains ineligible for training and carries no execution authority. When the trust policy is absent this operation fails closed with 412.",
@@ -310,28 +317,28 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/Conflict"
+            "$ref": "#/components/responses/Error"
           },
           "412": {
-            "$ref": "#/components/responses/FailedPrecondition"
+            "$ref": "#/components/responses/Error"
           },
           "413": {
-            "$ref": "#/components/responses/PayloadTooLarge"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           },
           "500": {
-            "$ref": "#/components/responses/DataLoss"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -339,7 +346,8 @@
     "/v1/{parent}/web:ingest": {
       "post": {
         "operationId": "projects.web.ingest",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:write",
         "summary": "Fetch, parse, and ingest a public HTTP/HTTPS page",
         "parameters": [
@@ -363,7 +371,7 @@
         },
         "responses": {
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "200": {
             "description": "Web ingest operation started",
@@ -386,22 +394,22 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/Conflict"
+            "$ref": "#/components/responses/Error"
           },
           "413": {
-            "$ref": "#/components/responses/PayloadTooLarge"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           },
           "504": {
-            "$ref": "#/components/responses/DeadlineExceeded"
+            "$ref": "#/components/responses/Error"
           },
           "500": {
-            "$ref": "#/components/responses/DataLoss"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -409,7 +417,8 @@
     "/v1/{parent}/campaigns": {
       "post": {
         "operationId": "projects.campaigns.create",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:write",
         "summary": "Create a data campaign with rubric, budget, target accuracy, and skill tags",
         "parameters": [
@@ -436,7 +445,7 @@
         },
         "responses": {
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "200": {
             "description": "Campaign created",
@@ -449,19 +458,20 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/Conflict"
+            "$ref": "#/components/responses/Error"
           },
           "413": {
-            "$ref": "#/components/responses/PayloadTooLarge"
+            "$ref": "#/components/responses/Error"
           }
         }
       },
       "get": {
         "operationId": "projects.campaigns.list",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:read",
         "summary": "List data campaigns",
         "parameters": [
@@ -477,10 +487,10 @@
         ],
         "responses": {
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "200": {
             "description": "Campaign list",
@@ -493,7 +503,7 @@
             }
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -501,7 +511,8 @@
     "/v1/{parent}/campaigns/{campaignId}:transition": {
       "post": {
         "operationId": "projects.campaigns.transition",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:write",
         "summary": "Pause, resume, or permanently close campaign job admission",
         "parameters": [
@@ -541,25 +552,25 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/Conflict"
+            "$ref": "#/components/responses/Error"
           },
           "413": {
-            "$ref": "#/components/responses/PayloadTooLarge"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -567,7 +578,8 @@
     "/v1/{parent}/campaigns/{campaignId}/reviewer-qualification": {
       "get": {
         "operationId": "projects.reviewerQualifications.get",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "review:resolve",
         "summary": "Get the authenticated reviewer's campaign qualification",
         "description": "Returns only the caller's project-scoped pseudonymous explicit-gold history and campaign eligibility. Blind probe results are deliberately excluded so before/after queries cannot reveal a hidden probe outcome.",
@@ -591,19 +603,19 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -611,7 +623,8 @@
     "/v1/{parent}/pipelines:runUseCase": {
       "post": {
         "operationId": "projects.pipelines.runUseCase",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "eval:run",
         "summary": "Run a complete MVP use-case pipeline",
         "parameters": [
@@ -635,7 +648,7 @@
         },
         "responses": {
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "200": {
             "description": "Pipeline result with campaign, artifacts, labels, bundle, and metrics",
@@ -648,22 +661,22 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/Conflict"
+            "$ref": "#/components/responses/Error"
           },
           "413": {
-            "$ref": "#/components/responses/PayloadTooLarge"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           },
           "504": {
-            "$ref": "#/components/responses/DeadlineExceeded"
+            "$ref": "#/components/responses/Error"
           },
           "500": {
-            "$ref": "#/components/responses/DataLoss"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -671,7 +684,8 @@
     "/v1/{parent}/expert-tasks": {
       "get": {
         "operationId": "projects.expertTasks.list",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:read",
         "summary": "List human residual review tasks",
         "parameters": [
@@ -725,10 +739,10 @@
         ],
         "responses": {
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "200": {
             "description": "Expert residual queue",
@@ -741,7 +755,7 @@
             }
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -749,7 +763,8 @@
     "/v1/{parent}/review-qualification-tasks": {
       "post": {
         "operationId": "projects.reviewQualificationTasks.create",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "review:gold:manage",
         "summary": "Clone a real review task into an isolated HMAC-scored qualification task",
         "description": "Requires review:gold:manage. The expected label is write-only and is retained only as a keyed HMAC under the private reviewer key. The clone preserves the source artifact, campaign, rubric, and task family but receives an isolated label cohort that no job or product references.",
@@ -781,25 +796,25 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/Conflict"
+            "$ref": "#/components/responses/Error"
           },
           "413": {
-            "$ref": "#/components/responses/PayloadTooLarge"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -807,7 +822,8 @@
     "/v1/{parent}/reviewer-revocations": {
       "post": {
         "operationId": "projects.reviewerRevocations.create",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "review:gold:manage",
         "summary": "Revoke one project-scoped reviewer pseudonym",
         "description": "Records one immutable operator receipt and immediately terminates every active assignment held by the pseudonymous reviewer. It never changes a prior human decision and is deliberately REST-only, not an MCP tool.",
@@ -838,22 +854,22 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/Conflict"
+            "$ref": "#/components/responses/Error"
           },
           "413": {
-            "$ref": "#/components/responses/PayloadTooLarge"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -861,7 +877,8 @@
     "/v1/{parent}/expert-tasks/{expertTaskId}:resolve": {
       "post": {
         "operationId": "projects.expertTasks.resolve",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "review:resolve",
         "summary": "Resolve, abstain, flag, or adjudicate one human residual",
         "parameters": [
@@ -898,25 +915,25 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/Conflict"
+            "$ref": "#/components/responses/Error"
           },
           "413": {
-            "$ref": "#/components/responses/PayloadTooLarge"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -924,7 +941,8 @@
     "/v1/{parent}/expert-tasks/{expertTaskId}:appeal": {
       "post": {
         "operationId": "projects.expertTasks.appeal",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "review:resolve",
         "summary": "Record an immutable reviewer appeal and open independent adjudication",
         "description": "Appeals are project-bound and pseudonymous. They never overwrite the appealed decision; one accepted appeal opens one independent adjudication task for the source label. This operator/reviewer workflow is REST-only.",
@@ -961,25 +979,25 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/Conflict"
+            "$ref": "#/components/responses/Error"
           },
           "413": {
-            "$ref": "#/components/responses/PayloadTooLarge"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -987,7 +1005,8 @@
     "/v1/{parent}/expert-tasks/{expertTaskId}:claim": {
       "post": {
         "operationId": "projects.expertTaskAssignments.claim",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "review:resolve",
         "summary": "Atomically claim one open expert task with an exclusive renewable lease",
         "description": "Returns retryable 503 UNAVAILABLE while assignment lifecycle writes are disabled in enforce-only rollback mode; existing leases remain authoritative.",
@@ -1021,25 +1040,25 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/Conflict"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           },
           "503": {
-            "$ref": "#/components/responses/Unavailable"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1047,7 +1066,8 @@
     "/v1/{parent}/expert-tasks/{expertTaskId}:renew": {
       "post": {
         "operationId": "projects.expertTaskAssignments.renew",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "review:resolve",
         "summary": "Renew the authenticated reviewer's active task lease",
         "description": "Returns retryable 503 UNAVAILABLE while assignment lifecycle writes are disabled in enforce-only rollback mode; existing leases remain authoritative.",
@@ -1081,25 +1101,25 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/Conflict"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           },
           "503": {
-            "$ref": "#/components/responses/Unavailable"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1107,7 +1127,8 @@
     "/v1/{parent}/expert-tasks/{expertTaskId}:release": {
       "post": {
         "operationId": "projects.expertTaskAssignments.release",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "review:resolve",
         "summary": "Release the authenticated reviewer's active task lease for reassignment",
         "description": "Returns retryable 503 UNAVAILABLE while assignment lifecycle writes are disabled in enforce-only rollback mode; existing leases remain authoritative.",
@@ -1141,25 +1162,25 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/Conflict"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           },
           "503": {
-            "$ref": "#/components/responses/Unavailable"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1167,7 +1188,8 @@
     "/v1/{parent}/expert-tasks/{expertTaskId}:saveDraft": {
       "post": {
         "operationId": "projects.expertTaskAssignments.saveDraft",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "review:resolve",
         "summary": "Autosave a version-checked draft under the active reviewer lease",
         "description": "Returns retryable 503 UNAVAILABLE while assignment lifecycle writes are disabled in enforce-only rollback mode; existing leases remain authoritative.",
@@ -1201,25 +1223,25 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/Conflict"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           },
           "503": {
-            "$ref": "#/components/responses/Unavailable"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1227,7 +1249,8 @@
     "/v1/{parent}/reviewer-sessions:record": {
       "post": {
         "operationId": "projects.reviewerSessions.record",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "review:resolve",
         "summary": "Record a same-origin cookie reviewer-session lifecycle event",
         "description": "Stores only a hash of a browser-generated opaque session identifier and the project-scoped reviewer pseudonym. This operational evidence never changes a review decision, routing, or release eligibility.",
@@ -1258,13 +1281,13 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1272,7 +1295,8 @@
     "/v1/{parent}/review-operations": {
       "get": {
         "operationId": "projects.reviewOperations.get",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "review:resolve",
         "summary": "Get project-scoped human-review operations and quality measures",
         "description": "Returns queue and SLA observations, bounded-window throughput, task-family-specific exact agreement with Wilson 95% intervals, pseudonymous reviewer calibration against consensus or adjudicated finals, rubric-version drift, and declared campaign budget. These observational measures never mutate or promote a review decision, and actual reviewer cost is explicitly unavailable until authoritative cost receipts exist. Quality aggregation fails closed above 50,000 accepted resolved task rows and all response dimensions are explicitly bounded.",
@@ -1317,16 +1341,16 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1334,7 +1358,8 @@
     "/v1/{parent}/metrics": {
       "get": {
         "operationId": "projects.metrics.get",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:read",
         "summary": "Get data-engine usage and quality metrics for a project",
         "parameters": [
@@ -1344,7 +1369,7 @@
         ],
         "responses": {
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "200": {
             "description": "Project metrics",
@@ -1357,7 +1382,7 @@
             }
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1365,7 +1390,8 @@
     "/v1/{parent}/label-quality": {
       "get": {
         "operationId": "projects.labelQuality.get",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:read",
         "summary": "Get the label quality report for a project",
         "description": "Per-verifier stats (label counts, mean confidence, accepted rate), cross-verifier disagreements for artifacts whose labels differ (capped at 50), the needs_expert backlog, and the overall auto_resolution_rate (consistent with the project metrics).",
@@ -1376,7 +1402,7 @@
         ],
         "responses": {
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "200": {
             "description": "Label quality report",
@@ -1389,7 +1415,7 @@
             }
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1397,7 +1423,8 @@
     "/v1/{parent}/ecosystem/readiness": {
       "get": {
         "operationId": "projects.ecosystem.readiness.get",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:read",
         "summary": "Get public-site and ecosystem readiness for one project",
         "parameters": [
@@ -1407,7 +1434,7 @@
         ],
         "responses": {
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "200": {
             "description": "Project readiness",
@@ -1420,7 +1447,7 @@
             }
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1428,7 +1455,8 @@
     "/v1/{parent}/artifacts": {
       "get": {
         "operationId": "projects.artifacts.list",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:read",
         "summary": "List artifacts",
         "parameters": [
@@ -1447,10 +1475,10 @@
         ],
         "responses": {
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "200": {
             "description": "Paginated artifact list",
@@ -1463,10 +1491,10 @@
             }
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           },
           "500": {
-            "$ref": "#/components/responses/DataLoss"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1474,7 +1502,8 @@
     "/v1/{parent}/artifacts/{artifactId}": {
       "get": {
         "operationId": "projects.artifacts.get",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:read",
         "summary": "Get an artifact",
         "parameters": [
@@ -1490,10 +1519,10 @@
         ],
         "responses": {
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "200": {
             "description": "Verified artifact summary by default, or full artifact for view=FULL",
@@ -1513,10 +1542,10 @@
             }
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           },
           "500": {
-            "$ref": "#/components/responses/DataLoss"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1524,7 +1553,8 @@
     "/v1/{parent}/artifacts/{artifactId}/labels": {
       "get": {
         "operationId": "projects.artifacts.labels.list",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:read",
         "summary": "List labels for an artifact",
         "parameters": [
@@ -1543,10 +1573,10 @@
         ],
         "responses": {
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "200": {
             "description": "Labels",
@@ -1559,10 +1589,10 @@
             }
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           },
           "500": {
-            "$ref": "#/components/responses/DataLoss"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1570,7 +1600,8 @@
     "/v1/{parent}/datasets:profile": {
       "post": {
         "operationId": "projects.datasets.profile",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:write",
         "summary": "Profile dataset quality before export",
         "description": "Deterministic quality profile over the whole project or an explicit artifact_ids subset: counts by artifact type and source, duplicate raw_hash groups, label coverage, and confidence/decision/label-value distributions computed over the latest label per artifact.",
@@ -1594,7 +1625,7 @@
         },
         "responses": {
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "200": {
             "description": "Dataset quality profile",
@@ -1607,10 +1638,10 @@
             }
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1618,7 +1649,8 @@
     "/v1/{parent}/jobs": {
       "post": {
         "operationId": "projects.jobs.create",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "eval:run",
         "summary": "Create a labeling job",
         "parameters": [
@@ -1642,7 +1674,7 @@
         },
         "responses": {
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "202": {
             "description": "Job accepted",
@@ -1655,19 +1687,19 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/Conflict"
+            "$ref": "#/components/responses/Error"
           },
           "413": {
-            "$ref": "#/components/responses/PayloadTooLarge"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           },
           "500": {
-            "$ref": "#/components/responses/DataLoss"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1675,7 +1707,8 @@
     "/v1/{parent}/jobs/{jobId}": {
       "get": {
         "operationId": "projects.jobs.get",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:read",
         "summary": "Get a job",
         "parameters": [
@@ -1688,7 +1721,7 @@
         ],
         "responses": {
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "200": {
             "description": "Job",
@@ -1701,7 +1734,7 @@
             }
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1709,7 +1742,8 @@
     "/v1/{parent}/jobs/{jobId}/results": {
       "get": {
         "operationId": "projects.jobs.results.list",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:read",
         "summary": "List deterministic results for a job",
         "parameters": [
@@ -1728,10 +1762,10 @@
         ],
         "responses": {
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "200": {
             "description": "Job results",
@@ -1744,7 +1778,7 @@
             }
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1752,7 +1786,8 @@
     "/v1/{parent}/products/{productId}": {
       "get": {
         "operationId": "projects.products.get",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:read",
         "summary": "Get product",
         "parameters": [
@@ -1765,7 +1800,7 @@
         ],
         "responses": {
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "200": {
             "description": "Product",
@@ -1778,10 +1813,10 @@
             }
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           },
           "500": {
-            "$ref": "#/components/responses/DataLoss"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1789,7 +1824,8 @@
     "/v1/{parent}/products/{productId}:validate": {
       "post": {
         "operationId": "projects.products.validate",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:write",
         "summary": "Validate an emitted product bundle",
         "description": "Referential-integrity and hygiene check for a bundle. Missing or out-of-project artifacts/labels and a missing/unparseable manifest are errors; duplicate raw_hash groups within the bundle and included needs_expert labels are warnings.",
@@ -1806,7 +1842,7 @@
         ],
         "responses": {
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "200": {
             "description": "Validation report",
@@ -1819,10 +1855,10 @@
             }
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1830,7 +1866,8 @@
     "/v1/{parent}/products:checkLeakage": {
       "post": {
         "operationId": "projects.products.checkLeakage",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:write",
         "summary": "Check raw_hash leakage between two product bundles",
         "description": "Train/eval split hygiene: computes the raw_hash overlap between exactly two bundles, including overlap ratios relative to each bundle and the overlapping hashes (capped at 50).",
@@ -1854,7 +1891,7 @@
         },
         "responses": {
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "200": {
             "description": "Leakage report",
@@ -1867,10 +1904,10 @@
             }
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1878,7 +1915,8 @@
     "/v1/{parent}/products/{productId}/manifest": {
       "get": {
         "operationId": "projects.products.manifest.get",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:read",
         "summary": "Get an integrity-checked eval product manifest",
         "parameters": [
@@ -1901,19 +1939,19 @@
             }
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/ProductNotReady"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           },
           "500": {
-            "$ref": "#/components/responses/DataLoss"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1921,7 +1959,8 @@
     "/v1/{parent}/training-releases:admit": {
       "post": {
         "operationId": "projects.trainingReleases.admit",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "training:publish",
         "summary": "Admit an exact product generation for model training",
         "description": "Requires the dedicated training:publish scope. READY eval publication alone is insufficient: admission revalidates integrity and live review state, requires explicit model_training consent on every resolved human review, and binds a different READY heldout product with zero raw-hash overlap. Exact retries revalidate the captured generations.",
@@ -1956,28 +1995,28 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/TrainingReleasePrecondition"
+            "$ref": "#/components/responses/Error"
           },
           "413": {
-            "$ref": "#/components/responses/PayloadTooLarge"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           },
           "500": {
-            "$ref": "#/components/responses/DataLoss"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1985,7 +2024,8 @@
     "/v1/{parent}/training-releases/{releaseId}": {
       "get": {
         "operationId": "projects.trainingReleases.get",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "training:publish",
         "summary": "Revalidate and get a training release",
         "description": "Requires the dedicated training:publish scope. Revalidates both exact product generations and durably returns STALE if review, consent, integrity, leakage, or generation state no longer authorizes training.",
@@ -2016,19 +2056,19 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -2036,7 +2076,8 @@
     "/v1/{parent}/products/{productId}:derive": {
       "post": {
         "operationId": "projects.products.derive",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "eval:run",
         "summary": "Derive a post-training bundle (SFT or preference) from a READY product",
         "description": "Read-only, deterministic derivation from the integrity-checked product manifest. The train/val split is content-addressed (hash of each artifact's raw bytes), so identical content always lands in the same split across products and replays. sft emits one record per accepted item with the authoritative label as the completion; preference emits chosen/rejected pairs from expert overrides and disagreeing ensemble minority votes. Requires quality_status READY; bounded keyset pages.",
@@ -2063,7 +2104,7 @@
         },
         "responses": {
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "200": {
             "description": "One bounded page of derived post-training records",
@@ -2076,19 +2117,19 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/ProductNotReady"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           },
           "500": {
-            "$ref": "#/components/responses/DataLoss"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -2096,7 +2137,8 @@
     "/v1/{parent}/products:emitEval": {
       "post": {
         "operationId": "projects.products.emitEval",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "eval:run",
         "summary": "Emit eval bundle",
         "parameters": [
@@ -2117,7 +2159,7 @@
         },
         "responses": {
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "202": {
             "description": "Emit started",
@@ -2130,19 +2172,19 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/ProductPrecondition"
+            "$ref": "#/components/responses/Error"
           },
           "413": {
-            "$ref": "#/components/responses/PayloadTooLarge"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           },
           "500": {
-            "$ref": "#/components/responses/DataLoss"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -2150,7 +2192,8 @@
     "/v1/{parent}/sourceDefinitions": {
       "post": {
         "operationId": "projects.sourceDefinitions.create",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "connector:manage",
         "summary": "Create an immutable-versioned connector source definition",
         "description": "Binds a project to one Auth Hub data-source connection revision and one fixed, credential-free connector configuration. Identical retries reuse the existing resource; changed content under the same id conflicts.",
@@ -2190,16 +2233,17 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/AlreadyExists"
+            "$ref": "#/components/responses/Error"
           }
         }
       },
       "get": {
         "operationId": "projects.sourceDefinitions.list",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "connector:read",
         "summary": "List project source definitions",
         "parameters": [
@@ -2225,7 +2269,7 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -2233,7 +2277,8 @@
     "/v1/{parent}/sourceDefinitions/{sourceDefinitionId}": {
       "get": {
         "operationId": "projects.sourceDefinitions.get",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "connector:read",
         "summary": "Get one source definition",
         "parameters": [
@@ -2261,13 +2306,14 @@
             }
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           }
         }
       },
       "patch": {
         "operationId": "projects.sourceDefinitions.patch",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "connector:manage",
         "summary": "Create a new version of a source definition",
         "description": "Requires the live etag and an explicit updateMask. A material change increments version and changes etag; older connector-run receipts remain bound to their original version.",
@@ -2314,10 +2360,10 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/AlreadyExists"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -2325,7 +2371,8 @@
     "/v1/{parent}/sourceDefinitions/{sourceDefinitionId}:run": {
       "post": {
         "operationId": "projects.sourceDefinitions.run",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "connector:run",
         "summary": "Start an exact-replay connector run from a reviewed definition",
         "description": "Persists PENDING before external I/O, executes outside the database transaction, then commits one immutable terminal receipt. Exact S3-key runs can complete; currently prefix, Snowflake, and Salesforce runs are conservatively INCOMPLETE until provider pagination proof is retained.",
@@ -2374,10 +2421,10 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/AlreadyExists"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -2385,7 +2432,8 @@
     "/v1/{parent}/connectorRuns": {
       "get": {
         "operationId": "projects.connectorRuns.list",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "connector:read",
         "summary": "List durable connector runs",
         "parameters": [
@@ -2411,7 +2459,7 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -2419,7 +2467,8 @@
     "/v1/{parent}/connectorRuns/{connectorRunId}": {
       "get": {
         "operationId": "projects.connectorRuns.get",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "connector:read",
         "summary": "Get one durable connector run and its terminal receipt",
         "parameters": [
@@ -2447,7 +2496,7 @@
             }
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -2455,7 +2504,8 @@
     "/v1/{parent}/sources:extract": {
       "post": {
         "operationId": "projects.sources.extract",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "connector:manage",
         "summary": "Extract from a source connector (s3, snowflake, salesforce) into artifacts",
         "description": "REST-only legacy migration surface; it is intentionally absent from the MCP tool catalog. Pulls objects/records from a configured source connector and always ingests them as content-addressed artifacts. Text S3 objects ingest raw; binary S3 objects are base64-encoded into raw_body with an encoding marker; structured rows (snowflake, salesforce) ingest as JSON row batches of 100 with row-count metadata. Fails closed with 412 FAILED_PRECONDITION when the connector's env config is absent.",
@@ -2482,7 +2532,7 @@
         },
         "responses": {
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "200": {
             "description": "Extraction result with per-item status",
@@ -2495,16 +2545,16 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "412": {
-            "$ref": "#/components/responses/FailedPrecondition"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           },
           "503": {
-            "$ref": "#/components/responses/Unavailable"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -2512,7 +2562,8 @@
     "/v1/{parent}/connectors": {
       "get": {
         "operationId": "projects.connectors.list",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "connector:read",
         "summary": "List source connectors with configured/unconfigured state",
         "description": "Reports each source connector (s3, snowflake, salesforce) as configured or unconfigured booleans plus non-secret config (region, endpoint host, api version). Secret values are never echoed.",
@@ -2529,7 +2580,7 @@
         ],
         "responses": {
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "200": {
             "description": "Connectors",
@@ -2542,7 +2593,7 @@
             }
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -2550,7 +2601,8 @@
     "/v1/{parent}/tools": {
       "post": {
         "operationId": "projects.tools.create",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:write",
         "summary": "Create or version-bump a stored custom tool",
         "description": "The tool forge write surface. Identical re-creates are idempotent; a changed definition for an existing name creates a new monotonic version with every previous version retained. Definitions are capped at 64 KiB canonical JSON and 256 tools per project. Stored tools are advertised dynamically on the MCP catalog as custom.<project>.<name>.",
@@ -2574,7 +2626,7 @@
         },
         "responses": {
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "200": {
             "description": "Stored custom tool (current version)",
@@ -2587,19 +2639,20 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "413": {
-            "$ref": "#/components/responses/PayloadTooLarge"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       },
       "get": {
         "operationId": "projects.tools.list",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:read",
         "summary": "List stored custom tools with usage stats",
         "description": "Lists every stored tool for the project, including invocation_count/last_invoked_at/error_count so an operator agent can prune stale tools.",
@@ -2616,7 +2669,7 @@
         ],
         "responses": {
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "200": {
             "description": "Custom tools",
@@ -2629,7 +2682,7 @@
             }
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -2637,7 +2690,8 @@
     "/v1/{parent}/tools/{toolName}": {
       "get": {
         "operationId": "projects.tools.get",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:read",
         "summary": "Get a stored custom tool (definition + stats)",
         "parameters": [
@@ -2650,7 +2704,7 @@
         ],
         "responses": {
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "200": {
             "description": "Custom tool",
@@ -2663,16 +2717,17 @@
             }
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       },
       "delete": {
         "operationId": "projects.tools.delete",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:write",
         "summary": "Hard-delete a stored custom tool",
         "description": "Deletes the tool row and every retained version; the deletion is recorded in the custom tool audit log with the final usage stats.",
@@ -2686,7 +2741,7 @@
         ],
         "responses": {
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "200": {
             "description": "Deletion receipt",
@@ -2699,10 +2754,10 @@
             }
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -2710,7 +2765,8 @@
     "/v1/{parent}/tools/{toolName}:invoke": {
       "post": {
         "operationId": "projects.tools.invoke",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:write",
         "summary": "Invoke a stored custom tool",
         "description": "deterministic_wasm tools execute only in the cradle sandbox (empty policy, no egress) and record program_sha256 plus the sandbox inputs_digest; when DATA_ENGINE_CRADLE_URL is unset the invoke fails closed with 412 FAILED_PRECONDITION. llm_prompt tools render the stored template with the caller arguments (no secret interpolation) and run the NVIDIA client (offline dry-run yields determinism \"heuristic\").",
@@ -2737,7 +2793,7 @@
         },
         "responses": {
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "200": {
             "description": "Invocation result with content-addressed provenance",
@@ -2750,22 +2806,22 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           },
           "412": {
-            "$ref": "#/components/responses/FailedPrecondition"
+            "$ref": "#/components/responses/Error"
           },
           "413": {
-            "$ref": "#/components/responses/PayloadTooLarge"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           },
           "503": {
-            "$ref": "#/components/responses/Unavailable"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -2773,7 +2829,8 @@
     "/v1/{parent}/discoveryReleases:commit": {
       "post": {
         "operationId": "projects.discoveryReleases.commit",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "eval:run",
         "summary": "Atomically commit an immutable discovery release graph",
         "description": "Admits an exact, same-project graph of already-ingested artifacts. Artifact type, raw SHA-256, release policy, lineage, eligibility, and integer budget invariants are validated in one transaction. Replaying the same requestId and semantic content returns the original release; reuse with different content fails with ALREADY_EXISTS. This operation records evidence and does not authorize or perform a physical experiment.",
@@ -2811,22 +2868,22 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/Conflict"
+            "$ref": "#/components/responses/Error"
           },
           "413": {
-            "$ref": "#/components/responses/PayloadTooLarge"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -2834,7 +2891,8 @@
     "/v1/{parent}/discoveryReleases/{discoveryReleaseId}": {
       "get": {
         "operationId": "projects.discoveryReleases.get",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:read",
         "summary": "Get one immutable discovery release",
         "parameters": [
@@ -2870,19 +2928,19 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -2890,7 +2948,8 @@
     "/v1/{parent}/evidenceRecords": {
       "post": {
         "operationId": "projects.evidenceRecords.create",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "eval:run",
         "summary": "Create an immutable shared evidence record",
         "description": "Creates a domain-neutral record by canonical content hash. Source and receipt artifacts must already exist in the same project. VERIFIED claims require at least one retained VERIFIER_RECEIPT artifact. Creation requires the eval scope rather than ordinary dataset write authority.",
@@ -2928,25 +2987,26 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "413": {
-            "$ref": "#/components/responses/PayloadTooLarge"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       },
       "get": {
         "operationId": "projects.evidenceRecords.list",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:read",
         "summary": "List immutable shared evidence records",
         "parameters": [
@@ -2981,16 +3041,16 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -2998,7 +3058,8 @@
     "/v1/{parent}/evidenceRecords/{evidenceRecordId}": {
       "get": {
         "operationId": "projects.evidenceRecords.get",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:read",
         "summary": "Get one immutable shared evidence record",
         "parameters": [
@@ -3033,19 +3094,19 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -3053,7 +3114,8 @@
     "/v1/{parent}/episodes": {
       "post": {
         "operationId": "projects.episodes.create",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "eval:run",
         "summary": "Create an immutable shared episode",
         "description": "Creates an episode by canonical content hash. Its context evidence and any verifier receipt artifacts must already exist in the same project; PASS results require a retained VERIFIER_RECEIPT artifact. Creation requires the eval scope rather than ordinary dataset write authority.",
@@ -3091,25 +3153,26 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "413": {
-            "$ref": "#/components/responses/PayloadTooLarge"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       },
       "get": {
         "operationId": "projects.episodes.list",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:read",
         "summary": "List immutable shared episodes",
         "parameters": [
@@ -3144,16 +3207,16 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -3161,7 +3224,8 @@
     "/v1/{parent}/episodes/{episodeId}": {
       "get": {
         "operationId": "projects.episodes.get",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:read",
         "summary": "Get one immutable shared episode",
         "parameters": [
@@ -3196,19 +3260,19 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -3216,7 +3280,8 @@
     "/v1/{parent}/researchRetrieval:query": {
       "post": {
         "operationId": "query_research_retrieval",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:read",
         "summary": "Retrieve candidates for an exact canonical typed obligation",
         "description": "Read-only structured query over one project's immutable catalog snapshot. The content hash is recomputed using tempera.math-ast-c14n/v1 before any catalog metadata is returned. A result is a retrieval candidate, not a proof or an invocation authorization.",
@@ -3247,19 +3312,19 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "413": {
-            "$ref": "#/components/responses/PayloadTooLarge"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -3267,7 +3332,8 @@
     "/v1/{parent}/researchCatalogEntries": {
       "post": {
         "operationId": "projects.researchCatalogEntries.create",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:write",
         "summary": "Create an immutable executable research catalog entry",
         "description": "Creates by canonical content hash. An exact retry returns the same resource; entries cannot be mutated or deleted through this API.",
@@ -3298,25 +3364,26 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "413": {
-            "$ref": "#/components/responses/PayloadTooLarge"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       },
       "get": {
         "operationId": "projects.researchCatalogEntries.list",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:read",
         "summary": "List immutable executable research catalog entries",
         "parameters": [
@@ -3342,16 +3409,16 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -3359,7 +3426,8 @@
     "/v1/{parent}/researchCatalogEntries/{entryId}": {
       "get": {
         "operationId": "projects.researchCatalogEntries.get",
-        "x-tempera-audience": "data-engine",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "data-engine",
         "x-tempera-required-scope": "dataset:read",
         "summary": "Get one immutable executable research catalog entry",
         "parameters": [
@@ -3388,19 +3456,19 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidArgument"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/Forbidden"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "$ref": "#/components/responses/TooManyRequests"
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -3622,175 +3690,87 @@
       }
     },
     "responses": {
-      "Unauthenticated": {
-        "description": "Missing or invalid bearer token",
+      "Error": {
+        "description": "A google.rpc.Status error envelope.",
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "InvalidArgument": {
-        "description": "Invalid argument",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "Forbidden": {
-        "description": "Authenticated but not authorized (audience or scope)",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "NotFound": {
-        "description": "Resource not found",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "Conflict": {
-        "description": "Immutable identity conflict; ALREADY_EXISTS is non-retryable",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "AlreadyExists": {
-        "description": "Source definition or connector-run identity conflict; ALREADY_EXISTS is non-retryable",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "ProductNotReady": {
-        "description": "Product publication is incomplete; FAILED_PRECONDITION is retryable",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "ProductPrecondition": {
-        "description": "Product publication is retryably incomplete or human-data reuse policy failed non-retryably",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "TrainingReleasePrecondition": {
-        "description": "Training release idempotency conflict, stale generation, or policy failure; non-retryable",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "DataLoss": {
-        "description": "Committed artifact raw bytes failed integrity verification; non-retryable",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "PayloadTooLarge": {
-        "description": "Declared JSON request body exceeds its route or tool pre-read limit (17 MiB global maximum)",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "FailedPrecondition": {
-        "description": "Precondition failed (for example, a source connector's env config is absent)",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "Unavailable": {
-        "description": "Retryable service or write-path unavailability; inspect the error message before retrying",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "TooManyRequests": {
-        "description": "Capacity or live-state quota error; inspect retryable before retrying",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "DeadlineExceeded": {
-        "description": "Retryable end-to-end receiver deadline exhaustion",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
+              "$ref": "#/components/schemas/Status"
             }
           }
         }
       }
     },
     "schemas": {
+      "Status": {
+        "type": "object",
+        "description": "The google.rpc.Status error envelope required of every Tempera API (AIP-193).",
+        "required": [
+          "error"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": [
+              "code",
+              "status",
+              "message"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "code": {
+                "type": "integer",
+                "description": "The HTTP status code, repeated in the body so the envelope is self-describing."
+              },
+              "status": {
+                "type": "string",
+                "description": "The canonical google.rpc.Code name, for example INVALID_ARGUMENT.",
+                "enum": [
+                  "CANCELLED",
+                  "UNKNOWN",
+                  "INVALID_ARGUMENT",
+                  "DEADLINE_EXCEEDED",
+                  "NOT_FOUND",
+                  "ALREADY_EXISTS",
+                  "PERMISSION_DENIED",
+                  "UNAUTHENTICATED",
+                  "RESOURCE_EXHAUSTED",
+                  "FAILED_PRECONDITION",
+                  "ABORTED",
+                  "OUT_OF_RANGE",
+                  "UNIMPLEMENTED",
+                  "INTERNAL",
+                  "UNAVAILABLE",
+                  "DATA_LOSS"
+                ]
+              },
+              "message": {
+                "type": "string",
+                "description": "A developer-facing description that is safe to log and safe to show."
+              },
+              "details": {
+                "type": "array",
+                "description": "Structured error details. Present but empty when there are none.",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "requestId": {
+                "type": "string",
+                "description": "The server-assigned request identifier, mirrored from the x-request-id response header."
+              }
+            }
+          }
+        }
+      },
       "Timestamp": {
         "type": "string",
         "format": "date-time"
       },
       "ETag": {
         "type": "string"
-      },
-      "Error": {
-        "type": "object",
-        "required": [
-          "error"
-        ],
-        "properties": {
-          "error": {
-            "$ref": "#/components/schemas/ErrorBody"
-          }
-        }
       },
       "ErrorBody": {
         "type": "object",
@@ -6434,443 +6414,10 @@
             "pattern": "^document-evidence-v2:[0-9a-f]{64}$"
           },
           "rawBody": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "schemaVersion",
-              "sourceSha256",
-              "extraction",
-              "producer",
-              "evidenceSha256"
-            ],
-            "properties": {
-              "schemaVersion": {
-                "const": "tempera.document-evidence.v2"
-              },
-              "sourceSha256": {
-                "type": "string",
-                "pattern": "^[0-9a-f]{64}$"
-              },
-              "extraction": {
-                "type": "object",
-                "additionalProperties": false,
-                "required": [
-                  "document",
-                  "documentVersion",
-                  "graphSha256",
-                  "requestSha256",
-                  "modelEndpoint",
-                  "modelProtocol",
-                  "modelConformanceSha256",
-                  "selectedUnitIndexes",
-                  "selection",
-                  "output",
-                  "evidence",
-                  "providerResponseId",
-                  "providerRequestId",
-                  "inputTokens",
-                  "outputTokens",
-                  "locallyEnforcedConstraints"
-                ],
-                "properties": {
-                  "document": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 1024,
-                    "pattern": "^projects/[^/]{1,128}/documents/[^/]{1,256}$"
-                  },
-                  "documentVersion": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 2048
-                  },
-                  "graphSha256": {
-                    "type": "string",
-                    "pattern": "^[0-9a-f]{64}$"
-                  },
-                  "requestSha256": {
-                    "type": "string",
-                    "pattern": "^[0-9a-f]{64}$"
-                  },
-                  "modelEndpoint": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 1024
-                  },
-                  "modelProtocol": {
-                    "enum": [
-                      "OPEN_AI_RESPONSES",
-                      "OPEN_AI_CHAT_COMPLETIONS",
-                      "ANTHROPIC_MESSAGES"
-                    ]
-                  },
-                  "modelConformanceSha256": {
-                    "type": "string",
-                    "pattern": "^[0-9a-f]{64}$"
-                  },
-                  "selectedUnitIndexes": {
-                    "type": "array",
-                    "minItems": 1,
-                    "maxItems": 10000,
-                    "uniqueItems": true,
-                    "items": {
-                      "type": "integer",
-                      "minimum": 0,
-                      "maximum": 4294967295
-                    }
-                  },
-                  "selection": {
-                    "type": "object",
-                    "additionalProperties": false,
-                    "required": [
-                      "method",
-                      "scannedUnitCount",
-                      "querySha256"
-                    ],
-                    "properties": {
-                      "method": {
-                        "enum": [
-                          "EXPLICIT",
-                          "COMPLETE_DOCUMENT",
-                          "LEXICAL_BM25_V1"
-                        ]
-                      },
-                      "scannedUnitCount": {
-                        "type": "integer",
-                        "minimum": 1,
-                        "maximum": 4294967295
-                      },
-                      "querySha256": {
-                        "oneOf": [
-                          {
-                            "type": "string",
-                            "pattern": "^[0-9a-f]{64}$"
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
-                      }
-                    }
-                  },
-                  "output": {
-                    "type": "object"
-                  },
-                  "evidence": {
-                    "type": "array",
-                    "maxItems": 8192,
-                    "items": {
-                      "type": "object",
-                      "additionalProperties": false,
-                      "required": [
-                        "jsonPointer",
-                        "quote",
-                        "evidence"
-                      ],
-                      "properties": {
-                        "jsonPointer": {
-                          "type": "string",
-                          "minLength": 1,
-                          "maxLength": 4096,
-                          "pattern": "^/"
-                        },
-                        "quote": {
-                          "type": "string",
-                          "minLength": 1,
-                          "maxLength": 65536
-                        },
-                        "evidence": {
-                          "type": "object",
-                          "additionalProperties": false,
-                          "required": [
-                            "unitId",
-                            "blockId",
-                            "charStart",
-                            "charEnd",
-                            "polygon",
-                            "sourceAnchor",
-                            "timeRange",
-                            "cropSha256",
-                            "support"
-                          ],
-                          "properties": {
-                            "unitId": {
-                              "type": "string",
-                              "minLength": 1,
-                              "maxLength": 1024
-                            },
-                            "blockId": {
-                              "oneOf": [
-                                {
-                                  "type": "string",
-                                  "minLength": 1,
-                                  "maxLength": 1024
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
-                            },
-                            "charStart": {
-                              "oneOf": [
-                                {
-                                  "type": "integer",
-                                  "minimum": 0,
-                                  "maximum": 4294967295
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
-                            },
-                            "charEnd": {
-                              "oneOf": [
-                                {
-                                  "type": "integer",
-                                  "minimum": 1,
-                                  "maximum": 4294967295
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
-                            },
-                            "polygon": {
-                              "oneOf": [
-                                {
-                                  "type": "object",
-                                  "additionalProperties": false,
-                                  "required": [
-                                    "points"
-                                  ],
-                                  "properties": {
-                                    "points": {
-                                      "type": "array",
-                                      "minItems": 3,
-                                      "maxItems": 64,
-                                      "items": {
-                                        "type": "object",
-                                        "additionalProperties": false,
-                                        "required": [
-                                          "x",
-                                          "y"
-                                        ],
-                                        "properties": {
-                                          "x": {
-                                            "type": "number",
-                                            "minimum": 0,
-                                            "maximum": 1
-                                          },
-                                          "y": {
-                                            "type": "number",
-                                            "minimum": 0,
-                                            "maximum": 1
-                                          }
-                                        }
-                                      }
-                                    }
-                                  }
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
-                            },
-                            "sourceAnchor": {
-                              "description": "Retained losslessly; receiver applies finite-number, depth, node, byte, and secret-key limits.",
-                              "type": [
-                                "object",
-                                "array",
-                                "string",
-                                "number",
-                                "boolean",
-                                "null"
-                              ]
-                            },
-                            "timeRange": {
-                              "oneOf": [
-                                {
-                                  "type": "object",
-                                  "additionalProperties": false,
-                                  "required": [
-                                    "startMs",
-                                    "endMs"
-                                  ],
-                                  "properties": {
-                                    "startMs": {
-                                      "type": "integer",
-                                      "minimum": 0,
-                                      "maximum": 9223372036854775807
-                                    },
-                                    "endMs": {
-                                      "type": "integer",
-                                      "minimum": 1,
-                                      "maximum": 9223372036854775807
-                                    }
-                                  }
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
-                            },
-                            "cropSha256": {
-                              "oneOf": [
-                                {
-                                  "type": "string",
-                                  "pattern": "^[0-9a-f]{64}$"
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
-                            },
-                            "support": {
-                              "const": "GROUNDED"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "providerResponseId": {
-                    "oneOf": [
-                      {
-                        "type": "string",
-                        "minLength": 1,
-                        "maxLength": 1024
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
-                  "providerRequestId": {
-                    "oneOf": [
-                      {
-                        "type": "string",
-                        "minLength": 1,
-                        "maxLength": 1024
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
-                  "inputTokens": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "maximum": 9223372036854775807
-                  },
-                  "outputTokens": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "maximum": 9223372036854775807
-                  },
-                  "locallyEnforcedConstraints": {
-                    "type": "array",
-                    "maxItems": 4096,
-                    "items": {
-                      "type": "string",
-                      "maxLength": 4096
-                    }
-                  }
-                }
-              },
-              "producer": {
-                "type": "object",
-                "additionalProperties": false,
-                "required": [
-                  "repository",
-                  "commitSha",
-                  "openapiSha256"
-                ],
-                "properties": {
-                  "repository": {
-                    "const": "https://github.com/tempera-dev/tempera-document"
-                  },
-                  "commitSha": {
-                    "type": "string",
-                    "pattern": "^[0-9a-f]{40}$"
-                  },
-                  "openapiSha256": {
-                    "type": "string",
-                    "pattern": "^[0-9a-f]{64}$"
-                  }
-                }
-              },
-              "evidenceSha256": {
-                "type": "string",
-                "pattern": "^[0-9a-f]{64}$"
-              }
-            }
+            "$ref": "#/$defs/rawBody"
           },
           "metadata": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "schemaVersion",
-              "evidenceSha256",
-              "classification",
-              "handlingTags",
-              "provenance"
-            ],
-            "properties": {
-              "schemaVersion": {
-                "const": "tempera.document-evidence.v2"
-              },
-              "evidenceSha256": {
-                "type": "string",
-                "pattern": "^[0-9a-f]{64}$"
-              },
-              "classification": {
-                "enum": [
-                  "PUBLIC",
-                  "INTERNAL",
-                  "CONFIDENTIAL",
-                  "RESTRICTED"
-                ]
-              },
-              "handlingTags": {
-                "type": "array",
-                "maxItems": 32,
-                "uniqueItems": true,
-                "items": {
-                  "enum": [
-                    "PHI",
-                    "PII",
-                    "MALWARE",
-                    "DUAL_USE",
-                    "EXPORT_CONTROLLED",
-                    "LICENSE_RESTRICTED"
-                  ]
-                }
-              },
-              "provenance": {
-                "type": "object",
-                "additionalProperties": false,
-                "required": [
-                  "origin",
-                  "integrity",
-                  "evaluationOnly",
-                  "trainingAllowed"
-                ],
-                "properties": {
-                  "origin": {
-                    "const": "CALLER_ASSERTED"
-                  },
-                  "integrity": {
-                    "const": "RECEIVER_VERIFIED"
-                  },
-                  "evaluationOnly": {
-                    "const": true
-                  },
-                  "trainingAllowed": {
-                    "const": false
-                  }
-                }
-              }
-            }
+            "$ref": "#/$defs/metadata"
           }
         },
         "$defs": {
@@ -6905,360 +6452,16 @@
                 "const": "tempera.document-evidence.v2"
               },
               "sourceSha256": {
-                "type": "string",
-                "pattern": "^[0-9a-f]{64}$"
+                "$ref": "#/$defs/sha256"
               },
               "extraction": {
-                "type": "object",
-                "additionalProperties": false,
-                "required": [
-                  "document",
-                  "documentVersion",
-                  "graphSha256",
-                  "requestSha256",
-                  "modelEndpoint",
-                  "modelProtocol",
-                  "modelConformanceSha256",
-                  "selectedUnitIndexes",
-                  "selection",
-                  "output",
-                  "evidence",
-                  "providerResponseId",
-                  "providerRequestId",
-                  "inputTokens",
-                  "outputTokens",
-                  "locallyEnforcedConstraints"
-                ],
-                "properties": {
-                  "document": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 1024,
-                    "pattern": "^projects/[^/]{1,128}/documents/[^/]{1,256}$"
-                  },
-                  "documentVersion": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 2048
-                  },
-                  "graphSha256": {
-                    "type": "string",
-                    "pattern": "^[0-9a-f]{64}$"
-                  },
-                  "requestSha256": {
-                    "type": "string",
-                    "pattern": "^[0-9a-f]{64}$"
-                  },
-                  "modelEndpoint": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 1024
-                  },
-                  "modelProtocol": {
-                    "enum": [
-                      "OPEN_AI_RESPONSES",
-                      "OPEN_AI_CHAT_COMPLETIONS",
-                      "ANTHROPIC_MESSAGES"
-                    ]
-                  },
-                  "modelConformanceSha256": {
-                    "type": "string",
-                    "pattern": "^[0-9a-f]{64}$"
-                  },
-                  "selectedUnitIndexes": {
-                    "type": "array",
-                    "minItems": 1,
-                    "maxItems": 10000,
-                    "uniqueItems": true,
-                    "items": {
-                      "type": "integer",
-                      "minimum": 0,
-                      "maximum": 4294967295
-                    }
-                  },
-                  "selection": {
-                    "type": "object",
-                    "additionalProperties": false,
-                    "required": [
-                      "method",
-                      "scannedUnitCount",
-                      "querySha256"
-                    ],
-                    "properties": {
-                      "method": {
-                        "enum": [
-                          "EXPLICIT",
-                          "COMPLETE_DOCUMENT",
-                          "LEXICAL_BM25_V1"
-                        ]
-                      },
-                      "scannedUnitCount": {
-                        "type": "integer",
-                        "minimum": 1,
-                        "maximum": 4294967295
-                      },
-                      "querySha256": {
-                        "oneOf": [
-                          {
-                            "type": "string",
-                            "pattern": "^[0-9a-f]{64}$"
-                          },
-                          {
-                            "type": "null"
-                          }
-                        ]
-                      }
-                    }
-                  },
-                  "output": {
-                    "type": "object"
-                  },
-                  "evidence": {
-                    "type": "array",
-                    "maxItems": 8192,
-                    "items": {
-                      "type": "object",
-                      "additionalProperties": false,
-                      "required": [
-                        "jsonPointer",
-                        "quote",
-                        "evidence"
-                      ],
-                      "properties": {
-                        "jsonPointer": {
-                          "type": "string",
-                          "minLength": 1,
-                          "maxLength": 4096,
-                          "pattern": "^/"
-                        },
-                        "quote": {
-                          "type": "string",
-                          "minLength": 1,
-                          "maxLength": 65536
-                        },
-                        "evidence": {
-                          "type": "object",
-                          "additionalProperties": false,
-                          "required": [
-                            "unitId",
-                            "blockId",
-                            "charStart",
-                            "charEnd",
-                            "polygon",
-                            "sourceAnchor",
-                            "timeRange",
-                            "cropSha256",
-                            "support"
-                          ],
-                          "properties": {
-                            "unitId": {
-                              "type": "string",
-                              "minLength": 1,
-                              "maxLength": 1024
-                            },
-                            "blockId": {
-                              "oneOf": [
-                                {
-                                  "type": "string",
-                                  "minLength": 1,
-                                  "maxLength": 1024
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
-                            },
-                            "charStart": {
-                              "oneOf": [
-                                {
-                                  "type": "integer",
-                                  "minimum": 0,
-                                  "maximum": 4294967295
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
-                            },
-                            "charEnd": {
-                              "oneOf": [
-                                {
-                                  "type": "integer",
-                                  "minimum": 1,
-                                  "maximum": 4294967295
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
-                            },
-                            "polygon": {
-                              "oneOf": [
-                                {
-                                  "type": "object",
-                                  "additionalProperties": false,
-                                  "required": [
-                                    "points"
-                                  ],
-                                  "properties": {
-                                    "points": {
-                                      "type": "array",
-                                      "minItems": 3,
-                                      "maxItems": 64,
-                                      "items": {
-                                        "type": "object",
-                                        "additionalProperties": false,
-                                        "required": [
-                                          "x",
-                                          "y"
-                                        ],
-                                        "properties": {
-                                          "x": {
-                                            "type": "number",
-                                            "minimum": 0,
-                                            "maximum": 1
-                                          },
-                                          "y": {
-                                            "type": "number",
-                                            "minimum": 0,
-                                            "maximum": 1
-                                          }
-                                        }
-                                      }
-                                    }
-                                  }
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
-                            },
-                            "sourceAnchor": {
-                              "description": "Retained losslessly; receiver applies finite-number, depth, node, byte, and secret-key limits.",
-                              "type": [
-                                "object",
-                                "array",
-                                "string",
-                                "number",
-                                "boolean",
-                                "null"
-                              ]
-                            },
-                            "timeRange": {
-                              "oneOf": [
-                                {
-                                  "type": "object",
-                                  "additionalProperties": false,
-                                  "required": [
-                                    "startMs",
-                                    "endMs"
-                                  ],
-                                  "properties": {
-                                    "startMs": {
-                                      "type": "integer",
-                                      "minimum": 0,
-                                      "maximum": 9223372036854775807
-                                    },
-                                    "endMs": {
-                                      "type": "integer",
-                                      "minimum": 1,
-                                      "maximum": 9223372036854775807
-                                    }
-                                  }
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
-                            },
-                            "cropSha256": {
-                              "oneOf": [
-                                {
-                                  "type": "string",
-                                  "pattern": "^[0-9a-f]{64}$"
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
-                            },
-                            "support": {
-                              "const": "GROUNDED"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "providerResponseId": {
-                    "oneOf": [
-                      {
-                        "type": "string",
-                        "minLength": 1,
-                        "maxLength": 1024
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
-                  "providerRequestId": {
-                    "oneOf": [
-                      {
-                        "type": "string",
-                        "minLength": 1,
-                        "maxLength": 1024
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
-                  "inputTokens": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "maximum": 9223372036854775807
-                  },
-                  "outputTokens": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "maximum": 9223372036854775807
-                  },
-                  "locallyEnforcedConstraints": {
-                    "type": "array",
-                    "maxItems": 4096,
-                    "items": {
-                      "type": "string",
-                      "maxLength": 4096
-                    }
-                  }
-                }
+                "$ref": "#/$defs/extraction"
               },
               "producer": {
-                "type": "object",
-                "additionalProperties": false,
-                "required": [
-                  "repository",
-                  "commitSha",
-                  "openapiSha256"
-                ],
-                "properties": {
-                  "repository": {
-                    "const": "https://github.com/tempera-dev/tempera-document"
-                  },
-                  "commitSha": {
-                    "type": "string",
-                    "pattern": "^[0-9a-f]{40}$"
-                  },
-                  "openapiSha256": {
-                    "type": "string",
-                    "pattern": "^[0-9a-f]{64}$"
-                  }
-                }
+                "$ref": "#/$defs/producer"
               },
               "evidenceSha256": {
-                "type": "string",
-                "pattern": "^[0-9a-f]{64}$"
+                "$ref": "#/$defs/sha256"
               }
             }
           },
@@ -7279,8 +6482,7 @@
                 "pattern": "^[0-9a-f]{40}$"
               },
               "openapiSha256": {
-                "type": "string",
-                "pattern": "^[0-9a-f]{64}$"
+                "$ref": "#/$defs/sha256"
               }
             }
           },
@@ -7299,8 +6501,7 @@
                 "const": "tempera.document-evidence.v2"
               },
               "evidenceSha256": {
-                "type": "string",
-                "pattern": "^[0-9a-f]{64}$"
+                "$ref": "#/$defs/sha256"
               },
               "classification": {
                 "enum": [
@@ -7385,12 +6586,10 @@
                 "maxLength": 2048
               },
               "graphSha256": {
-                "type": "string",
-                "pattern": "^[0-9a-f]{64}$"
+                "$ref": "#/$defs/sha256"
               },
               "requestSha256": {
-                "type": "string",
-                "pattern": "^[0-9a-f]{64}$"
+                "$ref": "#/$defs/sha256"
               },
               "modelEndpoint": {
                 "type": "string",
@@ -7405,8 +6604,7 @@
                 ]
               },
               "modelConformanceSha256": {
-                "type": "string",
-                "pattern": "^[0-9a-f]{64}$"
+                "$ref": "#/$defs/sha256"
               },
               "selectedUnitIndexes": {
                 "type": "array",
@@ -7420,38 +6618,7 @@
                 }
               },
               "selection": {
-                "type": "object",
-                "additionalProperties": false,
-                "required": [
-                  "method",
-                  "scannedUnitCount",
-                  "querySha256"
-                ],
-                "properties": {
-                  "method": {
-                    "enum": [
-                      "EXPLICIT",
-                      "COMPLETE_DOCUMENT",
-                      "LEXICAL_BM25_V1"
-                    ]
-                  },
-                  "scannedUnitCount": {
-                    "type": "integer",
-                    "minimum": 1,
-                    "maximum": 4294967295
-                  },
-                  "querySha256": {
-                    "oneOf": [
-                      {
-                        "type": "string",
-                        "pattern": "^[0-9a-f]{64}$"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  }
-                }
+                "$ref": "#/$defs/selection"
               },
               "output": {
                 "type": "object"
@@ -7460,202 +6627,14 @@
                 "type": "array",
                 "maxItems": 8192,
                 "items": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "jsonPointer",
-                    "quote",
-                    "evidence"
-                  ],
-                  "properties": {
-                    "jsonPointer": {
-                      "type": "string",
-                      "minLength": 1,
-                      "maxLength": 4096,
-                      "pattern": "^/"
-                    },
-                    "quote": {
-                      "type": "string",
-                      "minLength": 1,
-                      "maxLength": 65536
-                    },
-                    "evidence": {
-                      "type": "object",
-                      "additionalProperties": false,
-                      "required": [
-                        "unitId",
-                        "blockId",
-                        "charStart",
-                        "charEnd",
-                        "polygon",
-                        "sourceAnchor",
-                        "timeRange",
-                        "cropSha256",
-                        "support"
-                      ],
-                      "properties": {
-                        "unitId": {
-                          "type": "string",
-                          "minLength": 1,
-                          "maxLength": 1024
-                        },
-                        "blockId": {
-                          "oneOf": [
-                            {
-                              "type": "string",
-                              "minLength": 1,
-                              "maxLength": 1024
-                            },
-                            {
-                              "type": "null"
-                            }
-                          ]
-                        },
-                        "charStart": {
-                          "oneOf": [
-                            {
-                              "type": "integer",
-                              "minimum": 0,
-                              "maximum": 4294967295
-                            },
-                            {
-                              "type": "null"
-                            }
-                          ]
-                        },
-                        "charEnd": {
-                          "oneOf": [
-                            {
-                              "type": "integer",
-                              "minimum": 1,
-                              "maximum": 4294967295
-                            },
-                            {
-                              "type": "null"
-                            }
-                          ]
-                        },
-                        "polygon": {
-                          "oneOf": [
-                            {
-                              "type": "object",
-                              "additionalProperties": false,
-                              "required": [
-                                "points"
-                              ],
-                              "properties": {
-                                "points": {
-                                  "type": "array",
-                                  "minItems": 3,
-                                  "maxItems": 64,
-                                  "items": {
-                                    "type": "object",
-                                    "additionalProperties": false,
-                                    "required": [
-                                      "x",
-                                      "y"
-                                    ],
-                                    "properties": {
-                                      "x": {
-                                        "type": "number",
-                                        "minimum": 0,
-                                        "maximum": 1
-                                      },
-                                      "y": {
-                                        "type": "number",
-                                        "minimum": 0,
-                                        "maximum": 1
-                                      }
-                                    }
-                                  }
-                                }
-                              }
-                            },
-                            {
-                              "type": "null"
-                            }
-                          ]
-                        },
-                        "sourceAnchor": {
-                          "description": "Retained losslessly; receiver applies finite-number, depth, node, byte, and secret-key limits.",
-                          "type": [
-                            "object",
-                            "array",
-                            "string",
-                            "number",
-                            "boolean",
-                            "null"
-                          ]
-                        },
-                        "timeRange": {
-                          "oneOf": [
-                            {
-                              "type": "object",
-                              "additionalProperties": false,
-                              "required": [
-                                "startMs",
-                                "endMs"
-                              ],
-                              "properties": {
-                                "startMs": {
-                                  "type": "integer",
-                                  "minimum": 0,
-                                  "maximum": 9223372036854775807
-                                },
-                                "endMs": {
-                                  "type": "integer",
-                                  "minimum": 1,
-                                  "maximum": 9223372036854775807
-                                }
-                              }
-                            },
-                            {
-                              "type": "null"
-                            }
-                          ]
-                        },
-                        "cropSha256": {
-                          "oneOf": [
-                            {
-                              "type": "string",
-                              "pattern": "^[0-9a-f]{64}$"
-                            },
-                            {
-                              "type": "null"
-                            }
-                          ]
-                        },
-                        "support": {
-                          "const": "GROUNDED"
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/$defs/extractionEvidence"
                 }
               },
               "providerResponseId": {
-                "oneOf": [
-                  {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 1024
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
+                "$ref": "#/$defs/nullableBoundedString"
               },
               "providerRequestId": {
-                "oneOf": [
-                  {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 1024
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
+                "$ref": "#/$defs/nullableBoundedString"
               },
               "inputTokens": {
                 "type": "integer",
@@ -7701,8 +6680,7 @@
               "querySha256": {
                 "oneOf": [
                   {
-                    "type": "string",
-                    "pattern": "^[0-9a-f]{64}$"
+                    "$ref": "#/$defs/sha256"
                   },
                   {
                     "type": "null"
@@ -7732,155 +6710,7 @@
                 "maxLength": 65536
               },
               "evidence": {
-                "type": "object",
-                "additionalProperties": false,
-                "required": [
-                  "unitId",
-                  "blockId",
-                  "charStart",
-                  "charEnd",
-                  "polygon",
-                  "sourceAnchor",
-                  "timeRange",
-                  "cropSha256",
-                  "support"
-                ],
-                "properties": {
-                  "unitId": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 1024
-                  },
-                  "blockId": {
-                    "oneOf": [
-                      {
-                        "type": "string",
-                        "minLength": 1,
-                        "maxLength": 1024
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
-                  "charStart": {
-                    "oneOf": [
-                      {
-                        "type": "integer",
-                        "minimum": 0,
-                        "maximum": 4294967295
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
-                  "charEnd": {
-                    "oneOf": [
-                      {
-                        "type": "integer",
-                        "minimum": 1,
-                        "maximum": 4294967295
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
-                  "polygon": {
-                    "oneOf": [
-                      {
-                        "type": "object",
-                        "additionalProperties": false,
-                        "required": [
-                          "points"
-                        ],
-                        "properties": {
-                          "points": {
-                            "type": "array",
-                            "minItems": 3,
-                            "maxItems": 64,
-                            "items": {
-                              "type": "object",
-                              "additionalProperties": false,
-                              "required": [
-                                "x",
-                                "y"
-                              ],
-                              "properties": {
-                                "x": {
-                                  "type": "number",
-                                  "minimum": 0,
-                                  "maximum": 1
-                                },
-                                "y": {
-                                  "type": "number",
-                                  "minimum": 0,
-                                  "maximum": 1
-                                }
-                              }
-                            }
-                          }
-                        }
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
-                  "sourceAnchor": {
-                    "description": "Retained losslessly; receiver applies finite-number, depth, node, byte, and secret-key limits.",
-                    "type": [
-                      "object",
-                      "array",
-                      "string",
-                      "number",
-                      "boolean",
-                      "null"
-                    ]
-                  },
-                  "timeRange": {
-                    "oneOf": [
-                      {
-                        "type": "object",
-                        "additionalProperties": false,
-                        "required": [
-                          "startMs",
-                          "endMs"
-                        ],
-                        "properties": {
-                          "startMs": {
-                            "type": "integer",
-                            "minimum": 0,
-                            "maximum": 9223372036854775807
-                          },
-                          "endMs": {
-                            "type": "integer",
-                            "minimum": 1,
-                            "maximum": 9223372036854775807
-                          }
-                        }
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
-                  "cropSha256": {
-                    "oneOf": [
-                      {
-                        "type": "string",
-                        "pattern": "^[0-9a-f]{64}$"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
-                  },
-                  "support": {
-                    "const": "GROUNDED"
-                  }
-                }
+                "$ref": "#/$defs/evidenceSpan"
               }
             }
           },
@@ -7905,16 +6735,7 @@
                 "maxLength": 1024
               },
               "blockId": {
-                "oneOf": [
-                  {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 1024
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
+                "$ref": "#/$defs/nullableBoundedString"
               },
               "charStart": {
                 "oneOf": [
@@ -7943,38 +6764,7 @@
               "polygon": {
                 "oneOf": [
                   {
-                    "type": "object",
-                    "additionalProperties": false,
-                    "required": [
-                      "points"
-                    ],
-                    "properties": {
-                      "points": {
-                        "type": "array",
-                        "minItems": 3,
-                        "maxItems": 64,
-                        "items": {
-                          "type": "object",
-                          "additionalProperties": false,
-                          "required": [
-                            "x",
-                            "y"
-                          ],
-                          "properties": {
-                            "x": {
-                              "type": "number",
-                              "minimum": 0,
-                              "maximum": 1
-                            },
-                            "y": {
-                              "type": "number",
-                              "minimum": 0,
-                              "maximum": 1
-                            }
-                          }
-                        }
-                      }
-                    }
+                    "$ref": "#/$defs/polygon"
                   },
                   {
                     "type": "null"
@@ -7982,37 +6772,12 @@
                 ]
               },
               "sourceAnchor": {
-                "description": "Retained losslessly; receiver applies finite-number, depth, node, byte, and secret-key limits.",
-                "type": [
-                  "object",
-                  "array",
-                  "string",
-                  "number",
-                  "boolean",
-                  "null"
-                ]
+                "$ref": "#/$defs/nativeJson"
               },
               "timeRange": {
                 "oneOf": [
                   {
-                    "type": "object",
-                    "additionalProperties": false,
-                    "required": [
-                      "startMs",
-                      "endMs"
-                    ],
-                    "properties": {
-                      "startMs": {
-                        "type": "integer",
-                        "minimum": 0,
-                        "maximum": 9223372036854775807
-                      },
-                      "endMs": {
-                        "type": "integer",
-                        "minimum": 1,
-                        "maximum": 9223372036854775807
-                      }
-                    }
+                    "$ref": "#/$defs/timeRange"
                   },
                   {
                     "type": "null"
@@ -8022,8 +6787,7 @@
               "cropSha256": {
                 "oneOf": [
                   {
-                    "type": "string",
-                    "pattern": "^[0-9a-f]{64}$"
+                    "$ref": "#/$defs/sha256"
                   },
                   {
                     "type": "null"
@@ -8047,24 +6811,7 @@
                 "minItems": 3,
                 "maxItems": 64,
                 "items": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "required": [
-                    "x",
-                    "y"
-                  ],
-                  "properties": {
-                    "x": {
-                      "type": "number",
-                      "minimum": 0,
-                      "maximum": 1
-                    },
-                    "y": {
-                      "type": "number",
-                      "minimum": 0,
-                      "maximum": 1
-                    }
-                  }
+                  "$ref": "#/$defs/point"
                 }
               }
             }
@@ -12830,7 +11577,7 @@
               "preference",
               "rlvr"
             ],
-            "description": "sft emits {completion, provenance} records per accepted item; preference emits chosen/rejected pairs from expert overrides and disagreeing ensemble minority votes; rlvr emits the executable reward \u2014 the task family's deterministic wasm verifier spec (program text, digest, input projection, pass/fail labels) \u2014 with the authoritative label demoted to reference metadata."
+            "description": "sft emits {completion, provenance} records per accepted item; preference emits chosen/rejected pairs from expert overrides and disagreeing ensemble minority votes; rlvr emits the executable reward — the task family's deterministic wasm verifier spec (program text, digest, input projection, pass/fail labels) — with the authoritative label demoted to reference metadata."
           },
           "trainFraction": {
             "type": "number",
@@ -12851,7 +11598,7 @@
           "pageToken": {
             "type": "string",
             "maxLength": 4096,
-            "description": "Keyset token \u2014 the last processed artifactName from the previous page."
+            "description": "Keyset token — the last processed artifactName from the previous page."
           },
           "pairSources": {
             "type": "array",
@@ -12863,7 +11610,7 @@
                 "ensemble_minority"
               ]
             },
-            "description": "format=preference only \u2014 select the authority mix instead of a silent blend: expert_override is human feedback (RLHF-grade), ensemble_minority is AI feedback (RLAIF-grade). Defaults to both."
+            "description": "format=preference only — select the authority mix instead of a silent blend: expert_override is human feedback (RLHF-grade), ensemble_minority is AI feedback (RLAIF-grade). Defaults to both."
           }
         }
       },

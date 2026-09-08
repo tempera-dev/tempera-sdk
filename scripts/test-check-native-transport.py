@@ -58,7 +58,7 @@ class ContractTest(unittest.TestCase):
         websocket = voice_spec["x-tempera-websocket-contract"]
         stream = self.by_product["temperaVoice"]["streamVoiceSession"]
         self.assertEqual(stream["method"], "WSS")
-        self.assertEqual(stream["pathTemplate"], "/v1/sessions/{session_id}/stream")
+        self.assertEqual(stream["pathTemplate"], "/v1/sessions/{sessionId}/stream")
         self.assertEqual(stream["pathShape"], "/v1/sessions/{}/stream")
         self.assertEqual(stream["authAudience"], "tempera-voice")
         self.assertEqual(stream["scope"], "voice:stream")
@@ -90,11 +90,11 @@ class ClientCheckTest(unittest.TestCase):
 
     def test_annotated_wss_call_site_passes_the_literal_shape_rule(self) -> None:
         swift = '''
-            // tempera-transport: temperaVoice.streamVoiceSession WSS /v1/sessions/{session_id}/stream
+            // tempera-transport: temperaVoice.streamVoiceSession WSS /v1/sessions/{sessionId}/stream
             var request = try self.request("v1/sessions/\\(sessionID)/stream")
         '''
         kotlin = '''
-            // tempera-transport: temperaVoice.streamVoiceSession WSS /v1/sessions/{session_id}/stream
+            // tempera-transport: temperaVoice.streamVoiceSession WSS /v1/sessions/{sessionId}/stream
             val url = base.resolvePath("v1/sessions/$sessionId/stream").newBuilder().build()
         '''
         self.assertEqual(self.check("VoiceClient.swift", swift), [])
@@ -102,7 +102,7 @@ class ClientCheckTest(unittest.TestCase):
 
     def test_wss_annotation_with_the_wrong_literal_shape_fails(self) -> None:
         source = '''
-            // tempera-transport: temperaVoice.streamVoiceSession WSS /v1/sessions/{session_id}/stream
+            // tempera-transport: temperaVoice.streamVoiceSession WSS /v1/sessions/{sessionId}/stream
             var request = try self.request("v1/sessions/\\(sessionID)/events")
         '''
         failures = self.check("VoiceClient.swift", source)
@@ -111,7 +111,7 @@ class ClientCheckTest(unittest.TestCase):
 
     def test_http_annotation_declaring_the_stream_as_get_fails(self) -> None:
         source = '''
-            // tempera-transport: temperaVoice.streamVoiceSession GET /v1/sessions/{session_id}/stream
+            // tempera-transport: temperaVoice.streamVoiceSession GET /v1/sessions/{sessionId}/stream
             var request = try self.request("v1/sessions/\\(sessionID)/stream")
         '''
         failures = self.check("VoiceClient.swift", source)
@@ -123,8 +123,8 @@ class ClientCheckTest(unittest.TestCase):
             let a = try request("v1/sessions", method: "POST", body: body)
             let b = try request("v1/agents:default")
             let c = try request("v1/actions/\\(action.id):resolve", method: "POST")
-            let d: OperatingState = try await send("/v1/operating-state")
-            let e = try await send("/v1/business-profile")
+            let d: OperatingState = try await send("/v1/operatingState")
+            let e = try await send("/v1/businessProfile")
             let f = try await send("/v1/cases/\\(reviewed.id):reviewDraft", method: "POST")
             let g = try await send("/v1/organizations/\\(org)/inbox")
             let unrelated = try request("v1/capabilities")
@@ -137,8 +137,8 @@ class ClientCheckTest(unittest.TestCase):
                 "Mixed.swift:2: undeclared temperaVoice route /v1/sessions; add a tempera-transport annotation above the call site",
                 "Mixed.swift:3: undeclared temperaVoice route /v1/agents:default; add a tempera-transport annotation above the call site",
                 "Mixed.swift:4: undeclared temperaVoice route /v1/actions/{}:resolve; add a tempera-transport annotation above the call site",
-                "Mixed.swift:5: undeclared temperaBusiness route /v1/operating-state; add a tempera-transport annotation above the call site",
-                "Mixed.swift:6: undeclared temperaBusiness route /v1/business-profile; add a tempera-transport annotation above the call site",
+                "Mixed.swift:5: undeclared temperaBusiness route /v1/operatingState; add a tempera-transport annotation above the call site",
+                "Mixed.swift:6: undeclared temperaBusiness route /v1/businessProfile; add a tempera-transport annotation above the call site",
                 "Mixed.swift:7: undeclared temperaBusiness route /v1/cases/{}:reviewDraft; add a tempera-transport annotation above the call site",
                 "Mixed.swift:8: undeclared temperaDropshipping route /v1/organizations/{}/inbox; add a tempera-transport annotation above the call site",
             ],
@@ -148,7 +148,7 @@ class ClientCheckTest(unittest.TestCase):
         source = '''
             // tempera-transport: temperaVoice.getDefaultVoiceAgent GET /v1/agents:default
             let data = try await BoundedHTTP.data(for: try request("v1/agents:default"), limit: 65_536)
-            // tempera-transport: temperaVoice.resolveVoiceAction POST /v1/actions/{action_id}:resolve
+            // tempera-transport: temperaVoice.resolveVoiceAction POST /v1/actions/{actionId}:resolve
             let out = try await BoundedHTTP.data(for: try request("v1/actions/\\(action.id):resolve", method: "POST", body: body), limit: 65_536)
         '''
         self.assertEqual(self.check("VoiceActions.swift", source), [])

@@ -72,7 +72,7 @@ def expected_files(
         raise ValueError(f"MCP artifacts resolved to different commits: {sorted(commits)}")
 
     openapi_bytes, openapi_metadata = openapi_sync.committed_source(
-        source_repo_dir / "api/openapi.yaml",
+        source_repo_dir / "contracts/openapi/data-engine.openapi.json",
         source_branch=source_branch,
         source_commit=commit,
         allow_local_source=allow_local_source,
