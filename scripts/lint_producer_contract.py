@@ -88,6 +88,41 @@ def component_issues(document: dict[str, Any]) -> list[str]:
     return issues
 
 
+def reference_issues(document: dict[str, Any]) -> list[str]:
+    """Every local $ref must resolve inside this document.
+
+    A contract that points at a component it does not define is broken for
+    every consumer, but it looks fine to a schema-shape reviewer and it looks
+    fine to the AIP rules. tempera-connectors shipped four such references --
+    utoipa emitted fully-qualified `crate.models.X` names for request bodies
+    it had registered under their short names -- and nothing noticed until the
+    SDK tried to derive typed operations from it and could not.
+    """
+    # Only document-root OpenAPI pointers are checked. A bare "#/$defs/x"
+    # inside an embedded JSON Schema resolves against that schema resource,
+    # not against this document, and flagging it would be wrong.
+    text = json.dumps(document)
+    issues: list[str] = []
+    for reference in sorted(set(re.findall(r'"(#/components/[^"]+)"', text))):
+        target: Any = document
+        for token in reference[2:].split("/"):
+            key = token.replace("~1", "/").replace("~0", "~")
+            if isinstance(target, list):
+                try:
+                    target = target[int(key)]
+                    continue
+                except (ValueError, IndexError):
+                    target = None
+                    break
+            if not isinstance(target, dict) or key not in target:
+                target = None
+                break
+            target = target[key]
+        if target is None:
+            issues.append(f"unresolved local reference: {reference}")
+    return issues
+
+
 def declared_paths(document: dict[str, Any]) -> set[str]:
     return {path for path in (document.get("paths") or {}) if isinstance(path, str)}
 
@@ -196,6 +231,7 @@ def lint(
         issues.append(f"openapi must be {REQUIRED_OPENAPI!r}, found {version!r}")
     issues += serialization_issues(contract, document)
     issues += component_issues(document)
+    issues += reference_issues(document)
     route_issues, exempt = protocol_route_issues(document)
     issues += route_issues
     issues += extension_issues(document, exempt, audiences)
