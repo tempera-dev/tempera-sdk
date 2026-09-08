@@ -16,6 +16,7 @@ surface.json that no committed spec produced. Here the order is not optional.
 from __future__ import annotations
 
 import argparse
+import base64
 import importlib.util
 import os
 import shutil
@@ -45,15 +46,37 @@ def run(command: list[str], cwd: Path | None = None) -> None:
     subprocess.run(command, cwd=cwd, check=True)
 
 
+def _basic(token: str) -> str:
+    """The Authorization value git uses for a token, without putting it in a URL."""
+    return base64.b64encode(f"x-access-token:{token}".encode()).decode()
+
+
 def clone(repository: str, branch: str, commit: str, destination: Path) -> str:
     """Clone a producer and check out the exact commit we intend to vendor."""
     token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
+    canonical = f"https://github.com/{repository}.git"
     url = (
         f"https://x-access-token:{token}@github.com/{repository}.git"
         if token
-        else f"https://github.com/{repository}.git"
+        else canonical
     )
     run(["git", "clone", "--quiet", "--no-tags", url, str(destination)])
+    # Two reasons to rewrite the remote immediately: a token embedded in a
+    # clone URL is written verbatim into .git/config, and the source-lock
+    # validator canonicalizes `git remote get-url origin` to decide whether
+    # this checkout really is the producer it claims to be. A credentialed
+    # URL does not canonicalize, so vendoring would refuse it.
+    run(["git", "remote", "set-url", "origin", canonical], cwd=destination)
+    if token:
+        run(
+            [
+                "git",
+                "config",
+                "http.https://github.com/.extraheader",
+                f"Authorization: Basic {_basic(token)}",
+            ],
+            cwd=destination,
+        )
     run(["git", "fetch", "--quiet", "--no-tags", "origin", branch], cwd=destination)
     resolved = commit or subprocess.run(
         ["git", "rev-parse", f"origin/{branch}"],

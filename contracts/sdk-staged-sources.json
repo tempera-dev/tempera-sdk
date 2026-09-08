@@ -10,7 +10,7 @@
       "published_digest": "a28c7c56f302afbc5568ec49cc8eda382e604e715e4558012520777d215ca7fe",
       "owner": "tempera-business",
       "rationale": "The business profile contract (A2) is on an unmerged feature branch. This commit also carries the fix that lets the service accept the environment identifier the authority actually issues, without which no cross-service call succeeds, so the earlier pin describes a contract that cannot be used.",
-      "migration": "Re-run scripts/sync-vendored-openapi.py --product temperaBusiness against tempera-dev/tempera-business main once A2 merges, then delete this entry.",
+      "migration": "tempera-business main now publishes the canonical contract at contracts/openapi/business.openapi.json. Once A2 merges, repoint PRODUCTS['temperaBusiness'].source_path to that path, re-run scripts/revendor-product.py --products temperaBusiness, then delete this entry.",
       "review_after": "2026-10-01"
     }
   ]

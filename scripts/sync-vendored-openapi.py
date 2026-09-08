@@ -73,10 +73,10 @@ PRODUCTS: dict[str, dict[str, str]] = {
     "temperaGym": {
         "source_repo": "tempera-dev/tempera-gym",
         "source_branch": "main",
-        "source_path": "contracts/gym-api.openapi.yaml",
+        "source_path": "contracts/openapi/gym.openapi.json",
         "generated_path": "specs/tempera-gym-api.json",
-        "generated_with": "source_lock.py@1+PyYAML@6.0.3+json.dumps-indent-2",
-        "transform": "yaml-json",
+        "generated_with": "source_lock.py@1+verbatim-openapi-copy",
+        "transform": "verbatim",
     },
     "temperaBio": {
         "source_repo": "tempera-dev/tempera-bio",
