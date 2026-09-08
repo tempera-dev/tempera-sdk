@@ -374,6 +374,7 @@ jobs:
       - run: python3 scripts/sync-openapi-surface.py --check
       - run: python3 scripts/check-upstream-drift.py
       - run: python3 scripts/check-sdk-surface.py
+      - run: python3 scripts/test-check-native-transport.py
       - run: python3 scripts/check-native-transport.py
       - run: python3 scripts/test-native-transport.py
       - run: npm --prefix packages/typescript test

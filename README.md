@@ -323,6 +323,25 @@ the committed site is always current thanks to the drift gate).
   Reader App and reproduces the exact vendored SHA from committed source. A
   future exception must name its exact commit, owner, remediation, producer CI,
   and review date; it must never silently bypass the source gate.
+- `contracts/native-transport-v1.json` is the native transport contract for
+  the hand-written Kotlin and Swift clients in tempera-mobile and tempera-iOS,
+  which do not consume the generated packages. For every operation a phone may
+  call it publishes the method, path template, auth audience, scope, retry
+  class, and request/response digests derived from the vendored producer
+  contract: every tempera-dropshipping and tempera-business operation, the
+  phone-relevant tempera-voice session, pending-action, and agent operations,
+  and one synthetic `WSS` operation, `temperaVoice.streamVoiceSession`, taken
+  from the voice contract's `x-tempera-websocket-contract`. Each producer
+  entry records the exact mainline commit its vendored contract is locked to.
+  `scripts/check-native-transport.py` regenerates the file (`--write`), fails
+  when it is stale, and with `--client PATH` checks a native source file:
+  every `// tempera-transport: <product>.<op> <METHOD> <path>` annotation must
+  name a published operation with the exact method and path template and sit
+  directly above a call whose string literal has the same route shape (a
+  `WSS` annotation is checked the same way), and every literal that reaches
+  into a producer's canonical namespace (`/v1/organizations` for dropshipping;
+  `/v1/operating-state`, `/v1/business-profile`, `/v1/cases` for business;
+  `/v1/sessions`, `/v1/agents`, `/v1/actions` for voice) must be annotated.
 - The endpoint-change rollout process is documented in
   [`docs/ROLLOUT.md`](./docs/ROLLOUT.md).
 
