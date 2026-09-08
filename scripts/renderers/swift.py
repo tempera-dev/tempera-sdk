@@ -378,6 +378,19 @@ def render(surface: dict[str, Any]) -> str:
     lines.append("    }")
     lines.append("}")
     lines.append("")
+    lines.append("// One accessor per product, generated rather than hand-listed so the")
+    lines.append("// convenience API cannot drift from the product table.")
+    lines.append("extension TemperaClient {")
+    for index, (key, product) in enumerate(surface["products"].items()):
+        if index:
+            lines.append("")
+        lines.append(f"    /// {product['description']}")
+        lines.append(
+            f"    public nonisolated var {key}: TemperaProductClient {{ "
+            f"productClient({swift_literal(key)}) }}"
+        )
+    lines.append("}")
+    lines.append("")
     lines.append("// The operations table is split into fixed-size chunks; one 489-element")
     lines.append("// array literal is superlinear for the Swift type checker.")
     for index in range(chunk_count):

@@ -364,6 +364,13 @@ def render(surface: dict[str, Any]) -> str:
     lines.append("        mcpMethods.firstOrNull { it.id == id }")
     lines.append("}")
     lines.append("")
+    lines.append("// One accessor per product, generated rather than hand-listed so the")
+    lines.append("// convenience API cannot drift from the product table.")
+    for key, product in surface["products"].items():
+        lines.append(f"/** {product['description']} */")
+        lines.append(f"public val TemperaClient.{key}: TemperaProductClient")
+        lines.append(f"    get() = product({kotlin_literal(key)})")
+        lines.append("")
     lines.append("// The operations table is split across private objects: every JVM method is")
     lines.append("// capped at 64 KiB of bytecode and every class at 65535 constant-pool")
     lines.append("// entries, and one 489-element initializer would risk both.")

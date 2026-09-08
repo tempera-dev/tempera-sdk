@@ -476,6 +476,88 @@ public object TemperaSurface {
         mcpMethods.firstOrNull { it.id == id }
 }
 
+// One accessor per product, generated rather than hand-listed so the
+// convenience API cannot drift from the product table.
+/** Tempera control plane: unified accounts, OAuth issuance, workspaces, teams, API keys, billing, usage metering, and the unified MCP gateway. */
+public val TemperaClient.controlPlane: TemperaProductClient
+    get() = product("controlPlane")
+
+/** Agent observability: trace and span ingestion, search, datasets, evals, experiments, gates, and human review. */
+public val TemperaClient.palette: TemperaProductClient
+    get() = product("palette")
+
+/** Agent-native browser daemon (tempod): structured observation, batched actions, sessions, runs, and human handoff. */
+public val TemperaClient.tempo: TemperaProductClient
+    get() = product("tempo")
+
+/** OpenAI-compatible LLM gateway every Tempera product calls instead of hitting providers directly; reports LLM cost as model_cost usage events per the billing-credits contract. */
+public val TemperaClient.temperaLlm: TemperaProductClient
+    get() = product("temperaLlm")
+
+/** Provider-neutral realtime voice control plane with durable sessions, bounded provider adapters, MCP-mediated actions, Palette telemetry, and governed Tempera Evals evidence. A hosted URL must be supplied explicitly until a deployed environment is registered. */
+public val TemperaClient.temperaVoice: TemperaProductClient
+    get() = product("temperaVoice")
+
+/** Governed, non-decisional cross-domain investigation service. The trusted SDK surface manages cases, grants, research jobs, sources, and reviewed dossiers; the smaller MCP surface is separately curated. */
+public val TemperaClient.temperaRisk: TemperaProductClient
+    get() = product("temperaRisk")
+
+/** Deterministic workflow engine: bounded-DAG workflows (tempera.workflow/v1) of typed nodes executed as replayable, event-streamed runs; the run event stream (GET /v1/runs/{run_id}/events, SSE) is reachable through the raw passthrough request only. */
+public val TemperaClient.temperaWorkflows: TemperaProductClient
+    get() = product("temperaWorkflows")
+
+/** RL and evaluation service with persisted trajectories, sealed evaluators, and deterministic outcome-blind Bio batch proposals. */
+public val TemperaClient.temperaGym: TemperaProductClient
+    get() = product("temperaGym")
+
+/** Fail-closed computational-biology artifact pipeline for source ingestion, proposal preparation, measurement verification, and decision derivation. */
+public val TemperaClient.temperaBio: TemperaProductClient
+    get() = product("temperaBio")
+
+/** Document processing service with immutable uploads, globally anchored graph provenance, extraction, retrieval, and long-running operations. A hosted URL must be supplied explicitly until a deployed environment is registered. */
+public val TemperaClient.temperaDocument: TemperaProductClient
+    get() = product("temperaDocument")
+
+/** Provider-neutral fiat checkout and blockchain settlement platform with source-locked producer operations. */
+public val TemperaClient.temperaPayments: TemperaProductClient
+    get() = product("temperaPayments")
+
+/** Capability sandbox daemon (cradled): synchronous and job-based sandboxed execution plus browser admission control. */
+public val TemperaClient.cradle: TemperaProductClient
+    get() = product("cradle")
+
+/** Temporal memory server: remember, project, query, and maintain an agent memory graph. */
+public val TemperaClient.remi: TemperaProductClient
+    get() = product("remi")
+
+/** Domain-portable label-emergence engine: deterministic ingestion, sandboxed verification in cradle, and RL/eval/SFT dataset emission. */
+public val TemperaClient.dataEngine: TemperaProductClient
+    get() = product("dataEngine")
+
+/** Browser-agent human review: reviewers inspect provisioned browser-session evidence, record decisions, return candidate cases to the agent quality loop, and compute a typed qualification receipt. */
+public val TemperaClient.humanData: TemperaProductClient
+    get() = product("humanData")
+
+/** Durable JavaScript runtime bridge for Tempera agents. Passthrough client only; no typed operations yet. */
+public val TemperaClient.tempJs: TemperaProductClient
+    get() = product("tempJs")
+
+/** OS/runtime admission, policy, and receipt layer for agents. Passthrough client only; no typed operations yet. */
+public val TemperaClient.tempOS: TemperaProductClient
+    get() = product("tempOS")
+
+/** Settlement, chain, credits, and indexer layer for agent payments. Passthrough client only; no typed operations yet. */
+public val TemperaClient.arrha: TemperaProductClient
+    get() = product("arrha")
+
+/** Declared merchant order recovery: site-scoped orders, stores, proposals, and business workspaces. The producer prepares and reviews plans; it claims no provider execution authority. */
+public val TemperaClient.temperaDropshipping: TemperaProductClient
+    get() = product("temperaDropshipping")
+
+/** Tenant-scoped business profile and business-case drafting with per-fact provenance and an explicit document review lifecycle. */
+public val TemperaClient.temperaBusiness: TemperaProductClient
+    get() = product("temperaBusiness")
+
 // The operations table is split across private objects: every JVM method is
 // capped at 64 KiB of bytecode and every class at 65535 constant-pool
 // entries, and one 489-element initializer would risk both.

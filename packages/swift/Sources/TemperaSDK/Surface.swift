@@ -636,6 +636,70 @@ public enum TemperaSurface {
     }
 }
 
+// One accessor per product, generated rather than hand-listed so the
+// convenience API cannot drift from the product table.
+extension TemperaClient {
+    /// Tempera control plane: unified accounts, OAuth issuance, workspaces, teams, API keys, billing, usage metering, and the unified MCP gateway.
+    public nonisolated var controlPlane: TemperaProductClient { productClient("controlPlane") }
+
+    /// Agent observability: trace and span ingestion, search, datasets, evals, experiments, gates, and human review.
+    public nonisolated var palette: TemperaProductClient { productClient("palette") }
+
+    /// Agent-native browser daemon (tempod): structured observation, batched actions, sessions, runs, and human handoff.
+    public nonisolated var tempo: TemperaProductClient { productClient("tempo") }
+
+    /// OpenAI-compatible LLM gateway every Tempera product calls instead of hitting providers directly; reports LLM cost as model_cost usage events per the billing-credits contract.
+    public nonisolated var temperaLlm: TemperaProductClient { productClient("temperaLlm") }
+
+    /// Provider-neutral realtime voice control plane with durable sessions, bounded provider adapters, MCP-mediated actions, Palette telemetry, and governed Tempera Evals evidence. A hosted URL must be supplied explicitly until a deployed environment is registered.
+    public nonisolated var temperaVoice: TemperaProductClient { productClient("temperaVoice") }
+
+    /// Governed, non-decisional cross-domain investigation service. The trusted SDK surface manages cases, grants, research jobs, sources, and reviewed dossiers; the smaller MCP surface is separately curated.
+    public nonisolated var temperaRisk: TemperaProductClient { productClient("temperaRisk") }
+
+    /// Deterministic workflow engine: bounded-DAG workflows (tempera.workflow/v1) of typed nodes executed as replayable, event-streamed runs; the run event stream (GET /v1/runs/{run_id}/events, SSE) is reachable through the raw passthrough request only.
+    public nonisolated var temperaWorkflows: TemperaProductClient { productClient("temperaWorkflows") }
+
+    /// RL and evaluation service with persisted trajectories, sealed evaluators, and deterministic outcome-blind Bio batch proposals.
+    public nonisolated var temperaGym: TemperaProductClient { productClient("temperaGym") }
+
+    /// Fail-closed computational-biology artifact pipeline for source ingestion, proposal preparation, measurement verification, and decision derivation.
+    public nonisolated var temperaBio: TemperaProductClient { productClient("temperaBio") }
+
+    /// Document processing service with immutable uploads, globally anchored graph provenance, extraction, retrieval, and long-running operations. A hosted URL must be supplied explicitly until a deployed environment is registered.
+    public nonisolated var temperaDocument: TemperaProductClient { productClient("temperaDocument") }
+
+    /// Provider-neutral fiat checkout and blockchain settlement platform with source-locked producer operations.
+    public nonisolated var temperaPayments: TemperaProductClient { productClient("temperaPayments") }
+
+    /// Capability sandbox daemon (cradled): synchronous and job-based sandboxed execution plus browser admission control.
+    public nonisolated var cradle: TemperaProductClient { productClient("cradle") }
+
+    /// Temporal memory server: remember, project, query, and maintain an agent memory graph.
+    public nonisolated var remi: TemperaProductClient { productClient("remi") }
+
+    /// Domain-portable label-emergence engine: deterministic ingestion, sandboxed verification in cradle, and RL/eval/SFT dataset emission.
+    public nonisolated var dataEngine: TemperaProductClient { productClient("dataEngine") }
+
+    /// Browser-agent human review: reviewers inspect provisioned browser-session evidence, record decisions, return candidate cases to the agent quality loop, and compute a typed qualification receipt.
+    public nonisolated var humanData: TemperaProductClient { productClient("humanData") }
+
+    /// Durable JavaScript runtime bridge for Tempera agents. Passthrough client only; no typed operations yet.
+    public nonisolated var tempJs: TemperaProductClient { productClient("tempJs") }
+
+    /// OS/runtime admission, policy, and receipt layer for agents. Passthrough client only; no typed operations yet.
+    public nonisolated var tempOS: TemperaProductClient { productClient("tempOS") }
+
+    /// Settlement, chain, credits, and indexer layer for agent payments. Passthrough client only; no typed operations yet.
+    public nonisolated var arrha: TemperaProductClient { productClient("arrha") }
+
+    /// Declared merchant order recovery: site-scoped orders, stores, proposals, and business workspaces. The producer prepares and reviews plans; it claims no provider execution authority.
+    public nonisolated var temperaDropshipping: TemperaProductClient { productClient("temperaDropshipping") }
+
+    /// Tenant-scoped business profile and business-case drafting with per-fact provenance and an explicit document review lifecycle.
+    public nonisolated var temperaBusiness: TemperaProductClient { productClient("temperaBusiness") }
+}
+
 // The operations table is split into fixed-size chunks; one 489-element
 // array literal is superlinear for the Swift type checker.
 
