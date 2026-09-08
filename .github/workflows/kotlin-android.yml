@@ -56,6 +56,9 @@ jobs:
       - name: Android unit, Debug fixture, and minified Release fixture
         run: |
           gradle -p packages/kotlin-android testDebugUnitTest testReleaseUnitTest lintRelease assembleDebug :fixture-app:assembleDebug :fixture-app:assembleRelease
+      - name: Minified Release instrumentation APK and annotation classpath
+        run: |
+          gradle -p packages/kotlin-android -PfixtureTestBuildType=release :fixture-app:verifyReleaseTestAnnotationClasspath :fixture-app:assembleReleaseAndroidTest
       - name: Verify published AAR and Android API closure
         run: |
           python3 scripts/test-check-kotlin-android-artifact.py
