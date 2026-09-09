@@ -201,6 +201,7 @@ is the default when none is specified.
 | `tempera-clearing` | tempera-clearing |
 | `tempera-authority` | — |
 | `tempera-business` | tempera-business |
+| `tempera-taxes` | — |
 
 ## Scopes
 
@@ -283,29 +284,16 @@ is the default when none is specified.
 | `orders:write` | tempera-dropshipping: `createOrder`, `createStore`, `prepareBusinessBrowserTask`, `prepareBusinessTask`, `prepareProposal`, `recordBusinessTaskReceipt`, `recordManualOutcome`, `updateBusinessWorkspace`, `updateOrder` |
 | `orders:approve` | tempera-dropshipping: `approveProposal`, `executeProposal`, `reconcileOrder`, `reviewBusinessTask` |
 | `offline_access` | No typed SDK operation declares it yet; enforced server-side. |
+| `cradle:read` | cradle: `getBrowserAdapterContract`, `getBrowserProfiles`, `getCapabilities`, `getIntegrationContract`, `getJob`, `projectsModulesGet` |
+| `cradle:write` | cradle: `projectsModulesCreate` |
+| `cradle:execute` | cradle: `admitBrowserSession`, `cancelJob`, `createJob`, `execute`, `projectsBrowserAdaptersClaimLaunch`, `projectsBrowserAdaptersIssueCapability`, `projectsBrowserAdaptersPlanLaunch`, `projectsBrowserAdaptersRegister`, `projectsBrowserAdaptersValidate`, `projectsBrowserAdaptersValidateCompletion` |
+| `tempo:read` | tempo: `getRun`, `listRuns`, `listSessions`, `managerSession`, `observe`, `runEvents`, `screenshot`, `sessionEvents` |
+| `tempo:write` | tempo: `actBatch`, `adoptSession`, `cancelRun`, `closeSession`, `createRun`, `createSession`, `drain`, `grantConfirmation`, `handoffSession`, `registerSessionSurface`, `removeSessionSurface`, `resumeRun`, `transformSession` |
+| `taxes:read` | No typed SDK operation declares it yet; enforced server-side. |
+| `taxes:review` | No typed SDK operation declares it yet; enforced server-side. |
+| `taxes:write` | No typed SDK operation declares it yet; enforced server-side. |
 
 ## Known scope gaps
-
-### `cradle:execute`
-
-- **Status:** staged.
-- **Owner:** cradle.
-- **Reported:** 2026-09-08.
-- **Migration:** Cradle's canonical contract at contracts/openapi/cradle.openapi.json declares this scope. Add it to the Scope enum in the Auth Hub control-plane contract, re-vendor controlPlane, then drop this gap.
-
-### `cradle:read`
-
-- **Status:** staged.
-- **Owner:** cradle.
-- **Reported:** 2026-09-08.
-- **Migration:** Cradle's canonical contract at contracts/openapi/cradle.openapi.json declares this scope. Add it to the Scope enum in the Auth Hub control-plane contract, re-vendor controlPlane, then drop this gap.
-
-### `cradle:write`
-
-- **Status:** staged.
-- **Owner:** cradle.
-- **Reported:** 2026-09-08.
-- **Migration:** Cradle's canonical contract at contracts/openapi/cradle.openapi.json declares this scope. Add it to the Scope enum in the Auth Hub control-plane contract, re-vendor controlPlane, then drop this gap.
 
 ### `dataSource:resolve`
 
@@ -313,20 +301,6 @@ is the default when none is specified.
 - **Owner:** auth-hub.
 - **Reported:** 2026-09-09.
 - **Migration:** POST /v1/internal/data-source-connections:resolve is fenced by a static per-service token rather than an introspected OAuth grant, so this string is a label for what that secret authorizes rather than a grantable scope. Decide whether the route should move onto a real credential; if it should not, the SDK needs a way to say 'service secret, not a scope'.
-
-### `tempo:read`
-
-- **Status:** staged.
-- **Owner:** tempo.
-- **Reported:** 2026-09-08.
-- **Migration:** Tempo's canonical contract at contracts/openapi/tempo.openapi.json declares this scope. Add it to the Scope enum in the Auth Hub control-plane contract, re-vendor controlPlane, then drop this gap.
-
-### `tempo:write`
-
-- **Status:** staged.
-- **Owner:** tempo.
-- **Reported:** 2026-09-08.
-- **Migration:** Tempo's canonical contract at contracts/openapi/tempo.openapi.json declares this scope. Add it to the Scope enum in the Auth Hub control-plane contract, re-vendor controlPlane, then drop this gap.
 
 ### `usage:report`
 

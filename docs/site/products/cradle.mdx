@@ -38,7 +38,6 @@ Call POST /v1/browser/adapter/capability.
 - **Producer operationId:** `projects.browserAdapters.issueCapability`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `cradle`.
 - **Scope:** `cradle:execute`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.cradle.projectsBrowserAdaptersIssueCapability()` · Python `client.cradle.projects_browser_adapters_issue_capability()` · Rust `build_request("cradle", "projects_browser_adapters_issue_capability", params)`
 
 **Body parameters**
@@ -90,7 +89,6 @@ Call POST /v1/browser/adapter/completion/validate.
 - **Producer operationId:** `projects.browserAdapters.validateCompletion`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `cradle`.
 - **Scope:** `cradle:execute`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.cradle.projectsBrowserAdaptersValidateCompletion()` · Python `client.cradle.projects_browser_adapters_validate_completion()` · Rust `build_request("cradle", "projects_browser_adapters_validate_completion", params)`
 
 **Body parameters**
@@ -168,7 +166,6 @@ Fetch the browser adapter contract, required controls, and conformance profile.
 - **Producer operationId:** `projects.browserAdapters.getContract`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `cradle`.
 - **Scope:** `cradle:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.cradle.getBrowserAdapterContract()` · Python `client.cradle.get_browser_adapter_contract()` · Rust `build_request("cradle", "get_browser_adapter_contract", params)`
 
 <CodeGroup>
@@ -198,7 +195,6 @@ Call POST /v1/browser/adapter/launch/claim.
 - **Producer operationId:** `projects.browserAdapters.claimLaunch`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `cradle`.
 - **Scope:** `cradle:execute`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.cradle.projectsBrowserAdaptersClaimLaunch()` · Python `client.cradle.projects_browser_adapters_claim_launch()` · Rust `build_request("cradle", "projects_browser_adapters_claim_launch", params)`
 
 **Body parameters**
@@ -240,7 +236,6 @@ Call POST /v1/browser/adapter/launch/plan.
 - **Producer operationId:** `projects.browserAdapters.planLaunch`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `cradle`.
 - **Scope:** `cradle:execute`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.cradle.projectsBrowserAdaptersPlanLaunch()` · Python `client.cradle.projects_browser_adapters_plan_launch()` · Rust `build_request("cradle", "projects_browser_adapters_plan_launch", params)`
 
 **Body parameters**
@@ -290,7 +285,6 @@ Call POST /v1/browser/adapter/register.
 - **Producer operationId:** `projects.browserAdapters.register`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `cradle`.
 - **Scope:** `cradle:execute`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.cradle.projectsBrowserAdaptersRegister()` · Python `client.cradle.projects_browser_adapters_register()` · Rust `build_request("cradle", "projects_browser_adapters_register", params)`
 
 **Body parameters**
@@ -344,7 +338,6 @@ Call POST /v1/browser/adapter/validate.
 - **Producer operationId:** `projects.browserAdapters.validate`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `cradle`.
 - **Scope:** `cradle:execute`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.cradle.projectsBrowserAdaptersValidate()` · Python `client.cradle.projects_browser_adapters_validate()` · Rust `build_request("cradle", "projects_browser_adapters_validate", params)`
 
 **Body parameters**
@@ -410,7 +403,6 @@ Request admission for a browser session at a sandbox level and receive the guard
 - **Producer operationId:** `projects.browserSessions.admit`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `cradle`.
 - **Scope:** `cradle:execute`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.cradle.admitBrowserSession()` · Python `client.cradle.admit_browser_session()` · Rust `build_request("cradle", "admit_browser_session", params)`
 
 **Body parameters**
@@ -467,7 +459,6 @@ Fetch the browser sandbox profile levels and suppression modes this daemon offer
 - **Producer operationId:** `projects.browserProfiles.get`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `cradle`.
 - **Scope:** `cradle:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.cradle.getBrowserProfiles()` · Python `client.cradle.get_browser_profiles()` · Rust `build_request("cradle", "get_browser_profiles", params)`
 
 <CodeGroup>
@@ -497,7 +488,6 @@ Fetch the sandbox capability matrix: lanes, engines, limits, and integrations.
 - **Producer operationId:** `projects.capabilities.get`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `cradle`.
 - **Scope:** `cradle:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.cradle.getCapabilities()` · Python `client.cradle.get_capabilities()` · Rust `build_request("cradle", "get_capabilities", params)`
 
 <CodeGroup>
@@ -527,7 +517,6 @@ Execute source synchronously in a sandbox lane and return the result with metric
 - **Producer operationId:** `projects.executions.execute`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `cradle`.
 - **Scope:** `cradle:execute`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.cradle.execute()` · Python `client.cradle.execute()` · Rust `build_request("cradle", "execute", params)`
 
 **Body parameters**
@@ -609,7 +598,6 @@ Fetch the ecosystem integration contract this daemon implements.
 - **Producer operationId:** `projects.integration.get`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `cradle`.
 - **Scope:** `cradle:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.cradle.getIntegrationContract()` · Python `client.cradle.get_integration_contract()` · Rust `build_request("cradle", "get_integration_contract", params)`
 
 <CodeGroup>
@@ -639,7 +627,6 @@ Submit an asynchronous sandbox job; returns an operation handle to poll.
 - **Producer operationId:** `projects.jobs.create`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `cradle`.
 - **Scope:** `cradle:execute`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.cradle.createJob()` · Python `client.cradle.create_job()` · Rust `build_request("cradle", "create_job", params)`
 
 **Body parameters**
@@ -693,7 +680,6 @@ Cancel a queued or running sandbox job (idempotent for already-cancelled jobs).
 - **Producer operationId:** `projects.jobs.cancel`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `cradle`.
 - **Scope:** `cradle:execute`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.cradle.cancelJob()` · Python `client.cradle.cancel_job()` · Rust `build_request("cradle", "cancel_job", params)`
 
 **Path parameters**
@@ -735,7 +721,6 @@ Fetch a sandbox job's status and result.
 - **Producer operationId:** `projects.jobs.get`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `cradle`.
 - **Scope:** `cradle:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.cradle.getJob()` · Python `client.cradle.get_job()` · Rust `build_request("cradle", "get_job", params)`
 
 **Path parameters**
@@ -777,7 +762,6 @@ Call POST /v1/projects/\{project\}/modules.
 - **Producer operationId:** `projects.modules.create`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `cradle`.
 - **Scope:** `cradle:write`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.cradle.projectsModulesCreate()` · Python `client.cradle.projects_modules_create()` · Rust `build_request("cradle", "projects_modules_create", params)`
 
 **Path parameters**
@@ -828,7 +812,6 @@ Call GET /v1/projects/\{project\}/modules/\{sha256\}.
 - **Producer operationId:** `projects.modules.get`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `cradle`.
 - **Scope:** `cradle:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.cradle.projectsModulesGet()` · Python `client.cradle.projects_modules_get()` · Rust `build_request("cradle", "projects_modules_get", params)`
 
 **Path parameters**

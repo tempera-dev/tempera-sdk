@@ -32,7 +32,8 @@
     "tempera-voice",
     "tempera-clearing",
     "tempera-authority",
-    "tempera-business"
+    "tempera-business",
+    "tempera-taxes"
   ],
   "defaultAudience": "palette",
   "scopes": [
@@ -112,7 +113,15 @@
     "business:review",
     "orders:write",
     "orders:approve",
-    "offline_access"
+    "offline_access",
+    "cradle:read",
+    "cradle:write",
+    "cradle:execute",
+    "tempo:read",
+    "tempo:write",
+    "taxes:read",
+    "taxes:review",
+    "taxes:write"
   ],
   "accountPermissions": [
     "account:session",
@@ -130,36 +139,6 @@
     }
   },
   "scopeGaps": {
-    "cradle:read": {
-      "owner": "cradle",
-      "reportedDate": "2026-09-08",
-      "status": "staged",
-      "migration": "Cradle's canonical contract at contracts/openapi/cradle.openapi.json declares this scope. Add it to the Scope enum in the Auth Hub control-plane contract, re-vendor controlPlane, then drop this gap."
-    },
-    "cradle:write": {
-      "owner": "cradle",
-      "reportedDate": "2026-09-08",
-      "status": "staged",
-      "migration": "Cradle's canonical contract at contracts/openapi/cradle.openapi.json declares this scope. Add it to the Scope enum in the Auth Hub control-plane contract, re-vendor controlPlane, then drop this gap."
-    },
-    "cradle:execute": {
-      "owner": "cradle",
-      "reportedDate": "2026-09-08",
-      "status": "staged",
-      "migration": "Cradle's canonical contract at contracts/openapi/cradle.openapi.json declares this scope. Add it to the Scope enum in the Auth Hub control-plane contract, re-vendor controlPlane, then drop this gap."
-    },
-    "tempo:read": {
-      "owner": "tempo",
-      "reportedDate": "2026-09-08",
-      "status": "staged",
-      "migration": "Tempo's canonical contract at contracts/openapi/tempo.openapi.json declares this scope. Add it to the Scope enum in the Auth Hub control-plane contract, re-vendor controlPlane, then drop this gap."
-    },
-    "tempo:write": {
-      "owner": "tempo",
-      "reportedDate": "2026-09-08",
-      "status": "staged",
-      "migration": "Tempo's canonical contract at contracts/openapi/tempo.openapi.json declares this scope. Add it to the Scope enum in the Auth Hub control-plane contract, re-vendor controlPlane, then drop this gap."
-    },
     "usage:report": {
       "owner": "auth-hub",
       "reportedDate": "2026-09-09",

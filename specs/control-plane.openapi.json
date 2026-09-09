@@ -5694,12 +5694,20 @@
           "business:review",
           "orders:write",
           "orders:approve",
-          "offline_access"
+          "offline_access",
+          "cradle:read",
+          "cradle:write",
+          "cradle:execute",
+          "tempo:read",
+          "tempo:write",
+          "taxes:read",
+          "taxes:review",
+          "taxes:write"
         ]
       },
       "ApiKeyScope": {
         "type": "string",
-        "description": "A service-principal scope. Human-only review:resolve, review:gold:manage, training:publish, bio:experiment:approve, bio:signer:manage, clearing:actions:approve, payments:merchants:write and orders:commerce:write are intentionally excluded, as are the remaining orders:* scopes, which are reachable only through an expiring OAuth token. GET /v1/api-keys/audiences reports, per audience, which of these are issuable now and why the rest are refused. authority:holds:decide, authority:holds:write and authority:policies:write are likewise excluded: deciding and writing authority require an attributed OAuth principal, never an API key.",
+        "description": "A service-principal scope. Human-only review:resolve, review:gold:manage, training:publish, bio:experiment:approve, bio:signer:manage, clearing:actions:approve, payments:merchants:write and orders:commerce:write are intentionally excluded, as are the remaining orders:* scopes, which are reachable only through an expiring OAuth token. GET /v1/api-keys/audiences reports, per audience, which of these are issuable now and why the rest are refused. authority:holds:decide, authority:holds:write and authority:policies:write are likewise excluded: deciding and writing authority require an attributed OAuth principal, never an API key. taxes:review is excluded for the same reason: it records that the owner reviewed a tax return, which is an attributed human attestation, and a static tp_ key must not be able to forge one. cradle:execute is included: running a job in the sandbox is an unattended machine act like connector:run, eval:run and workflow:run, and is the purpose the audience exists to serve.",
         "enum": [
           "mcp:invoke",
           "memory:read",
@@ -5761,7 +5769,14 @@
           "authority:holds:read",
           "authority:policies:read",
           "authority:ledger:read",
-          "authority:ledger:export"
+          "authority:ledger:export",
+          "cradle:read",
+          "cradle:write",
+          "cradle:execute",
+          "tempo:read",
+          "tempo:write",
+          "taxes:read",
+          "taxes:write"
         ]
       },
       "ResourceAudience": {
@@ -5789,7 +5804,8 @@
           "tempera-voice",
           "tempera-clearing",
           "tempera-authority",
-          "tempera-business"
+          "tempera-business",
+          "tempera-taxes"
         ]
       },
       "TokenClaims": {
