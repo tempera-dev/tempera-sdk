@@ -1,13 +1,23 @@
 # Tempera SDK
 
-One versioned SDK contract in TypeScript, Python, and Rust. The primary product
-story is a browser-agent quality loop: the control plane provisions access,
-Tempo runs and records a browser session, Human Data reviews the provisioned
-session and trace evidence, and Palette holds and measures the corresponding
-trace. The onboarding-provisioned integration supplies the correlation path; a
-Tempo session does not by itself prove a Palette trace exists. A single manifest,
-[`surface.json`](./surface.json), keeps that workflow and the full private
-contract inventory aligned across languages.
+One versioned SDK contract in **TypeScript, Python, Rust, Swift, Kotlin, C, and
+C++** — generated, not hand-written, so an application in any of them calls a
+Tempera product directly rather than through a wrapper.
+
+A single manifest, [`surface.json`](./surface.json), is the source every
+language is rendered from. It is itself derived: each producer publishes an
+OpenAPI contract at `contracts/openapi/<product>.openapi.json`, the SDK vendors
+that contract at an exact commit with a verifiable source lock, and the surface
+is regenerated from what was vendored. Nobody copies a spec between
+repositories by hand, and a producer that moves its contract breaks the build
+loudly rather than silently serving a stale one.
+
+The primary product story is a browser-agent quality loop: the control plane
+provisions access, Tempo runs and records a browser session, Human Data reviews
+the provisioned session and trace evidence, and Palette holds and measures the
+corresponding trace. The onboarding-provisioned integration supplies the
+correlation path; a Tempo session does not by itself prove a Palette trace
+exists.
 
 ## Access status
 
@@ -20,55 +30,86 @@ The `production` preset and `api.tempera.dev` entries remain part of the SDK's
 versioned target contract; their presence does not mean production access is
 generally available or that the control plane is production-ready.
 
-## Primary browser-agent workflow
+## Clients
+
+Every client below is generated from the vendored producer contract, so the
+operation counts are what the SDK actually exposes rather than what someone
+remembered to write down. Presence in the registry does not advertise public
+availability, a live hosted service, or an undocumented endpoint.
+
+<!-- BEGIN generated client table -->
 
 | Client | Product | Typed operations | Audience |
-|---|---|---|---|
-| `controlPlane` / `control_plane` | [auth-hub](https://github.com/tempera-dev/auth-hub) — accounts, OAuth, workspaces, API keys, billing, usage | 71 | account tokens |
-| `tempo` | [tempo](https://github.com/tempera-dev/tempo) — agent-native browser (tempod) | 27 | `tempo` |
-| `humanData` / `human_data` | [human-data](https://github.com/tempera-dev/human-data) — reviewers inspect provisioned browser-session evidence and compute qualification receipts | 1 | `human-data` |
-| `palette` | [palette](https://github.com/tempera-dev/palette) — agent observability, traces, datasets, evals | 61 | `palette` |
+| --- | --- | --- | --- |
+| `controlPlane` | [auth-hub](https://github.com/tempera-dev/auth-hub) | 123 | — |
+| `dataEngine` | [data-engine](https://github.com/tempera-dev/data-engine) | 66 | `data-engine` |
+| `palette` | [palette](https://github.com/tempera-dev/palette) | 61 | `palette` |
+| `temperaRisk` | [tempera-risk](https://github.com/tempera-dev/tempera-risk) | 44 | `tempera-risk` |
+| `temperaDropshipping` | [tempera-dropshipping](https://github.com/tempera-dev/tempera-dropshipping) | 31 | `tempera-dropshipping` |
+| `tempo` | [tempo](https://github.com/tempera-dev/tempo) | 27 | `tempo` |
+| `temperaInvestigations` | [tempera-investigations](https://github.com/tempera-dev/tempera-investigations) | 24 | `tempera-investigations` |
+| `temperaVoice` | [tempera-voice](https://github.com/tempera-dev/tempera-voice) | 24 | `tempera-voice` |
+| `temperaGym` | [tempera-gym](https://github.com/tempera-dev/tempera-gym) | 22 | `tempera-gym` |
+| `temperaWorkflows` | [tempera-workflows](https://github.com/tempera-dev/tempera-workflows) | 21 | `tempera-workflows` |
+| `cradle` | [cradle](https://github.com/tempera-dev/cradle) | 18 | `cradle` |
+| `temperaBusiness` | [tempera-business](https://github.com/tempera-dev/tempera-business) | 15 | `tempera-business` |
+| `temperaDocument` | [tempera-document](https://github.com/tempera-dev/tempera-document) | 15 | `tempera-document` |
+| `temperaBio` | [tempera-bio](https://github.com/tempera-dev/tempera-bio) | 14 | `tempera-bio` |
+| `temperaPayments` | [tempera-payments](https://github.com/tempera-dev/tempera-payments) | 13 | `tempera-payments` |
+| `remi` | [remi](https://github.com/tempera-dev/remi) | 11 | `remi` |
+| `temperaClearing` | [tempera-clearing](https://github.com/tempera-dev/tempera-clearing) | 8 | `tempera-clearing` |
+| `temperaConnectors` | [tempera-connectors](https://github.com/tempera-dev/tempera-connectors-runtime) | 8 | `tempera-connectors` |
+| `temperaLlm` | [tempera-llm](https://github.com/tempera-dev/tempera-llm) | 5 | `tempera-llm` |
+| `humanData` | [human-data](https://github.com/tempera-dev/human-data) | 3 | `data-engine` |
+| `arrha` | [Arrha](https://github.com/tempera-dev/arrha) | passthrough; no typed operations | — |
+| `tempJs` | [temp.js](https://github.com/tempera-dev/temp.js) | passthrough; no typed operations | — |
+| `tempOS` | [tempOS](https://github.com/tempera-dev/tempOS) | passthrough; no typed operations | — |
 
-Human Data remains a provisioned review workflow. Its typed
-`computeQualification` method is generated from the exact producer OpenAPI;
-its presence does not advertise unrestricted hosted access.
+<!-- END generated client table -->
 
-## Versioned private contract inventory
+Four entries deserve a note.
 
-The SDK retains the following clients for compatibility and complete reference
-coverage. Their presence in the registry does not advertise public availability,
-a live hosted service, or an undocumented endpoint.
+**`controlPlane`** is the Auth Hub. Its account-plane routes are fenced by
+workspace role rather than by OAuth scope — `account:session`,
+`account:orgAdmin`, `account:billingAdmin`, `account:credentialAdmin`,
+`account:platformStaff` — and those roles are deliberately *not* grantable,
+because a long-lived `tp_` key must never be able to administer an
+organization. `surface.json` records them under `accountPermissions`, separate
+from `scopes`, and the surface gate refuses any string that appears in both.
 
-| Client | Product | Typed operations | Audience |
-|---|---|---|---|
-| `cradle` | [cradle](https://github.com/tempera-dev/cradle) — capability sandbox | 18 | `cradle` |
-| `temperaLlm` / `tempera_llm` | [tempera-llm](https://github.com/tempera-dev/tempera-llm) — OpenAI-compatible LLM gateway (chat completions, responses, models) | 5 | `tempera-llm` |
-| `temperaWorkflows` / `tempera_workflows` | [tempera-workflows](https://github.com/tempera-dev/tempera-workflows) — deterministic bounded-DAG workflow engine (definitions, validation, Bio campaign compilation, and authorized physical experiment submission/reconciliation; run SSE events via passthrough) | 20 | `tempera-workflows` |
-| `temperaGym` / `tempera_gym` | [tempera-gym](https://github.com/tempera-dev/tempera-gym) — RL environment pack, sealed evaluation, and outcome-blind Bio batch proposals | 22 | `tempera-gym` |
-| `temperaBio` / `tempera_bio` | [tempera-bio](https://github.com/tempera-dev/tempera-bio) — fail-closed computational-biology artifacts, Gym selection materialization, measurement verification, and replay-derived campaign state | 10 | `tempera-bio` |
-| `remi` | [remi](https://github.com/tempera-dev/remi) — temporal memory | 11 | `remi` |
-| `dataEngine` / `data_engine` | [data-engine](https://github.com/tempera-dev/data-engine) — label-emergence engine: ingestion, verification, RL/eval/SFT emission | 55 | `data-engine` |
-| `tempJs`, `tempOS`, `arrha` | [temp.js](https://github.com/tempera-dev/temp.js), [tempOS](https://github.com/tempera-dev/tempOS), [Arrha](https://github.com/tempera-dev/arrha) | passthrough; no typed operations yet | — |
+**`humanData`** is a provisioned review workflow whose typed operations are
+generated from the exact producer OpenAPI; their presence does not advertise
+unrestricted hosted access. It authenticates against the `data-engine`
+audience rather than one of its own.
 
-The aggregate Palette client covers all 61 ordinary JSON operations in the
-current producer OpenAPI. Its two raw OTLP collector routes remain explicit
-transport exclusions and should be called through an OTLP exporter rather than
-the aggregate JSON dispatcher.
+**`palette`** covers every ordinary JSON operation in the current producer
+OpenAPI. Its raw OTLP collector route is an explicit transport exclusion and
+should be called through an OTLP exporter, not the aggregate JSON dispatcher.
+
+**`tempJs`, `tempOS` and `arrha`** are passthrough clients with no typed
+operations yet.
 
 Tempera Code is intentionally not an aggregate HTTP product client. Its public
-contract is the app-server JSON-RPC protocol and its generated protocol SDKs;
-the old `/v1/models` and `/v1/responses` entries described a service that the
-repo does not publish and were removed in `0.10.0`.
+contract is the app-server JSON-RPC protocol and its generated protocol SDKs.
 
 ## Unified auth
 
 Your provisioned control-plane URL is an OAuth 2.1 issuer:
 authorization-code + PKCE (S256, public clients), refresh-token rotation, and
-RFC 8707 `resource` audience selection (`palette` default; `tempo`, `cradle`,
-`remi`, `human-data`, `data-engine`, `tempera-bio`, `tempera-gym`,
-`tempera-llm`, `tempera-workflows`, and `tempera-mcp` registered). One account mints one token
-per product audience, and control-plane API keys (`tp_...`) work as bearers
-at every product via central introspection.
+RFC 8707 `resource` audience selection. One account mints one token per product
+audience, and control-plane API keys (`tp_...`) work as bearers at every
+product via central introspection.
+
+The registered audiences and scopes are not listed here, because a list in
+prose goes stale: read `audiences`, `scopes` and `accountPermissions` in
+[`surface.json`](./surface.json), which is generated from the Auth Hub's own
+contract. A scope a producer declares but the Auth Hub has not registered
+appears in `scopeGaps` with an owner and a migration, so the omission is
+visible rather than silent.
+
+Note that a workflow spanning several products needs several tokens — each
+operation carries its own `authKind`, `authAudience` and `scope` in the
+surface, and one audience's token is not accepted by another.
 
 ```js
 import { TemperaAuth, createPkcePair, createTemperaClient } from "@tempera/sdk";
@@ -277,13 +318,36 @@ the committed site is always current thanks to the drift gate).
 
 ## Uniformity, tests, and rollout
 
+- [`scripts/product_registry.py`](./scripts/product_registry.py) is the one
+  table of producers. Registering a producer used to mean editing five
+  hand-maintained dictionaries with no way of noticing when they disagreed, so
+  a producer added to four of the five vendored and generated but silently
+  skipped a gate. The vendoring table, the spec-name maps and the default-auth
+  map are all derived from it now, and a partial registration is not
+  expressible.
+- [`docs/CONTRACT_STANDARD.md`](./docs/CONTRACT_STANDARD.md) is the normative
+  standard a producer's contract has to meet, and
+  [`scripts/lint_producer_contract.py`](./scripts/lint_producer_contract.py)
+  runs it. The same file is distributed to every producer through the auth-hub
+  agent kit and byte-verified against this copy, so a contract that passes in
+  the producer's own CI cannot fail once the SDK vendors it.
+- `python3 scripts/revendor-product.py --products all` is the whole
+  producer-to-SDK chain in one command: contract at an exact producer commit →
+  `specs/<product>.openapi.json` plus its `.source` lock → `surface.json` →
+  the generated surface table in every language → the docs site. Running the
+  steps by hand in the wrong order used to be possible and left a
+  `surface.json` no committed spec produced.
+- `.github/workflows/contract-updated.yml` runs that chain on a schedule, on a
+  `repository_dispatch` from a producer, and on demand, then opens a pull
+  request with the result.
 - `surface.json` is the single source of truth for SDK ergonomics;
   data-engine owns the canonical REST operation identities in OpenAPI.
-  `scripts/gen-sdk-surface.py` renders the per-language surface tables and
-  `scripts/gen-sdk-docs.py` the Mintlify docs site (both committed, both
-  drift-gated).
+  `scripts/gen-sdk-surface.py` renders the per-language surface tables,
+  `scripts/gen-sdk-docs.py` the Mintlify docs site, and
+  `scripts/gen-producer-tables.py` the producer and client tables in this
+  README and in the rollout docs (all committed, all drift-gated).
 - `scripts/check-sdk-surface.py` gates: manifest invariants, regenerate-and-
-  diff (surface tables and docs site), one version across the three packages,
+  diff (surface tables and docs site), one version across all seven packages,
   uniform-primitive markers, data-engine operation/path/method parity, and the
   exact source-pinned Palette evidence contract.
 - `scripts/check-aip-conformance.py` is the Google Cloud AIP migration
@@ -348,26 +412,41 @@ the committed site is always current thanks to the drift gate).
 ## Verification
 
 ```sh
-npm test   # surface gate + TypeScript + Python + Rust suites
+npm test   # surface gate + the language suites
 ```
 
-or individually:
+The gates, individually:
 
 ```sh
-python3 scripts/check-sdk-surface.py
-python3 scripts/check-aip-conformance.py
-python3 scripts/check-exact-source-gaps.py
-python3 scripts/sync-data-engine-openapi.py --check \
-  --source ../data-engine/api/openapi.yaml \
-  --source-repo tempera-dev/data-engine --source-branch main \
-  --source-commit <40-character-producer-commit>
-python3 scripts/sync-data-engine-mcp-contracts.py --check \
-  --source-repo-dir ../data-engine \
-  --source-commit <40-character-producer-commit>
-python3 scripts/sync-palette-eval-openapi.py --check
+python3 scripts/check-sdk-surface.py        # manifest invariants, regenerate-and-diff, one version across seven packages
+python3 scripts/check-aip-conformance.py    # the AIP ratchet over every vendored producer contract
+python3 scripts/check-upstream-drift.py     # bidirectional: no phantom SDK routes, no unaccounted producer routes
+python3 scripts/check-exact-source-gaps.py  # every vendored producer is verified commit-by-commit in CI
+python3 scripts/check-native-transport.py   # hand-written phone clients stay inside the published contract
+python3 scripts/sync-openapi-surface.py --check
+python3 scripts/gen-producer-tables.py --check
+```
+
+One producer's contract, linted the way its own CI lints it:
+
+```sh
+python3 scripts/lint_producer_contract.py \
+  ../tempera-voice/contracts/openapi/voice.openapi.json \
+  --product temperaVoice --audience tempera-voice
+```
+
+The language suites:
+
+```sh
 npm --prefix packages/typescript test
 PYTHONPATH=packages/python/src python3 -m unittest discover -s packages/python/tests
 cargo test --manifest-path packages/rust/Cargo.toml
+swift test --package-path packages/swift
+./gradlew -p packages/kotlin test
+cc -std=c99 -Wall -Wextra -Werror -pedantic -Ipackages/c/include \
+  packages/c/tests/test_tempera.c packages/c/src/*.c -o /tmp/tempera-c-tests && /tmp/tempera-c-tests
+c++ -std=c++20 -Wall -Wextra -Werror -pedantic -Ipackages/cpp/include \
+  packages/cpp/tests/test_tempera.cpp -o /tmp/tempera-cpp-tests && /tmp/tempera-cpp-tests
 ```
 
 For an unpublished exact-source train, synchronizers accept
