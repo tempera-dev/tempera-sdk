@@ -28,6 +28,7 @@ from typing import Any
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from aip_rules import (  # noqa: E402  (path is set immediately above)
+    EXEMPTIBLE_ROUTE as EXEMPTIBLE,
     HTTP_METHODS,
     Exemptions,
     discover_violations,
@@ -36,18 +37,6 @@ from aip_rules import (  # noqa: E402  (path is set immediately above)
 HERE = Path(__file__).resolve().parent
 REQUIRED_OPENAPI = "3.1.0"
 AUTH_KINDS = {"none", "account", "product", "oauthResource", "introspectionSecret"}
-# Health, transport, and identity-protocol routes are the only shapes that may
-# be declared exempt. Anything else is a resource API and answers to AIP.
-EXEMPTIBLE = re.compile(
-    r"^/(healthz|readyz|livez|metrics|mcp|bidi|openapi\.json)$"
-    r"|^/\.well-known/"
-    r"|^/oauth/"
-    # A versioned webhook collection is a legitimate receiver shape; without
-    # this, producers were renaming /v1/webhooks/stripe just to get past the
-    # exemption check, which is churn, not conformance.
-    r"|^/v1/webhooks/"
-    r"|webhook$|/callback$|^/v1/otlp/|/events$"
-)
 
 
 def canonical_status_components() -> dict[str, Any]:
