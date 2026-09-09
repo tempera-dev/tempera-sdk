@@ -115,7 +115,7 @@
     "/v1/sso/config": {
       "get": {
         "operationId": "samlSsoConfigurations.get",
-        "summary": "Read the active organization’s private SAML 2.0 SSO configuration status.",
+        "summary": "Read the active organization\u2019s private SAML 2.0 SSO configuration status.",
         "description": "Read-only status for active organization owners/admins. Configuration and disablement are private platform-staff identity-team onboarding operations. Certificate and private-key references or material are never returned.",
         "responses": {
           "200": {
@@ -144,7 +144,7 @@
     "/v1/sso/config:configure": {
       "post": {
         "operationId": "samlSsoConfigurations.configure",
-        "summary": "Provision or replace the active organization’s SAML 2.0 SP configuration through private staff onboarding.",
+        "summary": "Provision or replace the active organization\u2019s SAML 2.0 SP configuration through private staff onboarding.",
         "description": "Requires a verified platform-staff first-party account session and a fresh passkey step-up. Ordinary tenant owner/admin tokens are rejected. This is a private Tempera and customer identity-team onboarding operation, never a browser form: staff submit verified domains and externally managed secret references only after operational verification. `env://` references are accepted only when TEMPERA_DEPLOYMENT_ENVIRONMENT=local is explicitly configured. JIT provisioning is deliberately unsupported.",
         "requestBody": {
           "required": true,
@@ -183,7 +183,7 @@
     "/v1/sso/config:disable": {
       "post": {
         "operationId": "samlSsoConfigurations.disable",
-        "summary": "Disable the active organization’s SAML 2.0 SSO configuration through private staff onboarding.",
+        "summary": "Disable the active organization\u2019s SAML 2.0 SSO configuration through private staff onboarding.",
         "description": "Requires a verified platform-staff first-party account session and a fresh passkey step-up; ordinary tenant owner/admin tokens are rejected. This is never a customer browser action. Disabling invalidates outstanding SAML transactions and BFF handoffs.",
         "responses": {
           "200": {
@@ -376,7 +376,7 @@
       "post": {
         "operationId": "samlSsoHandoffs.exchange",
         "summary": "Exchange a one-time SAML handoff for a first-party session token pair.",
-        "description": "Private BFF protocol endpoint, not for browser JavaScript. It requires the deployment’s server-only BFF handoff secret plus the raw transaction nonce whose SHA-256 verifier was bound at SAML initiation. The raw nonce is hashed in memory, compared in constant time, and never persisted or returned; a mismatch does not consume the handoff.",
+        "description": "Private BFF protocol endpoint, not for browser JavaScript. It requires the deployment\u2019s server-only BFF handoff secret plus the raw transaction nonce whose SHA-256 verifier was bound at SAML initiation. The raw nonce is hashed in memory, compared in constant time, and never persisted or returned; a mismatch does not consume the handoff.",
         "security": [],
         "parameters": [
           {
@@ -5328,6 +5328,709 @@
           }
         }
       }
+    },
+    "/v1/authority/policies": {
+      "get": {
+        "operationId": "authorityPolicies.list",
+        "summary": "List the authority policies for one workspace.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-authority",
+        "x-tempera-required-scope": "authority:policies:read",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authority policies",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorityPolicyPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/AipError"
+          },
+          "403": {
+            "$ref": "#/components/responses/AipError"
+          }
+        }
+      },
+      "post": {
+        "operationId": "authorityPolicies.create",
+        "summary": "Create an authority policy. Requires an owner or admin human principal and a recent passkey step-up.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-authority",
+        "x-tempera-required-scope": "authority:policies:write",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAuthorityPolicyRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Authority policy created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorityPolicy"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/AipError"
+          },
+          "403": {
+            "$ref": "#/components/responses/AipError"
+          },
+          "409": {
+            "$ref": "#/components/responses/AipError"
+          }
+        }
+      }
+    },
+    "/v1/authority/policies/{id}": {
+      "patch": {
+        "operationId": "authorityPolicies.update",
+        "summary": "Replace an authority policy document. Requires an owner or admin human principal and a recent passkey step-up.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-authority",
+        "x-tempera-required-scope": "authority:policies:write",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          },
+          {
+            "name": "updateMask",
+            "in": "query",
+            "required": true,
+            "description": "Only document may be updated.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "document"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAuthorityPolicyRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Authority policy updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorityPolicy"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/AipError"
+          },
+          "403": {
+            "$ref": "#/components/responses/AipError"
+          },
+          "404": {
+            "$ref": "#/components/responses/AipError"
+          },
+          "409": {
+            "$ref": "#/components/responses/AipError"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "authorityPolicies.archive",
+        "summary": "Archive an authority policy. A decision already made cites the policy that made it, so the row stays readable.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-authority",
+        "x-tempera-required-scope": "authority:policies:write",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Authority policy archived or already absent"
+          },
+          "403": {
+            "$ref": "#/components/responses/AipError"
+          }
+        }
+      }
+    },
+    "/v1/authority/holds": {
+      "get": {
+        "operationId": "authorityHolds.list",
+        "summary": "List the authority holds for one workspace.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-authority",
+        "x-tempera-required-scope": "authority:holds:read",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "description": "Filter by hold state.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "held",
+                "approved",
+                "rejected",
+                "expired",
+                "revoked",
+                "leased",
+                "consumed",
+                "recovery_required"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authority holds",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorityHoldPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/AipError"
+          },
+          "403": {
+            "$ref": "#/components/responses/AipError"
+          }
+        }
+      },
+      "post": {
+        "operationId": "authorityHolds.create",
+        "summary": "Create a hold. A duplicate call digest joins the open hold rather than asking a person twice. Evidence is reference-only; inline content is rejected.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-authority",
+        "x-tempera-required-scope": "authority:holds:write",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAuthorityHoldRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Authority hold created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorityHold"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "An open hold for this exact call already exists and was returned unchanged",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorityHold"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/AipError"
+          },
+          "403": {
+            "$ref": "#/components/responses/AipError"
+          },
+          "404": {
+            "$ref": "#/components/responses/AipError"
+          }
+        }
+      }
+    },
+    "/v1/authority/holds/{id}": {
+      "get": {
+        "operationId": "authorityHolds.get",
+        "summary": "Read one authority hold and its attributed decisions.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-authority",
+        "x-tempera-required-scope": "authority:holds:read",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authority hold",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorityHold"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/AipError"
+          },
+          "404": {
+            "$ref": "#/components/responses/AipError"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "authorityHolds.revoke",
+        "summary": "Revoke a hold. Revoked, not deleted: a question that was asked stays answerable in the ledger.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-authority",
+        "x-tempera-required-scope": "authority:holds:write",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Authority hold revoked"
+          },
+          "403": {
+            "$ref": "#/components/responses/AipError"
+          },
+          "409": {
+            "$ref": "#/components/responses/AipError"
+          }
+        }
+      }
+    },
+    "/v1/authority/holds/{id}:decide": {
+      "post": {
+        "operationId": "authorityHolds.decide",
+        "summary": "Decide a held action. Requires a fresh passkey step-up; the staff password path can never produce a decision. Returns a decision token bound to the prepared effect once the quorum is met.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-authority",
+        "x-tempera-required-scope": "authority:holds:decide",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecideAuthorityHoldRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Decision recorded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DecideAuthorityHoldResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/AipError"
+          },
+          "403": {
+            "$ref": "#/components/responses/AipError"
+          },
+          "404": {
+            "$ref": "#/components/responses/AipError"
+          },
+          "409": {
+            "$ref": "#/components/responses/AipError"
+          }
+        }
+      }
+    },
+    "/v1/authority/holds/{id}:claim": {
+      "post": {
+        "operationId": "authorityHolds.claim",
+        "summary": "Spend the approval and take a single-use lease. Requires the decision token; a token presented for a different prepared effect digest fails closed.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-authority",
+        "x-tempera-required-scope": "authority:holds:write",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClaimAuthorityHoldRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Lease granted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClaimAuthorityHoldResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/AipError"
+          },
+          "403": {
+            "$ref": "#/components/responses/AipError"
+          },
+          "404": {
+            "$ref": "#/components/responses/AipError"
+          },
+          "409": {
+            "$ref": "#/components/responses/AipError"
+          }
+        }
+      }
+    },
+    "/v1/authority/holds/{id}:finalize": {
+      "post": {
+        "operationId": "authorityHolds.finalize",
+        "summary": "Close the hold against the outcome the lease produced. An exact retry replays; any other outcome fails closed.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-authority",
+        "x-tempera-required-scope": "authority:holds:write",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FinalizeAuthorityHoldRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Hold consumed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FinalizeAuthorityHoldResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/AipError"
+          },
+          "403": {
+            "$ref": "#/components/responses/AipError"
+          },
+          "404": {
+            "$ref": "#/components/responses/AipError"
+          },
+          "409": {
+            "$ref": "#/components/responses/AipError"
+          }
+        }
+      }
+    },
+    "/v1/authority/holds/{id}:markRecoveryRequired": {
+      "post": {
+        "operationId": "authorityHolds.markRecoveryRequired",
+        "summary": "Move a hold whose lease expired to recovery_required. Lease expiry is uncertainty, never a retry.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-authority",
+        "x-tempera-required-scope": "authority:holds:write",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Hold requires recovery",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorityHold"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/AipError"
+          },
+          "404": {
+            "$ref": "#/components/responses/AipError"
+          },
+          "409": {
+            "$ref": "#/components/responses/AipError"
+          }
+        }
+      }
+    },
+    "/v1/authority/credential-bindings": {
+      "get": {
+        "operationId": "authorityCredentialBindings.list",
+        "summary": "List the credential bindings for one workspace. A binding names a cred_ row; it never carries material.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-authority",
+        "x-tempera-required-scope": "authority:policies:read",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Credential bindings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorityCredentialBindingPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/AipError"
+          },
+          "403": {
+            "$ref": "#/components/responses/AipError"
+          }
+        }
+      },
+      "post": {
+        "operationId": "authorityCredentialBindings.create",
+        "summary": "Bind an existing connector credential to a destination and a release rule. Reference-only: a body carrying a secret is rejected by field name. Creating a binding is what makes a future release possible, so it takes the same scope, role and step-up as writing policy.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-authority",
+        "x-tempera-required-scope": "authority:policies:write",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAuthorityCredentialBindingRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Credential binding created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorityCredentialBinding"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/AipError"
+          },
+          "403": {
+            "$ref": "#/components/responses/AipError"
+          },
+          "404": {
+            "$ref": "#/components/responses/AipError"
+          },
+          "409": {
+            "$ref": "#/components/responses/AipError"
+          }
+        }
+      }
+    },
+    "/v1/authority/credential-bindings/{id}:release": {
+      "post": {
+        "operationId": "authorityCredentialBindings.release",
+        "summary": "Release a credential against a decision. Verifies the hold is leased by this caller with a lease token that validates, then mints or resolves and returns the material exactly once. The handler that evaluates the hold has no vault client in scope and the handler that resolves the vault evaluates no policy (ADR 0002 point 3). Service credentials only: never a human OAuth session.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-authority",
+        "x-tempera-required-scope": "authority:credentials:release",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/id"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReleaseAuthorityCredentialRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Credential released. Returned once, with cache-control: no-store.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReleaseAuthorityCredentialResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/AipError"
+          },
+          "403": {
+            "$ref": "#/components/responses/AipError"
+          },
+          "404": {
+            "$ref": "#/components/responses/AipError"
+          },
+          "409": {
+            "$ref": "#/components/responses/AipError"
+          },
+          "501": {
+            "$ref": "#/components/responses/AipError"
+          },
+          "503": {
+            "$ref": "#/components/responses/AipError"
+          }
+        }
+      }
+    },
+    "/v1/authority/ledger": {
+      "get": {
+        "operationId": "authorityLedger.export",
+        "summary": "Read the authority ledger, a hash chain projected from holds, decisions and policies.",
+        "description": "The ledger is a projection, not a store (ADR 0001 point 3). Every record is derived from Auth Hub rows and recomputed on request, so an export is reproducible from those rows alone and there is no ledger table.\n\nformat=json pages the chain for a console and requires authority:ledger:read. A page begins mid-chain and does not verify on its own.\n\nformat=jsonl returns the whole range as newline-delimited JSON and requires authority:ledger:export. That body is what re-verifies with the gateway's verifyLedger: sequence from 1, previousRecordDigest from the genesis digest, every recordDigest recomputed over the domain-separated canonical bytes of its record. There is deliberately no since/until filter: a chain with a hole in it does not verify, and an export that quietly stopped verifying because a date was passed would be worse than no export. pageSize and pageToken are refused with format=jsonl for the same reason.\n\nAn export emits the audit event authority.ledger.export carrying the row count and the range.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-authority",
+        "x-tempera-required-scope": "authority:ledger:read",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "required": false,
+            "description": "json (default) pages the chain and requires authority:ledger:read. jsonl returns the whole verifiable range as application/x-ndjson and requires authority:ledger:export.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "json",
+                "jsonl"
+              ],
+              "default": "json"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of the chain, or the whole chain as newline-delimited JSON.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorityLedgerPage"
+                }
+              },
+              "application/x-ndjson": {
+                "schema": {
+                  "type": "string",
+                  "description": "One AuthorityLedgerRecord per line, in sequence order, the whole range."
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/AipError"
+          },
+          "403": {
+            "$ref": "#/components/responses/AipError"
+          }
+        }
+      }
+    },
+    "/v1/authority/metrics": {
+      "get": {
+        "operationId": "authorityMetrics.get",
+        "summary": "Read the approval-fatigue metrics for one workspace.",
+        "description": "askRate7d, holdsByGate and medianTimeToDecideSeconds over a trailing window. The window is the trailing 7 days ending at the moment of the request, computed as [now - 7 days, now] against the stored timestamps. A hold counts toward askRate7d and medianTimeToDecideSeconds when its decided_at falls inside that window, and toward holdsByGate when its created_at does. When the window contains no decided holds, askRate7d and medianTimeToDecideSeconds are null, never zero: zero would read as 'nothing was approved' and 'every decision was instant', which are different statements from 'nobody was asked'.\n\naskRate7d is the approved share of decided holds. It is not the held share of agent calls: Auth Hub never observes a call that policy allowed, so that ratio has no denominator in these rows.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-authority",
+        "x-tempera-required-scope": "authority:ledger:read",
+        "responses": {
+          "200": {
+            "description": "Authority metrics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorityMetrics"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/AipError"
+          },
+          "403": {
+            "$ref": "#/components/responses/AipError"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -5675,6 +6378,14 @@
           "connection:invoke",
           "connection:write",
           "connection:read",
+          "authority:holds:read",
+          "authority:holds:decide",
+          "authority:holds:write",
+          "authority:policies:read",
+          "authority:policies:write",
+          "authority:credentials:release",
+          "authority:ledger:read",
+          "authority:ledger:export",
           "admin",
           "business:read",
           "business:write",
@@ -5686,7 +6397,7 @@
       },
       "ApiKeyScope": {
         "type": "string",
-        "description": "A service-principal scope. Human-only review:resolve, review:gold:manage, training:publish, bio:experiment:approve, bio:signer:manage, clearing:actions:approve, payments:merchants:write and orders:commerce:write are intentionally excluded, as are the remaining orders:* scopes, which are reachable only through an expiring OAuth token. GET /v1/api-keys/audiences reports, per audience, which of these are issuable now and why the rest are refused.",
+        "description": "A service-principal scope. Human-only review:resolve, review:gold:manage, training:publish, bio:experiment:approve, bio:signer:manage, clearing:actions:approve, payments:merchants:write and orders:commerce:write are intentionally excluded, as are the remaining orders:* scopes, which are reachable only through an expiring OAuth token. GET /v1/api-keys/audiences reports, per audience, which of these are issuable now and why the rest are refused. authority:holds:decide, authority:holds:write and authority:policies:write are likewise excluded: deciding and writing authority require an attributed OAuth principal, never an API key.",
         "enum": [
           "mcp:invoke",
           "memory:read",
@@ -5744,7 +6455,11 @@
           "business:read",
           "business:write",
           "business:review",
-          "admin"
+          "admin",
+          "authority:holds:read",
+          "authority:policies:read",
+          "authority:ledger:read",
+          "authority:ledger:export"
         ]
       },
       "ResourceAudience": {
@@ -5771,6 +6486,7 @@
           "tempera-dropshipping",
           "tempera-voice",
           "tempera-clearing",
+          "tempera-authority",
           "tempera-business"
         ]
       },
@@ -11813,6 +12529,2374 @@
           "expiresIn",
           "assuranceLevel"
         ]
+      },
+      "EffectTarget": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "One thing the call reaches, written so an approver can read it.",
+        "required": [
+          "system",
+          "resource",
+          "selector",
+          "operation"
+        ],
+        "properties": {
+          "system": {
+            "type": "string",
+            "maxLength": 64,
+            "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+          },
+          "resource": {
+            "type": "string",
+            "maxLength": 128,
+            "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+          },
+          "selector": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "operation": {
+            "type": "string",
+            "maxLength": 64,
+            "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+          }
+        }
+      },
+      "EffectSpend": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Money the call moves, in integer minor units. bound \"unknown\" is an amount nobody established: amountMinor is ABSENT rather than zero, a ceiling (spendMinorLt) never matches it, a floor (spendMinorGte) always does, and a budget treats it as reaching the limit. A zero would clear every permissive gate.",
+        "required": [
+          "currency",
+          "bound"
+        ],
+        "properties": {
+          "currency": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}$",
+            "description": "ISO 4217 code, or XXX when the currency is not established either."
+          },
+          "amountMinor": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Integer minor units. Required unless bound is unknown, and forbidden when it is."
+          },
+          "bound": {
+            "type": "string",
+            "enum": [
+              "exact",
+              "maximum",
+              "unknown"
+            ]
+          }
+        }
+      },
+      "EffectReversibility": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "How the call could be undone. A compensatable effect that names no compensationTool is an irreversible effect wearing a softer label and is rejected.",
+        "required": [
+          "kind"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "reversible",
+              "compensatable",
+              "irreversible"
+            ]
+          },
+          "compensationTool": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 256,
+            "description": "Required when kind is compensatable, forbidden otherwise."
+          }
+        }
+      },
+      "Effect": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "tempera.effect/v1. The typed answer to what a call actually does. Classes are ordered by consequence: read < write < irreversible < spend. Canonical bytes are the domain string \"tempera.effect/v1\", a zero byte, then restricted canonical JSON with sorted keys and safe integers only; contracts/fixtures/effect-v1.vector.json is the cross-implementation lock.",
+        "required": [
+          "schema",
+          "class",
+          "domains",
+          "reversibility",
+          "targets"
+        ],
+        "properties": {
+          "schema": {
+            "type": "string",
+            "const": "tempera.effect/v1"
+          },
+          "class": {
+            "type": "string",
+            "enum": [
+              "read",
+              "write",
+              "irreversible",
+              "spend"
+            ]
+          },
+          "domains": {
+            "type": "array",
+            "maxItems": 16,
+            "uniqueItems": true,
+            "description": "Sorted and deduplicated. An unknown domain is a rejection, never an ignored field.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "financial",
+                "credentialed",
+                "regulated",
+                "physical",
+                "external_message",
+                "customer_data",
+                "infrastructure",
+                "source_control",
+                "identity"
+              ]
+            }
+          },
+          "reversibility": {
+            "$ref": "#/components/schemas/EffectReversibility"
+          },
+          "spend": {
+            "$ref": "#/components/schemas/EffectSpend"
+          },
+          "targets": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 64,
+            "uniqueItems": true,
+            "description": "Sorted by canonical bytes so the digest does not depend on caller order.",
+            "items": {
+              "$ref": "#/components/schemas/EffectTarget"
+            }
+          }
+        }
+      },
+      "AuthorityPolicyGate": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "One rule that decides a matching call. Gates are tried highest priority first, ties in document order.",
+        "required": [
+          "id",
+          "priority",
+          "decision"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "priority": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100000
+          },
+          "decision": {
+            "type": "string",
+            "enum": [
+              "allow",
+              "hold",
+              "deny"
+            ]
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 512
+          },
+          "holdTtlSeconds": {
+            "type": "integer",
+            "minimum": 30,
+            "maximum": 604800
+          },
+          "onTimeout": {
+            "type": "string",
+            "enum": [
+              "reject"
+            ],
+            "description": "A hold that nobody answers is refused. There is no timeout that allows."
+          },
+          "approvers": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "roles": {
+                "type": "array",
+                "maxItems": 16,
+                "items": {
+                  "type": "string"
+                }
+              },
+              "userIds": {
+                "type": "array",
+                "maxItems": 64,
+                "items": {
+                  "type": "string"
+                }
+              },
+              "quorum": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 16
+              }
+            }
+          },
+          "match": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "effectClass": {
+                "type": "array",
+                "maxItems": 4,
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "read",
+                    "write",
+                    "irreversible",
+                    "spend"
+                  ]
+                }
+              },
+              "domains": {
+                "type": "array",
+                "maxItems": 16,
+                "items": {
+                  "type": "string"
+                }
+              },
+              "reversibility": {
+                "type": "array",
+                "maxItems": 3,
+                "items": {
+                  "type": "string"
+                }
+              },
+              "server": {
+                "type": "string",
+                "maxLength": 512
+              },
+              "tool": {
+                "type": "string",
+                "maxLength": 512
+              },
+              "system": {
+                "type": "string",
+                "maxLength": 512
+              },
+              "resource": {
+                "type": "string",
+                "maxLength": 512
+              },
+              "operation": {
+                "type": "string",
+                "maxLength": 512
+              },
+              "selector": {
+                "type": "string",
+                "maxLength": 512
+              },
+              "spendMinorGte": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "A floor. An effect whose amount is not established always clears it."
+              },
+              "spendMinorLt": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "A ceiling. An effect whose amount is not established never clears it."
+              }
+            }
+          }
+        }
+      },
+      "AuthorityPolicyBudget": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "A spend limit over a window. Budgets only tighten a decision, never loosen one, and an amount nobody established is treated as reaching the limit.",
+        "required": [
+          "id",
+          "limitMinor"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "window": {
+            "type": "string",
+            "enum": [
+              "call",
+              "session",
+              "hour",
+              "day"
+            ]
+          },
+          "currency": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}$"
+          },
+          "limitMinor": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Integer minor units. A float is rejected by the schema and by the table."
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "hold",
+              "deny"
+            ]
+          }
+        }
+      },
+      "AuthorityPolicyDocument": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "tempera.authority.policy/v1. The document the gateway and the control plane both evaluate. Every combining step is monotone toward caution: a gate or a budget may raise a decision and nothing lowers one.",
+        "required": [
+          "schema",
+          "version",
+          "name",
+          "defaults",
+          "unknownEffectClass",
+          "gates"
+        ],
+        "properties": {
+          "schema": {
+            "type": "string",
+            "const": "tempera.authority.policy/v1"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "defaults": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "The decision for a call no gate matched, per effect class.",
+            "properties": {
+              "read": {
+                "type": "string",
+                "enum": [
+                  "allow",
+                  "hold",
+                  "deny"
+                ]
+              },
+              "write": {
+                "type": "string",
+                "enum": [
+                  "allow",
+                  "hold",
+                  "deny"
+                ]
+              },
+              "irreversible": {
+                "type": "string",
+                "enum": [
+                  "allow",
+                  "hold",
+                  "deny"
+                ]
+              },
+              "spend": {
+                "type": "string",
+                "enum": [
+                  "allow",
+                  "hold",
+                  "deny"
+                ]
+              }
+            }
+          },
+          "unknownEffectClass": {
+            "type": "string",
+            "enum": [
+              "read",
+              "write",
+              "irreversible",
+              "spend"
+            ],
+            "description": "What an unclassifiable call is treated as. Defaults to irreversible, never read."
+          },
+          "trustUpstreamAnnotations": {
+            "type": "boolean",
+            "description": "An upstream annotation may only raise an effect class, never lower one."
+          },
+          "useHeuristics": {
+            "type": "boolean"
+          },
+          "scopes": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "allowTools": {
+                "type": "array",
+                "maxItems": 256,
+                "items": {
+                  "type": "string"
+                }
+              },
+              "denyTools": {
+                "type": "array",
+                "maxItems": 256,
+                "items": {
+                  "type": "string"
+                }
+              },
+              "allowServers": {
+                "type": "array",
+                "maxItems": 64,
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "rules": {
+            "type": "array",
+            "maxItems": 512,
+            "description": "Classification rules the gateway applies to a tool call's arguments. The control plane validates and stores them; it never sees the arguments.",
+            "items": {
+              "type": "object"
+            }
+          },
+          "gates": {
+            "type": "array",
+            "maxItems": 512,
+            "items": {
+              "$ref": "#/components/schemas/AuthorityPolicyGate"
+            }
+          },
+          "budgets": {
+            "type": "array",
+            "maxItems": 64,
+            "items": {
+              "$ref": "#/components/schemas/AuthorityPolicyBudget"
+            }
+          },
+          "redaction": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Argument values reach the ledger as a digest unless an operator deliberately turns recording on.",
+            "properties": {
+              "recordArgumentValues": {
+                "type": "boolean"
+              },
+              "allowFields": {
+                "type": "array",
+                "maxItems": 128,
+                "items": {
+                  "type": "string"
+                }
+              },
+              "denyFields": {
+                "type": "array",
+                "maxItems": 256,
+                "items": {
+                  "type": "string"
+                }
+              },
+              "maxValueLength": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 4096
+              }
+            }
+          },
+          "approval": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "local",
+                  "control-plane",
+                  "deny"
+                ]
+              },
+              "inlineWaitMs": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 900000
+              },
+              "holdTtlSeconds": {
+                "type": "integer",
+                "minimum": 30,
+                "maximum": 604800
+              },
+              "onTimeout": {
+                "type": "string",
+                "enum": [
+                  "reject"
+                ]
+              },
+              "approverLabel": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 128
+              }
+            }
+          }
+        }
+      },
+      "AuthorityPolicy": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "One stored authority policy. Auth Hub owns the authority transition (ADR 0001), so the policy that produced a decision is an Auth Hub row.",
+        "required": [
+          "policyId",
+          "orgId",
+          "projectId",
+          "environmentId",
+          "schema",
+          "name",
+          "documentVersion",
+          "document",
+          "policyDigest",
+          "state",
+          "seeded",
+          "createdAt",
+          "updatedAt",
+          "archivedAt"
+        ],
+        "properties": {
+          "policyId": {
+            "type": "string",
+            "pattern": "^apol_[A-Za-z0-9_-]{8,64}$"
+          },
+          "orgId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "schema": {
+            "type": "string",
+            "const": "tempera.authority.policy/v1"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "documentVersion": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "document": {
+            "$ref": "#/components/schemas/AuthorityPolicyDocument"
+          },
+          "policyDigest": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$",
+            "description": "sha256 over the domain-separated canonical bytes of the document."
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "active",
+              "archived"
+            ]
+          },
+          "seeded": {
+            "type": "boolean",
+            "description": "True for the default policy written when the environment was created."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "archivedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
+      "AuthorityPolicyPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "authorityPolicies",
+          "nextPageToken"
+        ],
+        "properties": {
+          "authorityPolicies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuthorityPolicy"
+            }
+          },
+          "nextPageToken": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateAuthorityPolicyRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "name",
+          "document"
+        ],
+        "properties": {
+          "orgId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "document": {
+            "$ref": "#/components/schemas/AuthorityPolicyDocument"
+          }
+        }
+      },
+      "UpdateAuthorityPolicyRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "document"
+        ],
+        "properties": {
+          "document": {
+            "$ref": "#/components/schemas/AuthorityPolicyDocument"
+          }
+        }
+      },
+      "AuthorityEvidenceReference": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "A reference to evidence held by the Data Engine. Auth Hub validates the shape and the digest format; it does not accept, store, render, or re-serve the bytes (ADR 0001 point 2). A hold that arrives with inline evidence content is rejected with invalid_argument, not truncated.",
+        "required": [
+          "kind",
+          "digest"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "label": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 128
+          },
+          "digest": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$",
+            "description": "A content digest. Auth Hub never resolves it."
+          },
+          "ref": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 512,
+            "description": "A Data Engine artifact reference. Null until that handoff lands."
+          }
+        }
+      },
+      "AuthorityHoldDecision": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "One attributed human decision on a hold. Always produced by a fresh passkey step-up.",
+        "required": [
+          "decisionId",
+          "holdId",
+          "decision",
+          "approverUserId",
+          "stepUpAssertionDigest",
+          "decidedAt"
+        ],
+        "properties": {
+          "decisionId": {
+            "type": "string"
+          },
+          "holdId": {
+            "type": "string"
+          },
+          "decision": {
+            "type": "string",
+            "enum": [
+              "approve",
+              "reject"
+            ]
+          },
+          "approverUserId": {
+            "type": "string"
+          },
+          "approverLabel": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "approverRole": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "stepUpAssertionDigest": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$",
+            "description": "The WebAuthn assertion that authorized this decision."
+          },
+          "stepUpAuthTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 2000
+          },
+          "policyDigest": {
+            "oneOf": [
+              {
+                "type": "string",
+                "pattern": "^sha256:[a-f0-9]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "preparedEffectDigest": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          },
+          "decidedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AuthorityHold": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "One paused agent action. held -> approved -> leased -> consumed; held -> rejected | expired | revoked; leased -> recovery_required (lease expiry is uncertainty, never a retry); recovery_required -> consumed on a late matching finalize only.",
+        "required": [
+          "holdId",
+          "orgId",
+          "projectId",
+          "environmentId",
+          "state",
+          "serverName",
+          "toolName",
+          "callDigest",
+          "effect",
+          "preparedEffectDigest",
+          "createdAt",
+          "expiresAt"
+        ],
+        "properties": {
+          "holdId": {
+            "type": "string",
+            "pattern": "^hold_[a-f0-9]{32}$"
+          },
+          "orgId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "schema": {
+            "type": "string",
+            "enum": [
+              "tempera.authority.hold/v1"
+            ]
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "held",
+              "approved",
+              "rejected",
+              "expired",
+              "revoked",
+              "leased",
+              "consumed",
+              "recovery_required"
+            ]
+          },
+          "policyId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "policyDigest": {
+            "oneOf": [
+              {
+                "type": "string",
+                "pattern": "^sha256:[a-f0-9]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "correlationId": {
+            "type": "string"
+          },
+          "principalId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "serverName": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "toolName": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "callDigest": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$",
+            "description": "The exact call the approver was shown. :claim refuses any other."
+          },
+          "surfaceDigest": {
+            "oneOf": [
+              {
+                "type": "string",
+                "pattern": "^sha256:[a-f0-9]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "effect": {
+            "$ref": "#/components/schemas/Effect"
+          },
+          "preparedEffectDigest": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$",
+            "description": "What the decision token is bound to."
+          },
+          "summary": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 2000,
+            "description": "Model-written prose. Displayed, never trusted, never used to decide."
+          },
+          "reaches": {
+            "type": "array",
+            "maxItems": 64,
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidence": {
+            "type": "array",
+            "maxItems": 64,
+            "items": {
+              "$ref": "#/components/schemas/AuthorityEvidenceReference"
+            }
+          },
+          "requiredApprovers": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "roles": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "userIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "quorum": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 32
+              }
+            }
+          },
+          "quorum": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 32
+          },
+          "decisionTokenExpiresAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "leaseFence": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Monotonic claim counter. A finalize on a stale fence is refused."
+          },
+          "leaseExpiresAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "outcomeStatus": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "confirmed",
+              "failed",
+              "rejected",
+              "expired",
+              "revoked",
+              null
+            ]
+          },
+          "outcomeDigest": {
+            "oneOf": [
+              {
+                "type": "string",
+                "pattern": "^sha256:[a-f0-9]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "outcomeRef": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 512
+          },
+          "approvalUrl": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 1024
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "decidedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "consumedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "decisions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuthorityHoldDecision"
+            }
+          }
+        }
+      },
+      "AuthorityHoldPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "authorityHolds",
+          "nextPageToken"
+        ],
+        "properties": {
+          "authorityHolds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuthorityHold"
+            }
+          },
+          "nextPageToken": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateAuthorityHoldRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "serverName",
+          "toolName",
+          "callDigest",
+          "effect"
+        ],
+        "properties": {
+          "orgId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "serverName": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "toolName": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "callDigest": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          },
+          "surfaceDigest": {
+            "oneOf": [
+              {
+                "type": "string",
+                "pattern": "^sha256:[a-f0-9]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "effect": {
+            "$ref": "#/components/schemas/Effect"
+          },
+          "summary": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 2000
+          },
+          "reaches": {
+            "type": "array",
+            "maxItems": 64,
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidence": {
+            "type": "array",
+            "maxItems": 64,
+            "items": {
+              "$ref": "#/components/schemas/AuthorityEvidenceReference"
+            },
+            "description": "Reference-only. Inline evidence content is rejected with invalid_argument."
+          },
+          "requiredApprovers": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "roles": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "userIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "quorum": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 32
+              }
+            }
+          },
+          "holdTtlSeconds": {
+            "type": "integer",
+            "minimum": 30,
+            "maximum": 604800,
+            "default": 86400
+          },
+          "correlationId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 128
+          },
+          "principalId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 256
+          },
+          "policyId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "policyDigest": {
+            "oneOf": [
+              {
+                "type": "string",
+                "pattern": "^sha256:[a-f0-9]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "approvalUrl": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 1024
+          }
+        }
+      },
+      "DecideAuthorityHoldRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "decision"
+        ],
+        "properties": {
+          "decision": {
+            "type": "string",
+            "enum": [
+              "approve",
+              "reject"
+            ]
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 2000
+          },
+          "tokenTtlSeconds": {
+            "type": "integer",
+            "minimum": 30,
+            "maximum": 900,
+            "default": 300
+          }
+        }
+      },
+      "AuthorityDecisionToken": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Authority to perform exactly one prepared effect. Field names follow draft-rosomakho-oauth-txn-challenge so a later OAuth transaction-challenge profile is a rename and not a redesign: txn is the hold id and authorizationDetails is the typed effect. Returned once, by :decide, and only once the quorum is met.",
+        "required": [
+          "schema",
+          "decisionToken",
+          "txn",
+          "authorizationDetails",
+          "preparedEffectDigest",
+          "exp",
+          "singleUse"
+        ],
+        "properties": {
+          "schema": {
+            "type": "string",
+            "enum": [
+              "tempera.authority.decision-token/v1"
+            ]
+          },
+          "decisionToken": {
+            "type": "string",
+            "description": "Returned once. The row keeps only its digest."
+          },
+          "txn": {
+            "type": "string",
+            "description": "The hold id."
+          },
+          "authorizationDetails": {
+            "$ref": "#/components/schemas/Effect"
+          },
+          "preparedEffectDigest": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$",
+            "description": "The token is bound to this. Presented for a different prepared effect it fails closed."
+          },
+          "exp": {
+            "type": "integer"
+          },
+          "iat": {
+            "type": "integer"
+          },
+          "singleUse": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          }
+        }
+      },
+      "DecideAuthorityHoldResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "hold",
+          "decision"
+        ],
+        "properties": {
+          "hold": {
+            "$ref": "#/components/schemas/AuthorityHold"
+          },
+          "decision": {
+            "$ref": "#/components/schemas/AuthorityHoldDecision"
+          },
+          "decisionToken": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/AuthorityDecisionToken"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Null until the quorum is met. One of two approvals is not an approval."
+          }
+        }
+      },
+      "ClaimAuthorityHoldRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "decisionToken",
+          "preparedEffectDigest",
+          "callDigest"
+        ],
+        "properties": {
+          "decisionToken": {
+            "type": "string"
+          },
+          "preparedEffectDigest": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          },
+          "callDigest": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          },
+          "leaseSeconds": {
+            "type": "integer",
+            "minimum": 5,
+            "maximum": 3600,
+            "default": 300
+          }
+        }
+      },
+      "ClaimAuthorityHoldResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "hold",
+          "leaseToken",
+          "leaseFence"
+        ],
+        "properties": {
+          "hold": {
+            "$ref": "#/components/schemas/AuthorityHold"
+          },
+          "leaseToken": {
+            "type": "string",
+            "description": "Returned once. The row keeps only its digest."
+          },
+          "leaseFence": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "leaseExpiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "FinalizeAuthorityHoldRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "leaseToken",
+          "leaseFence",
+          "outcomeDigest"
+        ],
+        "properties": {
+          "leaseToken": {
+            "type": "string"
+          },
+          "leaseFence": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          },
+          "outcomeDigest": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          },
+          "outcomeStatus": {
+            "type": "string",
+            "enum": [
+              "confirmed",
+              "failed"
+            ],
+            "default": "confirmed"
+          },
+          "outcomeRef": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 512
+          }
+        }
+      },
+      "FinalizeAuthorityHoldResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "hold",
+          "replay"
+        ],
+        "properties": {
+          "hold": {
+            "$ref": "#/components/schemas/AuthorityHold"
+          },
+          "replay": {
+            "type": "boolean",
+            "description": "True when an exact retry replayed. A different outcome fails closed instead."
+          }
+        }
+      },
+      "AuthorityLedgerRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "The call the person was shown, projected from the hold row. summary is model-written prose recorded because it is what the approver read, never because anything trusts it.",
+        "required": [
+          "server",
+          "tool",
+          "callDigest"
+        ],
+        "properties": {
+          "server": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 256
+          },
+          "tool": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 256
+          },
+          "effect": {
+            "$ref": "#/components/schemas/Effect"
+          },
+          "callDigest": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          },
+          "surfaceDigest": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          },
+          "preparedEffectDigest": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          },
+          "reaches": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 256
+            }
+          },
+          "summary": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 2000
+          }
+        }
+      },
+      "AuthorityLedgerGate": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Which gate of which policy asked the question. gateId is recovered by re-evaluating the cited policy document against the stored effect, not stored a second time, and only while the document still hashes to the digest the hold recorded. basis says why gateId is null when it is: matched, class_default, no_policy, policy_unavailable, or policy_changed.",
+        "required": [
+          "policyId",
+          "policyDigest",
+          "gateId",
+          "basis"
+        ],
+        "properties": {
+          "policyId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 128
+          },
+          "policyDigest": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          },
+          "policyName": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 128
+          },
+          "gateId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 64
+          },
+          "basis": {
+            "type": "string",
+            "enum": [
+              "matched",
+              "class_default",
+              "no_policy",
+              "policy_unavailable",
+              "policy_changed"
+            ]
+          }
+        }
+      },
+      "AuthorityLedgerApprover": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "The attributed human decision, present only on hold_decided records that came from a decision row. stepUpAssertionDigest names the WebAuthn assertion behind the decision and is NOT NULL in the schema, so a decision that cannot name its assertion does not exist.",
+        "required": [
+          "decisionId",
+          "userId",
+          "stepUpAssertionDigest"
+        ],
+        "properties": {
+          "decisionId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 128
+          },
+          "userId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 256
+          },
+          "label": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 128
+          },
+          "role": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 64
+          },
+          "stepUpAssertionDigest": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          },
+          "stepUpAuthTime": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 2000
+          }
+        }
+      },
+      "AuthorityLedgerOutcome": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "What happened, projected from the hold row. Null on call_held, because at that point nothing has happened yet.",
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "approved",
+              "rejected",
+              "expired",
+              "revoked",
+              "recovery_required",
+              "confirmed",
+              "failed"
+            ]
+          },
+          "detail": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 512
+          },
+          "digest": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          },
+          "ref": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 512
+          },
+          "leaseFence": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "AuthorityLedgerRecord": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "One link of the hash chain. The record is a projection of holds, decisions and policies Auth Hub already owns (ADR 0001 point 3): it introduces no new durable fact and no second copy of a Data Engine artifact, and it is recomputed from those rows on every request rather than stored. sequence starts at 1, previousRecordDigest starts at sha256:0000... (64 zeros), and recordDigest is the sha256 over the domain-separated canonical bytes of the record with recordDigest removed, domain 'tempera.authority.ledger-record/v1'. This is a hash chain over rows, not a signature: it detects an edit or a truncation that does not rewrite the whole tail, and it is not tamper-proof.",
+        "required": [
+          "schema",
+          "sequence",
+          "at",
+          "previousRecordDigest",
+          "kind",
+          "holdId",
+          "request",
+          "gate",
+          "evidence",
+          "recordDigest"
+        ],
+        "properties": {
+          "schema": {
+            "type": "string",
+            "const": "tempera.authority.ledger-record/v1"
+          },
+          "sequence": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "previousRecordDigest": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "call_held",
+              "hold_decided",
+              "hold_expired",
+              "call_recovery_required",
+              "call_committed",
+              "call_failed"
+            ],
+            "description": "A subset of the gateway's ledger kinds. Auth Hub never observes a call that policy allowed, so call_allowed, call_denied and the session kinds have no row to derive them from and are absent rather than invented."
+          },
+          "correlationId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 128
+          },
+          "holdId": {
+            "type": "string",
+            "pattern": "^hold_[a-f0-9]{32}$"
+          },
+          "principalId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 256
+          },
+          "request": {
+            "$ref": "#/components/schemas/AuthorityLedgerRequest"
+          },
+          "gate": {
+            "$ref": "#/components/schemas/AuthorityLedgerGate"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuthorityEvidenceReference"
+            },
+            "description": "References only. A ledger record carries {kind, label, digest, ref} and never evidence bytes (ADR 0001 point 2)."
+          },
+          "approver": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/AuthorityLedgerApprover"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "outcome": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/AuthorityLedgerOutcome"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "recordDigest": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          }
+        }
+      },
+      "AuthorityLedgerPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "A page of the chain, for a console to read. A page starts at some sequence k whose previousRecordDigest names a record the caller was not sent, so a page does not verify on its own. The verifiable artifact is format=jsonl, which returns the whole range. headDigest and the range below describe that whole chain, not this page.",
+        "required": [
+          "schema",
+          "records",
+          "nextPageToken",
+          "rowCount",
+          "from",
+          "to",
+          "headDigest"
+        ],
+        "properties": {
+          "schema": {
+            "type": "string",
+            "const": "tempera.authority.ledger-record/v1"
+          },
+          "records": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuthorityLedgerRecord"
+            }
+          },
+          "nextPageToken": {
+            "type": "string"
+          },
+          "rowCount": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Records in the whole chain."
+          },
+          "from": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "to": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "headDigest": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          }
+        }
+      },
+      "AuthorityHoldsByGate": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Holds created in the window, grouped by the gate that asked. An array rather than an object keyed by gate id, because gateId is null whenever basis is not 'matched' and because a gate may legitimately be named the same as any sentinel key a map would need.",
+        "required": [
+          "gateId",
+          "basis",
+          "count"
+        ],
+        "properties": {
+          "gateId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 64
+          },
+          "basis": {
+            "type": "string",
+            "enum": [
+              "matched",
+              "class_default",
+              "no_policy",
+              "policy_unavailable",
+              "policy_changed"
+            ]
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "AuthorityMetrics": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Approval-fatigue numbers for one workspace. These exist because approval fatigue is a security property and not a presentation detail: a gate that asks about everything trains the person to approve without reading, and at that point the hold is theatre. The window is the trailing 7 days ending at the moment of the request, computed as [now - 7 days, now] against the stored timestamps. A hold counts toward askRate7d and medianTimeToDecideSeconds when its decided_at falls inside that window, and toward holdsByGate when its created_at does. When the window contains no decided holds, askRate7d and medianTimeToDecideSeconds are null, never zero: zero would read as 'nothing was approved' and 'every decision was instant', which are different statements from 'nobody was asked'.",
+        "required": [
+          "windowStart",
+          "windowEnd",
+          "windowDays",
+          "askRate7d",
+          "holdsByGate",
+          "medianTimeToDecideSeconds",
+          "heldCount",
+          "decidedCount",
+          "approvedCount",
+          "rejectedCount"
+        ],
+        "properties": {
+          "windowStart": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "windowEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "windowDays": {
+            "type": "integer",
+            "const": 7
+          },
+          "askRate7d": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 1,
+            "description": "approvedCount / decidedCount over the window: the share of decided holds that were approved. It is NOT the share of agent calls that were held. Auth Hub never sees a call that policy allowed, so that second ratio has no denominator in these rows, and manufacturing one would mean storing a call counter Auth Hub does not own (ADR 0001 point 3). The gateway's local ledger is where the held-over-total ratio is computed. Above 0.9 the triggers are too broad and people have stopped reading what they approve. Null when the window contains no decided holds."
+          },
+          "holdsByGate": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuthorityHoldsByGate"
+            },
+            "description": "Descending by count, then by gate id."
+          },
+          "medianTimeToDecideSeconds": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "description": "Median of decided_at minus created_at, in whole seconds, over holds decided in the window. An even count averages the two middle values and rounds. Null, not zero, when the window contains no decided holds."
+          },
+          "heldCount": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Holds created in the window."
+          },
+          "decidedCount": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Holds decided in the window."
+          },
+          "approvedCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "rejectedCount": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "AuthorityCredentialBinding": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "A standing permission to release one connector credential against a decision. Reference-only: it names a cred_ row and never carries material (ADR 0002).",
+        "required": [
+          "bindingId",
+          "orgId",
+          "projectId",
+          "environmentId",
+          "name",
+          "credentialId",
+          "destination",
+          "delivery",
+          "releasePolicy",
+          "state"
+        ],
+        "properties": {
+          "bindingId": {
+            "type": "string",
+            "pattern": "^acb_[a-f0-9]{32}$"
+          },
+          "orgId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "schema": {
+            "type": "string",
+            "enum": [
+              "tempera.authority.credential-binding/v1"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "credentialId": {
+            "type": "string",
+            "pattern": "^cred_[A-Za-z0-9_-]{2,75}$",
+            "description": "The connector_credentials row this binding names. There is one credential store and this is it."
+          },
+          "destination": {
+            "$ref": "#/components/schemas/CredentialDestination"
+          },
+          "delivery": {
+            "$ref": "#/components/schemas/CredentialDeliveryMode"
+          },
+          "mint": {
+            "$ref": "#/components/schemas/CredentialMint"
+          },
+          "releasePolicy": {
+            "$ref": "#/components/schemas/CredentialReleasePolicy"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "active",
+              "revoked"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "revokedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "CredentialDeliveryMode": {
+        "type": "string",
+        "enum": [
+          "helper",
+          "minted",
+          "substituted"
+        ],
+        "description": "ADR 0002 point 4, in preference order: a native helper protocol, a native short-lived minting mechanism, egress substitution only where neither exists. `wrapped` - a long-lived credential with a scheduled revocation - is deliberately not a member and must never be added: it is the mode that looks like containment and is not. `substituted` is named here and returns a typed unimplemented at delivery."
+      },
+      "CredentialDestination": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "hosts"
+        ],
+        "description": "The allowlist is on the destination, not on the tool: an agent reaching the same host through a different tool is the same release.",
+        "properties": {
+          "hosts": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 32,
+            "items": {
+              "type": "string"
+            },
+            "description": "Hosts, not URLs. A host allowlist that accepted a path is one somebody will put a query string in."
+          },
+          "injection": {
+            "type": "string",
+            "enum": [
+              "header",
+              "helper",
+              "env"
+            ],
+            "default": "header"
+          }
+        }
+      },
+      "CredentialMint": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "adapter"
+        ],
+        "description": "Adapter parameters for the minted mode. Reference-only, exactly like the binding: an installation reference, an audience, a permission ceiling. A GitHub App private key or a client secret is deployment configuration held by the delivery point, so there is no field here to write one into.",
+        "properties": {
+          "adapter": {
+            "type": "string",
+            "enum": [
+              "github_app_installation",
+              "token_exchange",
+              "aws_sts",
+              "stripe_restricted_key"
+            ],
+            "description": "github_app_installation and token_exchange (RFC 8693) are implemented. aws_sts and stripe_restricted_key are named in the contract and return a typed unimplemented at delivery, so a caller learns the adapter is not built rather than that the word is unknown."
+          },
+          "audience": {
+            "type": "string",
+            "description": "token_exchange: the resource the exchanged token may reach."
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 32
+          },
+          "installationRef": {
+            "type": "string",
+            "description": "github_app_installation: the installation to mint against."
+          },
+          "repositories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 64,
+            "description": "A ceiling, not a request. The repositories actually asked for are derived from the approved effect's targets and intersected with this list, so a release can only ever ask for a subset."
+          },
+          "permissions": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "enum": [
+                "read",
+                "write",
+                "admin"
+              ]
+            },
+            "description": "A ceiling. A derived permission stronger than the bound one is lowered to it."
+          }
+        }
+      },
+      "CredentialReleasePolicy": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requires"
+        ],
+        "properties": {
+          "requires": {
+            "type": "string",
+            "enum": [
+              "allow",
+              "approved_hold"
+            ],
+            "description": "What a release must be able to point at. `allow` evaluates the environment's active policy against the presented effect; `approved_hold` accepts only a hold that is leased and whose lease verifies."
+          },
+          "maxTtlSeconds": {
+            "type": "integer",
+            "minimum": 30,
+            "maximum": 3600,
+            "default": 600
+          },
+          "singleUse": {
+            "type": "boolean",
+            "default": true,
+            "description": "Forced true when requires is approved_hold: the approval a release spends is spent once."
+          }
+        }
+      },
+      "AuthorityCredentialBindingPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "authorityCredentialBindings",
+          "nextPageToken"
+        ],
+        "properties": {
+          "authorityCredentialBindings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuthorityCredentialBinding"
+            }
+          },
+          "nextPageToken": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateAuthorityCredentialBindingRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "A binding names a credential and never carries one. Any field outside this set is rejected by name rather than dropped, so a caller that posts a secret alongside the reference is told so.",
+        "required": [
+          "name",
+          "credentialId",
+          "destination",
+          "delivery",
+          "releasePolicy"
+        ],
+        "properties": {
+          "orgId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "credentialId": {
+            "type": "string",
+            "pattern": "^cred_[A-Za-z0-9_-]{2,75}$"
+          },
+          "destination": {
+            "$ref": "#/components/schemas/CredentialDestination"
+          },
+          "delivery": {
+            "$ref": "#/components/schemas/CredentialDeliveryMode"
+          },
+          "mint": {
+            "$ref": "#/components/schemas/CredentialMint"
+          },
+          "releasePolicy": {
+            "$ref": "#/components/schemas/CredentialReleasePolicy"
+          }
+        }
+      },
+      "ReleaseAuthorityCredentialRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "The decision evidence (depth plan 5.4). effectDigest and callDigest are what the release is bound to; holdId and leaseToken are presented together or not at all.",
+        "required": [
+          "effectDigest",
+          "callDigest"
+        ],
+        "properties": {
+          "effectDigest": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$",
+            "description": "The one effect this release is authority for. On the hold path it must equal the hold's prepared effect digest; a mismatch fails closed, because an approval shown for a small action is not weaker authority for a large one, it is none."
+          },
+          "callDigest": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$",
+            "description": "The exact call. Must equal the hold's on the hold path."
+          },
+          "holdId": {
+            "type": "string",
+            "pattern": "^hold_[a-f0-9]{32}$",
+            "nullable": true
+          },
+          "leaseToken": {
+            "type": "string",
+            "nullable": true,
+            "description": "The lease WP-03's :claim returned once. Presenting it is what proves the hold is leased by this caller; the row keeps only its digest. A second release against the same lease is refused."
+          },
+          "effect": {
+            "type": "object",
+            "description": "The tempera.effect/v1 artifact, required only on the standing-allow path where there is no hold carrying an approved one. Rejected if it does not hash to effectDigest."
+          },
+          "serverName": {
+            "type": "string"
+          },
+          "toolName": {
+            "type": "string"
+          },
+          "ttlSeconds": {
+            "type": "integer",
+            "minimum": 30,
+            "maximum": 3600,
+            "description": "Capped by the binding's maxTtlSeconds."
+          },
+          "gateId": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "principalId": {
+            "type": "string",
+            "maxLength": 256,
+            "description": "The agent identity the caller acts for. Cross-checked against the hold's, never trusted as authentication."
+          }
+        }
+      },
+      "CredentialMaterial": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Returned exactly once, with cache-control: no-store. This is the only field in the control plane that carries credential material; it is never logged, audited, stored or repeated in an error.",
+        "required": [
+          "value",
+          "tokenType"
+        ],
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "tokenType": {
+            "type": "string"
+          },
+          "injection": {
+            "type": "string",
+            "enum": [
+              "header",
+              "helper",
+              "env"
+            ]
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AuthorityCredentialRelease": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "The durable record of one release. Records credentialId and credentialRevision and never the value (depth plan 5.3).",
+        "required": [
+          "releaseId",
+          "bindingId",
+          "credentialId",
+          "credentialRevision",
+          "effectDigest",
+          "callDigest",
+          "basis",
+          "delivery",
+          "ttlSeconds",
+          "singleUse",
+          "issuedAt",
+          "expiresAt"
+        ],
+        "properties": {
+          "releaseId": {
+            "type": "string",
+            "pattern": "^rel_[a-f0-9]{32}$"
+          },
+          "orgId": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "schema": {
+            "type": "string",
+            "enum": [
+              "tempera.authority.credential-release/v1"
+            ]
+          },
+          "bindingId": {
+            "type": "string"
+          },
+          "credentialId": {
+            "type": "string"
+          },
+          "credentialRevision": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "The revision the decision was made against. A rotation between decision and delivery is refused, not silently upgraded."
+          },
+          "effectDigest": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          },
+          "callDigest": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          },
+          "holdId": {
+            "type": "string",
+            "nullable": true
+          },
+          "basis": {
+            "type": "string",
+            "enum": [
+              "allow",
+              "approved_hold"
+            ]
+          },
+          "delivery": {
+            "$ref": "#/components/schemas/CredentialDeliveryMode"
+          },
+          "deliveryAdapter": {
+            "type": "string",
+            "nullable": true
+          },
+          "deliveryDetail": {
+            "type": "object",
+            "nullable": true,
+            "description": "What the adapter was asked for - repositories, permissions, audience. Never what it returned."
+          },
+          "destination": {
+            "$ref": "#/components/schemas/CredentialDestination"
+          },
+          "ttlSeconds": {
+            "type": "integer"
+          },
+          "singleUse": {
+            "type": "boolean"
+          },
+          "issuedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ReleaseAuthorityCredentialResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "release",
+          "material"
+        ],
+        "properties": {
+          "release": {
+            "$ref": "#/components/schemas/AuthorityCredentialRelease"
+          },
+          "material": {
+            "$ref": "#/components/schemas/CredentialMaterial"
+          }
+        }
       }
     }
   }

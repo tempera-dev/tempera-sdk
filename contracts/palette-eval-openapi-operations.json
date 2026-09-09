@@ -1,4 +1,5 @@
 {
+  "audience": "palette",
   "availability": "merged_main",
   "operations": [
     {
@@ -27,7 +28,8 @@
         "409",
         "413",
         "422",
-        "503"
+        "503",
+        "default"
       ],
       "sdkOperationId": "importTemperaBundle"
     },
@@ -57,7 +59,8 @@
         "409",
         "413",
         "422",
-        "503"
+        "503",
+        "default"
       ],
       "sdkOperationId": "recordTemperaDecision"
     },
@@ -78,7 +81,8 @@
         "400",
         "401",
         "403",
-        "404"
+        "404",
+        "default"
       ],
       "sdkOperationId": "getTemperaEvidence"
     }
@@ -88,9 +92,9 @@
   "requestSchema": "#/components/schemas/ImportTemperaEvidenceRequest",
   "requiredScope": "eval:run",
   "reviewUrl": "https://github.com/tempera-dev/palette/pull/23",
-  "revision": "cf55d3f979b4374d221f7b368fff26f9875ed710",
+  "revision": "8634190608524c9c543c51f54a6077aa57e304ed",
   "schemaVersion": 1,
-  "sourceBlob": "ef6ccc33b3dad70c15d89c89190b877e8c342746",
-  "sourcePath": "sdks/openapi/palette-api.json",
-  "sourceSha256": "sha256:136074a04219ea2bb96a70674afdbad4eec142c971f7c100ae0ab9db212fc5b7"
+  "sourceBlob": "beeb2261e78e6fa97981bff3e76d1aaa80f4350a",
+  "sourcePath": "contracts/openapi/palette.openapi.json",
+  "sourceSha256": "sha256:2d71fbbf94e31d38386a08f6dcde201d9b8f046cf0d4a9624da9c7a2a4b2aa46"
 }

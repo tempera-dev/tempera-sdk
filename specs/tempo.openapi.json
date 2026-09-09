@@ -71,6 +71,18 @@
         }
       }
     },
+    "responses": {
+      "Error": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Status"
+            }
+          }
+        },
+        "description": "A google.rpc.Status error envelope."
+      }
+    },
     "schemas": {
       "Action": {
         "oneOf": [
@@ -741,46 +753,6 @@
         ],
         "type": "object"
       },
-      "GoogleRpcError": {
-        "additionalProperties": false,
-        "properties": {
-          "error": {
-            "$ref": "#/components/schemas/GoogleRpcStatus"
-          }
-        },
-        "required": [
-          "error"
-        ],
-        "type": "object"
-      },
-      "GoogleRpcStatus": {
-        "additionalProperties": false,
-        "properties": {
-          "code": {
-            "type": "integer"
-          },
-          "details": {
-            "items": {
-              "additionalProperties": true,
-              "type": "object"
-            },
-            "type": "array"
-          },
-          "message": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "code",
-          "message",
-          "status",
-          "details"
-        ],
-        "type": "object"
-      },
       "HumanTakeover": {
         "additionalProperties": false,
         "properties": {
@@ -804,6 +776,55 @@
           "reason",
           "url"
         ],
+        "type": "object"
+      },
+      "InteractiveElement": {
+        "additionalProperties": true,
+        "properties": {
+          "bounds": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "items": {
+                  "type": "number"
+                },
+                "maxItems": 4,
+                "minItems": 4,
+                "type": "array"
+              }
+            ]
+          },
+          "name": {
+            "items": {
+              "$ref": "#/components/schemas/TaintSpan"
+            },
+            "type": "array"
+          },
+          "nodeId": {
+            "$ref": "#/components/schemas/NodeId"
+          },
+          "rank": {
+            "type": "number"
+          },
+          "role": {
+            "type": "string"
+          },
+          "value": {
+            "items": {
+              "$ref": "#/components/schemas/TaintSpan"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "nodeId",
+          "role",
+          "name",
+          "rank"
+        ],
+        "title": "InteractiveElement",
         "type": "object"
       },
       "ListRunsResponse": {
@@ -1340,6 +1361,69 @@
         "description": "Stable identifier for a native shell or WebView surface.",
         "type": "string"
       },
+      "Status": {
+        "additionalProperties": false,
+        "description": "The google.rpc.Status error envelope required of every Tempera API (AIP-193).",
+        "properties": {
+          "error": {
+            "additionalProperties": false,
+            "properties": {
+              "code": {
+                "description": "The HTTP status code, repeated in the body so the envelope is self-describing.",
+                "type": "integer"
+              },
+              "details": {
+                "description": "Structured error details. Present but empty when there are none.",
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "message": {
+                "description": "A developer-facing description that is safe to log and safe to show.",
+                "type": "string"
+              },
+              "requestId": {
+                "description": "The server-assigned request identifier, mirrored from the x-request-id response header.",
+                "type": "string"
+              },
+              "status": {
+                "description": "The canonical google.rpc.Code name, for example INVALID_ARGUMENT.",
+                "enum": [
+                  "CANCELLED",
+                  "UNKNOWN",
+                  "INVALID_ARGUMENT",
+                  "DEADLINE_EXCEEDED",
+                  "NOT_FOUND",
+                  "ALREADY_EXISTS",
+                  "PERMISSION_DENIED",
+                  "UNAUTHENTICATED",
+                  "RESOURCE_EXHAUSTED",
+                  "FAILED_PRECONDITION",
+                  "ABORTED",
+                  "OUT_OF_RANGE",
+                  "UNIMPLEMENTED",
+                  "INTERNAL",
+                  "UNAVAILABLE",
+                  "DATA_LOSS"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "code",
+              "status",
+              "message"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "type": "object"
+      },
       "StorageContinuityMode": {
         "enum": [
           "shared_profile",
@@ -1861,7 +1945,7 @@
         "x-tempera-protocol": "webdriver-bidi"
       }
     },
-    "/health": {
+    "/healthz": {
       "get": {
         "operationId": "health",
         "responses": {
@@ -1955,7 +2039,7 @@
         "x-tempera-protocol": "openapi-document"
       }
     },
-    "/ready": {
+    "/readyz": {
       "get": {
         "operationId": "ready",
         "responses": {
@@ -2019,21 +2103,17 @@
             "description": "Enter draining mode and close engine resources"
           },
           "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "google.rpc.Status error"
+            "$ref": "#/components/responses/Error"
           }
         },
         "security": [
           {
             "TempodBearer": []
           }
-        ]
+        ],
+        "x-tempera-auth-audience": "tempo",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "tempo:write"
       }
     },
     "/v1/runs": {
@@ -2067,31 +2147,20 @@
             "description": "Paginated list of agent runs"
           },
           "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "Invalid or request-mismatched page token"
+            "$ref": "#/components/responses/Error"
           },
           "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "google.rpc.Status error"
+            "$ref": "#/components/responses/Error"
           }
         },
         "security": [
           {
             "TempodBearer": []
           }
-        ]
+        ],
+        "x-tempera-auth-audience": "tempo",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "tempo:read"
       }
     },
     "/v1/runs/{runId}": {
@@ -2114,21 +2183,20 @@
             "description": "Agent run"
           },
           "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "google.rpc.Status error"
+            "$ref": "#/components/responses/Error"
           }
         },
         "security": [
           {
             "TempodBearer": []
           }
-        ]
+        ],
+        "x-tempera-auth-audience": "tempo",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "tempo:read",
+        "x-tempera-resource-pattern": {
+          "runId": "runs/*"
+        }
       }
     },
     "/v1/runs/{runId}/events": {
@@ -2160,21 +2228,20 @@
             "description": "Session event window for the run's session"
           },
           "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "google.rpc.Status error"
+            "$ref": "#/components/responses/Error"
           }
         },
         "security": [
           {
             "TempodBearer": []
           }
-        ]
+        ],
+        "x-tempera-auth-audience": "tempo",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "tempo:read",
+        "x-tempera-resource-pattern": {
+          "runId": "runs/*"
+        }
       }
     },
     "/v1/runs/{runId}:cancel": {
@@ -2197,21 +2264,20 @@
             "description": "Cancelled agent run"
           },
           "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "google.rpc.Status error"
+            "$ref": "#/components/responses/Error"
           }
         },
         "security": [
           {
             "TempodBearer": []
           }
-        ]
+        ],
+        "x-tempera-auth-audience": "tempo",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "tempo:write",
+        "x-tempera-resource-pattern": {
+          "runId": "runs/*"
+        }
       }
     },
     "/v1/runs/{runId}:resume": {
@@ -2234,31 +2300,23 @@
             "description": "Marked the agent run runnable after human handoff"
           },
           "409": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "Session is owned by a human surface"
+            "$ref": "#/components/responses/Error"
           },
           "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "google.rpc.Status error"
+            "$ref": "#/components/responses/Error"
           }
         },
         "security": [
           {
             "TempodBearer": []
           }
-        ]
+        ],
+        "x-tempera-auth-audience": "tempo",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "tempo:write",
+        "x-tempera-resource-pattern": {
+          "runId": "runs/*"
+        }
       }
     },
     "/v1/sessions": {
@@ -2284,31 +2342,20 @@
             "description": "Paginated list of sessions"
           },
           "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "Invalid or request-mismatched page token"
+            "$ref": "#/components/responses/Error"
           },
           "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "google.rpc.Status error"
+            "$ref": "#/components/responses/Error"
           }
         },
         "security": [
           {
             "TempodBearer": []
           }
-        ]
+        ],
+        "x-tempera-auth-audience": "tempo",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "tempo:read"
       },
       "post": {
         "operationId": "createSession",
@@ -2327,31 +2374,20 @@
             "description": "Created session"
           },
           "429": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "Session admission limit reached"
+            "$ref": "#/components/responses/Error"
           },
           "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "google.rpc.Status error"
+            "$ref": "#/components/responses/Error"
           }
         },
         "security": [
           {
             "TempodBearer": []
           }
-        ]
+        ],
+        "x-tempera-auth-audience": "tempo",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "tempo:write"
       }
     },
     "/v1/sessions/{sessionId}": {
@@ -2367,21 +2403,20 @@
             "description": "Closed session"
           },
           "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "google.rpc.Status error"
+            "$ref": "#/components/responses/Error"
           }
         },
         "security": [
           {
             "TempodBearer": []
           }
-        ]
+        ],
+        "x-tempera-auth-audience": "tempo",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "tempo:write",
+        "x-tempera-resource-pattern": {
+          "sessionId": "sessions/*"
+        }
       }
     },
     "/v1/sessions/{sessionId}/bidi": {
@@ -2394,7 +2429,10 @@
         ],
         "responses": {
           "101": {
-            "description": "BiDi WebSocket bound to this session driver"
+            "$ref": "#/components/responses/Error"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
           }
         },
         "security": [
@@ -2402,7 +2440,13 @@
             "TempodBearer": []
           }
         ],
-        "x-tempera-protocol": "webdriver-bidi"
+        "x-tempera-auth-audience": "tempo",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-protocol": "webdriver-bidi",
+        "x-tempera-required-scope": "tempo:write",
+        "x-tempera-resource-pattern": {
+          "sessionId": "sessions/*"
+        }
       },
       "post": {
         "operationId": "bidiPostSession",
@@ -2414,6 +2458,9 @@
         "responses": {
           "200": {
             "description": "BiDi command response bound to this session driver"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
           }
         },
         "security": [
@@ -2421,7 +2468,13 @@
             "TempodBearer": []
           }
         ],
-        "x-tempera-protocol": "webdriver-bidi"
+        "x-tempera-auth-audience": "tempo",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-protocol": "webdriver-bidi",
+        "x-tempera-required-scope": "tempo:write",
+        "x-tempera-resource-pattern": {
+          "sessionId": "sessions/*"
+        }
       }
     },
     "/v1/sessions/{sessionId}/confirmations/{confirmationId}:grant": {
@@ -2447,21 +2500,21 @@
             "description": "Server-minted confirmation grant for one pending native confirmation"
           },
           "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "google.rpc.Status error"
+            "$ref": "#/components/responses/Error"
           }
         },
         "security": [
           {
             "TempodBearer": []
           }
-        ]
+        ],
+        "x-tempera-auth-audience": "tempo",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "tempo:write",
+        "x-tempera-resource-pattern": {
+          "confirmationId": "sessions/*/confirmations/*",
+          "sessionId": "sessions/*"
+        }
       }
     },
     "/v1/sessions/{sessionId}/events": {
@@ -2493,21 +2546,20 @@
             "description": "Window of retained session events after the optional cursor"
           },
           "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "google.rpc.Status error"
+            "$ref": "#/components/responses/Error"
           }
         },
         "security": [
           {
             "TempodBearer": []
           }
-        ]
+        ],
+        "x-tempera-auth-audience": "tempo",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "tempo:read",
+        "x-tempera-resource-pattern": {
+          "sessionId": "sessions/*"
+        }
       }
     },
     "/v1/sessions/{sessionId}/events:stream": {
@@ -2532,14 +2584,7 @@
             "description": "Server-sent session event stream"
           },
           "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "google.rpc.Status error"
+            "$ref": "#/components/responses/Error"
           }
         },
         "security": [
@@ -2547,7 +2592,13 @@
             "TempodBearer": []
           }
         ],
-        "x-tempera-protocol": "server-sent-events"
+        "x-tempera-auth-audience": "tempo",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-protocol": "server-sent-events",
+        "x-tempera-required-scope": "tempo:read",
+        "x-tempera-resource-pattern": {
+          "sessionId": "sessions/*"
+        }
       }
     },
     "/v1/sessions/{sessionId}/manager": {
@@ -2570,21 +2621,20 @@
             "description": "Manager snapshot for one shared session"
           },
           "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "google.rpc.Status error"
+            "$ref": "#/components/responses/Error"
           }
         },
         "security": [
           {
             "TempodBearer": []
           }
-        ]
+        ],
+        "x-tempera-auth-audience": "tempo",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "tempo:read",
+        "x-tempera-resource-pattern": {
+          "sessionId": "sessions/*"
+        }
       }
     },
     "/v1/sessions/{sessionId}/mcp": {
@@ -2606,14 +2656,7 @@
             "description": "MCP JSON-RPC response bound to this session driver"
           },
           "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "google.rpc.Status error"
+            "$ref": "#/components/responses/Error"
           }
         },
         "security": [
@@ -2621,7 +2664,13 @@
             "TempodBearer": []
           }
         ],
-        "x-tempera-protocol": "mcp"
+        "x-tempera-auth-audience": "tempo",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-protocol": "mcp",
+        "x-tempera-required-scope": "mcp:invoke",
+        "x-tempera-resource-pattern": {
+          "sessionId": "sessions/*"
+        }
       }
     },
     "/v1/sessions/{sessionId}/runs": {
@@ -2654,31 +2703,23 @@
             "description": "Created and executed an agent run"
           },
           "409": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "Session already has an active writer"
+            "$ref": "#/components/responses/Error"
           },
           "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "google.rpc.Status error"
+            "$ref": "#/components/responses/Error"
           }
         },
         "security": [
           {
             "TempodBearer": []
           }
-        ]
+        ],
+        "x-tempera-auth-audience": "tempo",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "tempo:write",
+        "x-tempera-resource-pattern": {
+          "sessionId": "sessions/*"
+        }
       }
     },
     "/v1/sessions/{sessionId}/surfaces": {
@@ -2711,21 +2752,20 @@
             "description": "Registered native shell/WebView surface"
           },
           "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "google.rpc.Status error"
+            "$ref": "#/components/responses/Error"
           }
         },
         "security": [
           {
             "TempodBearer": []
           }
-        ]
+        ],
+        "x-tempera-auth-audience": "tempo",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "tempo:write",
+        "x-tempera-resource-pattern": {
+          "sessionId": "sessions/*"
+        }
       }
     },
     "/v1/sessions/{sessionId}/surfaces/{surfaceId}": {
@@ -2759,21 +2799,21 @@
             "description": "Removed native shell/WebView surface"
           },
           "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "google.rpc.Status error"
+            "$ref": "#/components/responses/Error"
           }
         },
         "security": [
           {
             "TempodBearer": []
           }
-        ]
+        ],
+        "x-tempera-auth-audience": "tempo",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "tempo:write",
+        "x-tempera-resource-pattern": {
+          "sessionId": "sessions/*",
+          "surfaceId": "sessions/*/surfaces/*"
+        }
       }
     },
     "/v1/sessions/{sessionId}:actBatch": {
@@ -2805,41 +2845,26 @@
             "description": "Action batch outcome"
           },
           "403": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "Policy denied"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "Idempotency conflict"
+            "$ref": "#/components/responses/Error"
           },
           "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "google.rpc.Status error"
+            "$ref": "#/components/responses/Error"
           }
         },
         "security": [
           {
             "TempodBearer": []
           }
-        ]
+        ],
+        "x-tempera-auth-audience": "tempo",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "tempo:write",
+        "x-tempera-resource-pattern": {
+          "sessionId": "sessions/*"
+        }
       }
     },
     "/v1/sessions/{sessionId}:adopt": {
@@ -2872,31 +2897,23 @@
             "description": "Human surface owns the shared session"
           },
           "409": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "Session has an active writer"
+            "$ref": "#/components/responses/Error"
           },
           "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "google.rpc.Status error"
+            "$ref": "#/components/responses/Error"
           }
         },
         "security": [
           {
             "TempodBearer": []
           }
-        ]
+        ],
+        "x-tempera-auth-audience": "tempo",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "tempo:write",
+        "x-tempera-resource-pattern": {
+          "sessionId": "sessions/*"
+        }
       }
     },
     "/v1/sessions/{sessionId}:handoff": {
@@ -2919,21 +2936,20 @@
             "description": "Session write ownership returned to the agent plane"
           },
           "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "google.rpc.Status error"
+            "$ref": "#/components/responses/Error"
           }
         },
         "security": [
           {
             "TempodBearer": []
           }
-        ]
+        ],
+        "x-tempera-auth-audience": "tempo",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "tempo:write",
+        "x-tempera-resource-pattern": {
+          "sessionId": "sessions/*"
+        }
       }
     },
     "/v1/sessions/{sessionId}:observe": {
@@ -2949,21 +2965,20 @@
             "description": "Compiled observation"
           },
           "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "google.rpc.Status error"
+            "$ref": "#/components/responses/Error"
           }
         },
         "security": [
           {
             "TempodBearer": []
           }
-        ]
+        ],
+        "x-tempera-auth-audience": "tempo",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "tempo:read",
+        "x-tempera-resource-pattern": {
+          "sessionId": "sessions/*"
+        }
       }
     },
     "/v1/sessions/{sessionId}:screenshot": {
@@ -2988,21 +3003,20 @@
             "description": "PNG screenshot for the shared session surface"
           },
           "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "google.rpc.Status error"
+            "$ref": "#/components/responses/Error"
           }
         },
         "security": [
           {
             "TempodBearer": []
           }
-        ]
+        ],
+        "x-tempera-auth-audience": "tempo",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "tempo:read",
+        "x-tempera-resource-pattern": {
+          "sessionId": "sessions/*"
+        }
       }
     },
     "/v1/sessions/{sessionId}:transform": {
@@ -3035,61 +3049,32 @@
             "description": "Page-tainted transform dispatched to the cradle sandbox; the execution audit (also emitted on the session event stream)"
           },
           "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "No page-derived taint span, or cradle rejected the transform shape"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "Session not found"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "Session killed and cannot accept producer events"
+            "$ref": "#/components/responses/Error"
           },
           "503": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "Cradle sandbox not configured, unreachable, or temporarily unavailable"
+            "$ref": "#/components/responses/Error"
           },
           "default": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcError"
-                }
-              }
-            },
-            "description": "google.rpc.Status error"
+            "$ref": "#/components/responses/Error"
           }
         },
         "security": [
           {
             "TempodBearer": []
           }
-        ]
+        ],
+        "x-tempera-auth-audience": "tempo",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "tempo:write",
+        "x-tempera-resource-pattern": {
+          "sessionId": "sessions/*"
+        }
       }
     }
   },
@@ -3097,5 +3082,15 @@
     {
       "url": "http://localhost"
     }
+  ],
+  "x-tempera-protocol-routes": [
+    "/healthz",
+    "/readyz",
+    "/metrics",
+    "/openapi.json",
+    "/mcp",
+    "/bidi",
+    "/.well-known/agent-card.json",
+    "/.well-known/agent.json"
   ]
 }

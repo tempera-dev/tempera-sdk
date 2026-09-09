@@ -10,32 +10,18 @@ from datetime import date
 from pathlib import Path
 from typing import Any
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from product_registry import SPEC_FILES  # noqa: E402  (path is set above)
+
 
 ROOT = Path(__file__).resolve().parents[1]
 SURFACE = ROOT / "surface.json"
 SPECS_DIR = ROOT / "specs"
 EXCLUSIONS = ROOT / "contracts" / "sdk-operation-exclusions.json"
 HTTP_METHODS = {"get", "post", "put", "patch", "delete"}
-VENDORED_SPECS = {
-    "temperaConnectors": "tempera-connectors-api.json",
-    "temperaPayments": "tempera-payments-api.json",
-    "dataEngine": "data-engine-openapi.json",
-    "humanData": "human-data-openapi.json",
-    "temperaLlm": "tempera-llm-api.json",
-    "temperaVoice": "tempera-voice-api.json",
-    "temperaRisk": "tempera-risk-api.json",
-    "temperaWorkflows": "tempera-workflows-api.json",
-    "temperaGym": "tempera-gym-api.json",
-    "temperaBio": "tempera-bio-api.json",
-    "palette": "palette-api.json",
-    "controlPlane": "control-plane.openapi.json",
-    "cradle": "cradle-openapi.json",
-    "temperaDocument": "tempera-document-api.json",
-    "remi": "remi-http-contract.json",
-    "tempo": "tempo-openapi.json",
-    "temperaDropshipping": "tempera-dropshipping-api.json",
-    "temperaBusiness": "tempera-business-api.json",
-}
+# Derived from the one producer registry; see scripts/product_registry.py.
+VENDORED_SPECS = SPEC_FILES
 STRICT_PRODUCTS = set(VENDORED_SPECS)
 PARAM_RE = re.compile(r"\{[^}]+\}")
 EXCLUSION_KEYS = {

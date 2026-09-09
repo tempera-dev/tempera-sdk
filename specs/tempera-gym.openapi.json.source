@@ -1,7 +1,7 @@
 {
-  "generated_path": "specs/tempera-gym-api.json",
+  "generated_path": "specs/tempera-gym.openapi.json",
   "generated_sha256": "f058009afa4ff2851954b560885a7c4443c1228a17c3a2b0cd912f30d848970d",
-  "generated_with": "source_lock.py@1+verbatim-openapi-copy",
+  "generated_with": "sync-vendored-openapi.py@1+verbatim-openapi-copy",
   "schema_version": 1,
   "source_blob_sha": "f1b78a1d28408274bdfafca51248b250dddf8388",
   "source_branch": "main",

@@ -1,0 +1,13 @@
+{
+  "generated_path": "specs/palette.openapi.json",
+  "generated_sha256": "2d71fbbf94e31d38386a08f6dcde201d9b8f046cf0d4a9624da9c7a2a4b2aa46",
+  "generated_with": "sync-vendored-openapi.py@1+verbatim-openapi-copy",
+  "schema_version": 1,
+  "source_blob_sha": "beeb2261e78e6fa97981bff3e76d1aaa80f4350a",
+  "source_branch": "main",
+  "source_commit": "8634190608524c9c543c51f54a6077aa57e304ed",
+  "source_mode": "100644",
+  "source_path": "contracts/openapi/palette.openapi.json",
+  "source_repo": "tempera-dev/palette",
+  "source_sha256": "2d71fbbf94e31d38386a08f6dcde201d9b8f046cf0d4a9624da9c7a2a4b2aa46"
+}

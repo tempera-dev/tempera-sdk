@@ -1,5 +1,5 @@
 {
-  "generated_path": "specs/tempera-business-api.json",
+  "generated_path": "specs/tempera-business.openapi.json",
   "generated_sha256": "aa892f880e743f87afc5c58c20d553a67a060bf3222cbe505d68c7811982bacc",
   "generated_with": "sync-vendored-openapi.py@1+verbatim-openapi-copy",
   "schema_version": 1,

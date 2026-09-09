@@ -1,5 +1,17 @@
 {
   "components": {
+    "responses": {
+      "Error": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Status"
+            }
+          }
+        },
+        "description": "A google.rpc.Status error envelope."
+      }
+    },
     "schemas": {
       "AetherPaymentContextCapabilities": {
         "additionalProperties": false,
@@ -2863,17 +2875,6 @@
         ],
         "type": "object"
       },
-      "GoogleRpcErrorResponse": {
-        "properties": {
-          "error": {
-            "$ref": "#/components/schemas/GoogleRpcStatus"
-          }
-        },
-        "required": [
-          "error"
-        ],
-        "type": "object"
-      },
       "GoogleRpcStatus": {
         "properties": {
           "code": {
@@ -3408,6 +3409,69 @@
             "type": "object"
           }
         ]
+      },
+      "Status": {
+        "additionalProperties": false,
+        "description": "The google.rpc.Status error envelope required of every Tempera API (AIP-193).",
+        "properties": {
+          "error": {
+            "additionalProperties": false,
+            "properties": {
+              "code": {
+                "description": "The HTTP status code, repeated in the body so the envelope is self-describing.",
+                "type": "integer"
+              },
+              "details": {
+                "description": "Structured error details. Present but empty when there are none.",
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "message": {
+                "description": "A developer-facing description that is safe to log and safe to show.",
+                "type": "string"
+              },
+              "requestId": {
+                "description": "The server-assigned request identifier, mirrored from the x-request-id response header.",
+                "type": "string"
+              },
+              "status": {
+                "description": "The canonical google.rpc.Code name, for example INVALID_ARGUMENT.",
+                "enum": [
+                  "CANCELLED",
+                  "UNKNOWN",
+                  "INVALID_ARGUMENT",
+                  "DEADLINE_EXCEEDED",
+                  "NOT_FOUND",
+                  "ALREADY_EXISTS",
+                  "PERMISSION_DENIED",
+                  "UNAUTHENTICATED",
+                  "RESOURCE_EXHAUSTED",
+                  "FAILED_PRECONDITION",
+                  "ABORTED",
+                  "OUT_OF_RANGE",
+                  "UNIMPLEMENTED",
+                  "INTERNAL",
+                  "UNAVAILABLE",
+                  "DATA_LOSS"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "code",
+              "status",
+              "message"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "type": "object"
       }
     },
     "securitySchemes": {
@@ -3483,39 +3547,21 @@
             "description": "Issue a short-lived one-time browser adapter same-user capability"
           },
           "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Invalid capability issuance request"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Missing auth or daemon auth is not configured"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Live capability quota exhausted"
+            "$ref": "#/components/responses/Error"
           }
         },
         "tags": [
           "v1"
-        ]
+        ],
+        "x-tempera-auth-audience": "cradle",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "cradle:execute"
       }
     },
     "/v1/browser/adapter/completion/validate": {
@@ -3543,29 +3589,18 @@
             "description": "Fail-closed browser adapter completion report validation"
           },
           "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Invalid adapter completion report"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Missing or invalid bearer token"
+            "$ref": "#/components/responses/Error"
           }
         },
         "tags": [
           "v1"
-        ]
+        ],
+        "x-tempera-auth-audience": "cradle",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "cradle:execute"
       }
     },
     "/v1/browser/adapter/contract": {
@@ -3591,27 +3626,15 @@
             }
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Missing or invalid bearer token",
-            "headers": {
-              "cache-control": {
-                "description": "Always `no-store`",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
         },
         "tags": [
           "v1"
-        ]
+        ],
+        "x-tempera-auth-audience": "cradle",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "cradle:read"
       }
     },
     "/v1/browser/adapter/launch/claim": {
@@ -3639,29 +3662,18 @@
             "description": "REST-only browser adapter launch request replay claim"
           },
           "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Invalid adapter launch claim request"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Missing or invalid bearer token"
+            "$ref": "#/components/responses/Error"
           }
         },
         "tags": [
           "v1"
-        ]
+        ],
+        "x-tempera-auth-audience": "cradle",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "cradle:execute"
       }
     },
     "/v1/browser/adapter/launch/plan": {
@@ -3689,29 +3701,18 @@
             "description": "Fail-closed browser adapter launch plan preflight"
           },
           "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Invalid adapter launch plan request"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Missing auth or daemon auth is not configured"
+            "$ref": "#/components/responses/Error"
           }
         },
         "tags": [
           "v1"
-        ]
+        ],
+        "x-tempera-auth-audience": "cradle",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "cradle:execute"
       }
     },
     "/v1/browser/adapter/register": {
@@ -3739,29 +3740,18 @@
             "description": "Fail-closed browser adapter registration preflight"
           },
           "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Invalid adapter registration request"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Missing or invalid bearer token"
+            "$ref": "#/components/responses/Error"
           }
         },
         "tags": [
           "v1"
-        ]
+        ],
+        "x-tempera-auth-audience": "cradle",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "cradle:execute"
       }
     },
     "/v1/browser/adapter/validate": {
@@ -3789,29 +3779,18 @@
             "description": "Fail-closed browser adapter manifest validation"
           },
           "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Invalid adapter manifest"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Missing or invalid bearer token"
+            "$ref": "#/components/responses/Error"
           }
         },
         "tags": [
           "v1"
-        ]
+        ],
+        "x-tempera-auth-audience": "cradle",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "cradle:execute"
       }
     },
     "/v1/browser/admit": {
@@ -3839,29 +3818,18 @@
             "description": "Browser sandbox admission decision"
           },
           "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Malformed, oversized, or non-JSON request body"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Missing or invalid bearer token"
+            "$ref": "#/components/responses/Error"
           }
         },
         "tags": [
           "v1"
-        ]
+        ],
+        "x-tempera-auth-audience": "cradle",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "cradle:execute"
       }
     },
     "/v1/browser/profiles": {
@@ -3887,27 +3855,15 @@
             }
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Missing or invalid bearer token",
-            "headers": {
-              "cache-control": {
-                "description": "Always `no-store`",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
         },
         "tags": [
           "v1"
-        ]
+        ],
+        "x-tempera-auth-audience": "cradle",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "cradle:read"
       }
     },
     "/v1/capabilities": {
@@ -3933,27 +3889,15 @@
             }
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Missing or invalid bearer token",
-            "headers": {
-              "cache-control": {
-                "description": "Always `no-store`",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
         },
         "tags": [
           "v1"
-        ]
+        ],
+        "x-tempera-auth-audience": "cradle",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "cradle:read"
       }
     },
     "/v1/execute": {
@@ -3981,29 +3925,18 @@
             "description": "ExecutionResult"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Missing or invalid bearer token"
+            "$ref": "#/components/responses/Error"
           },
           "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Protocol, source, policy, or sync-limit rejection"
+            "$ref": "#/components/responses/Error"
           }
         },
         "tags": [
           "v1"
-        ]
+        ],
+        "x-tempera-auth-audience": "cradle",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "cradle:execute"
       }
     },
     "/v1/health": {
@@ -4012,6 +3945,9 @@
         "responses": {
           "200": {
             "description": "Daemon health"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
           }
         },
         "security": [
@@ -4019,7 +3955,8 @@
         ],
         "tags": [
           "v1"
-        ]
+        ],
+        "x-tempera-auth-kind": "none"
       }
     },
     "/v1/integration": {
@@ -4045,27 +3982,15 @@
             }
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Missing or invalid bearer token",
-            "headers": {
-              "cache-control": {
-                "description": "Always `no-store`",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
         },
         "tags": [
           "v1"
-        ]
+        ],
+        "x-tempera-auth-audience": "cradle",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "cradle:read"
       }
     },
     "/v1/jobs": {
@@ -4107,49 +4032,24 @@
             "description": "Created asynchronous job operation"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Missing or invalid bearer token"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Idempotency key reused with a different payload"
+            "$ref": "#/components/responses/Error"
           },
           "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Protocol, source, policy, or job-limit rejection"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Worker, SQLite admission, or retained-state capacity exhausted"
+            "$ref": "#/components/responses/Error"
           }
         },
         "tags": [
           "v1"
-        ]
+        ],
+        "x-tempera-auth-audience": "cradle",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "cradle:execute"
       }
     },
     "/v1/jobs/{id}": {
@@ -4171,49 +4071,27 @@
             "description": "Canceled job (or already canceled)"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Missing or invalid bearer token"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Unknown or retention-pruned job"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Job already finished and cannot be canceled"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "SQLite job-store admission is busy"
+            "$ref": "#/components/responses/Error"
           }
         },
         "tags": [
           "v1"
-        ]
+        ],
+        "x-tempera-auth-audience": "cradle",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "cradle:execute",
+        "x-tempera-resource-pattern": {
+          "id": "jobs/*"
+        }
       },
       "get": {
         "operationId": "projects.jobs.get",
@@ -4240,39 +4118,24 @@
             "description": "JobRecord"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Missing or invalid bearer token"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Unknown or retention-pruned job"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "SQLite job-store admission is busy"
+            "$ref": "#/components/responses/Error"
           }
         },
         "tags": [
           "v1"
-        ]
+        ],
+        "x-tempera-auth-audience": "cradle",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "cradle:read",
+        "x-tempera-resource-pattern": {
+          "id": "jobs/*"
+        }
       }
     },
     "/v1/projects/{project}/modules": {
@@ -4311,49 +4174,27 @@
             "description": "Stored content-addressed module metadata"
           },
           "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Invalid or oversized base64 WebAssembly binary"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Missing or invalid central control-plane bearer"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Project is not the token-bound project"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Module-store admission or capacity exhausted"
+            "$ref": "#/components/responses/Error"
           }
         },
         "tags": [
           "v1"
-        ]
+        ],
+        "x-tempera-auth-audience": "cradle",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "cradle:write",
+        "x-tempera-resource-pattern": {
+          "project": "projects/*"
+        }
       }
     },
     "/v1/projects/{project}/modules/{sha256}": {
@@ -4391,49 +4232,28 @@
             "description": "Stored content-addressed module metadata"
           },
           "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Invalid module digest"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Missing or invalid central control-plane bearer"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Unknown module or project"
+            "$ref": "#/components/responses/Error"
           },
           "429": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleRpcErrorResponse"
-                }
-              }
-            },
-            "description": "Module-store admission or capacity exhausted"
+            "$ref": "#/components/responses/Error"
           }
         },
         "tags": [
           "v1"
-        ]
+        ],
+        "x-tempera-auth-audience": "cradle",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-required-scope": "cradle:read",
+        "x-tempera-resource-pattern": {
+          "project": "projects/*",
+          "sha256": "projects/*/modules/*"
+        }
       }
     }
   },
@@ -4451,5 +4271,8 @@
       "description": "stateless MCP JSON-RPC endpoint",
       "name": "mcp"
     }
+  ],
+  "x-tempera-protocol-routes": [
+    "/mcp"
   ]
 }

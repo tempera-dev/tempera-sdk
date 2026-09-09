@@ -21,7 +21,7 @@ def main():
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
     source = args.source_repo.resolve()
-    lock = json.loads((ROOT / "specs/tempera-dropshipping-api.json.source").read_text())
+    lock = json.loads((ROOT / "specs/tempera-dropshipping.openapi.json.source").read_text())
     def git(*parts):
         return subprocess.check_output(["git", "-C", str(source), *parts], text=True).strip()
     if git("rev-parse", "HEAD") != lock["source_commit"] or git("status", "--porcelain"):

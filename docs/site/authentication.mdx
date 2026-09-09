@@ -194,11 +194,12 @@ is the default when none is specified.
 | `tempera-bio` | tempera-bio |
 | `tempera-document` | tempera-document |
 | `tempera-risk` | tempera-risk |
-| `tempera-investigations` | — |
+| `tempera-investigations` | tempera-investigations |
 | `tempera-payments` | tempera-payments |
 | `tempera-dropshipping` | tempera-dropshipping |
 | `tempera-voice` | tempera-voice |
 | `tempera-clearing` | — |
+| `tempera-authority` | — |
 | `tempera-business` | tempera-business |
 
 ## Scopes
@@ -209,16 +210,16 @@ is the default when none is specified.
 | `memory:read` | No typed SDK operation declares it yet; enforced server-side. |
 | `memory:write` | No typed SDK operation declares it yet; enforced server-side. |
 | `memory:manage` | No typed SDK operation declares it yet; enforced server-side. |
-| `trace:read` | palette: `archiveTrace`, `getSpan`, `getSpanIo`, `getTrace`, `listTraces`, `searchSpans` |
+| `trace:read` | palette: `alertsEvaluate`, `archiveQuerySpans`, `archiveTrace`, `connectGetStatus`, `connectorsGetSkills`, `connectorsList`, `connectorsListTools`, `connectorsStatus`, `getSpan`, `getSpanIo`, `getTrace`, `listTraces`, `onlineDecideSampling`, `promptsDiffVersions`, `promptsGet`, `promptsList`, `promptsListVersions`, `searchSpans` |
 | `trace:write` | palette: `importSource`, `ingestSpan` |
-| `scenario:read` | No typed SDK operation declares it yet; enforced server-side. |
-| `scenario:write` | No typed SDK operation declares it yet; enforced server-side. |
+| `scenario:read` | palette: `scenariosGet`, `scenariosList`, `scenariosMine` |
+| `scenario:write` | palette: `scenariosCreate` |
 | `dataset:read` | data-engine: `getArtifact`, `getDiscoveryRelease`, `getEcosystemReadiness`, `getEpisode`, `getEvidenceRecord`, `getJob`, `getJobResults`, `getLabelQuality`, `getMetrics`, `getProduct`, `getProductManifest`, `getResearchCatalogEntry`, `getTool`, `getUseCase`, `listArtifactLabels`, `listArtifacts`, `listCampaigns`, `listEpisodes`, `listEvidenceRecords`, `listExpertTasks`, `listResearchCatalogEntries`, `listTools`, `listUseCases`, `queryResearchRetrieval`; tempera-gym: `bioProposalPoliciesList`, `getEpisode`, `getRun`, `getSealedEvaluation`, `getTask`, `listDomains`, `listEnvironments`, `listEpisodes`, `listRuns`, `listSealedEvaluations`, `listSealedEvaluators`, `listTasks`, `listVerifiers` |
-| `dataset:write` | data-engine: `checkProductLeakage`, `createCampaign`, `createResearchCatalogEntry`, `createTool`, `deleteTool`, `ingestArtifact`, `ingestWeb`, `invokeTool`, `profileDataset`, `projectsConnectorEvidenceIngest`, `transitionCampaign`, `validateProduct`; palette: `createDataset`, `createDatasetVersion`, `promoteTraceToCase` |
+| `dataset:write` | data-engine: `checkProductLeakage`, `createCampaign`, `createResearchCatalogEntry`, `createTool`, `deleteTool`, `ingestArtifact`, `ingestWeb`, `invokeTool`, `profileDataset`, `projectsConnectorEvidenceIngest`, `transitionCampaign`, `validateProduct`; palette: `createDataset`, `createDatasetVersion`, `promoteTraceToCase`, `promptsAddVersion`, `promptsCreate`, `reviewsCreateQueue`, `reviewsEnqueueTaskFromTrace`, `reviewsListTasks`, `reviewsPromoteAnnotation`, `reviewsSubmitAnnotation` |
 | `connector:read` | data-engine: `listConnectors`, `projectsConnectorRunsGet`, `projectsConnectorRunsList`, `projectsSourceDefinitionsGet`, `projectsSourceDefinitionsList` |
 | `connector:run` | data-engine: `projectsSourceDefinitionsRun` |
 | `connector:manage` | data-engine: `extractSource`, `projectsSourceDefinitionsCreate`, `projectsSourceDefinitionsPatch` |
-| `eval:run` | data-engine: `commitDiscoveryRelease`, `createEpisode`, `createEvidenceRecord`, `createJob`, `deriveBundle`, `emitEval`, `runUseCase`; palette: `getTemperaEvidence`, `importTemperaBundle`, `recordTemperaDecision`; tempera-gym: `bioProposalsProposeBatch`, `createEpisode`, `createRollout`, `evaluateTask`, `exportEpisode`, `precommitSealedEvaluation`, `runSealedEvaluation`, `stepEpisode`; tempera-voice: `buildVoiceEvalBundle`, `createVoicePaletteHandoff`, `exportVoiceSessions`, `importVoiceEvalResult`, `listVoiceEvalProfiles`, `publishVoicePaletteHandoff`, `sealVoiceEvalResult` |
+| `eval:run` | data-engine: `commitDiscoveryRelease`, `createEpisode`, `createEvidenceRecord`, `createJob`, `deriveBundle`, `emitEval`, `runUseCase`; palette: `calibrationsRun`, `connectorsInvokeTool`, `evalsRunDeterministic`, `evalsRunJudge`, `experimentsRunDeterministic`, `experimentsRunJudge`, `gatesCreate`, `gatesRun`, `getTemperaEvidence`, `importTemperaBundle`, `judgeEvaluate`, `judgeListLedger`, `recordTemperaDecision`; tempera-gym: `bioProposalsProposeBatch`, `createEpisode`, `createRollout`, `evaluateTask`, `exportEpisode`, `precommitSealedEvaluation`, `runSealedEvaluation`, `stepEpisode`; tempera-voice: `buildVoiceEvalBundle`, `createVoicePaletteHandoff`, `exportVoiceSessions`, `importVoiceEvalResult`, `listVoiceEvalProfiles`, `publishVoicePaletteHandoff`, `sealVoiceEvalResult` |
 | `training:publish` | data-engine: `admitTrainingRelease`, `getTrainingRelease`; human-data: `computeQualification` |
 | `review:gold:manage` | data-engine: `createReviewQualificationTask`, `createReviewerRevocation` |
 | `review:resolve` | data-engine: `claimExpertTask`, `createExpertTaskAppeal`, `getReviewOperations`, `getReviewerQualification`, `recordReviewerSessionEvent`, `releaseExpertTaskAssignment`, `renewExpertTaskAssignment`, `resolveExpertTask`, `saveExpertTaskDraft` |
@@ -240,10 +241,10 @@ is the default when none is specified.
 | `risk:read` | tempera-risk: `exportAudit`, `getCase`, `getCaseDossier`, `getDecision`, `getResearchJob`, `getResearchJobResult`, `getSourceCoverage`, `getSourcePack`, `getSubject`, `listCases`, `listResearchJobEvents`, `listSourcePacks`, `listSubjects`, `streamResearchJobEvents` |
 | `risk:write` | tempera-risk: `abortRiskClearingReservation`, `cancelResearchJob`, `createAccessGrant`, `createCase`, `createDecision`, `createPeopleDirectoryProfile`, `createResearchJob`, `createScreening`, `createSubject`, `deployPolicy`, `disputeRiskClearingExposure`, `executeGraphRead`, `ingestEvent`, `ingestModelScore`, `ingestPaymentObservation`, `markRiskClearingOutcomeUnknown`, `openRiskClearingExposure`, `recordOutcome`, `recordRiskClearingCompensation`, `recordRiskClearingProvisionalOutcome`, `registerModel`, `registerPolicy`, `revokeAccessGrant`, `searchPeople`, `settleRiskClearingExposure`, `verifyRiskClearingEvidenceLive` |
 | `risk:review` | tempera-risk: `createApproval`, `reviewResearchJob` |
-| `investigation:read` | No typed SDK operation declares it yet; enforced server-side. |
-| `investigation:write` | No typed SDK operation declares it yet; enforced server-side. |
-| `investigation:run` | No typed SDK operation declares it yet; enforced server-side. |
-| `investigation:review` | No typed SDK operation declares it yet; enforced server-side. |
+| `investigation:read` | tempera-investigations: `getAgenticRun`, `getDeterministicEvaluation`, `getInvestigation`, `getInvestigationDossier`, `getInvestigationProfile`, `getOperation`, `listAgenticRuns`, `listDeterministicEvaluations`, `listFindings`, `listInvestigationEvents`, `listInvestigationProfiles`, `listInvestigationReviews`, `listInvestigations` |
+| `investigation:write` | tempera-investigations: `cancelInvestigation`, `createInvestigation`, `createInvestigationProfile`, `deleteInvestigationProfile`, `updateInvestigationProfile` |
+| `investigation:run` | tempera-investigations: `cancelOperation`, `evaluateInvestigationDeterministically`, `replayInvestigation`, `runInvestigation`, `runInvestigationAgentic` |
+| `investigation:review` | tempera-investigations: `createInvestigationReview` |
 | `pii:unmask` | palette PII unmasking — pass `unmask` + `reason` on trace/span reads (`getTrace`, `getSpan`, `getSpanIo`). |
 | `payments:intents:read` | tempera-payments: `getPaymentIntent` |
 | `payments:intents:write` | tempera-payments: `createCardSession`, `createPaymentIntent`, `createStripeCheckout` |
@@ -267,13 +268,59 @@ is the default when none is specified.
 | `connection:invoke` | tempera-connectors: `connectionsInvoke` |
 | `connection:write` | tempera-connectors: `connectionsCreate`, `connectionsImportOpenApi`, `connectionsTest` |
 | `connection:read` | tempera-connectors: `connectionsGet`, `connectionsList`, `connectorsList` |
-| `admin` | palette: `createApiKey`, `getUsageSummary`, `revokeApiKey`; remi: `getMetrics`, `getPrometheusMetrics`, `getStats`, `health`, `listAudit`, `maintenance`, `project`, `query`, `remember` |
+| `authority:holds:read` | auth-hub: `authorityHoldsGet`, `authorityHoldsList` |
+| `authority:holds:decide` | auth-hub: `authorityHoldsDecide` |
+| `authority:holds:write` | auth-hub: `authorityHoldsClaim`, `authorityHoldsCreate`, `authorityHoldsFinalize`, `authorityHoldsMarkRecoveryRequired`, `authorityHoldsRevoke` |
+| `authority:policies:read` | auth-hub: `authorityCredentialBindingsList`, `authorityPoliciesList` |
+| `authority:policies:write` | auth-hub: `authorityCredentialBindingsCreate`, `authorityPoliciesArchive`, `authorityPoliciesCreate`, `authorityPoliciesUpdate` |
+| `authority:credentials:release` | auth-hub: `authorityCredentialBindingsRelease` |
+| `authority:ledger:read` | auth-hub: `authorityLedgerExport`, `authorityMetricsGet` |
+| `authority:ledger:export` | No typed SDK operation declares it yet; enforced server-side. |
+| `admin` | palette: `auditList`, `connectorsConnect`, `createApiKey`, `getUsageSummary`, `ingestDrainTraceIngested`, `ingestDrainTraceWrites`, `ingestGetQueueStatus`, `ingestReconcileTrace`, `ingestReplayDeadLetter`, `providerSecretsCreate`, `providerSecretsList`, `providerSecretsRevoke`, `revokeApiKey`; remi: `getMetrics`, `getPrometheusMetrics`, `getStats`, `health`, `listAudit`, `maintenance`, `project`, `query`, `remember` |
 | `business:read` | tempera-business: `businessCapabilities`, `businessCasesAudit`, `businessCasesGet`, `businessCasesList`, `businessOperatingState`, `businessProfileGet`, `businessProfileHistoryList` |
 | `business:write` | tempera-business: `businessCasesCreate`, `businessCasesPrepareDraft`, `businessCasesRecordDeclaredReceipt`, `businessCasesUpdateIntake`, `businessProfileInitialize`, `businessProfilePatch` |
 | `business:review` | tempera-business: `businessCasesReviewDraft`, `businessProfileClear` |
 | `orders:write` | tempera-dropshipping: `createOrder`, `createStore`, `prepareBusinessBrowserTask`, `prepareBusinessTask`, `prepareProposal`, `recordBusinessTaskReceipt`, `recordManualOutcome`, `updateBusinessWorkspace`, `updateOrder` |
 | `orders:approve` | tempera-dropshipping: `approveProposal`, `executeProposal`, `reconcileOrder`, `reviewBusinessTask` |
 | `offline_access` | No typed SDK operation declares it yet; enforced server-side. |
+
+## Known scope gaps
+
+### `cradle:execute`
+
+- **Status:** staged.
+- **Owner:** cradle.
+- **Reported:** 2026-09-08.
+- **Migration:** Cradle's canonical contract at contracts/openapi/cradle.openapi.json declares this scope. Add it to the Scope enum in the Auth Hub control-plane contract, re-vendor controlPlane, then drop this gap.
+
+### `cradle:read`
+
+- **Status:** staged.
+- **Owner:** cradle.
+- **Reported:** 2026-09-08.
+- **Migration:** Cradle's canonical contract at contracts/openapi/cradle.openapi.json declares this scope. Add it to the Scope enum in the Auth Hub control-plane contract, re-vendor controlPlane, then drop this gap.
+
+### `cradle:write`
+
+- **Status:** staged.
+- **Owner:** cradle.
+- **Reported:** 2026-09-08.
+- **Migration:** Cradle's canonical contract at contracts/openapi/cradle.openapi.json declares this scope. Add it to the Scope enum in the Auth Hub control-plane contract, re-vendor controlPlane, then drop this gap.
+
+### `tempo:read`
+
+- **Status:** staged.
+- **Owner:** tempo.
+- **Reported:** 2026-09-08.
+- **Migration:** Tempo's canonical contract at contracts/openapi/tempo.openapi.json declares this scope. Add it to the Scope enum in the Auth Hub control-plane contract, re-vendor controlPlane, then drop this gap.
+
+### `tempo:write`
+
+- **Status:** staged.
+- **Owner:** tempo.
+- **Reported:** 2026-09-08.
+- **Migration:** Tempo's canonical contract at contracts/openapi/tempo.openapi.json declares this scope. Add it to the Scope enum in the Auth Hub control-plane contract, re-vendor controlPlane, then drop this gap.
+
 
 ## Issuer endpoints
 

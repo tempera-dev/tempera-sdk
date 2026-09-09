@@ -84,7 +84,7 @@ let spec = client.build_request("tempo", "agent_json", &[])?;
 
 ### health
 
-`GET /health`
+`GET /healthz`
 
 Check tempod liveness; returns \{ok: true\}.
 
@@ -168,7 +168,7 @@ let spec = client.build_request("tempo", "openapi", &[])?;
 
 ### ready
 
-`GET /ready`
+`GET /readyz`
 
 Check tempod readiness, including engine attachment, drain state, and session capacity.
 
@@ -201,7 +201,9 @@ let spec = client.build_request("tempo", "ready", &[])?;
 Call POST /drain.
 
 - **Producer operationId:** `drain`
-- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempo`.
+- **Scope:** `tempo:write`
+- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.tempo.drain()` · Python `client.tempo.drain()` · Rust `build_request("tempo", "drain", params)`
 
 <CodeGroup>
@@ -229,7 +231,9 @@ let spec = client.build_request("tempo", "drain", &[])?;
 List agent runs, optionally filtered to one session.
 
 - **Producer operationId:** `listRuns`
-- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempo`.
+- **Scope:** `tempo:read`
+- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.tempo.listRuns()` · Python `client.tempo.list_runs()` · Rust `build_request("tempo", "list_runs", params)`
 
 **Query parameters**
@@ -274,7 +278,9 @@ let spec = client.build_request("tempo", "list_runs", &[
 Fetch one agent run with its state.
 
 - **Producer operationId:** `getRun`
-- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempo`.
+- **Scope:** `tempo:read`
+- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.tempo.getRun()` · Python `client.tempo.get_run()` · Rust `build_request("tempo", "get_run", params)`
 
 **Path parameters**
@@ -314,7 +320,9 @@ let spec = client.build_request("tempo", "get_run", &[
 Call GET /runs/\{run_id\}/events.
 
 - **Producer operationId:** `runEvents`
-- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempo`.
+- **Scope:** `tempo:read`
+- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.tempo.runEvents()` · Python `client.tempo.run_events()` · Rust `build_request("tempo", "run_events", params)`
 
 **Path parameters**
@@ -363,7 +371,9 @@ let spec = client.build_request("tempo", "run_events", &[
 Cancel an agent run.
 
 - **Producer operationId:** `cancelRun`
-- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempo`.
+- **Scope:** `tempo:write`
+- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.tempo.cancelRun()` · Python `client.tempo.cancel_run()` · Rust `build_request("tempo", "cancel_run", params)`
 
 **Path parameters**
@@ -403,7 +413,9 @@ let spec = client.build_request("tempo", "cancel_run", &[
 Resume an agent run after a human handoff completes.
 
 - **Producer operationId:** `resumeRun`
-- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempo`.
+- **Scope:** `tempo:write`
+- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.tempo.resumeRun()` · Python `client.tempo.resume_run()` · Rust `build_request("tempo", "resume_run", params)`
 
 **Path parameters**
@@ -443,7 +455,9 @@ let spec = client.build_request("tempo", "resume_run", &[
 List browser sessions with their state and creation time.
 
 - **Producer operationId:** `listSessions`
-- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempo`.
+- **Scope:** `tempo:read`
+- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.tempo.listSessions()` · Python `client.tempo.list_sessions()` · Rust `build_request("tempo", "list_sessions", params)`
 
 **Query parameters**
@@ -487,7 +501,9 @@ let spec = client.build_request("tempo", "list_sessions", &[
 Open a browser session at a URL; driverless sessions skip engine attachment.
 
 - **Producer operationId:** `createSession`
-- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempo`.
+- **Scope:** `tempo:write`
+- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.tempo.createSession()` · Python `client.tempo.create_session()` · Rust `build_request("tempo", "create_session", params)`
 
 **Body parameters**
@@ -531,7 +547,9 @@ let spec = client.build_request("tempo", "create_session", &[
 Close a browser session and release its engine resources.
 
 - **Producer operationId:** `closeSession`
-- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempo`.
+- **Scope:** `tempo:write`
+- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.tempo.closeSession()` · Python `client.tempo.close_session()` · Rust `build_request("tempo", "close_session", params)`
 
 **Path parameters**
@@ -571,7 +589,9 @@ let spec = client.build_request("tempo", "close_session", &[
 Grant a pending policy confirmation and receive a single-use grant token.
 
 - **Producer operationId:** `grantSessionConfirmation`
-- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempo`.
+- **Scope:** `tempo:write`
+- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.tempo.grantConfirmation()` · Python `client.tempo.grant_confirmation()` · Rust `build_request("tempo", "grant_confirmation", params)`
 
 **Path parameters**
@@ -615,7 +635,9 @@ let spec = client.build_request("tempo", "grant_confirmation", &[
 Fetch the session's event window after a sequence number.
 
 - **Producer operationId:** `sessionEvents`
-- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempo`.
+- **Scope:** `tempo:read`
+- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.tempo.sessionEvents()` · Python `client.tempo.session_events()` · Rust `build_request("tempo", "session_events", params)`
 
 **Path parameters**
@@ -664,7 +686,9 @@ let spec = client.build_request("tempo", "session_events", &[
 Call GET /sessions/\{session_id\}/manager.
 
 - **Producer operationId:** `managerSession`
-- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempo`.
+- **Scope:** `tempo:read`
+- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.tempo.managerSession()` · Python `client.tempo.manager_session()` · Rust `build_request("tempo", "manager_session", params)`
 
 **Path parameters**
@@ -704,7 +728,9 @@ let spec = client.build_request("tempo", "manager_session", &[
 Start an agent run against the session with a goal, action budget, and round limit.
 
 - **Producer operationId:** `createSessionRun`
-- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempo`.
+- **Scope:** `tempo:write`
+- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.tempo.createRun()` · Python `client.tempo.create_run()` · Rust `build_request("tempo", "create_run", params)`
 
 **Path parameters**
@@ -762,7 +788,9 @@ let spec = client.build_request("tempo", "create_run", &[
 Call POST /sessions/\{session_id\}/surfaces.
 
 - **Producer operationId:** `registerSessionSurface`
-- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempo`.
+- **Scope:** `tempo:write`
+- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.tempo.registerSessionSurface()` · Python `client.tempo.register_session_surface()` · Rust `build_request("tempo", "register_session_surface", params)`
 
 **Path parameters**
@@ -822,7 +850,9 @@ let spec = client.build_request("tempo", "register_session_surface", &[
 Call DELETE /sessions/\{session_id\}/surfaces/\{surface_id\}.
 
 - **Producer operationId:** `removeSessionSurface`
-- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempo`.
+- **Scope:** `tempo:write`
+- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.tempo.removeSessionSurface()` · Python `client.tempo.remove_session_surface()` · Rust `build_request("tempo", "remove_session_surface", params)`
 
 **Path parameters**
@@ -866,7 +896,9 @@ let spec = client.build_request("tempo", "remove_session_surface", &[
 Apply a batch of semantic actions with policy gating; returns the applied diff or a policy decision.
 
 - **Producer operationId:** `actBatchSession`
-- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempo`.
+- **Scope:** `tempo:write`
+- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.tempo.actBatch()` · Python `client.tempo.act_batch()` · Rust `build_request("tempo", "act_batch", params)`
 
 **Path parameters**
@@ -926,7 +958,9 @@ let spec = client.build_request("tempo", "act_batch", &[
 Let a human surface take write ownership of the session and receive an adoption lease.
 
 - **Producer operationId:** `adoptSession`
-- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempo`.
+- **Scope:** `tempo:write`
+- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.tempo.adoptSession()` · Python `client.tempo.adopt_session()` · Rust `build_request("tempo", "adopt_session", params)`
 
 **Path parameters**
@@ -986,7 +1020,9 @@ let spec = client.build_request("tempo", "adopt_session", &[
 Return write ownership of the session to the agent plane.
 
 - **Producer operationId:** `handoffSession`
-- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempo`.
+- **Scope:** `tempo:write`
+- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.tempo.handoffSession()` · Python `client.tempo.handoff_session()` · Rust `build_request("tempo", "handoff_session", params)`
 
 **Path parameters**
@@ -1026,7 +1062,9 @@ let spec = client.build_request("tempo", "handoff_session", &[
 Fetch the session's compiled structured observation (ranked, stably-identified elements).
 
 - **Producer operationId:** `observeSession`
-- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempo`.
+- **Scope:** `tempo:read`
+- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.tempo.observe()` · Python `client.tempo.observe()` · Rust `build_request("tempo", "observe", params)`
 
 **Path parameters**
@@ -1066,7 +1104,9 @@ let spec = client.build_request("tempo", "observe", &[
 Capture a PNG screenshot of the session, optionally annotated with set-of-marks.
 
 - **Producer operationId:** `screenshotSession`
-- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempo`.
+- **Scope:** `tempo:read`
+- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.tempo.screenshot()` · Python `client.tempo.screenshot()` · Rust `build_request("tempo", "screenshot", params)`
 
 **Path parameters**
@@ -1115,7 +1155,9 @@ let spec = client.build_request("tempo", "screenshot", &[
 Call POST /sessions/\{session_id\}/transform.
 
 - **Producer operationId:** `transformSession`
-- **Auth:** Product bearer — an access token minted for audience `tempo`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempo`.
+- **Scope:** `tempo:write`
+- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.tempo.transformSession()` · Python `client.tempo.transform_session()` · Rust `build_request("tempo", "transform_session", params)`
 
 **Path parameters**

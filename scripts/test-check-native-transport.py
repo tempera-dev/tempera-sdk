@@ -53,7 +53,7 @@ class ContractTest(unittest.TestCase):
 
     def test_stream_operation_comes_from_the_websocket_contract(self) -> None:
         voice_spec = json.loads(
-            (ROOT / "specs" / "tempera-voice-api.json").read_text(encoding="utf-8")
+            (ROOT / "specs" / "tempera-voice.openapi.json").read_text(encoding="utf-8")
         )
         websocket = voice_spec["x-tempera-websocket-contract"]
         stream = self.by_product["temperaVoice"]["streamVoiceSession"]

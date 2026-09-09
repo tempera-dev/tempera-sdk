@@ -31,6 +31,7 @@
     "tempera-dropshipping",
     "tempera-voice",
     "tempera-clearing",
+    "tempera-authority",
     "tempera-business"
   ],
   "defaultAudience": "palette",
@@ -97,6 +98,14 @@
     "connection:invoke",
     "connection:write",
     "connection:read",
+    "authority:holds:read",
+    "authority:holds:decide",
+    "authority:holds:write",
+    "authority:policies:read",
+    "authority:policies:write",
+    "authority:credentials:release",
+    "authority:ledger:read",
+    "authority:ledger:export",
     "admin",
     "business:read",
     "business:write",
@@ -113,7 +122,38 @@
       "migration": "Register the tempera-business resource audience in the Auth Hub control-plane contract, then drop this gap and re-vendor the enum."
     }
   },
-  "scopeGaps": {},
+  "scopeGaps": {
+    "cradle:read": {
+      "owner": "cradle",
+      "reportedDate": "2026-09-08",
+      "status": "staged",
+      "migration": "Cradle's canonical contract at contracts/openapi/cradle.openapi.json declares this scope. Add it to the Scope enum in the Auth Hub control-plane contract, re-vendor controlPlane, then drop this gap."
+    },
+    "cradle:write": {
+      "owner": "cradle",
+      "reportedDate": "2026-09-08",
+      "status": "staged",
+      "migration": "Cradle's canonical contract at contracts/openapi/cradle.openapi.json declares this scope. Add it to the Scope enum in the Auth Hub control-plane contract, re-vendor controlPlane, then drop this gap."
+    },
+    "cradle:execute": {
+      "owner": "cradle",
+      "reportedDate": "2026-09-08",
+      "status": "staged",
+      "migration": "Cradle's canonical contract at contracts/openapi/cradle.openapi.json declares this scope. Add it to the Scope enum in the Auth Hub control-plane contract, re-vendor controlPlane, then drop this gap."
+    },
+    "tempo:read": {
+      "owner": "tempo",
+      "reportedDate": "2026-09-08",
+      "status": "staged",
+      "migration": "Tempo's canonical contract at contracts/openapi/tempo.openapi.json declares this scope. Add it to the Scope enum in the Auth Hub control-plane contract, re-vendor controlPlane, then drop this gap."
+    },
+    "tempo:write": {
+      "owner": "tempo",
+      "reportedDate": "2026-09-08",
+      "status": "staged",
+      "migration": "Tempo's canonical contract at contracts/openapi/tempo.openapi.json declares this scope. Add it to the Scope enum in the Auth Hub control-plane contract, re-vendor controlPlane, then drop this gap."
+    }
+  },
   "environments": {
     "local": {
       "publicSiteUrl": "http://localhost:3000",
@@ -381,6 +421,14 @@
       "audience": "tempera-connectors",
       "auth": "bearer minted for audience tempera-connectors; the service additionally accepts a tempera-workflows bearer and rewrites those workflow scopes down to connection scopes, which the SDK deliberately does not model",
       "description": "Tenant-scoped external API connection control plane and bounded invocation runtime."
+    },
+    "temperaInvestigations": {
+      "name": "tempera-investigations",
+      "repository": "https://github.com/tempera-dev/tempera-investigations",
+      "envVar": "TEMPERA_INVESTIGATIONS_URL",
+      "audience": "tempera-investigations",
+      "auth": "bearer minted for audience tempera-investigations with the operation's investigation:read/investigation:write/investigation:run/investigation:review scope",
+      "description": "Long-running investigations with profiles, agentic and deterministic runs, findings, reviews and a replayable dossier."
     }
   },
   "operations": {
@@ -2250,13 +2298,390 @@
         "authAudience": "tempera-clearing",
         "scope": "clearing:actions:reconcile",
         "safeRetry": "none"
+      },
+      {
+        "id": "authorityPoliciesList",
+        "method": "GET",
+        "path": "/v1/authority/policies",
+        "auth": "oauthResource",
+        "description": "List the authority policies for one workspace.",
+        "upstreamOperationId": "authorityPolicies.list",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-authority",
+        "scope": "authority:policies:read",
+        "safeRetry": "read"
+      },
+      {
+        "id": "authorityPoliciesCreate",
+        "method": "POST",
+        "path": "/v1/authority/policies",
+        "auth": "oauthResource",
+        "description": "Create an authority policy. Requires an owner or admin human principal and a recent passkey step-up.",
+        "upstreamOperationId": "authorityPolicies.create",
+        "body": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "name",
+          "document"
+        ],
+        "requiredBody": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "name",
+          "document"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-authority",
+        "scope": "authority:policies:write",
+        "safeRetry": "none"
+      },
+      {
+        "id": "authorityPoliciesUpdate",
+        "method": "PATCH",
+        "path": "/v1/authority/policies/{id}",
+        "auth": "oauthResource",
+        "description": "Replace an authority policy document. Requires an owner or admin human principal and a recent passkey step-up.",
+        "upstreamOperationId": "authorityPolicies.update",
+        "pathParams": [
+          "id"
+        ],
+        "query": [
+          "updateMask"
+        ],
+        "requiredQuery": [
+          "updateMask"
+        ],
+        "body": [
+          "document"
+        ],
+        "requiredBody": [
+          "document"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-authority",
+        "scope": "authority:policies:write",
+        "safeRetry": "none"
+      },
+      {
+        "id": "authorityPoliciesArchive",
+        "method": "DELETE",
+        "path": "/v1/authority/policies/{id}",
+        "auth": "oauthResource",
+        "description": "Archive an authority policy. A decision already made cites the policy that made it, so the row stays readable.",
+        "upstreamOperationId": "authorityPolicies.archive",
+        "pathParams": [
+          "id"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-authority",
+        "scope": "authority:policies:write",
+        "safeRetry": "none"
+      },
+      {
+        "id": "authorityHoldsList",
+        "method": "GET",
+        "path": "/v1/authority/holds",
+        "auth": "oauthResource",
+        "description": "List the authority holds for one workspace.",
+        "upstreamOperationId": "authorityHolds.list",
+        "query": [
+          "pageSize",
+          "pageToken",
+          "state"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-authority",
+        "scope": "authority:holds:read",
+        "safeRetry": "read"
+      },
+      {
+        "id": "authorityHoldsCreate",
+        "method": "POST",
+        "path": "/v1/authority/holds",
+        "auth": "oauthResource",
+        "description": "Create a hold. A duplicate call digest joins the open hold rather than asking a person twice. Evidence is reference-only; inline content is rejected.",
+        "upstreamOperationId": "authorityHolds.create",
+        "body": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "serverName",
+          "toolName",
+          "callDigest",
+          "surfaceDigest",
+          "effect",
+          "summary",
+          "reaches",
+          "evidence",
+          "requiredApprovers",
+          "holdTtlSeconds",
+          "correlationId",
+          "principalId",
+          "policyId",
+          "policyDigest",
+          "approvalUrl"
+        ],
+        "requiredBody": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "serverName",
+          "toolName",
+          "callDigest",
+          "effect"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-authority",
+        "scope": "authority:holds:write",
+        "safeRetry": "none"
+      },
+      {
+        "id": "authorityHoldsGet",
+        "method": "GET",
+        "path": "/v1/authority/holds/{id}",
+        "auth": "oauthResource",
+        "description": "Read one authority hold and its attributed decisions.",
+        "upstreamOperationId": "authorityHolds.get",
+        "pathParams": [
+          "id"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-authority",
+        "scope": "authority:holds:read",
+        "safeRetry": "read"
+      },
+      {
+        "id": "authorityHoldsRevoke",
+        "method": "DELETE",
+        "path": "/v1/authority/holds/{id}",
+        "auth": "oauthResource",
+        "description": "Revoke a hold. Revoked, not deleted: a question that was asked stays answerable in the ledger.",
+        "upstreamOperationId": "authorityHolds.revoke",
+        "pathParams": [
+          "id"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-authority",
+        "scope": "authority:holds:write",
+        "safeRetry": "none"
+      },
+      {
+        "id": "authorityHoldsDecide",
+        "method": "POST",
+        "path": "/v1/authority/holds/{id}:decide",
+        "auth": "oauthResource",
+        "description": "Decide a held action. Requires a fresh passkey step-up; the staff password path can never produce a decision. Returns a decision token bound to the prepared effect once the quorum is met.",
+        "upstreamOperationId": "authorityHolds.decide",
+        "pathParams": [
+          "id"
+        ],
+        "body": [
+          "decision",
+          "note",
+          "tokenTtlSeconds"
+        ],
+        "requiredBody": [
+          "decision"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-authority",
+        "scope": "authority:holds:decide",
+        "safeRetry": "none"
+      },
+      {
+        "id": "authorityHoldsClaim",
+        "method": "POST",
+        "path": "/v1/authority/holds/{id}:claim",
+        "auth": "oauthResource",
+        "description": "Spend the approval and take a single-use lease. Requires the decision token; a token presented for a different prepared effect digest fails closed.",
+        "upstreamOperationId": "authorityHolds.claim",
+        "pathParams": [
+          "id"
+        ],
+        "body": [
+          "decisionToken",
+          "preparedEffectDigest",
+          "callDigest",
+          "leaseSeconds"
+        ],
+        "requiredBody": [
+          "decisionToken",
+          "preparedEffectDigest",
+          "callDigest"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-authority",
+        "scope": "authority:holds:write",
+        "safeRetry": "none"
+      },
+      {
+        "id": "authorityHoldsFinalize",
+        "method": "POST",
+        "path": "/v1/authority/holds/{id}:finalize",
+        "auth": "oauthResource",
+        "description": "Close the hold against the outcome the lease produced. An exact retry replays; any other outcome fails closed.",
+        "upstreamOperationId": "authorityHolds.finalize",
+        "pathParams": [
+          "id"
+        ],
+        "body": [
+          "leaseToken",
+          "leaseFence",
+          "outcomeDigest",
+          "outcomeStatus",
+          "outcomeRef"
+        ],
+        "requiredBody": [
+          "leaseToken",
+          "leaseFence",
+          "outcomeDigest"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-authority",
+        "scope": "authority:holds:write",
+        "safeRetry": "none"
+      },
+      {
+        "id": "authorityHoldsMarkRecoveryRequired",
+        "method": "POST",
+        "path": "/v1/authority/holds/{id}:markRecoveryRequired",
+        "auth": "oauthResource",
+        "description": "Move a hold whose lease expired to recovery_required. Lease expiry is uncertainty, never a retry.",
+        "upstreamOperationId": "authorityHolds.markRecoveryRequired",
+        "pathParams": [
+          "id"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-authority",
+        "scope": "authority:holds:write",
+        "safeRetry": "none"
+      },
+      {
+        "id": "authorityCredentialBindingsList",
+        "method": "GET",
+        "path": "/v1/authority/credential-bindings",
+        "auth": "oauthResource",
+        "description": "List the credential bindings for one workspace. A binding names a cred_ row; it never carries material.",
+        "upstreamOperationId": "authorityCredentialBindings.list",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-authority",
+        "scope": "authority:policies:read",
+        "safeRetry": "read"
+      },
+      {
+        "id": "authorityCredentialBindingsCreate",
+        "method": "POST",
+        "path": "/v1/authority/credential-bindings",
+        "auth": "oauthResource",
+        "description": "Bind an existing connector credential to a destination and a release rule. Reference-only: a body carrying a secret is rejected by field name. Creating a binding is what makes a future release possible, so it takes the same scope, role and step-up as writing policy.",
+        "upstreamOperationId": "authorityCredentialBindings.create",
+        "body": [
+          "orgId",
+          "projectId",
+          "environmentId",
+          "name",
+          "credentialId",
+          "destination",
+          "delivery",
+          "mint",
+          "releasePolicy"
+        ],
+        "requiredBody": [
+          "name",
+          "credentialId",
+          "destination",
+          "delivery",
+          "releasePolicy"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-authority",
+        "scope": "authority:policies:write",
+        "safeRetry": "none"
+      },
+      {
+        "id": "authorityCredentialBindingsRelease",
+        "method": "POST",
+        "path": "/v1/authority/credential-bindings/{id}:release",
+        "auth": "oauthResource",
+        "description": "Release a credential against a decision. Verifies the hold is leased by this caller with a lease token that validates, then mints or resolves and returns the material exactly once. The handler that evaluates the hold has no vault client in scope and the handler that resolves the vault evaluates no policy (ADR 0002 point 3). Service credentials only: never a human OAuth session.",
+        "upstreamOperationId": "authorityCredentialBindings.release",
+        "pathParams": [
+          "id"
+        ],
+        "body": [
+          "effectDigest",
+          "callDigest",
+          "holdId",
+          "leaseToken",
+          "effect",
+          "serverName",
+          "toolName",
+          "ttlSeconds",
+          "gateId",
+          "principalId"
+        ],
+        "requiredBody": [
+          "effectDigest",
+          "callDigest"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-authority",
+        "scope": "authority:credentials:release",
+        "safeRetry": "none"
+      },
+      {
+        "id": "authorityLedgerExport",
+        "method": "GET",
+        "path": "/v1/authority/ledger",
+        "auth": "oauthResource",
+        "description": "Read the authority ledger, a hash chain projected from holds, decisions and policies.",
+        "upstreamOperationId": "authorityLedger.export",
+        "query": [
+          "pageSize",
+          "pageToken",
+          "format"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-authority",
+        "scope": "authority:ledger:read",
+        "safeRetry": "read"
+      },
+      {
+        "id": "authorityMetricsGet",
+        "method": "GET",
+        "path": "/v1/authority/metrics",
+        "auth": "oauthResource",
+        "description": "Read the approval-fatigue metrics for one workspace.",
+        "upstreamOperationId": "authorityMetrics.get",
+        "requestBodyKind": "none",
+        "authAudience": "tempera-authority",
+        "scope": "authority:ledger:read",
+        "safeRetry": "read"
       }
     ],
     "palette": [
       {
         "id": "health",
         "method": "GET",
-        "path": "/health",
+        "path": "/healthz",
         "auth": "none",
         "description": "Check palette API liveness; returns {ok: true}.",
         "upstreamOperationId": "health.check",
@@ -2267,7 +2692,7 @@
         "id": "alertsEvaluate",
         "method": "POST",
         "path": "/v1/alerts/{tenantId}/{projectId}/traces/{traceId}/webhook",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /v1/alerts/{tenant_id}/{project_id}/traces/{trace_id}/webhook.",
         "pathParams": [
           "tenantId",
@@ -2291,13 +2716,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "trace:read"
       },
       {
         "id": "createApiKey",
         "method": "POST",
         "path": "/v1/api-keys/{tenantId}/{projectId}/{environmentId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "tenantId",
           "projectId",
@@ -2320,13 +2747,14 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette"
       },
       {
         "id": "revokeApiKey",
         "method": "POST",
         "path": "/v1/api-keys/{tenantId}/{projectId}/{environmentId}/{apiKeyId}/revoke",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "tenantId",
           "projectId",
@@ -2343,13 +2771,14 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette"
       },
       {
         "id": "archiveQuerySpans",
         "method": "GET",
         "path": "/v1/archive/{tenantId}/{projectId}/spans",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call GET /v1/archive/{tenant_id}/{project_id}/spans.",
         "pathParams": [
           "tenantId",
@@ -2372,13 +2801,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "trace:read"
       },
       {
         "id": "archiveTrace",
         "method": "POST",
         "path": "/v1/archive/{tenantId}/{projectId}/{traceId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "tenantId",
           "projectId",
@@ -2394,13 +2825,14 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette"
       },
       {
         "id": "auditList",
         "method": "GET",
         "path": "/v1/audit/{tenantId}/{projectId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call GET /v1/audit/{tenant_id}/{project_id}.",
         "pathParams": [
           "tenantId",
@@ -2418,13 +2850,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "admin"
       },
       {
         "id": "calibrationsRun",
         "method": "POST",
         "path": "/v1/calibrations/{tenantId}/{projectId}/{datasetId}/versions/{versionId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /v1/calibrations/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}.",
         "pathParams": [
           "tenantId",
@@ -2446,13 +2880,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "eval:run"
       },
       {
         "id": "connectGetStatus",
         "method": "GET",
         "path": "/v1/connect/status/{tenantId}/{projectId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call GET /v1/connect/status/{tenant_id}/{project_id}.",
         "pathParams": [
           "tenantId",
@@ -2466,13 +2902,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "trace:read"
       },
       {
         "id": "connectorsList",
         "method": "GET",
         "path": "/v1/connectors/{tenantId}/{projectId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call GET /v1/connectors/{tenant_id}/{project_id}.",
         "pathParams": [
           "tenantId",
@@ -2490,13 +2928,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "trace:read"
       },
       {
         "id": "connectorsConnect",
         "method": "POST",
         "path": "/v1/connectors/{tenantId}/{projectId}/connect",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /v1/connectors/{tenant_id}/{project_id}/connect.",
         "pathParams": [
           "tenantId",
@@ -2517,13 +2957,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "admin"
       },
       {
         "id": "connectorsInvokeTool",
         "method": "POST",
         "path": "/v1/connectors/{tenantId}/{projectId}/invoke",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /v1/connectors/{tenant_id}/{project_id}/invoke.",
         "pathParams": [
           "tenantId",
@@ -2545,13 +2987,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "eval:run"
       },
       {
         "id": "connectorsGetSkills",
         "method": "GET",
         "path": "/v1/connectors/{tenantId}/{projectId}/skills",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call GET /v1/connectors/{tenant_id}/{project_id}/skills.",
         "pathParams": [
           "tenantId",
@@ -2571,13 +3015,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "trace:read"
       },
       {
         "id": "connectorsStatus",
         "method": "GET",
         "path": "/v1/connectors/{tenantId}/{projectId}/status",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call GET /v1/connectors/{tenant_id}/{project_id}/status.",
         "pathParams": [
           "tenantId",
@@ -2597,13 +3043,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "trace:read"
       },
       {
         "id": "connectorsListTools",
         "method": "GET",
         "path": "/v1/connectors/{tenantId}/{projectId}/tools",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call GET /v1/connectors/{tenant_id}/{project_id}/tools.",
         "pathParams": [
           "tenantId",
@@ -2625,13 +3073,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "trace:read"
       },
       {
         "id": "createDataset",
         "method": "POST",
         "path": "/v1/datasets/{tenantId}/{projectId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "tenantId",
           "projectId"
@@ -2653,13 +3103,14 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette"
       },
       {
         "id": "promoteTraceToCase",
         "method": "POST",
         "path": "/v1/datasets/{tenantId}/{projectId}/{datasetId}/cases/from-trace",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "tenantId",
           "projectId",
@@ -2684,13 +3135,14 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette"
       },
       {
         "id": "createDatasetVersion",
         "method": "POST",
         "path": "/v1/datasets/{tenantId}/{projectId}/{datasetId}/versions",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "tenantId",
           "projectId",
@@ -2710,13 +3162,14 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette"
       },
       {
         "id": "evalsRunDeterministic",
         "method": "POST",
         "path": "/v1/datasets/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/evals/deterministic",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/deterministic.",
         "pathParams": [
           "tenantId",
@@ -2748,13 +3201,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "eval:run"
       },
       {
         "id": "evalsRunJudge",
         "method": "POST",
         "path": "/v1/datasets/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/evals/judge",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /v1/datasets/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/evals/judge.",
         "pathParams": [
           "tenantId",
@@ -2787,13 +3242,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "eval:run"
       },
       {
         "id": "importTemperaBundle",
         "method": "POST",
         "path": "/v1/eval-results/{tenantId}/{projectId}/tempera/bundles",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "tenantId",
           "projectId"
@@ -2819,13 +3276,14 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette"
       },
       {
         "id": "recordTemperaDecision",
         "method": "POST",
         "path": "/v1/eval-results/{tenantId}/{projectId}/tempera/decisions",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "tenantId",
           "projectId"
@@ -2851,13 +3309,14 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette"
       },
       {
         "id": "getTemperaEvidence",
         "method": "GET",
         "path": "/v1/eval-results/{tenantId}/{projectId}/tempera/{kind}/{externalId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "tenantId",
           "projectId",
@@ -2874,13 +3333,14 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette"
       },
       {
         "id": "experimentsRunDeterministic",
         "method": "POST",
         "path": "/v1/experiments/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/deterministic",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/deterministic.",
         "pathParams": [
           "tenantId",
@@ -2916,13 +3376,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "eval:run"
       },
       {
         "id": "experimentsRunJudge",
         "method": "POST",
         "path": "/v1/experiments/{tenantId}/{projectId}/{datasetId}/versions/{versionId}/judge",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/judge.",
         "pathParams": [
           "tenantId",
@@ -2960,13 +3422,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "eval:run"
       },
       {
         "id": "gatesCreate",
         "method": "POST",
         "path": "/v1/gates/{tenantId}/{projectId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /v1/gates/{tenant_id}/{project_id}.",
         "pathParams": [
           "tenantId",
@@ -2992,13 +3456,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "eval:run"
       },
       {
         "id": "gatesRun",
         "method": "POST",
         "path": "/v1/gates/{tenantId}/{projectId}/{gateId}/run",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /v1/gates/{tenant_id}/{project_id}/{gate_id}/run.",
         "pathParams": [
           "tenantId",
@@ -3017,13 +3483,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "eval:run"
       },
       {
         "id": "importSource",
         "method": "POST",
         "path": "/v1/import/{tenantId}/{projectId}/{environmentId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "tenantId",
           "projectId",
@@ -3048,13 +3516,14 @@
         "headers": [
           "authorization",
           "x-palette-api-key"
-        ]
+        ],
+        "authAudience": "palette"
       },
       {
         "id": "ingestReplayDeadLetter",
         "method": "POST",
         "path": "/v1/ingest/{tenantId}/{projectId}/dead-letters/{messageId}/replay",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/dead-letters/{message_id}/replay.",
         "pathParams": [
           "tenantId",
@@ -3072,13 +3541,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "admin"
       },
       {
         "id": "ingestGetQueueStatus",
         "method": "GET",
         "path": "/v1/ingest/{tenantId}/{projectId}/queue",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call GET /v1/ingest/{tenant_id}/{project_id}/queue.",
         "pathParams": [
           "tenantId",
@@ -3092,13 +3563,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "admin"
       },
       {
         "id": "ingestDrainTraceIngested",
         "method": "POST",
         "path": "/v1/ingest/{tenantId}/{projectId}/trace-ingested/drain",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/trace-ingested/drain.",
         "pathParams": [
           "tenantId",
@@ -3115,13 +3588,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "admin"
       },
       {
         "id": "ingestDrainTraceWrites",
         "method": "POST",
         "path": "/v1/ingest/{tenantId}/{projectId}/trace-writes/drain",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/trace-writes/drain.",
         "pathParams": [
           "tenantId",
@@ -3138,13 +3613,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "admin"
       },
       {
         "id": "ingestReconcileTrace",
         "method": "POST",
         "path": "/v1/ingest/{tenantId}/{projectId}/traces/{traceId}/reconcile",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /v1/ingest/{tenant_id}/{project_id}/traces/{trace_id}/reconcile.",
         "pathParams": [
           "tenantId",
@@ -3159,13 +3636,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "admin"
       },
       {
         "id": "judgeEvaluate",
         "method": "POST",
         "path": "/v1/judge/{tenantId}/{projectId}/evaluate",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /v1/judge/{tenant_id}/{project_id}/evaluate.",
         "pathParams": [
           "tenantId",
@@ -3191,13 +3670,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "eval:run"
       },
       {
         "id": "judgeListLedger",
         "method": "GET",
         "path": "/v1/judge/{tenantId}/{projectId}/ledger",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call GET /v1/judge/{tenant_id}/{project_id}/ledger.",
         "pathParams": [
           "tenantId",
@@ -3215,13 +3696,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "eval:run"
       },
       {
         "id": "onlineDecideSampling",
         "method": "POST",
         "path": "/v1/online/{tenantId}/{projectId}/traces/{traceId}/sampling",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /v1/online/{tenant_id}/{project_id}/traces/{trace_id}/sampling.",
         "pathParams": [
           "tenantId",
@@ -3247,13 +3730,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "trace:read"
       },
       {
         "id": "promptsList",
         "method": "GET",
         "path": "/v1/prompts/{tenantId}/{projectId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call GET /v1/prompts/{tenant_id}/{project_id}.",
         "pathParams": [
           "tenantId",
@@ -3271,13 +3756,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "trace:read"
       },
       {
         "id": "promptsCreate",
         "method": "POST",
         "path": "/v1/prompts/{tenantId}/{projectId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /v1/prompts/{tenant_id}/{project_id}.",
         "pathParams": [
           "tenantId",
@@ -3303,13 +3790,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "dataset:write"
       },
       {
         "id": "promptsGet",
         "method": "GET",
         "path": "/v1/prompts/{tenantId}/{projectId}/{promptId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}.",
         "pathParams": [
           "tenantId",
@@ -3324,13 +3813,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "trace:read"
       },
       {
         "id": "promptsDiffVersions",
         "method": "GET",
         "path": "/v1/prompts/{tenantId}/{projectId}/{promptId}/diff",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/diff.",
         "pathParams": [
           "tenantId",
@@ -3353,13 +3844,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "trace:read"
       },
       {
         "id": "promptsListVersions",
         "method": "GET",
         "path": "/v1/prompts/{tenantId}/{projectId}/{promptId}/versions",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call GET /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions.",
         "pathParams": [
           "tenantId",
@@ -3378,13 +3871,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "trace:read"
       },
       {
         "id": "promptsAddVersion",
         "method": "POST",
         "path": "/v1/prompts/{tenantId}/{projectId}/{promptId}/versions",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /v1/prompts/{tenant_id}/{project_id}/{prompt_id}/versions.",
         "pathParams": [
           "tenantId",
@@ -3408,13 +3903,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "dataset:write"
       },
       {
         "id": "providerSecretsList",
         "method": "GET",
         "path": "/v1/provider-secrets/{tenantId}/{projectId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call GET /v1/provider-secrets/{tenant_id}/{project_id}.",
         "pathParams": [
           "tenantId",
@@ -3432,13 +3929,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "admin"
       },
       {
         "id": "providerSecretsCreate",
         "method": "POST",
         "path": "/v1/provider-secrets/{tenantId}/{projectId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /v1/provider-secrets/{tenant_id}/{project_id}.",
         "pathParams": [
           "tenantId",
@@ -3463,13 +3962,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "admin"
       },
       {
         "id": "providerSecretsRevoke",
         "method": "POST",
         "path": "/v1/provider-secrets/{tenantId}/{projectId}/{providerSecretId}/revoke",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /v1/provider-secrets/{tenant_id}/{project_id}/{provider_secret_id}/revoke.",
         "pathParams": [
           "tenantId",
@@ -3484,13 +3985,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "admin"
       },
       {
         "id": "reviewsCreateQueue",
         "method": "POST",
         "path": "/v1/review-queues/{tenantId}/{projectId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}.",
         "pathParams": [
           "tenantId",
@@ -3514,13 +4017,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "dataset:write"
       },
       {
         "id": "reviewsListTasks",
         "method": "GET",
         "path": "/v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call GET /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks.",
         "pathParams": [
           "tenantId",
@@ -3540,13 +4045,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "dataset:write"
       },
       {
         "id": "reviewsEnqueueTaskFromTrace",
         "method": "POST",
         "path": "/v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks/from-trace",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/from-trace.",
         "pathParams": [
           "tenantId",
@@ -3573,13 +4080,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "dataset:write"
       },
       {
         "id": "reviewsSubmitAnnotation",
         "method": "POST",
         "path": "/v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks/{taskId}/annotations",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations.",
         "pathParams": [
           "tenantId",
@@ -3607,13 +4116,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "dataset:write"
       },
       {
         "id": "reviewsPromoteAnnotation",
         "method": "POST",
         "path": "/v1/review-queues/{tenantId}/{projectId}/{queueId}/tasks/{taskId}/annotations/{annotationId}/promote",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations/{annotation_id}/promote.",
         "pathParams": [
           "tenantId",
@@ -3638,13 +4149,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "dataset:write"
       },
       {
         "id": "scenariosList",
         "method": "GET",
         "path": "/v1/scenarios/{tenantId}/{projectId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call GET /v1/scenarios/{tenant_id}/{project_id}.",
         "pathParams": [
           "tenantId",
@@ -3662,13 +4175,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "scenario:read"
       },
       {
         "id": "scenariosCreate",
         "method": "POST",
         "path": "/v1/scenarios/{tenantId}/{projectId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /v1/scenarios/{tenant_id}/{project_id}.",
         "pathParams": [
           "tenantId",
@@ -3694,13 +4209,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "scenario:write"
       },
       {
         "id": "scenariosMine",
         "method": "POST",
         "path": "/v1/scenarios/{tenantId}/{projectId}/mine",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /v1/scenarios/{tenant_id}/{project_id}/mine.",
         "pathParams": [
           "tenantId",
@@ -3722,13 +4239,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "scenario:read"
       },
       {
         "id": "scenariosGet",
         "method": "GET",
         "path": "/v1/scenarios/{tenantId}/{projectId}/{scenarioId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call GET /v1/scenarios/{tenant_id}/{project_id}/{scenario_id}.",
         "pathParams": [
           "tenantId",
@@ -3743,13 +4262,15 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette",
+        "scope": "scenario:read"
       },
       {
         "id": "searchSpans",
         "method": "GET",
         "path": "/v1/search/{tenantId}/spans",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "tenantId"
         ],
@@ -3776,13 +4297,14 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette"
       },
       {
         "id": "getSpan",
         "method": "GET",
         "path": "/v1/spans/{tenantId}/{traceId}/{spanId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "tenantId",
           "traceId",
@@ -3802,13 +4324,14 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette"
       },
       {
         "id": "getSpanIo",
         "method": "GET",
         "path": "/v1/spans/{tenantId}/{traceId}/{spanId}/io",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "tenantId",
           "traceId",
@@ -3828,13 +4351,14 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette"
       },
       {
         "id": "ingestSpan",
         "method": "POST",
         "path": "/v1/traces/native",
-        "auth": "product",
+        "auth": "oauthResource",
         "query": [
           "durability"
         ],
@@ -3881,13 +4405,14 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette"
       },
       {
         "id": "listTraces",
         "method": "GET",
         "path": "/v1/traces/{tenantId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "tenantId"
         ],
@@ -3918,13 +4443,14 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette"
       },
       {
         "id": "getTrace",
         "method": "GET",
         "path": "/v1/traces/{tenantId}/{traceId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "tenantId",
           "traceId"
@@ -3943,13 +4469,14 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette"
       },
       {
         "id": "getUsageSummary",
         "method": "GET",
         "path": "/v1/usage/{tenantId}/{projectId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "tenantId",
           "projectId"
@@ -3964,7 +4491,8 @@
           "x-palette-api-key",
           "x-palette-project-id",
           "x-palette-environment-id"
-        ]
+        ],
+        "authAudience": "palette"
       }
     ],
     "tempo": [
@@ -3991,7 +4519,7 @@
       {
         "id": "health",
         "method": "GET",
-        "path": "/health",
+        "path": "/healthz",
         "auth": "none",
         "description": "Check tempod liveness; returns {ok: true}.",
         "upstreamOperationId": "health",
@@ -4021,7 +4549,7 @@
       {
         "id": "ready",
         "method": "GET",
-        "path": "/ready",
+        "path": "/readyz",
         "auth": "product",
         "description": "Check tempod readiness, including engine attachment, drain state, and session capacity.",
         "upstreamOperationId": "ready",
@@ -4032,17 +4560,19 @@
         "id": "drain",
         "method": "POST",
         "path": "/v1/drain",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /drain.",
         "upstreamOperationId": "drain",
         "requestBodyKind": "none",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "authAudience": "tempo",
+        "scope": "tempo:write"
       },
       {
         "id": "listRuns",
         "method": "GET",
         "path": "/v1/runs",
-        "auth": "product",
+        "auth": "oauthResource",
         "query": [
           "sessionId",
           "pageSize",
@@ -4051,26 +4581,30 @@
         "description": "List agent runs, optionally filtered to one session.",
         "upstreamOperationId": "listRuns",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "tempo",
+        "scope": "tempo:read"
       },
       {
         "id": "getRun",
         "method": "GET",
         "path": "/v1/runs/{runId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "runId"
         ],
         "description": "Fetch one agent run with its state.",
         "upstreamOperationId": "getRun",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "tempo",
+        "scope": "tempo:read"
       },
       {
         "id": "runEvents",
         "method": "GET",
         "path": "/v1/runs/{runId}/events",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call GET /runs/{run_id}/events.",
         "upstreamOperationId": "runEvents",
         "pathParams": [
@@ -4080,39 +4614,45 @@
           "afterSeq"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "tempo",
+        "scope": "tempo:read"
       },
       {
         "id": "cancelRun",
         "method": "POST",
         "path": "/v1/runs/{runId}:cancel",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "runId"
         ],
         "description": "Cancel an agent run.",
         "upstreamOperationId": "cancelRun",
         "requestBodyKind": "none",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "authAudience": "tempo",
+        "scope": "tempo:write"
       },
       {
         "id": "resumeRun",
         "method": "POST",
         "path": "/v1/runs/{runId}:resume",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "runId"
         ],
         "description": "Resume an agent run after a human handoff completes.",
         "upstreamOperationId": "resumeRun",
         "requestBodyKind": "none",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "authAudience": "tempo",
+        "scope": "tempo:write"
       },
       {
         "id": "listSessions",
         "method": "GET",
         "path": "/v1/sessions",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "List browser sessions with their state and creation time.",
         "upstreamOperationId": "listSessions",
         "query": [
@@ -4120,13 +4660,15 @@
           "pageToken"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "tempo",
+        "scope": "tempo:read"
       },
       {
         "id": "createSession",
         "method": "POST",
         "path": "/v1/sessions",
-        "auth": "product",
+        "auth": "oauthResource",
         "body": [
           "driverless",
           "url"
@@ -4138,26 +4680,30 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "authAudience": "tempo",
+        "scope": "tempo:write"
       },
       {
         "id": "closeSession",
         "method": "DELETE",
         "path": "/v1/sessions/{sessionId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "sessionId"
         ],
         "description": "Close a browser session and release its engine resources.",
         "upstreamOperationId": "closeSession",
         "requestBodyKind": "none",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "authAudience": "tempo",
+        "scope": "tempo:write"
       },
       {
         "id": "grantConfirmation",
         "method": "POST",
         "path": "/v1/sessions/{sessionId}/confirmations/{confirmationId}:grant",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "sessionId",
           "confirmationId"
@@ -4165,13 +4711,15 @@
         "description": "Grant a pending policy confirmation and receive a single-use grant token.",
         "upstreamOperationId": "grantSessionConfirmation",
         "requestBodyKind": "none",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "authAudience": "tempo",
+        "scope": "tempo:write"
       },
       {
         "id": "sessionEvents",
         "method": "GET",
         "path": "/v1/sessions/{sessionId}/events",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "sessionId"
         ],
@@ -4181,26 +4729,30 @@
         "description": "Fetch the session's event window after a sequence number.",
         "upstreamOperationId": "sessionEvents",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "tempo",
+        "scope": "tempo:read"
       },
       {
         "id": "managerSession",
         "method": "GET",
         "path": "/v1/sessions/{sessionId}/manager",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call GET /sessions/{session_id}/manager.",
         "upstreamOperationId": "managerSession",
         "pathParams": [
           "sessionId"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "tempo",
+        "scope": "tempo:read"
       },
       {
         "id": "createRun",
         "method": "POST",
         "path": "/v1/sessions/{sessionId}/runs",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "sessionId"
         ],
@@ -4214,13 +4766,15 @@
         "upstreamOperationId": "createSessionRun",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "authAudience": "tempo",
+        "scope": "tempo:write"
       },
       {
         "id": "registerSessionSurface",
         "method": "POST",
         "path": "/v1/sessions/{sessionId}/surfaces",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /sessions/{session_id}/surfaces.",
         "upstreamOperationId": "registerSessionSurface",
         "pathParams": [
@@ -4236,13 +4790,15 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "authAudience": "tempo",
+        "scope": "tempo:write"
       },
       {
         "id": "removeSessionSurface",
         "method": "DELETE",
         "path": "/v1/sessions/{sessionId}/surfaces/{surfaceId}",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call DELETE /sessions/{session_id}/surfaces/{surface_id}.",
         "upstreamOperationId": "removeSessionSurface",
         "pathParams": [
@@ -4250,13 +4806,15 @@
           "surfaceId"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "authAudience": "tempo",
+        "scope": "tempo:write"
       },
       {
         "id": "actBatch",
         "method": "POST",
         "path": "/v1/sessions/{sessionId}:actBatch",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "sessionId"
         ],
@@ -4279,13 +4837,15 @@
         "headers": [
           "x-payment",
           "x-aether-payment-hash"
-        ]
+        ],
+        "authAudience": "tempo",
+        "scope": "tempo:write"
       },
       {
         "id": "adoptSession",
         "method": "POST",
         "path": "/v1/sessions/{sessionId}:adopt",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "sessionId"
         ],
@@ -4301,39 +4861,45 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "authAudience": "tempo",
+        "scope": "tempo:write"
       },
       {
         "id": "handoffSession",
         "method": "POST",
         "path": "/v1/sessions/{sessionId}:handoff",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "sessionId"
         ],
         "description": "Return write ownership of the session to the agent plane.",
         "upstreamOperationId": "handoffSession",
         "requestBodyKind": "none",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "authAudience": "tempo",
+        "scope": "tempo:write"
       },
       {
         "id": "observe",
         "method": "GET",
         "path": "/v1/sessions/{sessionId}:observe",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "sessionId"
         ],
         "description": "Fetch the session's compiled structured observation (ranked, stably-identified elements).",
         "upstreamOperationId": "observeSession",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "tempo",
+        "scope": "tempo:read"
       },
       {
         "id": "screenshot",
         "method": "GET",
         "path": "/v1/sessions/{sessionId}:screenshot",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "sessionId"
         ],
@@ -4343,13 +4909,15 @@
         "description": "Capture a PNG screenshot of the session, optionally annotated with set-of-marks.",
         "upstreamOperationId": "screenshotSession",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "tempo",
+        "scope": "tempo:read"
       },
       {
         "id": "transformSession",
         "method": "POST",
         "path": "/v1/sessions/{sessionId}:transform",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /sessions/{session_id}/transform.",
         "upstreamOperationId": "transformSession",
         "pathParams": [
@@ -4369,7 +4937,9 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "idempotent"
+        "safeRetry": "idempotent",
+        "authAudience": "tempo",
+        "scope": "tempo:write"
       }
     ],
     "temperaLlm": [
@@ -7594,7 +8164,7 @@
         "id": "projectsBrowserAdaptersIssueCapability",
         "method": "POST",
         "path": "/v1/browser/adapter/capability",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /v1/browser/adapter/capability.",
         "body": [
           "actor",
@@ -7610,13 +8180,15 @@
         "upstreamOperationId": "projects.browserAdapters.issueCapability",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "authAudience": "cradle",
+        "scope": "cradle:execute"
       },
       {
         "id": "projectsBrowserAdaptersValidateCompletion",
         "method": "POST",
         "path": "/v1/browser/adapter/completion/validate",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /v1/browser/adapter/completion/validate.",
         "body": [
           "adapterId",
@@ -7645,23 +8217,27 @@
         "upstreamOperationId": "projects.browserAdapters.validateCompletion",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "authAudience": "cradle",
+        "scope": "cradle:execute"
       },
       {
         "id": "getBrowserAdapterContract",
         "method": "GET",
         "path": "/v1/browser/adapter/contract",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Fetch the browser adapter contract, required controls, and conformance profile.",
         "upstreamOperationId": "projects.browserAdapters.getContract",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "cradle",
+        "scope": "cradle:read"
       },
       {
         "id": "projectsBrowserAdaptersClaimLaunch",
         "method": "POST",
         "path": "/v1/browser/adapter/launch/claim",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /v1/browser/adapter/launch/claim.",
         "body": [
           "launchRequest"
@@ -7672,13 +8248,15 @@
         "upstreamOperationId": "projects.browserAdapters.claimLaunch",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "authAudience": "cradle",
+        "scope": "cradle:execute"
       },
       {
         "id": "projectsBrowserAdaptersPlanLaunch",
         "method": "POST",
         "path": "/v1/browser/adapter/launch/plan",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /v1/browser/adapter/launch/plan.",
         "body": [
           "admission",
@@ -7693,13 +8271,15 @@
         "upstreamOperationId": "projects.browserAdapters.planLaunch",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "authAudience": "cradle",
+        "scope": "cradle:execute"
       },
       {
         "id": "projectsBrowserAdaptersRegister",
         "method": "POST",
         "path": "/v1/browser/adapter/register",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /v1/browser/adapter/register.",
         "body": [
           "actor",
@@ -7716,13 +8296,15 @@
         "upstreamOperationId": "projects.browserAdapters.register",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "authAudience": "cradle",
+        "scope": "cradle:execute"
       },
       {
         "id": "projectsBrowserAdaptersValidate",
         "method": "POST",
         "path": "/v1/browser/adapter/validate",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /v1/browser/adapter/validate.",
         "body": [
           "adapterId",
@@ -7745,13 +8327,15 @@
         "upstreamOperationId": "projects.browserAdapters.validate",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "authAudience": "cradle",
+        "scope": "cradle:execute"
       },
       {
         "id": "admitBrowserSession",
         "method": "POST",
         "path": "/v1/browser/admit",
-        "auth": "product",
+        "auth": "oauthResource",
         "body": [
           "actor",
           "allowDowngrade",
@@ -7773,33 +8357,39 @@
         "upstreamOperationId": "projects.browserSessions.admit",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "authAudience": "cradle",
+        "scope": "cradle:execute"
       },
       {
         "id": "getBrowserProfiles",
         "method": "GET",
         "path": "/v1/browser/profiles",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Fetch the browser sandbox profile levels and suppression modes this daemon offers.",
         "upstreamOperationId": "projects.browserProfiles.get",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "cradle",
+        "scope": "cradle:read"
       },
       {
         "id": "getCapabilities",
         "method": "GET",
         "path": "/v1/capabilities",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Fetch the sandbox capability matrix: lanes, engines, limits, and integrations.",
         "upstreamOperationId": "projects.capabilities.get",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "cradle",
+        "scope": "cradle:read"
       },
       {
         "id": "execute",
         "method": "POST",
         "path": "/v1/execute",
-        "auth": "product",
+        "auth": "oauthResource",
         "body": [
           "entrypoint",
           "idempotencyKey",
@@ -7817,7 +8407,9 @@
         "upstreamOperationId": "projects.executions.execute",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "idempotent"
+        "safeRetry": "idempotent",
+        "authAudience": "cradle",
+        "scope": "cradle:execute"
       },
       {
         "id": "health",
@@ -7833,17 +8425,19 @@
         "id": "getIntegrationContract",
         "method": "GET",
         "path": "/v1/integration",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Fetch the ecosystem integration contract this daemon implements.",
         "upstreamOperationId": "projects.integration.get",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "cradle",
+        "scope": "cradle:read"
       },
       {
         "id": "createJob",
         "method": "POST",
         "path": "/v1/jobs",
-        "auth": "product",
+        "auth": "oauthResource",
         "body": [
           "entrypoint",
           "idempotencyKey",
@@ -7864,39 +8458,45 @@
         "safeRetry": "idempotent",
         "headers": [
           "Idempotency-Key"
-        ]
+        ],
+        "authAudience": "cradle",
+        "scope": "cradle:execute"
       },
       {
         "id": "cancelJob",
         "method": "DELETE",
         "path": "/v1/jobs/{id}",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "id"
         ],
         "description": "Cancel a queued or running sandbox job (idempotent for already-cancelled jobs).",
         "upstreamOperationId": "projects.jobs.cancel",
         "requestBodyKind": "none",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "authAudience": "cradle",
+        "scope": "cradle:execute"
       },
       {
         "id": "getJob",
         "method": "GET",
         "path": "/v1/jobs/{id}",
-        "auth": "product",
+        "auth": "oauthResource",
         "pathParams": [
           "id"
         ],
         "description": "Fetch a sandbox job's status and result.",
         "upstreamOperationId": "projects.jobs.get",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "cradle",
+        "scope": "cradle:read"
       },
       {
         "id": "projectsModulesCreate",
         "method": "POST",
         "path": "/v1/projects/{project}/modules",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call POST /v1/projects/{project}/modules.",
         "pathParams": [
           "project"
@@ -7910,13 +8510,15 @@
         "upstreamOperationId": "projects.modules.create",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "authAudience": "cradle",
+        "scope": "cradle:write"
       },
       {
         "id": "projectsModulesGet",
         "method": "GET",
         "path": "/v1/projects/{project}/modules/{sha256}",
-        "auth": "product",
+        "auth": "oauthResource",
         "description": "Call GET /v1/projects/{project}/modules/{sha256}.",
         "pathParams": [
           "project",
@@ -7924,7 +8526,9 @@
         ],
         "upstreamOperationId": "projects.modules.get",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "cradle",
+        "scope": "cradle:read"
       }
     ],
     "remi": [
@@ -11618,6 +12222,473 @@
         "authAudience": "tempera-connectors",
         "scope": "connection:read",
         "safeRetry": "read"
+      }
+    ],
+    "temperaInvestigations": [
+      {
+        "id": "createInvestigationProfile",
+        "method": "POST",
+        "path": "/v1/projects/{project}/investigationProfiles",
+        "auth": "oauthResource",
+        "description": "Create investigation profile.",
+        "upstreamOperationId": "createInvestigationProfile",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "pathParams": [
+          "project"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-investigations",
+        "scope": "investigation:write",
+        "safeRetry": "none"
+      },
+      {
+        "id": "listInvestigationProfiles",
+        "method": "GET",
+        "path": "/v1/projects/{project}/investigationProfiles",
+        "auth": "oauthResource",
+        "description": "List investigation profiles.",
+        "upstreamOperationId": "listInvestigationProfiles",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "pathParams": [
+          "project"
+        ],
+        "query": [
+          "pageSize",
+          "pageToken"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-investigations",
+        "scope": "investigation:read",
+        "safeRetry": "read"
+      },
+      {
+        "id": "getInvestigationProfile",
+        "method": "GET",
+        "path": "/v1/projects/{project}/investigationProfiles/{profile}",
+        "auth": "oauthResource",
+        "description": "Get investigation profile.",
+        "upstreamOperationId": "getInvestigationProfile",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "pathParams": [
+          "project",
+          "profile"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-investigations",
+        "scope": "investigation:read",
+        "safeRetry": "read"
+      },
+      {
+        "id": "updateInvestigationProfile",
+        "method": "PATCH",
+        "path": "/v1/projects/{project}/investigationProfiles/{profile}",
+        "auth": "oauthResource",
+        "description": "Update investigation profile.",
+        "upstreamOperationId": "updateInvestigationProfile",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "pathParams": [
+          "project",
+          "profile"
+        ],
+        "query": [
+          "updateMask"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-investigations",
+        "scope": "investigation:write",
+        "safeRetry": "none"
+      },
+      {
+        "id": "deleteInvestigationProfile",
+        "method": "DELETE",
+        "path": "/v1/projects/{project}/investigationProfiles/{profile}",
+        "auth": "oauthResource",
+        "description": "Delete investigation profile.",
+        "upstreamOperationId": "deleteInvestigationProfile",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "pathParams": [
+          "project",
+          "profile"
+        ],
+        "query": [
+          "etag"
+        ],
+        "requiredQuery": [
+          "etag"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-investigations",
+        "scope": "investigation:write",
+        "safeRetry": "none"
+      },
+      {
+        "id": "createInvestigation",
+        "method": "POST",
+        "path": "/v1/projects/{project}/investigations",
+        "auth": "oauthResource",
+        "description": "Create investigation.",
+        "upstreamOperationId": "createInvestigation",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "pathParams": [
+          "project"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-investigations",
+        "scope": "investigation:write",
+        "safeRetry": "none"
+      },
+      {
+        "id": "listInvestigations",
+        "method": "GET",
+        "path": "/v1/projects/{project}/investigations",
+        "auth": "oauthResource",
+        "description": "List investigations.",
+        "upstreamOperationId": "listInvestigations",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "pathParams": [
+          "project"
+        ],
+        "query": [
+          "pageSize",
+          "pageToken"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-investigations",
+        "scope": "investigation:read",
+        "safeRetry": "read"
+      },
+      {
+        "id": "getInvestigation",
+        "method": "GET",
+        "path": "/v1/projects/{project}/investigations/{investigation}",
+        "auth": "oauthResource",
+        "description": "Get investigation.",
+        "upstreamOperationId": "getInvestigation",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "pathParams": [
+          "project",
+          "investigation"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-investigations",
+        "scope": "investigation:read",
+        "safeRetry": "read"
+      },
+      {
+        "id": "evaluateInvestigationDeterministically",
+        "method": "POST",
+        "path": "/v1/projects/{project}/investigations/{investigation}:evaluateDeterministically",
+        "auth": "oauthResource",
+        "description": "Run deterministic investigation.",
+        "upstreamOperationId": "evaluateInvestigationDeterministically",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "pathParams": [
+          "project",
+          "investigation"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-investigations",
+        "scope": "investigation:run",
+        "safeRetry": "none"
+      },
+      {
+        "id": "runInvestigationAgentic",
+        "method": "POST",
+        "path": "/v1/projects/{project}/investigations/{investigation}:runAgentic",
+        "auth": "oauthResource",
+        "description": "Run agentic investigation.",
+        "upstreamOperationId": "runInvestigationAgentic",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "pathParams": [
+          "project",
+          "investigation"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-investigations",
+        "scope": "investigation:run",
+        "safeRetry": "none"
+      },
+      {
+        "id": "runInvestigation",
+        "method": "POST",
+        "path": "/v1/projects/{project}/investigations/{investigation}:run",
+        "auth": "oauthResource",
+        "description": "Run hybrid investigation.",
+        "upstreamOperationId": "runInvestigation",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "pathParams": [
+          "project",
+          "investigation"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-investigations",
+        "scope": "investigation:run",
+        "safeRetry": "none"
+      },
+      {
+        "id": "cancelInvestigation",
+        "method": "POST",
+        "path": "/v1/projects/{project}/investigations/{investigation}:cancel",
+        "auth": "oauthResource",
+        "description": "Cancel investigation.",
+        "upstreamOperationId": "cancelInvestigation",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "pathParams": [
+          "project",
+          "investigation"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-investigations",
+        "scope": "investigation:write",
+        "safeRetry": "none"
+      },
+      {
+        "id": "replayInvestigation",
+        "method": "POST",
+        "path": "/v1/projects/{project}/investigations/{investigation}:replay",
+        "auth": "oauthResource",
+        "description": "Replay investigation.",
+        "upstreamOperationId": "replayInvestigation",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "pathParams": [
+          "project",
+          "investigation"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-investigations",
+        "scope": "investigation:run",
+        "safeRetry": "none"
+      },
+      {
+        "id": "listDeterministicEvaluations",
+        "method": "GET",
+        "path": "/v1/projects/{project}/investigations/{investigation}/deterministicEvaluations",
+        "auth": "oauthResource",
+        "description": "List deterministic evaluations.",
+        "upstreamOperationId": "listDeterministicEvaluations",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "pathParams": [
+          "project",
+          "investigation"
+        ],
+        "query": [
+          "pageSize",
+          "pageToken"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-investigations",
+        "scope": "investigation:read",
+        "safeRetry": "read"
+      },
+      {
+        "id": "listAgenticRuns",
+        "method": "GET",
+        "path": "/v1/projects/{project}/investigations/{investigation}/agenticRuns",
+        "auth": "oauthResource",
+        "description": "List agentic runs.",
+        "upstreamOperationId": "listAgenticRuns",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "pathParams": [
+          "project",
+          "investigation"
+        ],
+        "query": [
+          "pageSize",
+          "pageToken"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-investigations",
+        "scope": "investigation:read",
+        "safeRetry": "read"
+      },
+      {
+        "id": "listFindings",
+        "method": "GET",
+        "path": "/v1/projects/{project}/investigations/{investigation}/findings",
+        "auth": "oauthResource",
+        "description": "List findings.",
+        "upstreamOperationId": "listFindings",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "pathParams": [
+          "project",
+          "investigation"
+        ],
+        "query": [
+          "pageSize",
+          "pageToken"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-investigations",
+        "scope": "investigation:read",
+        "safeRetry": "read"
+      },
+      {
+        "id": "listInvestigationEvents",
+        "method": "GET",
+        "path": "/v1/projects/{project}/investigations/{investigation}/events",
+        "auth": "oauthResource",
+        "description": "List investigation events.",
+        "upstreamOperationId": "listInvestigationEvents",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "pathParams": [
+          "project",
+          "investigation"
+        ],
+        "query": [
+          "pageSize",
+          "pageToken"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-investigations",
+        "scope": "investigation:read",
+        "safeRetry": "read"
+      },
+      {
+        "id": "listInvestigationReviews",
+        "method": "GET",
+        "path": "/v1/projects/{project}/investigations/{investigation}/reviews",
+        "auth": "oauthResource",
+        "description": "List investigation reviews.",
+        "upstreamOperationId": "listInvestigationReviews",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "pathParams": [
+          "project",
+          "investigation"
+        ],
+        "query": [
+          "pageSize",
+          "pageToken"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-investigations",
+        "scope": "investigation:read",
+        "safeRetry": "read"
+      },
+      {
+        "id": "createInvestigationReview",
+        "method": "POST",
+        "path": "/v1/projects/{project}/investigations/{investigation}/reviews",
+        "auth": "oauthResource",
+        "description": "Create append-only review.",
+        "upstreamOperationId": "createInvestigationReview",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "pathParams": [
+          "project",
+          "investigation"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-investigations",
+        "scope": "investigation:review",
+        "safeRetry": "none"
+      },
+      {
+        "id": "getDeterministicEvaluation",
+        "method": "GET",
+        "path": "/v1/projects/{project}/investigations/{investigation}/deterministicEvaluations/{evaluation}",
+        "auth": "oauthResource",
+        "description": "Get deterministic evaluation.",
+        "upstreamOperationId": "getDeterministicEvaluation",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "pathParams": [
+          "project",
+          "investigation",
+          "evaluation"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-investigations",
+        "scope": "investigation:read",
+        "safeRetry": "read"
+      },
+      {
+        "id": "getAgenticRun",
+        "method": "GET",
+        "path": "/v1/projects/{project}/investigations/{investigation}/agenticRuns/{run}",
+        "auth": "oauthResource",
+        "description": "Get agentic run.",
+        "upstreamOperationId": "getAgenticRun",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "pathParams": [
+          "project",
+          "investigation",
+          "run"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-investigations",
+        "scope": "investigation:read",
+        "safeRetry": "read"
+      },
+      {
+        "id": "getInvestigationDossier",
+        "method": "GET",
+        "path": "/v1/projects/{project}/investigations/{investigation}/dossier",
+        "auth": "oauthResource",
+        "description": "Get cited investigation dossier.",
+        "upstreamOperationId": "getInvestigationDossier",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "pathParams": [
+          "project",
+          "investigation"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-investigations",
+        "scope": "investigation:read",
+        "safeRetry": "read"
+      },
+      {
+        "id": "getOperation",
+        "method": "GET",
+        "path": "/v1/operations/{operation}",
+        "auth": "oauthResource",
+        "description": "Get long-running operation.",
+        "upstreamOperationId": "getOperation",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "pathParams": [
+          "operation"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-investigations",
+        "scope": "investigation:read",
+        "safeRetry": "read"
+      },
+      {
+        "id": "cancelOperation",
+        "method": "POST",
+        "path": "/v1/operations/{operation}:cancel",
+        "auth": "oauthResource",
+        "description": "Cancel long-running operation.",
+        "upstreamOperationId": "cancelOperation",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "pathParams": [
+          "operation"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-investigations",
+        "scope": "investigation:run",
+        "safeRetry": "none"
       }
     ]
   },

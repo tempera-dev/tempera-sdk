@@ -32,7 +32,7 @@ final class OrdersCommerceClientTests: XCTestCase {
             JSONSerialization.jsonObject(
                 with: Data(
                     contentsOf: root.appendingPathComponent(
-                        "specs/tempera-dropshipping-api.json.source"))) as? [String: Any])
+                        "specs/tempera-dropshipping.openapi.json.source"))) as? [String: Any])
         XCTAssertEqual(bundle["source_commit"] as? String, lock["source_commit"] as? String)
         XCTAssertEqual(bundle["source_sha256"] as? String, lock["source_sha256"] as? String)
         return try XCTUnwrap((bundle["responses"] as? [String: Any])?[name] as? [String: Any])

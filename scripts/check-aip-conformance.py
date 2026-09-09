@@ -23,6 +23,9 @@ from urllib.parse import unquote
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+from product_registry import (  # noqa: E402  (path is set immediately above)
+    SPEC_FILES,
+)
 from aip_rules import (  # noqa: E402  (path is set immediately above)
     HTTP_METHODS,
     RULES,
@@ -39,26 +42,8 @@ from aip_rules import (  # noqa: E402  (path is set immediately above)
 
 ROOT = Path(__file__).resolve().parents[1]
 BASELINE = ROOT / "contracts" / "aip-conformance-baseline.json"
-SPECS = {
-    "controlPlane": "control-plane.openapi.json",
-    "cradle": "cradle-openapi.json",
-    "dataEngine": "data-engine-openapi.json",
-    "humanData": "human-data-openapi.json",
-    "palette": "palette-api.json",
-    "remi": "remi-http-contract.json",
-    "temperaBio": "tempera-bio-api.json",
-    "temperaBusiness": "tempera-business-api.json",
-    "temperaConnectors": "tempera-connectors-api.json",
-    "temperaDocument": "tempera-document-api.json",
-    "temperaDropshipping": "tempera-dropshipping-api.json",
-    "temperaGym": "tempera-gym-api.json",
-    "temperaLlm": "tempera-llm-api.json",
-    "temperaPayments": "tempera-payments-api.json",
-    "temperaRisk": "tempera-risk-api.json",
-    "temperaVoice": "tempera-voice-api.json",
-    "temperaWorkflows": "tempera-workflows-api.json",
-    "tempo": "tempo-openapi.json",
-}
+# Derived from the one producer registry; see scripts/product_registry.py.
+SPECS = SPEC_FILES
 REFERENCE_GATED_PRODUCTS = {"controlPlane", "dataEngine"}
 
 # These are transport or operational endpoints, not Google-style resource APIs.
@@ -83,21 +68,15 @@ PROTOCOL_EXCEPTIONS = {
     ("cradle", "/v1/health"),
     ("cradle", "/mcp"),
     ("dataEngine", "/mcp"),
-    ("palette", "/health"),
     ("palette", "/v1/traces"),
     ("remi", "/livez"),
     ("remi", "/readyz"),
     ("temperaGym", "/healthz"),
     # These routes intentionally implement OpenAI's public wire contract so
     # existing OpenAI-compatible clients can use Tempera LLM unchanged.
-    ("temperaLlm", "/v1/chat/completions"),
-    ("temperaLlm", "/v1/models"),
-    ("temperaLlm", "/v1/responses"),
     ("temperaLlm", "/healthz"),
     ("temperaLlm", "/readyz"),
     ("temperaWorkflows", "/healthz"),
-    ("tempo", "/health"),
-    ("tempo", "/ready"),
     ("tempo", "/metrics"),
     ("tempo", "/openapi.json"),
     ("tempo", "/bidi"),
@@ -131,6 +110,15 @@ PROTOCOL_JSON_EXCEPTIONS = {
     ("controlPlane", "POST", "/v1/sessions"),
     ("controlPlane", "POST", "/v1/step-up/passkey:finish"),
     ("controlPlane", "POST", "/v1/workspace/select"),
+    # tempera-llm deliberately implements OpenAI's public wire contract on
+    # these three routes, so their JSON field names are snake_case on purpose.
+    # This used to be a whole-route protocol exception, which also waived the
+    # path, pagination and standard-error rules that tempera-llm's own
+    # reviewed baseline never claimed. A waiver should cover exactly what was
+    # reviewed and nothing else.
+    ("temperaLlm", "GET", "/v1/models"),
+    ("temperaLlm", "POST", "/v1/chat/completions"),
+    ("temperaLlm", "POST", "/v1/responses"),
 }
 
 # The reviewed protocol tables above, handed to the shared rule engine. Keeping

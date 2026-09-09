@@ -1,7 +1,7 @@
 {
-  "generated_path": "specs/tempera-voice-api.json",
+  "generated_path": "specs/tempera-voice.openapi.json",
   "generated_sha256": "175e71a27f9b1553cbbb12a4f63e104bf4c840d661e6bfb9dcc9421c12feff98",
-  "generated_with": "source_lock.py@1+verbatim-openapi-copy",
+  "generated_with": "sync-vendored-openapi.py@1+verbatim-openapi-copy",
   "schema_version": 1,
   "source_blob_sha": "205b684bb1bf51bed3ed78c4bdaf615ab37fb30b",
   "source_branch": "main",

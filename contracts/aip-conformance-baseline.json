@@ -54,23 +54,17 @@
     "cradle|/mcp",
     "cradle|/v1/health",
     "dataEngine|/mcp",
-    "palette|/health",
     "palette|/v1/traces",
     "remi|/livez",
     "remi|/readyz",
     "temperaGym|/healthz",
     "temperaLlm|/healthz",
     "temperaLlm|/readyz",
-    "temperaLlm|/v1/chat/completions",
-    "temperaLlm|/v1/models",
-    "temperaLlm|/v1/responses",
     "temperaWorkflows|/healthz",
     "tempo|/bidi",
-    "tempo|/health",
     "tempo|/mcp",
     "tempo|/metrics",
-    "tempo|/openapi.json",
-    "tempo|/ready"
+    "tempo|/openapi.json"
   ],
   "protocol_prefix_exceptions": [
     "controlPlane|/.well-known/",
@@ -91,7 +85,10 @@
     "controlPlane|POST|/v1/passkeys/registration:finish",
     "controlPlane|POST|/v1/sessions",
     "controlPlane|POST|/v1/step-up/passkey:finish",
-    "controlPlane|POST|/v1/workspace/select"
+    "controlPlane|POST|/v1/workspace/select",
+    "temperaLlm|GET|/v1/models",
+    "temperaLlm|POST|/v1/chat/completions",
+    "temperaLlm|POST|/v1/responses"
   ],
   "accepted_violations": [
     "temperaRisk|POST|/v1/projects/{project}/graphReads/execute|aip-127-lower-camel-json-fields"

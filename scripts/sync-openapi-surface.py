@@ -10,52 +10,21 @@ import sys
 from pathlib import Path
 from typing import Any, Mapping
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from product_registry import (  # noqa: E402  (path is set immediately above)
+    DEFAULT_AUTH,
+    SPEC_FILES,
+)
+
 
 ROOT = Path(__file__).resolve().parents[1]
 SURFACE = ROOT / "surface.json"
 EXCLUSIONS = ROOT / "contracts" / "sdk-operation-exclusions.json"
 OVERRIDES = ROOT / "contracts" / "sdk-operation-overrides.json"
 HTTP_METHODS = {"get", "post", "put", "patch", "delete"}
-PRODUCT_SPECS = {
-    "temperaConnectors": "tempera-connectors-api.json",
-    "temperaPayments": "tempera-payments-api.json",
-    "dataEngine": "data-engine-openapi.json",
-    "humanData": "human-data-openapi.json",
-    "controlPlane": "control-plane.openapi.json",
-    "palette": "palette-api.json",
-    "cradle": "cradle-openapi.json",
-    "temperaDocument": "tempera-document-api.json",
-    "temperaLlm": "tempera-llm-api.json",
-    "temperaVoice": "tempera-voice-api.json",
-    "temperaRisk": "tempera-risk-api.json",
-    "temperaWorkflows": "tempera-workflows-api.json",
-    "temperaGym": "tempera-gym-api.json",
-    "temperaBio": "tempera-bio-api.json",
-    "remi": "remi-http-contract.json",
-    "tempo": "tempo-openapi.json",
-    "temperaDropshipping": "tempera-dropshipping-api.json",
-    "temperaBusiness": "tempera-business-api.json",
-}
-DEFAULT_AUTH = {
-    "temperaConnectors": "oauthResource",
-    "temperaPayments": "oauthResource",
-    "dataEngine": "product",
-    "humanData": "product",
-    "controlPlane": "account",
-    "palette": "product",
-    "cradle": "product",
-    "temperaDocument": "product",
-    "temperaLlm": "product",
-    "temperaVoice": "oauthResource",
-    "temperaRisk": "product",
-    "temperaWorkflows": "product",
-    "temperaGym": "product",
-    "temperaBio": "product",
-    "remi": "product",
-    "tempo": "product",
-    "temperaDropshipping": "oauthResource",
-    "temperaBusiness": "oauthResource",
-}
+# Derived from the one producer registry; see scripts/product_registry.py.
+PRODUCT_SPECS = SPEC_FILES
 # Producers whose contracts declare a bearer scheme and an explicit
 # x-tempera-required-scope but no per-operation OAuth security requirement.
 # Their audience is the product audience recorded in surface.json, so the
@@ -396,6 +365,12 @@ def synchronize_product(
     exclusions: set[Route],
     overrides: dict[Route, dict[str, str]],
 ) -> None:
+    if product not in surface["operations"]:
+        raise ValueError(
+            f"{product} is registered in scripts/product_registry.py but has no "
+            f'entry in surface.json: add "{product}" to products and an empty '
+            f'operations["{product}"] list, then re-run'
+        )
     existing = surface["operations"][product]
     by_route: dict[Route, dict[str, Any]] = {}
     by_upstream_operation_id: dict[str, dict[str, Any]] = {}

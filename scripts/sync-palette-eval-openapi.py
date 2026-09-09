@@ -9,7 +9,7 @@ Usage:
   python3 scripts/sync-palette-eval-openapi.py
   python3 scripts/sync-palette-eval-openapi.py --check
   python3 scripts/sync-palette-eval-openapi.py --check \
-    --source /path/to/palette/sdks/openapi/palette-api.json \
+    --source /path/to/palette/contracts/openapi/palette.openapi.json \
     --source-checkout /path/to/palette
 """
 from __future__ import annotations
@@ -25,25 +25,47 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 LOCK = ROOT / "contracts" / "palette-eval-openapi-operations.json"
-DEFAULT_SOURCE = ROOT / "specs" / "palette-api.json"
+DEFAULT_SOURCE = ROOT / "specs" / "palette.openapi.json"
 SURFACE = ROOT / "surface.json"
 
 PALETTE_REPOSITORY = "https://github.com/tempera-dev/palette"
-PALETTE_REVISION = "cf55d3f979b4374d221f7b368fff26f9875ed710"
-PALETTE_SOURCE_PATH = "sdks/openapi/palette-api.json"
-PALETTE_SOURCE_BLOB = "ef6ccc33b3dad70c15d89c89190b877e8c342746"
-PALETTE_SOURCE_SHA256 = (
-    "sha256:136074a04219ea2bb96a70674afdbad4eec142c971f7c100ae0ab9db212fc5b7"
-)
+
+
+def _vendoring_lock() -> dict[str, str]:
+    """Provenance comes from the vendoring lock, never from a second hand pin.
+
+    The revision, path, blob and digest below used to be literals here as well
+    as in specs/palette.openapi.json.source. Two copies of one fact drift, and
+    they did: re-vendoring Palette onto its canonical contract path left this
+    file pinning a revision and a path that no longer existed, and the failure
+    surfaced as an opaque digest mismatch rather than as "you moved the file".
+    """
+
+    return json.loads(
+        (ROOT / "specs" / "palette.openapi.json.source").read_text(encoding="utf-8")
+    )
+
+
+_LOCK = _vendoring_lock()
+PALETTE_REVISION = _LOCK["source_commit"]
+PALETTE_SOURCE_PATH = _LOCK["source_path"]
+PALETTE_SOURCE_BLOB = _LOCK["source_blob_sha"]
+PALETTE_SOURCE_SHA256 = "sha256:" + _LOCK["source_sha256"]
 PALETTE_REVIEW_URL = "https://github.com/tempera-dev/palette/pull/23"
 PALETTE_AVAILABILITY = "merged_main"
 PALETTE_SCOPE = "eval:run"
+PALETTE_AUDIENCE = "palette"
 REQUEST_SCHEMA = "#/components/schemas/ImportTemperaEvidenceRequest"
 RECEIPT_SCHEMA = "#/components/schemas/TemperaEvidenceReceipt"
 REQUEST_FIELDS = ["canonicalJson", "publicKeyPem", "signatureBase64"]
 REQUIRED_REQUEST_FIELDS = ["canonicalJson", "signatureBase64", "publicKeyPem"]
-IMPORT_RESPONSE_CODES = ["200", "400", "401", "403", "409", "413", "422", "503"]
-RECEIPT_RESPONSE_CODES = ["200", "400", "401", "403", "404"]
+# `default` is the canonical google.rpc.Status error response the contract
+# standard requires on every operation; Palette gained it when it moved onto
+# the standard, so the reviewed binding has to expect it.
+IMPORT_RESPONSE_CODES = [
+    "200", "400", "401", "403", "409", "413", "422", "503", "default",
+]
+RECEIPT_RESPONSE_CODES = ["200", "400", "401", "403", "404", "default"]
 
 OPERATIONS = [
     {
@@ -266,7 +288,12 @@ def render(source: Path, *, source_checkout: Path | None = None) -> str:
         bindings = {
             "method": expected["method"],
             "path": expected["path"],
-            "auth": "product",
+            # Palette moved onto the producer contract standard and now
+            # declares x-tempera-auth-kind: oauthResource on these operations,
+            # so the reviewed binding is an audience-bound OAuth token rather
+            # than the old central product credential.
+            "auth": "oauthResource",
+            "authAudience": PALETTE_AUDIENCE,
             "pathParams": expected["pathParams"],
             "body": expected["body"],
             "requiredBody": expected["requiredBody"],
@@ -291,6 +318,7 @@ def render(source: Path, *, source_checkout: Path | None = None) -> str:
         "reviewUrl": PALETTE_REVIEW_URL,
         "availability": PALETTE_AVAILABILITY,
         "requiredScope": PALETTE_SCOPE,
+        "audience": PALETTE_AUDIENCE,
         "requestSchema": REQUEST_SCHEMA,
         "receiptSchema": RECEIPT_SCHEMA,
         "operations": locked_operations,

@@ -138,7 +138,7 @@ def revendor_bespoke(product: str, commit: str, workspace: Path) -> str:
     if product == "paletteEval":
         run([
             sys.executable, str(SCRIPTS / "sync-palette-eval-openapi.py"),
-            "--source", str(checkout / "sdks/openapi/palette-api.json"),
+            "--source", str(checkout / "contracts/openapi/palette.openapi.json"),
             "--source-checkout", str(checkout),
         ])
     return resolved
