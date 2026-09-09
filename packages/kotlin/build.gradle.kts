@@ -12,6 +12,7 @@
 plugins {
     kotlin("jvm") version "2.0.21"
     `java-library`
+    `maven-publish`
 }
 
 group = "dev.tempera"
@@ -37,6 +38,29 @@ kotlin {
 
 java {
     withSourcesJar()
+}
+
+configurations.configureEach {
+    if (isCanBeConsumed) {
+        // Explicit capabilities replace Gradle's implicit module capability.
+        outgoing.capability("dev.tempera:tempera-sdk-kotlin:$version")
+        outgoing.capability("dev.tempera:tempera-sdk-runtime:$version")
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            from(components["java"])
+            artifactId = "tempera-sdk-kotlin"
+        }
+    }
+    repositories {
+        maven {
+            name = "fixture"
+            url = uri(providers.gradleProperty("fixtureRepository").getOrElse(layout.buildDirectory.dir("fixture-repository").get().asFile.absolutePath))
+        }
+    }
 }
 
 tasks.withType<Test>().configureEach {
