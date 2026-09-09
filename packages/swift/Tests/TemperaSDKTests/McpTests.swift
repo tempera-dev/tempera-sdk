@@ -5,13 +5,17 @@ import XCTest
 
 final class McpTests: XCTestCase {
     private func gateway(
-        _ body: String = #"{"jsonrpc":"2.0","id":1,"result":{"ok":true}}"#
+        _ body: String? = nil
     ) -> StubTransport {
-        StubTransport(responder: { _, _ in
-            TemperaHTTPResponse(
+        StubTransport(responder: { request, _ in
+            let response = body ?? {
+                let id = TemperaJSON.parse(request.body ?? Data())?["id"]?.intValue ?? -1
+                return #"{"jsonrpc":"2.0","id":\#(id),"result":{"ok":true}}"#
+            }()
+            return TemperaHTTPResponse(
                 status: 200,
                 headers: [TemperaKeyValue(key: "content-type", value: "application/json")],
-                body: Data(body.utf8)
+                body: Data(response.utf8)
             )
         })
     }
@@ -112,14 +116,14 @@ final class McpTests: XCTestCase {
 
     func testListToolsReturnsTheToolsArray() async throws {
         let transport = gateway(
-            #"{"jsonrpc":"2.0","id":1,"result":{"tools":[{"name":"tempera_search"},{"name":"tempera_invoke"}]}}"#
+            #"{"jsonrpc":"2.0","id":1,"result":{"tools":[{"name":"tempera_search","inputSchema":{}},{"name":"tempera_invoke","inputSchema":{}}]}}"#
         )
         let mcp = try client(transport)
         let tools = try await mcp.listTools()
         XCTAssertEqual(tools.count, 2)
         XCTAssertEqual(tools.first?["name"], .string("tempera_search"))
 
-        let empty = try client(gateway(#"{"jsonrpc":"2.0","id":1,"result":{}}"#))
+        let empty = try client(gateway(#"{"jsonrpc":"2.0","id":1,"result":{"tools":[]}}"#))
         let none = try await empty.listTools()
         XCTAssertTrue(none.isEmpty)
     }
@@ -141,33 +145,170 @@ final class McpTests: XCTestCase {
         }
     }
 
-    func testNonConformantErrorsAreHandledUniformly() async throws {
-        // A string error becomes code 0 with its own text.
-        do {
-            try await client(gateway(#"{"error":"nope"}"#)).ping()
-            XCTFail("expected a TemperaMcpError")
-        } catch let error as TemperaMcpError {
-            XCTAssertEqual(error.code, 0)
-            XCTAssertEqual(error.message, "nope")
+    func testRpcEnvelopeValidationFailsClosedAndAcceptsExplicitNullResult() async throws {
+        await assertSdkError("jsonrpc must be exactly 2.0") {
+            _ = try await self.client(self.gateway(#"{"jsonrpc":"1.0","id":1,"result":null}"#)).ping()
         }
-        // An object without an integer code keeps its message, code 0.
-        do {
-            try await client(gateway(#"{"error":{"code":"x","message":"m"}}"#)).ping()
-            XCTFail("expected a TemperaMcpError")
-        } catch let error as TemperaMcpError {
-            XCTAssertEqual(error.code, 0)
-            XCTAssertEqual(error.message, "m")
+        await assertSdkError("response id does not match request id") {
+            _ = try await self.client(self.gateway(#"{"jsonrpc":"2.0","id":"1","result":null}"#)).ping()
         }
-        // An object with neither gets the shared label.
-        do {
-            try await client(gateway(#"{"error":{}}"#)).ping()
-            XCTFail("expected a TemperaMcpError")
-        } catch let error as TemperaMcpError {
-            XCTAssertEqual(error.message, "MCP error")
+        for id in ["1.0", "true", "null"] {
+            await assertSdkError("response id does not match request id") {
+                _ = try await self.client(self.gateway(#"{"jsonrpc":"2.0","id":\#(id),"result":null}"#)).ping()
+            }
         }
-        // A null error is not an error.
-        let result = try await client(gateway(#"{"error":null,"result":{"ok":true}}"#)).ping()
-        XCTAssertEqual(result["ok"], .bool(true))
+        await assertSdkError("response id does not match request id") { _ = try await self.client(self.gateway(#"{"jsonrpc":"2.0","id":9007199254740992,"result":null}"#)).ping() }
+        await assertSdkError("response id does not match request id") {
+            _ = try await self.client(self.gateway(#"{"jsonrpc":"2.0","id":1,"id":1,"result":null}"#)).ping()
+        }
+        await assertSdkError("exactly one result or error") {
+            _ = try await self.client(self.gateway(#"{"jsonrpc":"2.0","id":1,"result":null,"result":null}"#)).ping()
+        }
+        await assertSdkError("exactly one result or error") {
+            _ = try await self.client(self.gateway(#"{"jsonrpc":"2.0","id":1,"error":{"code":1,"message":"x"},"error":{"code":1,"message":"x"}}"#)).ping()
+        }
+        await assertSdkError("exactly one result or error") {
+            _ = try await self.client(self.gateway(#"{"jsonrpc":"2.0","id":1,"result":null,"error":null}"#)).ping()
+        }
+        await assertSdkError("exactly one result or error") { _ = try await self.client(self.gateway(#"{"jsonrpc":"2.0","id":1}"#)).ping() }
+        await assertSdkError("error code must be an integer") { _ = try await self.client(self.gateway(#"{"jsonrpc":"2.0","id":1,"error":{"code":1,"code":2,"message":"x"}}"#)).ping() }
+        await assertSdkError("error code must be an integer") {
+            _ = try await self.client(self.gateway(#"{"jsonrpc":"2.0","id":1,"error":{"code":"x","message":"m"}}"#)).ping()
+        }
+        await assertSdkError("jsonrpc must be exactly 2.0") {
+            _ = try await self.client(self.gateway(#"{"jsonrpc":"2.0","jsonrpc":"2.0","id":1,"result":null}"#)).ping()
+        }
+        let result = try await client(gateway(#"{"jsonrpc":"2.0","id":1,"result":null}"#)).ping()
+        XCTAssertEqual(result, .null)
+    }
+
+    func testListToolsFollowsOpaqueCursorsAndRejectsPartialCatalogs() async throws {
+        let transport = StubTransport(responder: { request, attempt in
+            let cursor = TemperaJSON.parse(request.body ?? Data())?["params"]?["cursor"]?.stringValue
+            if attempt == 1 {
+                XCTAssertNil(cursor)
+                return TemperaHTTPResponse(
+                    status: 200, headers: [],
+                    body: Data(#"{"jsonrpc":"2.0","id":1,"result":{"tools":[{"name":"a","inputSchema":{}}],"nextCursor":"opaque-1"}}"#.utf8))
+            }
+            XCTAssertEqual(cursor, "opaque-1")
+            return TemperaHTTPResponse(
+                status: 200, headers: [],
+                body: Data(#"{"jsonrpc":"2.0","id":2,"result":{"tools":[{"name":"b","inputSchema":{}}]}}"#.utf8))
+        })
+        let names = try await client(transport).listTools().compactMap { $0["name"]?.stringValue }
+        XCTAssertEqual(names, ["a", "b"])
+
+        let repeating = StubTransport(responder: { _, attempt in
+            TemperaHTTPResponse(status: 200, headers: [], body: Data(
+                #"{"jsonrpc":"2.0","id":\#(attempt),"result":{"tools":[],"nextCursor":"again"}}"#.utf8))
+        })
+        await assertSdkError("repeated or empty nextCursor") {
+            _ = try await self.client(repeating).listTools()
+        }
+        let conflict = StubTransport(responder: { _, attempt in
+            let result = attempt == 1
+                ? #"{"tools":[{"name":"same","inputSchema":{}}],"nextCursor":"next"}"#
+                : #"{"tools":[{"inputSchema":{},"name":"same"}]}"#
+            return TemperaHTTPResponse(status: 200, headers: [], body: Data(
+                #"{"jsonrpc":"2.0","id":\#(attempt),"result":\#(result)}"#.utf8))
+        })
+        await assertSdkError("duplicate tool name") {
+            _ = try await self.client(conflict).listTools()
+        }
+        await assertSdkError("tools array") {
+            _ = try await self.client(self.gateway(#"{"jsonrpc":"2.0","id":1,"result":{}}"#)).listTools()
+        }
+        await assertSdkError("tool must be an object") {
+            _ = try await self.client(self.gateway(#"{"jsonrpc":"2.0","id":1,"result":{"tools":[true]}}"#)).listTools()
+        }
+        await assertSdkError("inputSchema must be an object") {
+            _ = try await self.client(self.gateway(#"{"jsonrpc":"2.0","id":1,"result":{"tools":[{"name":"x"}]}}"#)).listTools()
+        }
+        await assertSdkError("invisible character") {
+            _ = try await self.client(self.gateway(#"{"jsonrpc":"2.0","id":1,"result":{"tools":[{"name":"x\u202ey","inputSchema":{}}]}}"#)).listTools()
+        }
+        await assertSdkError("duplicate object key") {
+            _ = try await self.client(self.gateway(#"{"jsonrpc":"2.0","id":1,"result":{"tools":[{"name":"x","inputSchema":{"a":[[{"x":1,"x":2}]]}}]}}"#)).listTools()
+        }
+    }
+
+    func testListToolsBoundsEveryReceivedDescriptorIncludingDuplicates() async throws {
+        func descriptors(_ count: Int, _ name: String) -> String {
+            Array(repeating: #"{"name":"\#(name)","inputSchema":{}}"#, count: count).joined(separator: ",")
+        }
+
+        let overOnePage = descriptors(10_001, "same")
+        let tenThousandUnique = (0..<10_000).map { #"{"name":"unique-\#($0)","inputSchema":{}}"# }.joined(separator: ",")
+        await assertSdkError("response byte limit") {
+            _ = try await self.client(self.gateway(String(repeating: "x", count: 1_048_577))).listTools()
+        }
+        await assertSdkError("exceeds item limit") {
+            _ = try await self.client(self.gateway(
+                #"{"jsonrpc":"2.0","id":1,"result":{"tools":[\#(overOnePage)]}}"#)).listTools()
+        }
+        let cumulative = StubTransport(responder: { _, attempt in
+            let result = attempt == 1
+                ? #"{"tools":[\#(tenThousandUnique)],"nextCursor":"more"}"#
+                : #"{"tools":[{"name":"later","inputSchema":{}}]}"#
+            return TemperaHTTPResponse(status: 200, headers: [], body: Data(
+                #"{"jsonrpc":"2.0","id":\#(attempt),"result":\#(result)}"#.utf8))
+        })
+        await assertSdkError("exceeds item limit") {
+            _ = try await self.client(cumulative).listTools()
+        }
+
+        let exact = (0..<10_000).map { #"{"name":"tool-\#($0)","inputSchema":{}}"# }.joined(separator: ",")
+        let tools = try await client(gateway(
+            #"{"jsonrpc":"2.0","id":1,"result":{"tools":[\#(exact)]}}"#)).listTools()
+        XCTAssertEqual(tools.count, 10_000)
+
+        let exactPages = StubTransport(responder: { _, attempt in
+            let continuation = attempt < 100 ? ",\"nextCursor\":\"cursor-\(attempt)\"" : ""
+            return TemperaHTTPResponse(status: 200, headers: [], body: Data(
+                #"{"jsonrpc":"2.0","id":\#(attempt),"result":{"tools":[]\#(continuation)}}"#.utf8))
+        })
+        let completeCatalog = try await client(exactPages).listTools()
+        XCTAssertTrue(completeCatalog.isEmpty)
+        let overPages = StubTransport(responder: { _, attempt in
+            TemperaHTTPResponse(status: 200, headers: [], body: Data(
+                #"{"jsonrpc":"2.0","id":\#(attempt),"result":{"tools":[],"nextCursor":"cursor-\#(attempt)"}}"#.utf8))
+        })
+        await assertSdkError("exceeds page limit") {
+            _ = try await self.client(overPages).listTools()
+        }
+    }
+
+    func testListToolsAcceptsExactByteBudgetsAndRejectsBeforeParsing() async throws {
+        @Sendable func page(_ bytes: Int, _ id: Int, _ name: String, _ next: String? = nil) -> String {
+            let prefix = #"{"jsonrpc":"2.0","id":\#(id),"result":{"tools":[{"name":"\#(name)","description":""#
+            let suffix = #"","inputSchema":{}}]"# + (next.map { ",\"nextCursor\":\"\($0)\"" } ?? "") + "}}"
+            return prefix + String(repeating: "x", count: bytes - prefix.utf8.count - suffix.utf8.count) + suffix
+        }
+        let onePage = try await client(gateway(page(1_048_576, 1, "one"))).listTools()
+        XCTAssertFalse(onePage.isEmpty)
+        await assertSdkError("response byte limit") { _ = try await self.client(self.gateway(page(1_048_577, 1, "one"))).listTools() }
+        let exact = StubTransport(responder: { _, attempt in TemperaHTTPResponse(status: 200, headers: [], body: Data(page(1_048_576, attempt, "p\(attempt)", attempt < 8 ? "c\(attempt)" : nil).utf8)) })
+        let eightPages = try await client(exact).listTools()
+        XCTAssertEqual(eightPages.count, 8)
+        let over = StubTransport(responder: { _, attempt in TemperaHTTPResponse(status: 200, headers: [], body: Data(page(attempt <= 7 ? 1_048_576 : attempt == 8 ? 1_047_553 : 1_024, attempt, "p\(attempt)", attempt < 9 ? "c\(attempt)" : nil).utf8)) })
+        await assertSdkError("response byte limit") { _ = try await self.client(over).listTools() }
+        let error = StubTransport(responder: { _, _ in TemperaHTTPResponse(status: 500, headers: [], body: Data(String(repeating: "x", count: 1_048_577).utf8)) })
+        await assertSdkError("response byte limit") { _ = try await self.client(error).listTools() }
+    }
+
+    func testConcurrentPingsUseUniqueCorrelatedIDs() async throws {
+        let transport = StubTransport(responder: { request, _ in
+            let id = TemperaJSON.parse(request.body ?? Data())?["id"]?.intValue ?? -1
+            return TemperaHTTPResponse(status: 200, headers: [], body: Data(#"{"jsonrpc":"2.0","id":\#(id),"result":{"ok":true}}"#.utf8))
+        })
+        let mcp = try client(transport)
+        try await withThrowingTaskGroup(of: TemperaJSON.self) { group in
+            for _ in 0..<128 { group.addTask { try await mcp.ping() } }
+            for try await _ in group {}
+        }
+        let ids = await transport.requests.compactMap { TemperaJSON.parse($0.body ?? Data())?["id"]?.intValue }
+        XCTAssertEqual(Set(ids), Set(1...128))
     }
 
     func testHttpFailuresBecomeApiErrorsLabelledWithTheRpcMethod() async throws {
@@ -187,6 +328,8 @@ final class McpTests: XCTestCase {
             XCTAssertEqual(error.product, "mcpGateway")
             XCTAssertEqual(error.operation, "tools/list")
         }
+        let attempts = await transport.attempts
+        XCTAssertEqual(attempts, 1, "MCP POSTs are never automatically retried")
     }
 
     func testCredentialResolutionPrefersAnExplicitBearerThenTheMcpAudience() async throws {
