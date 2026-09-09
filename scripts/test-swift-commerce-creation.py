@@ -36,7 +36,7 @@ def git(source, *parts):
 
 
 def validate_source(source):
-    lock_path = ROOT / "specs/tempera-dropshipping-api.json.source"
+    lock_path = ROOT / "specs/tempera-dropshipping.openapi.json.source"
     lock = json.loads(lock_path.read_text())
     if any(lock.get(key) != value for key, value in EXPECTED_SOURCE.items()):
         fail("Orders source identity is not allowlisted")

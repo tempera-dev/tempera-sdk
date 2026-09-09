@@ -63,10 +63,10 @@ CONTRACT = ROOT / "contracts" / "native-transport-v1.json"
 # Products whose operations the native clients are allowed to call directly.
 NATIVE_PRODUCTS = ("temperaDropshipping", "temperaBusiness", "temperaPayments", "temperaVoice")
 PRODUCT_SPECS = {
-    "temperaDropshipping": "tempera-dropshipping-api.json",
-    "temperaBusiness": "tempera-business-api.json",
-    "temperaPayments": "tempera-payments-api.json",
-    "temperaVoice": "tempera-voice-api.json",
+    "temperaDropshipping": "tempera-dropshipping.openapi.json",
+    "temperaBusiness": "tempera-business.openapi.json",
+    "temperaPayments": "tempera-payments.openapi.json",
+    "temperaVoice": "tempera-voice.openapi.json",
 }
 # Operations each product publishes to the phones, by surface.json id. None
 # means every operation surface.json carries for the product. An allowlisted

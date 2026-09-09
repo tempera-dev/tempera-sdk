@@ -1,7 +1,7 @@
 {
-  "generated_path": "specs/tempera-connectors-api.json",
+  "generated_path": "specs/tempera-connectors.openapi.json",
   "generated_sha256": "87b3c23e7df7161245563b24c2c03cd0b47a4a2debd79ed0c56f37edd33105ee",
-  "generated_with": "source_lock.py@1+verbatim-openapi-copy",
+  "generated_with": "sync-vendored-openapi.py@1+verbatim-openapi-copy",
   "schema_version": 1,
   "source_blob_sha": "1cc3b9eee38eb6bc81011bf9a23572560489c52d",
   "source_branch": "main",

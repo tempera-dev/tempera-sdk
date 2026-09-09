@@ -1,5 +1,5 @@
 {
-  "generated_path": "specs/remi-http-contract.json",
+  "generated_path": "specs/remi.openapi.json",
   "generated_sha256": "a6e65b9b8028bbea23e16229748beef814c6fbad1d21242bc47fe0882fa26c11",
   "generated_with": "sync-vendored-openapi.py@1+verbatim-openapi-copy",
   "schema_version": 1,

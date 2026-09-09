@@ -53,7 +53,7 @@ class NativeTransportTests(unittest.TestCase):
         )
 
     def test_required_idempotency_headers_are_bound_to_producer(self) -> None:
-        spec = json.loads((ROOT / "specs/tempera-payments-api.json").read_text())
+        spec = json.loads((ROOT / "specs/tempera-payments.openapi.json").read_text())
         upstream = checker.upstream_operations(spec)
         for operation in checker.PAYMENTS_NATIVE_OPERATIONS:
             if operation["scope"] != "payments:merchants:write":

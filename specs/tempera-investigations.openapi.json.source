@@ -1,0 +1,13 @@
+{
+  "generated_path": "specs/tempera-investigations.openapi.json",
+  "generated_sha256": "e5f0652ca66c343bb12530731b730897af2d4587323ae35f02935bff9936b3d4",
+  "generated_with": "sync-vendored-openapi.py@1+verbatim-openapi-copy",
+  "schema_version": 1,
+  "source_blob_sha": "7bc02ddf4af09bbb77063e4d7e17be2fba56633b",
+  "source_branch": "main",
+  "source_commit": "454c9d579765fac1ecfe5477a17e671286ceb2ad",
+  "source_mode": "100644",
+  "source_path": "contracts/openapi/investigations.openapi.json",
+  "source_repo": "tempera-dev/tempera-investigations",
+  "source_sha256": "e5f0652ca66c343bb12530731b730897af2d4587323ae35f02935bff9936b3d4"
+}

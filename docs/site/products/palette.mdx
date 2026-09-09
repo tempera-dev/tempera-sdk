@@ -28,7 +28,7 @@ Anything this page does not cover is reachable through the raw passthrough:
 
 ### health
 
-`GET /health`
+`GET /healthz`
 
 Check palette API liveness; returns \{ok: true\}.
 
@@ -61,7 +61,8 @@ let spec = client.build_request("palette", "health", &[])?;
 Call POST /v1/alerts/\{tenant_id\}/\{project_id\}/traces/\{trace_id\}/webhook.
 
 - **Producer operationId:** `alerts.evaluate`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `trace:read`
 - **Call as:** TypeScript `client.palette.alertsEvaluate()` · Python `client.palette.alerts_evaluate()` · Rust `build_request("palette", "alerts_evaluate", params)`
 
 **Path parameters**
@@ -122,7 +123,7 @@ let spec = client.build_request("palette", "alerts_evaluate", &[
 Mint a palette-scoped API key; the secret is returned exactly once.
 
 - **Producer operationId:** `apiKeys.create`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
 - **Scope:** `admin`
 - **Call as:** TypeScript `client.palette.createApiKey()` · Python `client.palette.create_api_key()` · Rust `build_request("palette", "create_api_key", params)`
 
@@ -180,7 +181,7 @@ let spec = client.build_request("palette", "create_api_key", &[
 Revoke a palette API key.
 
 - **Producer operationId:** `apiKeys.revoke`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
 - **Scope:** `admin`
 - **Call as:** TypeScript `client.palette.revokeApiKey()` · Python `client.palette.revoke_api_key()` · Rust `build_request("palette", "revoke_api_key", params)`
 
@@ -233,7 +234,8 @@ let spec = client.build_request("palette", "revoke_api_key", &[
 Call GET /v1/archive/\{tenant_id\}/\{project_id\}/spans.
 
 - **Producer operationId:** `archive.querySpans`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `trace:read`
 - **Call as:** TypeScript `client.palette.archiveQuerySpans()` · Python `client.palette.archive_query_spans()` · Rust `build_request("palette", "archive_query_spans", params)`
 
 **Path parameters**
@@ -295,7 +297,7 @@ let spec = client.build_request("palette", "archive_query_spans", &[
 Archive a trace to Parquet and return the archive manifest.
 
 - **Producer operationId:** `archive.archiveTrace`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
 - **Scope:** `trace:read`
 - **Call as:** TypeScript `client.palette.archiveTrace()` · Python `client.palette.archive_trace()` · Rust `build_request("palette", "archive_trace", params)`
 
@@ -344,7 +346,8 @@ let spec = client.build_request("palette", "archive_trace", &[
 Call GET /v1/audit/\{tenant_id\}/\{project_id\}.
 
 - **Producer operationId:** `audit.list`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `admin`
 - **Call as:** TypeScript `client.palette.auditList()` · Python `client.palette.audit_list()` · Rust `build_request("palette", "audit_list", params)`
 
 **Path parameters**
@@ -401,7 +404,8 @@ let spec = client.build_request("palette", "audit_list", &[
 Call POST /v1/calibrations/\{tenant_id\}/\{project_id\}/\{dataset_id\}/versions/\{version_id\}.
 
 - **Producer operationId:** `calibrations.run`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `eval:run`
 - **Call as:** TypeScript `client.palette.calibrationsRun()` · Python `client.palette.calibrations_run()` · Rust `build_request("palette", "calibrations_run", params)`
 
 **Path parameters**
@@ -470,7 +474,8 @@ let spec = client.build_request("palette", "calibrations_run", &[
 Call GET /v1/connect/status/\{tenant_id\}/\{project_id\}.
 
 - **Producer operationId:** `connect.getStatus`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `trace:read`
 - **Call as:** TypeScript `client.palette.connectGetStatus()` · Python `client.palette.connect_get_status()` · Rust `build_request("palette", "connect_get_status", params)`
 
 **Path parameters**
@@ -514,7 +519,8 @@ let spec = client.build_request("palette", "connect_get_status", &[
 Call GET /v1/connectors/\{tenant_id\}/\{project_id\}.
 
 - **Producer operationId:** `connectors.list`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `trace:read`
 - **Call as:** TypeScript `client.palette.connectorsList()` · Python `client.palette.connectors_list()` · Rust `build_request("palette", "connectors_list", params)`
 
 **Path parameters**
@@ -571,7 +577,8 @@ let spec = client.build_request("palette", "connectors_list", &[
 Call POST /v1/connectors/\{tenant_id\}/\{project_id\}/connect.
 
 - **Producer operationId:** `connectors.connect`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `admin`
 - **Call as:** TypeScript `client.palette.connectorsConnect()` · Python `client.palette.connectors_connect()` · Rust `build_request("palette", "connectors_connect", params)`
 
 **Path parameters**
@@ -624,7 +631,8 @@ let spec = client.build_request("palette", "connectors_connect", &[
 Call POST /v1/connectors/\{tenant_id\}/\{project_id\}/invoke.
 
 - **Producer operationId:** `connectors.invokeTool`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `eval:run`
 - **Call as:** TypeScript `client.palette.connectorsInvokeTool()` · Python `client.palette.connectors_invoke_tool()` · Rust `build_request("palette", "connectors_invoke_tool", params)`
 
 **Path parameters**
@@ -681,7 +689,8 @@ let spec = client.build_request("palette", "connectors_invoke_tool", &[
 Call GET /v1/connectors/\{tenant_id\}/\{project_id\}/skills.
 
 - **Producer operationId:** `connectors.getSkills`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `trace:read`
 - **Call as:** TypeScript `client.palette.connectorsGetSkills()` · Python `client.palette.connectors_get_skills()` · Rust `build_request("palette", "connectors_get_skills", params)`
 
 **Path parameters**
@@ -734,7 +743,8 @@ let spec = client.build_request("palette", "connectors_get_skills", &[
 Call GET /v1/connectors/\{tenant_id\}/\{project_id\}/status.
 
 - **Producer operationId:** `connectors.status`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `trace:read`
 - **Call as:** TypeScript `client.palette.connectorsStatus()` · Python `client.palette.connectors_status()` · Rust `build_request("palette", "connectors_status", params)`
 
 **Path parameters**
@@ -787,7 +797,8 @@ let spec = client.build_request("palette", "connectors_status", &[
 Call GET /v1/connectors/\{tenant_id\}/\{project_id\}/tools.
 
 - **Producer operationId:** `connectors.listTools`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `trace:read`
 - **Call as:** TypeScript `client.palette.connectorsListTools()` · Python `client.palette.connectors_list_tools()` · Rust `build_request("palette", "connectors_list_tools", params)`
 
 **Path parameters**
@@ -845,7 +856,7 @@ let spec = client.build_request("palette", "connectors_list_tools", &[
 Create a dataset for curating cases from traces.
 
 - **Producer operationId:** `datasets.create`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
 - **Scope:** `dataset:write`
 - **Call as:** TypeScript `client.palette.createDataset()` · Python `client.palette.create_dataset()` · Rust `build_request("palette", "create_dataset", params)`
 
@@ -899,7 +910,7 @@ let spec = client.build_request("palette", "create_dataset", &[
 Promote a trace (or one span of it) into a dataset case.
 
 - **Producer operationId:** `datasets.promoteCaseFromTrace`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
 - **Scope:** `dataset:write`
 - **Call as:** TypeScript `client.palette.promoteTraceToCase()` · Python `client.palette.promote_trace_to_case()` · Rust `build_request("palette", "promote_trace_to_case", params)`
 
@@ -965,7 +976,7 @@ let spec = client.build_request("palette", "promote_trace_to_case", &[
 Snapshot a dataset into an immutable version for evals and experiments.
 
 - **Producer operationId:** `datasets.createVersion`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
 - **Scope:** `dataset:write`
 - **Call as:** TypeScript `client.palette.createDatasetVersion()` · Python `client.palette.create_dataset_version()` · Rust `build_request("palette", "create_dataset_version", params)`
 
@@ -1023,7 +1034,8 @@ let spec = client.build_request("palette", "create_dataset_version", &[
 Call POST /v1/datasets/\{tenant_id\}/\{project_id\}/\{dataset_id\}/versions/\{version_id\}/evals/deterministic.
 
 - **Producer operationId:** `evals.runDeterministic`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `eval:run`
 - **Call as:** TypeScript `client.palette.evalsRunDeterministic()` · Python `client.palette.evals_run_deterministic()` · Rust `build_request("palette", "evals_run_deterministic", params)`
 
 **Path parameters**
@@ -1099,7 +1111,8 @@ let spec = client.build_request("palette", "evals_run_deterministic", &[
 Call POST /v1/datasets/\{tenant_id\}/\{project_id\}/\{dataset_id\}/versions/\{version_id\}/evals/judge.
 
 - **Producer operationId:** `evals.runJudge`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `eval:run`
 - **Call as:** TypeScript `client.palette.evalsRunJudge()` · Python `client.palette.evals_run_judge()` · Rust `build_request("palette", "evals_run_judge", params)`
 
 **Path parameters**
@@ -1178,7 +1191,7 @@ let spec = client.build_request("palette", "evals_run_judge", &[
 Import one RFC 8785-canonical, detached-Ed25519-signed official Tempera result bundle and return its minimal evidence receipt.
 
 - **Producer operationId:** `evalResults.importTemperaBundle`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
 - **Scope:** `eval:run`
 - **Call as:** TypeScript `client.palette.importTemperaBundle()` · Python `client.palette.import_tempera_bundle()` · Rust `build_request("palette", "import_tempera_bundle", params)`
 
@@ -1240,7 +1253,7 @@ let spec = client.build_request("palette", "import_tempera_bundle", &[
 Import one RFC 8785-canonical, detached-Ed25519-signed preregistered Tempera A/B decision and return its minimal evidence receipt.
 
 - **Producer operationId:** `evalResults.recordTemperaDecision`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
 - **Scope:** `eval:run`
 - **Call as:** TypeScript `client.palette.recordTemperaDecision()` · Python `client.palette.record_tempera_decision()` · Rust `build_request("palette", "record_tempera_decision", params)`
 
@@ -1302,7 +1315,7 @@ let spec = client.build_request("palette", "record_tempera_decision", &[
 Fetch one tenant/project-scoped Tempera evidence receipt without returning its raw signed payload.
 
 - **Producer operationId:** `evalResults.getTemperaEvidence`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
 - **Scope:** `eval:run`
 - **Call as:** TypeScript `client.palette.getTemperaEvidence()` · Python `client.palette.get_tempera_evidence()` · Rust `build_request("palette", "get_tempera_evidence", params)`
 
@@ -1355,7 +1368,8 @@ let spec = client.build_request("palette", "get_tempera_evidence", &[
 Call POST /v1/experiments/\{tenant_id\}/\{project_id\}/\{dataset_id\}/versions/\{version_id\}/deterministic.
 
 - **Producer operationId:** `experiments.runDeterministic`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `eval:run`
 - **Call as:** TypeScript `client.palette.experimentsRunDeterministic()` · Python `client.palette.experiments_run_deterministic()` · Rust `build_request("palette", "experiments_run_deterministic", params)`
 
 **Path parameters**
@@ -1441,7 +1455,8 @@ let spec = client.build_request("palette", "experiments_run_deterministic", &[
 Call POST /v1/experiments/\{tenant_id\}/\{project_id\}/\{dataset_id\}/versions/\{version_id\}/judge.
 
 - **Producer operationId:** `experiments.runJudge`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `eval:run`
 - **Call as:** TypeScript `client.palette.experimentsRunJudge()` · Python `client.palette.experiments_run_judge()` · Rust `build_request("palette", "experiments_run_judge", params)`
 
 **Path parameters**
@@ -1531,7 +1546,8 @@ let spec = client.build_request("palette", "experiments_run_judge", &[
 Call POST /v1/gates/\{tenant_id\}/\{project_id\}.
 
 - **Producer operationId:** `gates.create`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `eval:run`
 - **Call as:** TypeScript `client.palette.gatesCreate()` · Python `client.palette.gates_create()` · Rust `build_request("palette", "gates_create", params)`
 
 **Path parameters**
@@ -1594,7 +1610,8 @@ let spec = client.build_request("palette", "gates_create", &[
 Call POST /v1/gates/\{tenant_id\}/\{project_id\}/\{gate_id\}/run.
 
 - **Producer operationId:** `gates.run`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `eval:run`
 - **Call as:** TypeScript `client.palette.gatesRun()` · Python `client.palette.gates_run()` · Rust `build_request("palette", "gates_run", params)`
 
 **Path parameters**
@@ -1651,7 +1668,7 @@ let spec = client.build_request("palette", "gates_run", &[
 Import spans from a named external source payload.
 
 - **Producer operationId:** `ingest.importSource`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
 - **Scope:** `trace:write`
 - **Call as:** TypeScript `client.palette.importSource()` · Python `client.palette.import_source()` · Rust `build_request("palette", "import_source", params)`
 
@@ -1719,7 +1736,8 @@ let spec = client.build_request("palette", "import_source", &[
 Call POST /v1/ingest/\{tenant_id\}/\{project_id\}/dead-letters/\{message_id\}/replay.
 
 - **Producer operationId:** `ingest.replayDeadLetter`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `admin`
 - **Call as:** TypeScript `client.palette.ingestReplayDeadLetter()` · Python `client.palette.ingest_replay_dead_letter()` · Rust `build_request("palette", "ingest_replay_dead_letter", params)`
 
 **Path parameters**
@@ -1773,7 +1791,8 @@ let spec = client.build_request("palette", "ingest_replay_dead_letter", &[
 Call GET /v1/ingest/\{tenant_id\}/\{project_id\}/queue.
 
 - **Producer operationId:** `ingest.getQueueStatus`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `admin`
 - **Call as:** TypeScript `client.palette.ingestGetQueueStatus()` · Python `client.palette.ingest_get_queue_status()` · Rust `build_request("palette", "ingest_get_queue_status", params)`
 
 **Path parameters**
@@ -1817,7 +1836,8 @@ let spec = client.build_request("palette", "ingest_get_queue_status", &[
 Call POST /v1/ingest/\{tenant_id\}/\{project_id\}/trace-ingested/drain.
 
 - **Producer operationId:** `ingest.drainTraceIngested`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `admin`
 - **Call as:** TypeScript `client.palette.ingestDrainTraceIngested()` · Python `client.palette.ingest_drain_trace_ingested()` · Rust `build_request("palette", "ingest_drain_trace_ingested", params)`
 
 **Path parameters**
@@ -1867,7 +1887,8 @@ let spec = client.build_request("palette", "ingest_drain_trace_ingested", &[
 Call POST /v1/ingest/\{tenant_id\}/\{project_id\}/trace-writes/drain.
 
 - **Producer operationId:** `ingest.drainTraceWrites`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `admin`
 - **Call as:** TypeScript `client.palette.ingestDrainTraceWrites()` · Python `client.palette.ingest_drain_trace_writes()` · Rust `build_request("palette", "ingest_drain_trace_writes", params)`
 
 **Path parameters**
@@ -1917,7 +1938,8 @@ let spec = client.build_request("palette", "ingest_drain_trace_writes", &[
 Call POST /v1/ingest/\{tenant_id\}/\{project_id\}/traces/\{trace_id\}/reconcile.
 
 - **Producer operationId:** `ingest.reconcileTrace`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `admin`
 - **Call as:** TypeScript `client.palette.ingestReconcileTrace()` · Python `client.palette.ingest_reconcile_trace()` · Rust `build_request("palette", "ingest_reconcile_trace", params)`
 
 **Path parameters**
@@ -1965,7 +1987,8 @@ let spec = client.build_request("palette", "ingest_reconcile_trace", &[
 Call POST /v1/judge/\{tenant_id\}/\{project_id\}/evaluate.
 
 - **Producer operationId:** `judge.evaluate`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `eval:run`
 - **Call as:** TypeScript `client.palette.judgeEvaluate()` · Python `client.palette.judge_evaluate()` · Rust `build_request("palette", "judge_evaluate", params)`
 
 **Path parameters**
@@ -2027,7 +2050,8 @@ let spec = client.build_request("palette", "judge_evaluate", &[
 Call GET /v1/judge/\{tenant_id\}/\{project_id\}/ledger.
 
 - **Producer operationId:** `judge.listLedger`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `eval:run`
 - **Call as:** TypeScript `client.palette.judgeListLedger()` · Python `client.palette.judge_list_ledger()` · Rust `build_request("palette", "judge_list_ledger", params)`
 
 **Path parameters**
@@ -2084,7 +2108,8 @@ let spec = client.build_request("palette", "judge_list_ledger", &[
 Call POST /v1/online/\{tenant_id\}/\{project_id\}/traces/\{trace_id\}/sampling.
 
 - **Producer operationId:** `online.decideSampling`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `trace:read`
 - **Call as:** TypeScript `client.palette.onlineDecideSampling()` · Python `client.palette.online_decide_sampling()` · Rust `build_request("palette", "online_decide_sampling", params)`
 
 **Path parameters**
@@ -2150,7 +2175,8 @@ let spec = client.build_request("palette", "online_decide_sampling", &[
 Call GET /v1/prompts/\{tenant_id\}/\{project_id\}.
 
 - **Producer operationId:** `prompts.list`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `trace:read`
 - **Call as:** TypeScript `client.palette.promptsList()` · Python `client.palette.prompts_list()` · Rust `build_request("palette", "prompts_list", params)`
 
 **Path parameters**
@@ -2207,7 +2233,8 @@ let spec = client.build_request("palette", "prompts_list", &[
 Call POST /v1/prompts/\{tenant_id\}/\{project_id\}.
 
 - **Producer operationId:** `prompts.create`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `dataset:write`
 - **Call as:** TypeScript `client.palette.promptsCreate()` · Python `client.palette.prompts_create()` · Rust `build_request("palette", "prompts_create", params)`
 
 **Path parameters**
@@ -2270,7 +2297,8 @@ let spec = client.build_request("palette", "prompts_create", &[
 Call GET /v1/prompts/\{tenant_id\}/\{project_id\}/\{prompt_id\}.
 
 - **Producer operationId:** `prompts.get`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `trace:read`
 - **Call as:** TypeScript `client.palette.promptsGet()` · Python `client.palette.prompts_get()` · Rust `build_request("palette", "prompts_get", params)`
 
 **Path parameters**
@@ -2318,7 +2346,8 @@ let spec = client.build_request("palette", "prompts_get", &[
 Call GET /v1/prompts/\{tenant_id\}/\{project_id\}/\{prompt_id\}/diff.
 
 - **Producer operationId:** `prompts.diffVersions`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `trace:read`
 - **Call as:** TypeScript `client.palette.promptsDiffVersions()` · Python `client.palette.prompts_diff_versions()` · Rust `build_request("palette", "prompts_diff_versions", params)`
 
 **Path parameters**
@@ -2379,7 +2408,8 @@ let spec = client.build_request("palette", "prompts_diff_versions", &[
 Call GET /v1/prompts/\{tenant_id\}/\{project_id\}/\{prompt_id\}/versions.
 
 - **Producer operationId:** `prompts.listVersions`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `trace:read`
 - **Call as:** TypeScript `client.palette.promptsListVersions()` · Python `client.palette.prompts_list_versions()` · Rust `build_request("palette", "prompts_list_versions", params)`
 
 **Path parameters**
@@ -2440,7 +2470,8 @@ let spec = client.build_request("palette", "prompts_list_versions", &[
 Call POST /v1/prompts/\{tenant_id\}/\{project_id\}/\{prompt_id\}/versions.
 
 - **Producer operationId:** `prompts.addVersion`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `dataset:write`
 - **Call as:** TypeScript `client.palette.promptsAddVersion()` · Python `client.palette.prompts_add_version()` · Rust `build_request("palette", "prompts_add_version", params)`
 
 **Path parameters**
@@ -2505,7 +2536,8 @@ let spec = client.build_request("palette", "prompts_add_version", &[
 Call GET /v1/provider-secrets/\{tenant_id\}/\{project_id\}.
 
 - **Producer operationId:** `providerSecrets.list`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `admin`
 - **Call as:** TypeScript `client.palette.providerSecretsList()` · Python `client.palette.provider_secrets_list()` · Rust `build_request("palette", "provider_secrets_list", params)`
 
 **Path parameters**
@@ -2562,7 +2594,8 @@ let spec = client.build_request("palette", "provider_secrets_list", &[
 Call POST /v1/provider-secrets/\{tenant_id\}/\{project_id\}.
 
 - **Producer operationId:** `providerSecrets.create`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `admin`
 - **Call as:** TypeScript `client.palette.providerSecretsCreate()` · Python `client.palette.provider_secrets_create()` · Rust `build_request("palette", "provider_secrets_create", params)`
 
 **Path parameters**
@@ -2623,7 +2656,8 @@ let spec = client.build_request("palette", "provider_secrets_create", &[
 Call POST /v1/provider-secrets/\{tenant_id\}/\{project_id\}/\{provider_secret_id\}/revoke.
 
 - **Producer operationId:** `providerSecrets.revoke`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `admin`
 - **Call as:** TypeScript `client.palette.providerSecretsRevoke()` · Python `client.palette.provider_secrets_revoke()` · Rust `build_request("palette", "provider_secrets_revoke", params)`
 
 **Path parameters**
@@ -2671,7 +2705,8 @@ let spec = client.build_request("palette", "provider_secrets_revoke", &[
 Call POST /v1/review-queues/\{tenant_id\}/\{project_id\}.
 
 - **Producer operationId:** `reviews.createQueue`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `dataset:write`
 - **Call as:** TypeScript `client.palette.reviewsCreateQueue()` · Python `client.palette.reviews_create_queue()` · Rust `build_request("palette", "reviews_create_queue", params)`
 
 **Path parameters**
@@ -2732,7 +2767,8 @@ let spec = client.build_request("palette", "reviews_create_queue", &[
 Call GET /v1/review-queues/\{tenant_id\}/\{project_id\}/\{queue_id\}/tasks.
 
 - **Producer operationId:** `reviews.listTasks`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `dataset:write`
 - **Call as:** TypeScript `client.palette.reviewsListTasks()` · Python `client.palette.reviews_list_tasks()` · Rust `build_request("palette", "reviews_list_tasks", params)`
 
 **Path parameters**
@@ -2794,7 +2830,8 @@ let spec = client.build_request("palette", "reviews_list_tasks", &[
 Call POST /v1/review-queues/\{tenant_id\}/\{project_id\}/\{queue_id\}/tasks/from-trace.
 
 - **Producer operationId:** `reviews.enqueueTaskFromTrace`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `dataset:write`
 - **Call as:** TypeScript `client.palette.reviewsEnqueueTaskFromTrace()` · Python `client.palette.reviews_enqueue_task_from_trace()` · Rust `build_request("palette", "reviews_enqueue_task_from_trace", params)`
 
 **Path parameters**
@@ -2862,7 +2899,8 @@ let spec = client.build_request("palette", "reviews_enqueue_task_from_trace", &[
 Call POST /v1/review-queues/\{tenant_id\}/\{project_id\}/\{queue_id\}/tasks/\{task_id\}/annotations.
 
 - **Producer operationId:** `reviews.submitAnnotation`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `dataset:write`
 - **Call as:** TypeScript `client.palette.reviewsSubmitAnnotation()` · Python `client.palette.reviews_submit_annotation()` · Rust `build_request("palette", "reviews_submit_annotation", params)`
 
 **Path parameters**
@@ -2932,7 +2970,8 @@ let spec = client.build_request("palette", "reviews_submit_annotation", &[
 Call POST /v1/review-queues/\{tenant_id\}/\{project_id\}/\{queue_id\}/tasks/\{task_id\}/annotations/\{annotation_id\}/promote.
 
 - **Producer operationId:** `reviews.promoteAnnotation`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `dataset:write`
 - **Call as:** TypeScript `client.palette.reviewsPromoteAnnotation()` · Python `client.palette.reviews_promote_annotation()` · Rust `build_request("palette", "reviews_promote_annotation", params)`
 
 **Path parameters**
@@ -3001,7 +3040,8 @@ let spec = client.build_request("palette", "reviews_promote_annotation", &[
 Call GET /v1/scenarios/\{tenant_id\}/\{project_id\}.
 
 - **Producer operationId:** `scenarios.list`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `scenario:read`
 - **Call as:** TypeScript `client.palette.scenariosList()` · Python `client.palette.scenarios_list()` · Rust `build_request("palette", "scenarios_list", params)`
 
 **Path parameters**
@@ -3058,7 +3098,8 @@ let spec = client.build_request("palette", "scenarios_list", &[
 Call POST /v1/scenarios/\{tenant_id\}/\{project_id\}.
 
 - **Producer operationId:** `scenarios.create`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `scenario:write`
 - **Call as:** TypeScript `client.palette.scenariosCreate()` · Python `client.palette.scenarios_create()` · Rust `build_request("palette", "scenarios_create", params)`
 
 **Path parameters**
@@ -3121,7 +3162,8 @@ let spec = client.build_request("palette", "scenarios_create", &[
 Call POST /v1/scenarios/\{tenant_id\}/\{project_id\}/mine.
 
 - **Producer operationId:** `scenarios.mine`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `scenario:read`
 - **Call as:** TypeScript `client.palette.scenariosMine()` · Python `client.palette.scenarios_mine()` · Rust `build_request("palette", "scenarios_mine", params)`
 
 **Path parameters**
@@ -3178,7 +3220,8 @@ let spec = client.build_request("palette", "scenarios_mine", &[
 Call GET /v1/scenarios/\{tenant_id\}/\{project_id\}/\{scenario_id\}.
 
 - **Producer operationId:** `scenarios.get`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
+- **Scope:** `scenario:read`
 - **Call as:** TypeScript `client.palette.scenariosGet()` · Python `client.palette.scenarios_get()` · Rust `build_request("palette", "scenarios_get", params)`
 
 **Path parameters**
@@ -3226,7 +3269,7 @@ let spec = client.build_request("palette", "scenarios_get", &[
 Search spans by text query and facet filters.
 
 - **Producer operationId:** `search.spans`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
 - **Scope:** `trace:read`
 - **Call as:** TypeScript `client.palette.searchSpans()` · Python `client.palette.search_spans()` · Rust `build_request("palette", "search_spans", params)`
 
@@ -3289,7 +3332,7 @@ let spec = client.build_request("palette", "search_spans", &[
 Fetch one canonical span by trace and span id.
 
 - **Producer operationId:** `spans.get`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
 - **Scope:** `trace:read`
 - **Call as:** TypeScript `client.palette.getSpan()` · Python `client.palette.get_span()` · Rust `build_request("palette", "get_span", params)`
 
@@ -3351,7 +3394,7 @@ let spec = client.build_request("palette", "get_span", &[
 Fetch a span's recorded input and output values.
 
 - **Producer operationId:** `spans.getIo`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
 - **Scope:** `trace:read`
 - **Call as:** TypeScript `client.palette.getSpanIo()` · Python `client.palette.get_span_io()` · Rust `build_request("palette", "get_span_io", params)`
 
@@ -3413,7 +3456,7 @@ let spec = client.build_request("palette", "get_span_io", &[
 Ingest one native span; idempotent when an idempotency key is supplied.
 
 - **Producer operationId:** `ingest.native`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
 - **Scope:** `trace:write`
 - **Call as:** TypeScript `client.palette.ingestSpan()` · Python `client.palette.ingest_span()` · Rust `build_request("palette", "ingest_span", params)`
 
@@ -3502,7 +3545,7 @@ let spec = client.build_request("palette", "ingest_span", &[
 List trace summaries for a tenant with filters and cursor pagination.
 
 - **Producer operationId:** `traces.list`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
 - **Scope:** `trace:read`
 - **Call as:** TypeScript `client.palette.listTraces()` · Python `client.palette.list_traces()` · Rust `build_request("palette", "list_traces", params)`
 
@@ -3569,7 +3612,7 @@ let spec = client.build_request("palette", "list_traces", &[
 Fetch one full trace with all canonical spans; unmasking PII requires the pii:unmask scope and a reason.
 
 - **Producer operationId:** `traces.get`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
 - **Scope:** `trace:read`
 - **Call as:** TypeScript `client.palette.getTrace()` · Python `client.palette.get_trace()` · Rust `build_request("palette", "get_trace", params)`
 
@@ -3627,7 +3670,7 @@ let spec = client.build_request("palette", "get_trace", &[
 Fetch usage totals for a tenant project.
 
 - **Producer operationId:** `usage.getSummary`
-- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `palette`.
 - **Scope:** `admin`
 - **Call as:** TypeScript `client.palette.getUsageSummary()` · Python `client.palette.get_usage_summary()` · Rust `build_request("palette", "get_usage_summary", params)`
 

@@ -2121,7 +2121,7 @@ mod tests {
     fn base_url_trailing_slash_is_trimmed() {
         let client = TemperaClient::new().with_base_url("tempo", "https://tempo.example.test///");
         let spec = client.build_request("tempo", "health", &[]).unwrap();
-        assert_eq!(spec.url, "https://tempo.example.test/health");
+        assert_eq!(spec.url, "https://tempo.example.test/healthz");
     }
 
     #[test]

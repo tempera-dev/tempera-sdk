@@ -1,7 +1,7 @@
 {
-  "generated_path": "specs/human-data-openapi.json",
+  "generated_path": "specs/human-data.openapi.json",
   "generated_sha256": "3358934cbe5c42f03b3b409391e0cf322b1d113508aab52b33e9cfe6847d6aef",
-  "generated_with": "source_lock.py@1+verbatim-openapi-copy",
+  "generated_with": "sync-vendored-openapi.py@1+verbatim-openapi-copy",
   "schema_version": 1,
   "source_blob_sha": "0decd10175b716114955f7b7be20e52803b862a6",
   "source_branch": "main",

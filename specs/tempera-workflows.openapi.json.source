@@ -1,7 +1,7 @@
 {
-  "generated_path": "specs/tempera-workflows-api.json",
+  "generated_path": "specs/tempera-workflows.openapi.json",
   "generated_sha256": "a2bb31ee42e1fea2aa1b2b2904f2dfca68f6eb955187b255244e70fa09d38c88",
-  "generated_with": "source_lock.py@1+verbatim-openapi-copy",
+  "generated_with": "sync-vendored-openapi.py@1+verbatim-openapi-copy",
   "schema_version": 1,
   "source_blob_sha": "76ebd372db7c70cf9aa19bc4329f3c4b4a4bd529",
   "source_branch": "main",

@@ -18,7 +18,7 @@ Tempera control plane: unified accounts, OAuth issuance, workspaces, teams, API 
 | Audience | — (no OAuth audience) |
 | Auth | account bearer token from createHostedSession (control-plane session); introspectToken requires the introspection secret |
 | Client | TypeScript `client.controlPlane` · Python `client.control_plane` · Rust `build_request("control_plane", ...)` |
-| Typed operations | 106 |
+| Typed operations | 123 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.controlPlane.request(path, options)` (TypeScript) /
@@ -4832,6 +4832,873 @@ result = client.control_plane.clearing_admissions_mark_recovery_required({
 let spec = client.build_request("control_plane", "clearing_admissions_mark_recovery_required", &[
     ("admissionId", "<admissionId>".into()),
 ])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### authorityPoliciesList
+
+`GET /v1/authority/policies`
+
+List the authority policies for one workspace.
+
+- **Producer operationId:** `authorityPolicies.list`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-authority`.
+- **Scope:** `authority:policies:read`
+- **Call as:** TypeScript `client.controlPlane.authorityPoliciesList()` · Python `client.control_plane.authority_policies_list()` · Rust `build_request("control_plane", "authority_policies_list", params)`
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.authorityPoliciesList({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
+```
+
+```python Python
+result = client.control_plane.authority_policies_list({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "authority_policies_list", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### authorityPoliciesCreate
+
+`POST /v1/authority/policies`
+
+Create an authority policy. Requires an owner or admin human principal and a recent passkey step-up.
+
+- **Producer operationId:** `authorityPolicies.create`
+- **Auth:** OAuth access token for audience `tempera-authority`. Central `tp_` API keys cannot carry the required `authority:policies:write` scope.
+- **Scope:** `authority:policies:write`
+- **Call as:** TypeScript `client.controlPlane.authorityPoliciesCreate()` · Python `client.control_plane.authority_policies_create()` · Rust `build_request("control_plane", "authority_policies_create", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `orgId` | yes | — |
+| `projectId` | yes | — |
+| `environmentId` | yes | — |
+| `name` | yes | — |
+| `document` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.authorityPoliciesCreate({
+  orgId: "<orgId>",
+  projectId: "<projectId>",
+  environmentId: "<environmentId>",
+  name: "<name>",
+  document: "<document>",
+});
+```
+
+```python Python
+result = client.control_plane.authority_policies_create({
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
+    "name": "<name>",
+    "document": "<document>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "authority_policies_create", &[
+    ("orgId", "<orgId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("environmentId", "<environmentId>".into()),
+    ("name", "<name>".into()),
+    ("document", "<document>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### authorityPoliciesUpdate
+
+`PATCH /v1/authority/policies/{id}`
+
+Replace an authority policy document. Requires an owner or admin human principal and a recent passkey step-up.
+
+- **Producer operationId:** `authorityPolicies.update`
+- **Auth:** OAuth access token for audience `tempera-authority`. Central `tp_` API keys cannot carry the required `authority:policies:write` scope.
+- **Scope:** `authority:policies:write`
+- **Call as:** TypeScript `client.controlPlane.authorityPoliciesUpdate()` · Python `client.control_plane.authority_policies_update()` · Rust `build_request("control_plane", "authority_policies_update", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `updateMask` | yes | — |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `document` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.authorityPoliciesUpdate({
+  id: "<id>",
+  document: "<document>",
+});
+```
+
+```python Python
+result = client.control_plane.authority_policies_update({
+    "id": "<id>",
+    "document": "<document>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "authority_policies_update", &[
+    ("id", "<id>".into()),
+    ("document", "<document>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### authorityPoliciesArchive
+
+`DELETE /v1/authority/policies/{id}`
+
+Archive an authority policy. A decision already made cites the policy that made it, so the row stays readable.
+
+- **Producer operationId:** `authorityPolicies.archive`
+- **Auth:** OAuth access token for audience `tempera-authority`. Central `tp_` API keys cannot carry the required `authority:policies:write` scope.
+- **Scope:** `authority:policies:write`
+- **Call as:** TypeScript `client.controlPlane.authorityPoliciesArchive()` · Python `client.control_plane.authority_policies_archive()` · Rust `build_request("control_plane", "authority_policies_archive", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.authorityPoliciesArchive({
+  id: "<id>",
+});
+```
+
+```python Python
+result = client.control_plane.authority_policies_archive({
+    "id": "<id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "authority_policies_archive", &[
+    ("id", "<id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### authorityHoldsList
+
+`GET /v1/authority/holds`
+
+List the authority holds for one workspace.
+
+- **Producer operationId:** `authorityHolds.list`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-authority`.
+- **Scope:** `authority:holds:read`
+- **Call as:** TypeScript `client.controlPlane.authorityHoldsList()` · Python `client.control_plane.authority_holds_list()` · Rust `build_request("control_plane", "authority_holds_list", params)`
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+| `state` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.authorityHoldsList({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
+```
+
+```python Python
+result = client.control_plane.authority_holds_list({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "authority_holds_list", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### authorityHoldsCreate
+
+`POST /v1/authority/holds`
+
+Create a hold. A duplicate call digest joins the open hold rather than asking a person twice. Evidence is reference-only; inline content is rejected.
+
+- **Producer operationId:** `authorityHolds.create`
+- **Auth:** OAuth access token for audience `tempera-authority`. Central `tp_` API keys cannot carry the required `authority:holds:write` scope.
+- **Scope:** `authority:holds:write`
+- **Call as:** TypeScript `client.controlPlane.authorityHoldsCreate()` · Python `client.control_plane.authority_holds_create()` · Rust `build_request("control_plane", "authority_holds_create", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `orgId` | yes | — |
+| `projectId` | yes | — |
+| `environmentId` | yes | — |
+| `serverName` | yes | — |
+| `toolName` | yes | — |
+| `callDigest` | yes | — |
+| `surfaceDigest` | no | — |
+| `effect` | yes | — |
+| `summary` | no | — |
+| `reaches` | no | — |
+| `evidence` | no | — |
+| `requiredApprovers` | no | — |
+| `holdTtlSeconds` | no | — |
+| `correlationId` | no | — |
+| `principalId` | no | — |
+| `policyId` | no | — |
+| `policyDigest` | no | — |
+| `approvalUrl` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.authorityHoldsCreate({
+  orgId: "<orgId>",
+  projectId: "<projectId>",
+  environmentId: "<environmentId>",
+  serverName: "<serverName>",
+  toolName: "<toolName>",
+  callDigest: "<callDigest>",
+  effect: "<effect>",
+});
+```
+
+```python Python
+result = client.control_plane.authority_holds_create({
+    "orgId": "<orgId>",
+    "projectId": "<projectId>",
+    "environmentId": "<environmentId>",
+    "serverName": "<serverName>",
+    "toolName": "<toolName>",
+    "callDigest": "<callDigest>",
+    "effect": "<effect>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "authority_holds_create", &[
+    ("orgId", "<orgId>".into()),
+    ("projectId", "<projectId>".into()),
+    ("environmentId", "<environmentId>".into()),
+    ("serverName", "<serverName>".into()),
+    ("toolName", "<toolName>".into()),
+    ("callDigest", "<callDigest>".into()),
+    ("effect", "<effect>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### authorityHoldsGet
+
+`GET /v1/authority/holds/{id}`
+
+Read one authority hold and its attributed decisions.
+
+- **Producer operationId:** `authorityHolds.get`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-authority`.
+- **Scope:** `authority:holds:read`
+- **Call as:** TypeScript `client.controlPlane.authorityHoldsGet()` · Python `client.control_plane.authority_holds_get()` · Rust `build_request("control_plane", "authority_holds_get", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.authorityHoldsGet({
+  id: "<id>",
+});
+```
+
+```python Python
+result = client.control_plane.authority_holds_get({
+    "id": "<id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "authority_holds_get", &[
+    ("id", "<id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### authorityHoldsRevoke
+
+`DELETE /v1/authority/holds/{id}`
+
+Revoke a hold. Revoked, not deleted: a question that was asked stays answerable in the ledger.
+
+- **Producer operationId:** `authorityHolds.revoke`
+- **Auth:** OAuth access token for audience `tempera-authority`. Central `tp_` API keys cannot carry the required `authority:holds:write` scope.
+- **Scope:** `authority:holds:write`
+- **Call as:** TypeScript `client.controlPlane.authorityHoldsRevoke()` · Python `client.control_plane.authority_holds_revoke()` · Rust `build_request("control_plane", "authority_holds_revoke", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.authorityHoldsRevoke({
+  id: "<id>",
+});
+```
+
+```python Python
+result = client.control_plane.authority_holds_revoke({
+    "id": "<id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "authority_holds_revoke", &[
+    ("id", "<id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### authorityHoldsDecide
+
+`POST /v1/authority/holds/{id}:decide`
+
+Decide a held action. Requires a fresh passkey step-up; the staff password path can never produce a decision. Returns a decision token bound to the prepared effect once the quorum is met.
+
+- **Producer operationId:** `authorityHolds.decide`
+- **Auth:** OAuth access token for audience `tempera-authority`. Central `tp_` API keys cannot carry the required `authority:holds:decide` scope.
+- **Scope:** `authority:holds:decide`
+- **Call as:** TypeScript `client.controlPlane.authorityHoldsDecide()` · Python `client.control_plane.authority_holds_decide()` · Rust `build_request("control_plane", "authority_holds_decide", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `decision` | yes | — |
+| `note` | no | — |
+| `tokenTtlSeconds` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.authorityHoldsDecide({
+  id: "<id>",
+  decision: "<decision>",
+  note: "<note>",
+  tokenTtlSeconds: "<tokenTtlSeconds>",
+});
+```
+
+```python Python
+result = client.control_plane.authority_holds_decide({
+    "id": "<id>",
+    "decision": "<decision>",
+    "note": "<note>",
+    "tokenTtlSeconds": "<tokenTtlSeconds>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "authority_holds_decide", &[
+    ("id", "<id>".into()),
+    ("decision", "<decision>".into()),
+    ("note", "<note>".into()),
+    ("tokenTtlSeconds", "<tokenTtlSeconds>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### authorityHoldsClaim
+
+`POST /v1/authority/holds/{id}:claim`
+
+Spend the approval and take a single-use lease. Requires the decision token; a token presented for a different prepared effect digest fails closed.
+
+- **Producer operationId:** `authorityHolds.claim`
+- **Auth:** OAuth access token for audience `tempera-authority`. Central `tp_` API keys cannot carry the required `authority:holds:write` scope.
+- **Scope:** `authority:holds:write`
+- **Call as:** TypeScript `client.controlPlane.authorityHoldsClaim()` · Python `client.control_plane.authority_holds_claim()` · Rust `build_request("control_plane", "authority_holds_claim", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `decisionToken` | yes | — |
+| `preparedEffectDigest` | yes | — |
+| `callDigest` | yes | — |
+| `leaseSeconds` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.authorityHoldsClaim({
+  id: "<id>",
+  decisionToken: "<decisionToken>",
+  preparedEffectDigest: "<preparedEffectDigest>",
+  callDigest: "<callDigest>",
+});
+```
+
+```python Python
+result = client.control_plane.authority_holds_claim({
+    "id": "<id>",
+    "decisionToken": "<decisionToken>",
+    "preparedEffectDigest": "<preparedEffectDigest>",
+    "callDigest": "<callDigest>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "authority_holds_claim", &[
+    ("id", "<id>".into()),
+    ("decisionToken", "<decisionToken>".into()),
+    ("preparedEffectDigest", "<preparedEffectDigest>".into()),
+    ("callDigest", "<callDigest>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### authorityHoldsFinalize
+
+`POST /v1/authority/holds/{id}:finalize`
+
+Close the hold against the outcome the lease produced. An exact retry replays; any other outcome fails closed.
+
+- **Producer operationId:** `authorityHolds.finalize`
+- **Auth:** OAuth access token for audience `tempera-authority`. Central `tp_` API keys cannot carry the required `authority:holds:write` scope.
+- **Scope:** `authority:holds:write`
+- **Call as:** TypeScript `client.controlPlane.authorityHoldsFinalize()` · Python `client.control_plane.authority_holds_finalize()` · Rust `build_request("control_plane", "authority_holds_finalize", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `leaseToken` | yes | — |
+| `leaseFence` | yes | — |
+| `outcomeDigest` | yes | — |
+| `outcomeStatus` | no | — |
+| `outcomeRef` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.authorityHoldsFinalize({
+  id: "<id>",
+  leaseToken: "<leaseToken>",
+  leaseFence: "<leaseFence>",
+  outcomeDigest: "<outcomeDigest>",
+});
+```
+
+```python Python
+result = client.control_plane.authority_holds_finalize({
+    "id": "<id>",
+    "leaseToken": "<leaseToken>",
+    "leaseFence": "<leaseFence>",
+    "outcomeDigest": "<outcomeDigest>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "authority_holds_finalize", &[
+    ("id", "<id>".into()),
+    ("leaseToken", "<leaseToken>".into()),
+    ("leaseFence", "<leaseFence>".into()),
+    ("outcomeDigest", "<outcomeDigest>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### authorityHoldsMarkRecoveryRequired
+
+`POST /v1/authority/holds/{id}:markRecoveryRequired`
+
+Move a hold whose lease expired to recovery_required. Lease expiry is uncertainty, never a retry.
+
+- **Producer operationId:** `authorityHolds.markRecoveryRequired`
+- **Auth:** OAuth access token for audience `tempera-authority`. Central `tp_` API keys cannot carry the required `authority:holds:write` scope.
+- **Scope:** `authority:holds:write`
+- **Call as:** TypeScript `client.controlPlane.authorityHoldsMarkRecoveryRequired()` · Python `client.control_plane.authority_holds_mark_recovery_required()` · Rust `build_request("control_plane", "authority_holds_mark_recovery_required", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `id` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.authorityHoldsMarkRecoveryRequired({
+  id: "<id>",
+});
+```
+
+```python Python
+result = client.control_plane.authority_holds_mark_recovery_required({
+    "id": "<id>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "authority_holds_mark_recovery_required", &[
+    ("id", "<id>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### authorityCredentialBindingsList
+
+`GET /v1/authority/credential-bindings`
+
+List the credential bindings for one workspace. A binding names a cred_ row; it never carries material.
+
+- **Producer operationId:** `authorityCredentialBindings.list`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-authority`.
+- **Scope:** `authority:policies:read`
+- **Call as:** TypeScript `client.controlPlane.authorityCredentialBindingsList()` · Python `client.control_plane.authority_credential_bindings_list()` · Rust `build_request("control_plane", "authority_credential_bindings_list", params)`
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.authorityCredentialBindingsList({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
+```
+
+```python Python
+result = client.control_plane.authority_credential_bindings_list({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "authority_credential_bindings_list", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### authorityCredentialBindingsCreate
+
+`POST /v1/authority/credential-bindings`
+
+Bind an existing connector credential to a destination and a release rule. Reference-only: a body carrying a secret is rejected by field name. Creating a binding is what makes a future release possible, so it takes the same scope, role and step-up as writing policy.
+
+- **Producer operationId:** `authorityCredentialBindings.create`
+- **Auth:** OAuth access token for audience `tempera-authority`. Central `tp_` API keys cannot carry the required `authority:policies:write` scope.
+- **Scope:** `authority:policies:write`
+- **Call as:** TypeScript `client.controlPlane.authorityCredentialBindingsCreate()` · Python `client.control_plane.authority_credential_bindings_create()` · Rust `build_request("control_plane", "authority_credential_bindings_create", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `orgId` | no | — |
+| `projectId` | no | — |
+| `environmentId` | no | — |
+| `name` | yes | — |
+| `credentialId` | yes | — |
+| `destination` | yes | — |
+| `delivery` | yes | — |
+| `mint` | no | — |
+| `releasePolicy` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.authorityCredentialBindingsCreate({
+  name: "<name>",
+  credentialId: "<credentialId>",
+  destination: "<destination>",
+  delivery: "<delivery>",
+  releasePolicy: "<releasePolicy>",
+});
+```
+
+```python Python
+result = client.control_plane.authority_credential_bindings_create({
+    "name": "<name>",
+    "credentialId": "<credentialId>",
+    "destination": "<destination>",
+    "delivery": "<delivery>",
+    "releasePolicy": "<releasePolicy>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "authority_credential_bindings_create", &[
+    ("name", "<name>".into()),
+    ("credentialId", "<credentialId>".into()),
+    ("destination", "<destination>".into()),
+    ("delivery", "<delivery>".into()),
+    ("releasePolicy", "<releasePolicy>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### authorityCredentialBindingsRelease
+
+`POST /v1/authority/credential-bindings/{id}:release`
+
+Release a credential against a decision. Verifies the hold is leased by this caller with a lease token that validates, then mints or resolves and returns the material exactly once. The handler that evaluates the hold has no vault client in scope and the handler that resolves the vault evaluates no policy (ADR 0002 point 3). Service credentials only: never a human OAuth session.
+
+- **Producer operationId:** `authorityCredentialBindings.release`
+- **Auth:** OAuth access token for audience `tempera-authority`. Central `tp_` API keys cannot carry the required `authority:credentials:release` scope.
+- **Scope:** `authority:credentials:release`
+- **Call as:** TypeScript `client.controlPlane.authorityCredentialBindingsRelease()` · Python `client.control_plane.authority_credential_bindings_release()` · Rust `build_request("control_plane", "authority_credential_bindings_release", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `id` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `effectDigest` | yes | — |
+| `callDigest` | yes | — |
+| `holdId` | no | — |
+| `leaseToken` | no | — |
+| `effect` | no | — |
+| `serverName` | no | — |
+| `toolName` | no | — |
+| `ttlSeconds` | no | — |
+| `gateId` | no | — |
+| `principalId` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.authorityCredentialBindingsRelease({
+  id: "<id>",
+  effectDigest: "<effectDigest>",
+  callDigest: "<callDigest>",
+  holdId: "<holdId>",
+});
+```
+
+```python Python
+result = client.control_plane.authority_credential_bindings_release({
+    "id": "<id>",
+    "effectDigest": "<effectDigest>",
+    "callDigest": "<callDigest>",
+    "holdId": "<holdId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "authority_credential_bindings_release", &[
+    ("id", "<id>".into()),
+    ("effectDigest", "<effectDigest>".into()),
+    ("callDigest", "<callDigest>".into()),
+    ("holdId", "<holdId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### authorityLedgerExport
+
+`GET /v1/authority/ledger`
+
+Read the authority ledger, a hash chain projected from holds, decisions and policies.
+
+- **Producer operationId:** `authorityLedger.export`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-authority`.
+- **Scope:** `authority:ledger:read`
+- **Call as:** TypeScript `client.controlPlane.authorityLedgerExport()` · Python `client.control_plane.authority_ledger_export()` · Rust `build_request("control_plane", "authority_ledger_export", params)`
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+| `format` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.authorityLedgerExport({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
+```
+
+```python Python
+result = client.control_plane.authority_ledger_export({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "authority_ledger_export", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### authorityMetricsGet
+
+`GET /v1/authority/metrics`
+
+Read the approval-fatigue metrics for one workspace.
+
+- **Producer operationId:** `authorityMetrics.get`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-authority`.
+- **Scope:** `authority:ledger:read`
+- **Call as:** TypeScript `client.controlPlane.authorityMetricsGet()` · Python `client.control_plane.authority_metrics_get()` · Rust `build_request("control_plane", "authority_metrics_get", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.authorityMetricsGet();
+```
+
+```python Python
+result = client.control_plane.authority_metrics_get()
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "authority_metrics_get", &[])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```

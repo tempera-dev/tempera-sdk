@@ -19,20 +19,32 @@ product handler change                     (all source-locked HTTP producers)
 
 Every product repo already gates its own contract; the SDK pins to those
 artifacts:
+<!-- BEGIN generated producer registry table -->
 
-| Product | Contract artifact | Product-side gate |
-|---|---|---|
-| auth-hub | `contracts/control-plane.openapi.json` | `scripts/check-control-plane-openapi.py` |
-| palette | `sdks/openapi/palette-api.json` (generated from `#[utoipa::path]`) | `scripts/check-contract-sync.sh` (CI: sdk-contract.yml) |
-| cradle | `sdks/openapi.json` (utoipa, committed) | `tests/openapi_drift.rs` + `tests/mcp_catalog_drift.rs` |
-| tempo | `api/openapi.json` (committed from the runtime generator) | `crates/tempo-headless/tests/openapi_drift.rs` |
-| remi | `docs/public-http-contract.json` | `scripts/check-public-http-contract.py` |
-| data-engine | `api/openapi.yaml` (contract-first, committed) | route/auth coverage in `tests/test_mvp.py` |
-| human-data | `api/openapi.json` | deterministic OpenAPI drift plus runtime conformance tests |
-| tempera-gym | `contracts/gym-api.openapi.yaml` | producer contract tests plus generated-client drift |
-| tempera-bio | `openapi/tempera-bio-discovery-v1.openapi.json` | deterministic runtime regeneration plus REST/auth conformance tests |
-| tempera-llm | `sdks/openapi/tempera-llm-api.json` | CI regenerates from handlers and rejects diff |
-| tempera-workflows | `sdks/openapi/tempera-workflows-api.json` | `scripts/check-contract-sync.sh` |
+| Product key | Repository | Producer contract | Vendored as | Canonical |
+| --- | --- | --- | --- | --- |
+| `controlPlane` | auth-hub | `contracts/control-plane.openapi.json` | `specs/control-plane.openapi.json` | **no** |
+| `cradle` | cradle | `contracts/openapi/cradle.openapi.json` | `specs/cradle.openapi.json` | yes |
+| `dataEngine` | data-engine | `contracts/openapi/data-engine.openapi.json` | `specs/data-engine.openapi.json` | yes |
+| `humanData` | human-data | `contracts/openapi/human-data.openapi.json` | `specs/human-data.openapi.json` | yes |
+| `palette` | palette | `contracts/openapi/palette.openapi.json` | `specs/palette.openapi.json` | yes |
+| `remi` | remi | `contracts/openapi/remi.openapi.json` | `specs/remi.openapi.json` | yes |
+| `tempo` | tempo | `contracts/openapi/tempo.openapi.json` | `specs/tempo.openapi.json` | yes |
+| `temperaBio` | tempera-bio | `contracts/openapi/bio.openapi.json` | `specs/tempera-bio.openapi.json` | yes |
+| `temperaBusiness` | tempera-business | `contracts/openapi/business.openapi.json` | `specs/tempera-business.openapi.json` | yes |
+| `temperaConnectors` | tempera-connectors-runtime | `contracts/openapi/connectors.openapi.json` | `specs/tempera-connectors.openapi.json` | yes |
+| `temperaDocument` | tempera-document | `contracts/openapi/document.openapi.json` | `specs/tempera-document.openapi.json` | yes |
+| `temperaDropshipping` | tempera-dropshipping | `contracts/openapi/dropshipping.openapi.json` | `specs/tempera-dropshipping.openapi.json` | yes |
+| `temperaGym` | tempera-gym | `contracts/openapi/gym.openapi.json` | `specs/tempera-gym.openapi.json` | yes |
+| `temperaInvestigations` | tempera-investigations | `contracts/openapi/investigations.openapi.json` | `specs/tempera-investigations.openapi.json` | yes |
+| `temperaLlm` | tempera-llm | `contracts/openapi/llm.openapi.json` | `specs/tempera-llm.openapi.json` | yes |
+| `temperaPayments` | tempera-payments | `contracts/openapi/payments.openapi.json` | `specs/tempera-payments.openapi.json` | yes |
+| `temperaRisk` | tempera-risk | `contracts/openapi/risk.openapi.json` | `specs/tempera-risk.openapi.json` | yes |
+| `temperaVoice` | tempera-voice | `contracts/openapi/voice.openapi.json` | `specs/tempera-voice.openapi.json` | yes |
+| `temperaWorkflows` | tempera-workflows | `sdks/openapi/tempera-workflows-api.json` | `specs/tempera-workflows.openapi.json` | **no** |
+
+<!-- END generated producer registry table -->
+
 
 Data Engine is additionally pinned in
 `contracts/data-engine-openapi-operations.json`. Its sync tool rejects a dirty

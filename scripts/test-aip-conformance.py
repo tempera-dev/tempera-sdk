@@ -266,13 +266,20 @@ class AipConformanceTest(unittest.TestCase):
         )
         self.assertTrue(MODULE.SDK_EXEMPTIONS.covers_path("remi", "/readyz"))
         self.assertTrue(MODULE.SDK_EXEMPTIONS.covers_path("temperaLlm", "/readyz"))
-        self.assertTrue(
-            MODULE.SDK_EXEMPTIONS.covers_path("temperaLlm", "/v1/chat/completions")
-        )
-        self.assertTrue(MODULE.SDK_EXEMPTIONS.covers_path("temperaLlm", "/v1/models"))
-        self.assertTrue(
-            MODULE.SDK_EXEMPTIONS.covers_path("temperaLlm", "/v1/responses")
-        )
+        # tempera-llm's three OpenAI-wire routes are exempt from the field-name
+        # rule only. They are ordinary /v1 resource routes in every other
+        # respect, and waiving the whole route would have hidden a pagination
+        # or standard-error regression on the busiest surface in the fleet.
+        for method, path in (
+            ("GET", "/v1/models"),
+            ("POST", "/v1/chat/completions"),
+            ("POST", "/v1/responses"),
+        ):
+            self.assertIn(
+                ("temperaLlm", method, path),
+                MODULE.SDK_EXEMPTIONS.json_payloads,
+            )
+            self.assertFalse(MODULE.SDK_EXEMPTIONS.covers_path("temperaLlm", path))
         self.assertTrue(
             MODULE.SDK_EXEMPTIONS.covers_path("palette", "/v1/otlp/t/p/e/v1/traces")
         )

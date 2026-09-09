@@ -1,0 +1,13 @@
+{
+  "generated_path": "specs/cradle.openapi.json",
+  "generated_sha256": "e2a1bf02b22af640fa28156ac7fdaa0949ab9a6eb14880d2a158022489179baf",
+  "generated_with": "sync-vendored-openapi.py@1+verbatim-openapi-copy",
+  "schema_version": 1,
+  "source_blob_sha": "358fecae19182e336264bfe9c565d6fe07d733ba",
+  "source_branch": "main",
+  "source_commit": "5978f050d195a187f4e7d8aff7d068b0907b3d44",
+  "source_mode": "100644",
+  "source_path": "contracts/openapi/cradle.openapi.json",
+  "source_repo": "tempera-dev/cradle",
+  "source_sha256": "e2a1bf02b22af640fa28156ac7fdaa0949ab9a6eb14880d2a158022489179baf"
+}

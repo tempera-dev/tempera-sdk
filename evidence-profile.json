@@ -54,7 +54,7 @@
       "evidence_class": "synthetic_fixture",
       "proof_refs": [
         "surface.json",
-        "specs/tempera-gym-api.json.source",
+        "specs/tempera-gym.openapi.json.source",
         "packages/typescript/src/surface.js",
         "packages/python/src/tempera_sdk/surface.py",
         "packages/rust/src/surface.rs"
@@ -68,7 +68,7 @@
       "evidence_class": "synthetic_fixture",
       "proof_refs": [
         "surface.json",
-        "specs/tempera-bio-api.json.source",
+        "specs/tempera-bio.openapi.json.source",
         "packages/typescript/test/client.test.mjs",
         "packages/python/tests/test_client.py",
         "packages/rust/src/client.rs"
@@ -82,7 +82,7 @@
       "evidence_class": "synthetic_fixture",
       "proof_refs": [
         "surface.json",
-        "specs/tempera-workflows-api.json.source",
+        "specs/tempera-workflows.openapi.json.source",
         "packages/typescript/test/client.test.mjs",
         "packages/python/tests/test_client.py",
         "packages/rust/src/client.rs"
@@ -96,7 +96,7 @@
       "evidence_class": "synthetic_fixture",
       "proof_refs": [
         "surface.json",
-        "specs/tempera-workflows-api.json.source",
+        "specs/tempera-workflows.openapi.json.source",
         "packages/typescript/test/client.test.mjs",
         "packages/python/tests/test_client.py",
         "packages/rust/src/client.rs"
@@ -110,8 +110,8 @@
       "evidence_class": "synthetic_fixture",
       "proof_refs": [
         "surface.json",
-        "specs/tempera-dropshipping-api.json.source",
-        "specs/tempera-business-api.json.source",
+        "specs/tempera-dropshipping.openapi.json.source",
+        "specs/tempera-business.openapi.json.source",
         "contracts/sdk-staged-sources.json",
         "contracts/native-transport-v1.json",
         "packages/typescript/test/retry.test.mjs",

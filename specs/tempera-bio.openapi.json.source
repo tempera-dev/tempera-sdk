@@ -1,7 +1,7 @@
 {
-  "generated_path": "specs/tempera-bio-api.json",
+  "generated_path": "specs/tempera-bio.openapi.json",
   "generated_sha256": "07560c39ab3efdb7f0a9068dbc60a325f10376206b24260542445302e4cd76e7",
-  "generated_with": "source_lock.py@1+verbatim-openapi-copy",
+  "generated_with": "sync-vendored-openapi.py@1+verbatim-openapi-copy",
   "schema_version": 1,
   "source_blob_sha": "6ba901d894963aff051e3d51a35a83f07624c733",
   "source_branch": "main",

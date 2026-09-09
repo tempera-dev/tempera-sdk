@@ -2,10 +2,10 @@
 // Type declarations for the generated surface tables plus the typed
 // product-client interfaces used by createTemperaClient().
 
-export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code" | "tempera-llm" | "tempera-connectors" | "tempera-workflows" | "tempera-gym" | "tempera-bio" | "tempera-document" | "tempera-risk" | "tempera-investigations" | "tempera-payments" | "tempera-dropshipping" | "tempera-voice" | "tempera-clearing" | "tempera-business";
-export type TemperaScope = "mcp:invoke" | "memory:read" | "memory:write" | "memory:manage" | "trace:read" | "trace:write" | "scenario:read" | "scenario:write" | "dataset:read" | "dataset:write" | "connector:read" | "connector:run" | "connector:manage" | "eval:run" | "training:publish" | "review:gold:manage" | "review:resolve" | "workflow:read" | "workflow:write" | "workflow:run" | "bio:source:read" | "bio:proposal:write" | "bio:measurement:verify" | "bio:decision:write" | "bio:experiment:approve" | "bio:experiment:submit" | "bio:signer:manage" | "model:read" | "model:invoke" | "usage:reserve" | "document:read" | "document:write" | "risk:read" | "risk:write" | "risk:review" | "investigation:read" | "investigation:write" | "investigation:run" | "investigation:review" | "pii:unmask" | "payments:intents:read" | "payments:intents:write" | "payments:receipts:read" | "payments:webhooks:write" | "payments:refunds:write" | "payments:admin" | "payments:merchants:read" | "payments:merchants:write" | "orders:read" | "orders:commerce:write" | "voice:read" | "voice:write" | "voice:stream" | "clearing:actions:read" | "clearing:actions:propose" | "clearing:actions:commit" | "clearing:actions:reconcile" | "clearing:receipts:read" | "clearing:actions:approve" | "connection:invoke" | "connection:write" | "connection:read" | "admin" | "business:read" | "business:write" | "business:review" | "orders:write" | "orders:approve" | "offline_access";
+export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code" | "tempera-llm" | "tempera-connectors" | "tempera-workflows" | "tempera-gym" | "tempera-bio" | "tempera-document" | "tempera-risk" | "tempera-investigations" | "tempera-payments" | "tempera-dropshipping" | "tempera-voice" | "tempera-clearing" | "tempera-authority" | "tempera-business";
+export type TemperaScope = "mcp:invoke" | "memory:read" | "memory:write" | "memory:manage" | "trace:read" | "trace:write" | "scenario:read" | "scenario:write" | "dataset:read" | "dataset:write" | "connector:read" | "connector:run" | "connector:manage" | "eval:run" | "training:publish" | "review:gold:manage" | "review:resolve" | "workflow:read" | "workflow:write" | "workflow:run" | "bio:source:read" | "bio:proposal:write" | "bio:measurement:verify" | "bio:decision:write" | "bio:experiment:approve" | "bio:experiment:submit" | "bio:signer:manage" | "model:read" | "model:invoke" | "usage:reserve" | "document:read" | "document:write" | "risk:read" | "risk:write" | "risk:review" | "investigation:read" | "investigation:write" | "investigation:run" | "investigation:review" | "pii:unmask" | "payments:intents:read" | "payments:intents:write" | "payments:receipts:read" | "payments:webhooks:write" | "payments:refunds:write" | "payments:admin" | "payments:merchants:read" | "payments:merchants:write" | "orders:read" | "orders:commerce:write" | "voice:read" | "voice:write" | "voice:stream" | "clearing:actions:read" | "clearing:actions:propose" | "clearing:actions:commit" | "clearing:actions:reconcile" | "clearing:receipts:read" | "clearing:actions:approve" | "connection:invoke" | "connection:write" | "connection:read" | "authority:holds:read" | "authority:holds:decide" | "authority:holds:write" | "authority:policies:read" | "authority:policies:write" | "authority:credentials:release" | "authority:ledger:read" | "authority:ledger:export" | "admin" | "business:read" | "business:write" | "business:review" | "orders:write" | "orders:approve" | "offline_access";
 export type TemperaEnvironment = "local" | "preview" | "staging" | "production";
-export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaLlm" | "temperaVoice" | "temperaRisk" | "temperaWorkflows" | "temperaGym" | "temperaBio" | "temperaDocument" | "temperaPayments" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha" | "temperaDropshipping" | "temperaBusiness" | "temperaConnectors";
+export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaLlm" | "temperaVoice" | "temperaRisk" | "temperaWorkflows" | "temperaGym" | "temperaBio" | "temperaDocument" | "temperaPayments" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha" | "temperaDropshipping" | "temperaBusiness" | "temperaConnectors" | "temperaInvestigations";
 
 export declare const TEMPERA_SURFACE_VERSION: number;
 export declare const TEMPERA_AUDIENCES: readonly TemperaAudience[];
@@ -311,6 +311,40 @@ export interface ControlPlaneClient extends TemperaProductClientBase {
   clearingAdmissionsFinalize(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Monotonically mark an expired lease as requiring authoritative reconciliation. */
   clearingAdmissionsMarkRecoveryRequired(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List the authority policies for one workspace. */
+  authorityPoliciesList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create an authority policy. Requires an owner or admin human principal and a recent passkey step-up. */
+  authorityPoliciesCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Replace an authority policy document. Requires an owner or admin human principal and a recent passkey step-up. */
+  authorityPoliciesUpdate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Archive an authority policy. A decision already made cites the policy that made it, so the row stays readable. */
+  authorityPoliciesArchive(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List the authority holds for one workspace. */
+  authorityHoldsList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create a hold. A duplicate call digest joins the open hold rather than asking a person twice. Evidence is reference-only; inline content is rejected. */
+  authorityHoldsCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Read one authority hold and its attributed decisions. */
+  authorityHoldsGet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Revoke a hold. Revoked, not deleted: a question that was asked stays answerable in the ledger. */
+  authorityHoldsRevoke(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Decide a held action. Requires a fresh passkey step-up; the staff password path can never produce a decision. Returns a decision token bound to the prepared effect once the quorum is met. */
+  authorityHoldsDecide(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Spend the approval and take a single-use lease. Requires the decision token; a token presented for a different prepared effect digest fails closed. */
+  authorityHoldsClaim(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Close the hold against the outcome the lease produced. An exact retry replays; any other outcome fails closed. */
+  authorityHoldsFinalize(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Move a hold whose lease expired to recovery_required. Lease expiry is uncertainty, never a retry. */
+  authorityHoldsMarkRecoveryRequired(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List the credential bindings for one workspace. A binding names a cred_ row; it never carries material. */
+  authorityCredentialBindingsList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Bind an existing connector credential to a destination and a release rule. Reference-only: a body carrying a secret is rejected by field name. Creating a binding is what makes a future release possible, so it takes the same scope, role and step-up as writing policy. */
+  authorityCredentialBindingsCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Release a credential against a decision. Verifies the hold is leased by this caller with a lease token that validates, then mints or resolves and returns the material exactly once. The handler that evaluates the hold has no vault client in scope and the handler that resolves the vault evaluates no policy (ADR 0002 point 3). Service credentials only: never a human OAuth session. */
+  authorityCredentialBindingsRelease(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Read the authority ledger, a hash chain projected from holds, decisions and policies. */
+  authorityLedgerExport(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Read the approval-fatigue metrics for one workspace. */
+  authorityMetricsGet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export interface PaletteClient extends TemperaProductClientBase {
@@ -1158,6 +1192,57 @@ export interface TemperaConnectorsClient extends TemperaProductClientBase {
   connectionsImportOpenApi(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List the reviewed, read-only connector catalog. */
   connectorsList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+}
+
+export interface TemperaInvestigationsClient extends TemperaProductClientBase {
+  /** Create investigation profile. */
+  createInvestigationProfile(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List investigation profiles. */
+  listInvestigationProfiles(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get investigation profile. */
+  getInvestigationProfile(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Update investigation profile. */
+  updateInvestigationProfile(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Delete investigation profile. */
+  deleteInvestigationProfile(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create investigation. */
+  createInvestigation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List investigations. */
+  listInvestigations(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get investigation. */
+  getInvestigation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Run deterministic investigation. */
+  evaluateInvestigationDeterministically(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Run agentic investigation. */
+  runInvestigationAgentic(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Run hybrid investigation. */
+  runInvestigation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Cancel investigation. */
+  cancelInvestigation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Replay investigation. */
+  replayInvestigation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List deterministic evaluations. */
+  listDeterministicEvaluations(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List agentic runs. */
+  listAgenticRuns(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List findings. */
+  listFindings(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List investigation events. */
+  listInvestigationEvents(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List investigation reviews. */
+  listInvestigationReviews(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create append-only review. */
+  createInvestigationReview(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get deterministic evaluation. */
+  getDeterministicEvaluation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get agentic run. */
+  getAgenticRun(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get cited investigation dossier. */
+  getInvestigationDossier(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get long-running operation. */
+  getOperation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Cancel long-running operation. */
+  cancelOperation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export type PassthroughClient = TemperaProductClientBase;

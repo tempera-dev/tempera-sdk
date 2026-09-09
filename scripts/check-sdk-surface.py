@@ -586,7 +586,7 @@ def main() -> int:
             "scripts/check-sdk-surface.py",
             # Immutable producer artifact: Remi's current crate and source paths
             # still use the legacy name. Generated SDK/code/docs remain gated.
-            "specs/remi-http-contract.json",
+            "specs/remi.openapi.json",
         }:
             continue  # These exact files necessarily spell the denied pattern.
         path = ROOT / tracked_path

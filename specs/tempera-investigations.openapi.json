@@ -1,0 +1,1826 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Tempera Investigations API",
+    "version": "0.1.0",
+    "description": "Generic, non-authorizing deterministic and agentic investigation control plane."
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8787"
+    }
+  ],
+  "paths": {
+    "/v1/projects/{project}/investigationProfiles": {
+      "parameters": [
+        {
+          "name": "project",
+          "in": "path",
+          "required": true,
+          "description": "The project that owns the investigation resources.",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "createInvestigationProfile",
+        "summary": "Create investigation profile",
+        "responses": {
+          "201": {
+            "description": "The created investigation profile.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "The profile a previous request with this request_id created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-investigations",
+        "x-tempera-required-scope": "investigation:write",
+        "x-tempera-physical-action": false,
+        "x-tempera-execution-authority": false,
+        "x-tempera-resource-pattern": {
+          "project": "projects/*"
+        }
+      },
+      "get": {
+        "operationId": "listInvestigationProfiles",
+        "summary": "List investigation profiles",
+        "responses": {
+          "200": {
+            "description": "One page of investigation profiles.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "investigationProfiles",
+                    "nextPageToken"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "investigationProfiles": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Resource"
+                      }
+                    },
+                    "nextPageToken": {
+                      "type": "string",
+                      "description": "The pageToken for the next page, or an empty string on the last page."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-investigations",
+        "x-tempera-required-scope": "investigation:read",
+        "x-tempera-physical-action": false,
+        "x-tempera-execution-authority": false,
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ],
+        "x-tempera-resource-pattern": {
+          "project": "projects/*"
+        }
+      }
+    },
+    "/v1/projects/{project}/investigationProfiles/{profile}": {
+      "parameters": [
+        {
+          "name": "project",
+          "in": "path",
+          "required": true,
+          "description": "The project that owns the investigation resources.",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "profile",
+          "in": "path",
+          "required": true,
+          "description": "The investigation profile identifier.",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getInvestigationProfile",
+        "summary": "Get investigation profile",
+        "responses": {
+          "200": {
+            "description": "The requested investigation profile.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-investigations",
+        "x-tempera-required-scope": "investigation:read",
+        "x-tempera-physical-action": false,
+        "x-tempera-execution-authority": false,
+        "x-tempera-resource-pattern": {
+          "project": "projects/*",
+          "profile": "projects/*/investigationProfiles/*"
+        }
+      },
+      "patch": {
+        "operationId": "updateInvestigationProfile",
+        "summary": "Update investigation profile",
+        "responses": {
+          "200": {
+            "description": "The updated investigation profile.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-investigations",
+        "x-tempera-required-scope": "investigation:write",
+        "x-tempera-physical-action": false,
+        "x-tempera-execution-authority": false,
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UpdateMask"
+          }
+        ],
+        "x-tempera-resource-pattern": {
+          "project": "projects/*",
+          "profile": "projects/*/investigationProfiles/*"
+        }
+      },
+      "delete": {
+        "operationId": "deleteInvestigationProfile",
+        "summary": "Delete investigation profile",
+        "responses": {
+          "200": {
+            "description": "The profile was deleted."
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-investigations",
+        "x-tempera-required-scope": "investigation:write",
+        "x-tempera-physical-action": false,
+        "x-tempera-execution-authority": false,
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Etag"
+          }
+        ],
+        "x-tempera-resource-pattern": {
+          "project": "projects/*",
+          "profile": "projects/*/investigationProfiles/*"
+        }
+      }
+    },
+    "/v1/projects/{project}/investigations": {
+      "parameters": [
+        {
+          "name": "project",
+          "in": "path",
+          "required": true,
+          "description": "The project that owns the investigation resources.",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "createInvestigation",
+        "summary": "Create investigation",
+        "responses": {
+          "201": {
+            "description": "The created investigation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "The investigation a previous request with this request_id created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-investigations",
+        "x-tempera-required-scope": "investigation:write",
+        "x-tempera-physical-action": false,
+        "x-tempera-execution-authority": false,
+        "x-tempera-resource-pattern": {
+          "project": "projects/*"
+        }
+      },
+      "get": {
+        "operationId": "listInvestigations",
+        "summary": "List investigations",
+        "responses": {
+          "200": {
+            "description": "One page of investigations.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "investigations",
+                    "nextPageToken"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "investigations": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Resource"
+                      }
+                    },
+                    "nextPageToken": {
+                      "type": "string",
+                      "description": "The pageToken for the next page, or an empty string on the last page."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-investigations",
+        "x-tempera-required-scope": "investigation:read",
+        "x-tempera-physical-action": false,
+        "x-tempera-execution-authority": false,
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ],
+        "x-tempera-resource-pattern": {
+          "project": "projects/*"
+        }
+      }
+    },
+    "/v1/projects/{project}/investigations/{investigation}": {
+      "parameters": [
+        {
+          "name": "project",
+          "in": "path",
+          "required": true,
+          "description": "The project that owns the investigation resources.",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "investigation",
+          "in": "path",
+          "required": true,
+          "description": "The investigation identifier.",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getInvestigation",
+        "summary": "Get investigation",
+        "responses": {
+          "200": {
+            "description": "The requested investigation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-investigations",
+        "x-tempera-required-scope": "investigation:read",
+        "x-tempera-physical-action": false,
+        "x-tempera-execution-authority": false,
+        "x-tempera-resource-pattern": {
+          "project": "projects/*",
+          "investigation": "projects/*/investigations/*"
+        }
+      }
+    },
+    "/v1/projects/{project}/investigations/{investigation}:evaluateDeterministically": {
+      "parameters": [
+        {
+          "name": "project",
+          "in": "path",
+          "required": true,
+          "description": "The project that owns the investigation resources.",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "investigation",
+          "in": "path",
+          "required": true,
+          "description": "The investigation identifier.",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "evaluateInvestigationDeterministically",
+        "summary": "Run deterministic investigation",
+        "responses": {
+          "200": {
+            "description": "The completed deterministic evaluation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-investigations",
+        "x-tempera-required-scope": "investigation:run",
+        "x-tempera-physical-action": false,
+        "x-tempera-execution-authority": false,
+        "x-tempera-resource-pattern": {
+          "project": "projects/*",
+          "investigation": "projects/*/investigations/*"
+        }
+      }
+    },
+    "/v1/projects/{project}/investigations/{investigation}:runAgentic": {
+      "parameters": [
+        {
+          "name": "project",
+          "in": "path",
+          "required": true,
+          "description": "The project that owns the investigation resources.",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "investigation",
+          "in": "path",
+          "required": true,
+          "description": "The investigation identifier.",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "runInvestigationAgentic",
+        "summary": "Run agentic investigation",
+        "responses": {
+          "202": {
+            "description": "The long-running operation tracking this execution.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-investigations",
+        "x-tempera-required-scope": "investigation:run",
+        "x-tempera-physical-action": false,
+        "x-tempera-execution-authority": false,
+        "x-tempera-resource-pattern": {
+          "project": "projects/*",
+          "investigation": "projects/*/investigations/*"
+        }
+      }
+    },
+    "/v1/projects/{project}/investigations/{investigation}:run": {
+      "parameters": [
+        {
+          "name": "project",
+          "in": "path",
+          "required": true,
+          "description": "The project that owns the investigation resources.",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "investigation",
+          "in": "path",
+          "required": true,
+          "description": "The investigation identifier.",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "runInvestigation",
+        "summary": "Run hybrid investigation",
+        "responses": {
+          "202": {
+            "description": "The long-running operation tracking this execution.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-investigations",
+        "x-tempera-required-scope": "investigation:run",
+        "x-tempera-physical-action": false,
+        "x-tempera-execution-authority": false,
+        "x-tempera-resource-pattern": {
+          "project": "projects/*",
+          "investigation": "projects/*/investigations/*"
+        }
+      }
+    },
+    "/v1/projects/{project}/investigations/{investigation}:cancel": {
+      "parameters": [
+        {
+          "name": "project",
+          "in": "path",
+          "required": true,
+          "description": "The project that owns the investigation resources.",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "investigation",
+          "in": "path",
+          "required": true,
+          "description": "The investigation identifier.",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "cancelInvestigation",
+        "summary": "Cancel investigation",
+        "responses": {
+          "200": {
+            "description": "The cancelled investigation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-investigations",
+        "x-tempera-required-scope": "investigation:write",
+        "x-tempera-physical-action": false,
+        "x-tempera-execution-authority": false,
+        "x-tempera-resource-pattern": {
+          "project": "projects/*",
+          "investigation": "projects/*/investigations/*"
+        }
+      }
+    },
+    "/v1/projects/{project}/investigations/{investigation}:replay": {
+      "parameters": [
+        {
+          "name": "project",
+          "in": "path",
+          "required": true,
+          "description": "The project that owns the investigation resources.",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "investigation",
+          "in": "path",
+          "required": true,
+          "description": "The investigation identifier.",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "replayInvestigation",
+        "summary": "Replay investigation",
+        "responses": {
+          "202": {
+            "description": "The long-running operation tracking this execution.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-investigations",
+        "x-tempera-required-scope": "investigation:run",
+        "x-tempera-physical-action": false,
+        "x-tempera-execution-authority": false,
+        "x-tempera-resource-pattern": {
+          "project": "projects/*",
+          "investigation": "projects/*/investigations/*"
+        }
+      }
+    },
+    "/v1/projects/{project}/investigations/{investigation}/deterministicEvaluations": {
+      "parameters": [
+        {
+          "name": "project",
+          "in": "path",
+          "required": true,
+          "description": "The project that owns the investigation resources.",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "investigation",
+          "in": "path",
+          "required": true,
+          "description": "The investigation identifier.",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "listDeterministicEvaluations",
+        "summary": "List deterministic evaluations",
+        "responses": {
+          "200": {
+            "description": "One page of deterministicEvaluations.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "deterministicEvaluations",
+                    "nextPageToken"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "deterministicEvaluations": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Resource"
+                      }
+                    },
+                    "nextPageToken": {
+                      "type": "string",
+                      "description": "The pageToken for the next page, or an empty string on the last page."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-investigations",
+        "x-tempera-required-scope": "investigation:read",
+        "x-tempera-physical-action": false,
+        "x-tempera-execution-authority": false,
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ],
+        "x-tempera-resource-pattern": {
+          "project": "projects/*",
+          "investigation": "projects/*/investigations/*"
+        }
+      }
+    },
+    "/v1/projects/{project}/investigations/{investigation}/agenticRuns": {
+      "parameters": [
+        {
+          "name": "project",
+          "in": "path",
+          "required": true,
+          "description": "The project that owns the investigation resources.",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "investigation",
+          "in": "path",
+          "required": true,
+          "description": "The investigation identifier.",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "listAgenticRuns",
+        "summary": "List agentic runs",
+        "responses": {
+          "200": {
+            "description": "One page of agenticRuns.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "agenticRuns",
+                    "nextPageToken"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "agenticRuns": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Resource"
+                      }
+                    },
+                    "nextPageToken": {
+                      "type": "string",
+                      "description": "The pageToken for the next page, or an empty string on the last page."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-investigations",
+        "x-tempera-required-scope": "investigation:read",
+        "x-tempera-physical-action": false,
+        "x-tempera-execution-authority": false,
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ],
+        "x-tempera-resource-pattern": {
+          "project": "projects/*",
+          "investigation": "projects/*/investigations/*"
+        }
+      }
+    },
+    "/v1/projects/{project}/investigations/{investigation}/findings": {
+      "parameters": [
+        {
+          "name": "project",
+          "in": "path",
+          "required": true,
+          "description": "The project that owns the investigation resources.",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "investigation",
+          "in": "path",
+          "required": true,
+          "description": "The investigation identifier.",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "listFindings",
+        "summary": "List findings",
+        "responses": {
+          "200": {
+            "description": "One page of findings.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "findings",
+                    "nextPageToken"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "findings": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Resource"
+                      }
+                    },
+                    "nextPageToken": {
+                      "type": "string",
+                      "description": "The pageToken for the next page, or an empty string on the last page."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-investigations",
+        "x-tempera-required-scope": "investigation:read",
+        "x-tempera-physical-action": false,
+        "x-tempera-execution-authority": false,
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ],
+        "x-tempera-resource-pattern": {
+          "project": "projects/*",
+          "investigation": "projects/*/investigations/*"
+        }
+      }
+    },
+    "/v1/projects/{project}/investigations/{investigation}/events": {
+      "parameters": [
+        {
+          "name": "project",
+          "in": "path",
+          "required": true,
+          "description": "The project that owns the investigation resources.",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "investigation",
+          "in": "path",
+          "required": true,
+          "description": "The investigation identifier.",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "listInvestigationEvents",
+        "summary": "List investigation events",
+        "responses": {
+          "200": {
+            "description": "One page of events.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "events",
+                    "nextPageToken"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "events": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Resource"
+                      }
+                    },
+                    "nextPageToken": {
+                      "type": "string",
+                      "description": "The pageToken for the next page, or an empty string on the last page."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-investigations",
+        "x-tempera-required-scope": "investigation:read",
+        "x-tempera-physical-action": false,
+        "x-tempera-execution-authority": false,
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ],
+        "x-tempera-resource-pattern": {
+          "project": "projects/*",
+          "investigation": "projects/*/investigations/*"
+        }
+      }
+    },
+    "/v1/projects/{project}/investigations/{investigation}/reviews": {
+      "parameters": [
+        {
+          "name": "project",
+          "in": "path",
+          "required": true,
+          "description": "The project that owns the investigation resources.",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "investigation",
+          "in": "path",
+          "required": true,
+          "description": "The investigation identifier.",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "listInvestigationReviews",
+        "summary": "List investigation reviews",
+        "responses": {
+          "200": {
+            "description": "One page of reviews.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "reviews",
+                    "nextPageToken"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "reviews": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Resource"
+                      }
+                    },
+                    "nextPageToken": {
+                      "type": "string",
+                      "description": "The pageToken for the next page, or an empty string on the last page."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-investigations",
+        "x-tempera-required-scope": "investigation:read",
+        "x-tempera-physical-action": false,
+        "x-tempera-execution-authority": false,
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ],
+        "x-tempera-resource-pattern": {
+          "project": "projects/*",
+          "investigation": "projects/*/investigations/*"
+        }
+      },
+      "post": {
+        "operationId": "createInvestigationReview",
+        "summary": "Create append-only review",
+        "responses": {
+          "201": {
+            "description": "The recorded review.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-investigations",
+        "x-tempera-required-scope": "investigation:review",
+        "x-tempera-physical-action": false,
+        "x-tempera-execution-authority": false,
+        "x-tempera-resource-pattern": {
+          "project": "projects/*",
+          "investigation": "projects/*/investigations/*"
+        }
+      }
+    },
+    "/v1/projects/{project}/investigations/{investigation}/deterministicEvaluations/{evaluation}": {
+      "parameters": [
+        {
+          "name": "project",
+          "in": "path",
+          "required": true,
+          "description": "The project that owns the investigation resources.",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "investigation",
+          "in": "path",
+          "required": true,
+          "description": "The investigation identifier.",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "evaluation",
+          "in": "path",
+          "required": true,
+          "description": "The deterministic evaluation identifier.",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getDeterministicEvaluation",
+        "summary": "Get deterministic evaluation",
+        "responses": {
+          "200": {
+            "description": "The requested deterministicEvaluations child.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-investigations",
+        "x-tempera-required-scope": "investigation:read",
+        "x-tempera-physical-action": false,
+        "x-tempera-execution-authority": false,
+        "x-tempera-resource-pattern": {
+          "project": "projects/*",
+          "investigation": "projects/*/investigations/*",
+          "evaluation": "projects/*/investigations/*/deterministicEvaluations/*"
+        }
+      }
+    },
+    "/v1/projects/{project}/investigations/{investigation}/agenticRuns/{run}": {
+      "parameters": [
+        {
+          "name": "project",
+          "in": "path",
+          "required": true,
+          "description": "The project that owns the investigation resources.",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "investigation",
+          "in": "path",
+          "required": true,
+          "description": "The investigation identifier.",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "run",
+          "in": "path",
+          "required": true,
+          "description": "The agentic run identifier.",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getAgenticRun",
+        "summary": "Get agentic run",
+        "responses": {
+          "200": {
+            "description": "The requested agenticRuns child.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-investigations",
+        "x-tempera-required-scope": "investigation:read",
+        "x-tempera-physical-action": false,
+        "x-tempera-execution-authority": false,
+        "x-tempera-resource-pattern": {
+          "project": "projects/*",
+          "investigation": "projects/*/investigations/*",
+          "run": "projects/*/investigations/*/agenticRuns/*"
+        }
+      }
+    },
+    "/v1/projects/{project}/investigations/{investigation}/dossier": {
+      "parameters": [
+        {
+          "name": "project",
+          "in": "path",
+          "required": true,
+          "description": "The project that owns the investigation resources.",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "investigation",
+          "in": "path",
+          "required": true,
+          "description": "The investigation identifier.",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getInvestigationDossier",
+        "summary": "Get cited investigation dossier",
+        "responses": {
+          "200": {
+            "description": "The cited, non-authorizing investigation dossier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-investigations",
+        "x-tempera-required-scope": "investigation:read",
+        "x-tempera-physical-action": false,
+        "x-tempera-execution-authority": false,
+        "x-tempera-resource-pattern": {
+          "project": "projects/*",
+          "investigation": "projects/*/investigations/*"
+        }
+      }
+    },
+    "/v1/operations/{operation}": {
+      "parameters": [
+        {
+          "name": "operation",
+          "in": "path",
+          "required": true,
+          "description": "The long-running operation identifier.",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getOperation",
+        "summary": "Get long-running operation",
+        "responses": {
+          "200": {
+            "description": "The requested operation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-investigations",
+        "x-tempera-required-scope": "investigation:read",
+        "x-tempera-physical-action": false,
+        "x-tempera-execution-authority": false,
+        "x-tempera-resource-pattern": {
+          "operation": "operations/*"
+        }
+      }
+    },
+    "/v1/operations/{operation}:cancel": {
+      "parameters": [
+        {
+          "name": "operation",
+          "in": "path",
+          "required": true,
+          "description": "The long-running operation identifier.",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "cancelOperation",
+        "summary": "Cancel long-running operation",
+        "responses": {
+          "200": {
+            "description": "The cancelled operation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resource"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-investigations",
+        "x-tempera-required-scope": "investigation:run",
+        "x-tempera-physical-action": false,
+        "x-tempera-execution-authority": false,
+        "x-tempera-resource-pattern": {
+          "operation": "operations/*"
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "PageSize": {
+        "name": "pageSize",
+        "in": "query",
+        "required": false,
+        "description": "Maximum resources to return. 0 requests the server default of 50.",
+        "schema": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000
+        }
+      },
+      "PageToken": {
+        "name": "pageToken",
+        "in": "query",
+        "required": false,
+        "description": "The nextPageToken returned by the previous page.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "UpdateMask": {
+        "name": "updateMask",
+        "in": "query",
+        "required": false,
+        "description": "Comma-separated field paths to update, from displayName and spec. Omit it to apply every field the request supplies.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "Etag": {
+        "name": "etag",
+        "in": "query",
+        "required": true,
+        "description": "The current ETag of the resource being deleted.",
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "schemas": {
+      "Status": {
+        "type": "object",
+        "description": "The google.rpc.Status error envelope required of every Tempera API (AIP-193).",
+        "required": [
+          "error"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": [
+              "code",
+              "status",
+              "message"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "code": {
+                "type": "integer",
+                "description": "The HTTP status code, repeated in the body so the envelope is self-describing."
+              },
+              "status": {
+                "type": "string",
+                "description": "The canonical google.rpc.Code name, for example INVALID_ARGUMENT.",
+                "enum": [
+                  "CANCELLED",
+                  "UNKNOWN",
+                  "INVALID_ARGUMENT",
+                  "DEADLINE_EXCEEDED",
+                  "NOT_FOUND",
+                  "ALREADY_EXISTS",
+                  "PERMISSION_DENIED",
+                  "UNAUTHENTICATED",
+                  "RESOURCE_EXHAUSTED",
+                  "FAILED_PRECONDITION",
+                  "ABORTED",
+                  "OUT_OF_RANGE",
+                  "UNIMPLEMENTED",
+                  "INTERNAL",
+                  "UNAVAILABLE",
+                  "DATA_LOSS"
+                ]
+              },
+              "message": {
+                "type": "string",
+                "description": "A developer-facing description that is safe to log and safe to show."
+              },
+              "details": {
+                "type": "array",
+                "description": "Structured error details. Present but empty when there are none.",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "requestId": {
+                "type": "string",
+                "description": "The server-assigned request identifier, mirrored from the x-request-id response header."
+              }
+            }
+          }
+        }
+      },
+      "Resource": {
+        "type": "object",
+        "description": "An investigation resource. Always carries name, etag, and execution_authority=false.",
+        "additionalProperties": true
+      },
+      "NonAuthorizingArtifact": {
+        "type": "object",
+        "description": "The invariant every public artifact of this service satisfies.",
+        "required": [
+          "execution_authority"
+        ],
+        "properties": {
+          "execution_authority": {
+            "const": false
+          }
+        }
+      }
+    },
+    "responses": {
+      "Error": {
+        "description": "A google.rpc.Status error envelope.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Status"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "Tempera access token",
+        "description": "Auth Hub token with audience tempera-investigations and an operation-appropriate investigation:* scope."
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ]
+}
