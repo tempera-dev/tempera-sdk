@@ -731,7 +731,7 @@ static void test_base_url_precedence(void)
     (void)setenv("TEMPERA_TEMPO_URL", "https://env.example.test", 1);
     status = tempera_client_build_request(client, "tempo", "health", NULL, 0, &request, &error);
     CHECK(status == TEMPERA_OK, "env base URL rejected: %s", error.detail);
-    CHECK_STR(request->url, "https://env.example.test/health");
+    CHECK_STR(request->url, "https://env.example.test/healthz");
     tempera_request_free(request);
     request = NULL;
 
@@ -739,7 +739,7 @@ static void test_base_url_precedence(void)
     (void)tempera_client_set_base_url(client, "tempo", "https://override.example.test");
     status = tempera_client_build_request(client, "tempo", "health", NULL, 0, &request, &error);
     CHECK(status == TEMPERA_OK, "override rejected: %s", error.detail);
-    CHECK_STR(request->url, "https://override.example.test/health");
+    CHECK_STR(request->url, "https://override.example.test/healthz");
     tempera_request_free(request);
     request = NULL;
 
@@ -759,7 +759,7 @@ static void test_base_url_precedence(void)
     (void)tempera_client_set_base_url(client, "tempo", "https://tempo.example.test///");
     status = tempera_client_build_request(client, "tempo", "health", NULL, 0, &request, &error);
     CHECK(status == TEMPERA_OK, "trailing-slash base URL rejected: %s", error.detail);
-    CHECK_STR(request->url, "https://tempo.example.test/health");
+    CHECK_STR(request->url, "https://tempo.example.test/healthz");
     tempera_request_free(request);
 
     tempera_client_free(client);

@@ -542,13 +542,13 @@ void test_base_url_precedence() {
     (void)::setenv("TEMPERA_TEMPO_URL", "https://env.example.test", 1);
     Result<RequestSpec> from_env = client.build_request("tempo", "health");
     CHECK(from_env.has_value(), "env base URL rejected");
-    CHECK_EQ(from_env.value().url, std::string("https://env.example.test/health"));
+    CHECK_EQ(from_env.value().url, std::string("https://env.example.test/healthz"));
 
     // An explicit override wins over the env var.
     client.with_base_url("tempo", "https://override.example.test");
     Result<RequestSpec> overridden = client.build_request("tempo", "health");
     CHECK(overridden.has_value(), "override rejected");
-    CHECK_EQ(overridden.value().url, std::string("https://override.example.test/health"));
+    CHECK_EQ(overridden.value().url, std::string("https://override.example.test/healthz"));
 
     // An empty env var counts as unset.
     (void)::setenv("TEMPERA_TEMPO_URL", "", 1);
@@ -562,7 +562,7 @@ void test_base_url_precedence() {
     client.with_base_url("tempo", "https://tempo.example.test///");
     Result<RequestSpec> trimmed = client.build_request("tempo", "health");
     CHECK(trimmed.has_value(), "trailing-slash base URL rejected");
-    CHECK_EQ(trimmed.value().url, std::string("https://tempo.example.test/health"));
+    CHECK_EQ(trimmed.value().url, std::string("https://tempo.example.test/healthz"));
 }
 
 // -------------------------------------------------------------------------
