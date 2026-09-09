@@ -23,6 +23,26 @@
       "bearerAuth": []
     }
   ],
+  "x-tempera-protocol-routes": [
+    "/healthz",
+    "/readyz",
+    "/.well-known/jwks.json",
+    "/.well-known/oauth-authorization-server",
+    "/.well-known/oauth-protected-resource",
+    "/.well-known/oauth-protected-resource/{resource}",
+    "/.well-known/tempera-mobile-configuration",
+    "/oauth/authorize",
+    "/oauth/token",
+    "/oauth/revoke",
+    "/oauth/introspect",
+    "/sso/saml/{configId}/callback",
+    "/mcp",
+    "/github/callback",
+    "/github/webhook",
+    "/billing/webhook",
+    "/billing/rails/coinbase/webhook",
+    "/billing/rails/paypal/webhook"
+  ],
   "paths": {
     "/healthz": {
       "get": {
@@ -109,13 +129,14 @@
               }
             }
           }
-        }
+        },
+        "description": "Error statuses: `503` Durable storage is unavailable."
       }
     },
     "/v1/sso/config": {
       "get": {
         "operationId": "samlSsoConfigurations.get",
-        "summary": "Read the active organization\u2019s private SAML 2.0 SSO configuration status.",
+        "summary": "Read the active organization’s private SAML 2.0 SSO configuration status.",
         "description": "Read-only status for active organization owners/admins. Configuration and disablement are private platform-staff identity-team onboarding operations. Certificate and private-key references or material are never returned.",
         "responses": {
           "200": {
@@ -129,22 +150,17 @@
             }
           },
           "default": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:orgAdmin"
       }
     },
     "/v1/sso/config:configure": {
       "post": {
         "operationId": "samlSsoConfigurations.configure",
-        "summary": "Provision or replace the active organization\u2019s SAML 2.0 SP configuration through private staff onboarding.",
+        "summary": "Provision or replace the active organization’s SAML 2.0 SP configuration through private staff onboarding.",
         "description": "Requires a verified platform-staff first-party account session and a fresh passkey step-up. Ordinary tenant owner/admin tokens are rejected. This is a private Tempera and customer identity-team onboarding operation, never a browser form: staff submit verified domains and externally managed secret references only after operational verification. `env://` references are accepted only when TEMPERA_DEPLOYMENT_ENVIRONMENT=local is explicitly configured. JIT provisioning is deliberately unsupported.",
         "requestBody": {
           "required": true,
@@ -168,22 +184,17 @@
             }
           },
           "default": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:platformStaff"
       }
     },
     "/v1/sso/config:disable": {
       "post": {
         "operationId": "samlSsoConfigurations.disable",
-        "summary": "Disable the active organization\u2019s SAML 2.0 SSO configuration through private staff onboarding.",
+        "summary": "Disable the active organization’s SAML 2.0 SSO configuration through private staff onboarding.",
         "description": "Requires a verified platform-staff first-party account session and a fresh passkey step-up; ordinary tenant owner/admin tokens are rejected. This is never a customer browser action. Disabling invalidates outstanding SAML transactions and BFF handoffs.",
         "responses": {
           "200": {
@@ -197,23 +208,18 @@
             }
           },
           "default": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:platformStaff"
       }
     },
-    "/sso/saml/login": {
+    "/v1/sso/saml/login": {
       "get": {
         "operationId": "samlSsoLogin.begin",
         "summary": "Start a domain-bound SAML 2.0 SP login.",
-        "description": "Public protocol endpoint called by the first-party BFF. It stores a short-lived opaque RelayState and the BFF-supplied transaction-nonce SHA-256 verifier, then redirects to the configured IdP with a signed AuthnRequest. The raw BFF nonce is never accepted or stored here, and no response identifies an organization when the binding or configuration is invalid.",
+        "description": "Public protocol endpoint called by the first-party BFF. It stores a short-lived opaque RelayState and the BFF-supplied transaction-nonce SHA-256 verifier, then redirects to the configured IdP with a signed AuthnRequest. The raw BFF nonce is never accepted or stored here, and no response identifies an organization when the binding or configuration is invalid. Error statuses: `400` Malformed public login request. `401` The BFF nonce verifier was missing or invalid, or no eligible SAML configuration exists for this email domain. `501` SAML BFF handoff or signing material is not configured.",
         "security": [],
         "parameters": [
           {
@@ -255,43 +261,23 @@
             "description": "Redirect to the configured IdP with a signed SAML AuthnRequest."
           },
           "400": {
-            "description": "Malformed public login request.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "description": "The BFF nonce verifier was missing or invalid, or no eligible SAML configuration exists for this email domain.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "501": {
-            "description": "SAML BFF handoff or signing material is not configured.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "none"
       }
     },
-    "/sso/saml/metadata/{configId}": {
+    "/v1/sso/saml/metadata/{configId}": {
       "get": {
         "operationId": "samlSsoMetadata.get",
         "summary": "Return active SAML 2.0 SP metadata for a configured organization.",
-        "description": "Public protocol endpoint. The metadata contains the SP entity ID, ACS URL, and public signing certificate only.",
+        "description": "Public protocol endpoint. The metadata contains the SP entity ID, ACS URL, and public signing certificate only. Error statuses: `404` The configuration is not active or does not exist.",
         "security": [],
         "parameters": [
           {
@@ -316,23 +302,17 @@
             }
           },
           "404": {
-            "description": "The configuration is not active or does not exist.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "none"
       }
     },
-    "/sso/saml/acs/{configId}": {
+    "/sso/saml/{configId}/callback": {
       "post": {
         "operationId": "samlSsoLogin.complete",
         "summary": "Validate a signed SAML response and redirect to the first-party BFF callback.",
-        "description": "Public protocol endpoint. It requires signed response and assertion validation plus exact issuer, audience, ACS destination, Recipient, and InResponseTo correlation. It creates only a short-lived one-time opaque BFF handoff; it never puts browser tokens in the redirect URL.",
+        "description": "Public protocol endpoint. It requires signed response and assertion validation plus exact issuer, audience, ACS destination, Recipient, and InResponseTo correlation. It creates only a short-lived one-time opaque BFF handoff; it never puts browser tokens in the redirect URL. Error statuses: `401` SAML response validation, configuration binding, or pre-provisioned membership verification failed.",
         "security": [],
         "parameters": [
           {
@@ -376,7 +356,7 @@
       "post": {
         "operationId": "samlSsoHandoffs.exchange",
         "summary": "Exchange a one-time SAML handoff for a first-party session token pair.",
-        "description": "Private BFF protocol endpoint, not for browser JavaScript. It requires the deployment\u2019s server-only BFF handoff secret plus the raw transaction nonce whose SHA-256 verifier was bound at SAML initiation. The raw nonce is hashed in memory, compared in constant time, and never persisted or returned; a mismatch does not consume the handoff.",
+        "description": "Private BFF protocol endpoint, not for browser JavaScript. It requires the deployment’s server-only BFF handoff secret plus the raw transaction nonce whose SHA-256 verifier was bound at SAML initiation. The raw nonce is hashed in memory, compared in constant time, and never persisted or returned; a mismatch does not consume the handoff. Error statuses: `401` The BFF secret or handoff code is invalid, expired, stale, or already consumed.",
         "security": [],
         "parameters": [
           {
@@ -412,16 +392,11 @@
             }
           },
           "401": {
-            "description": "The BFF secret or handoff code is invalid, expired, stale, or already consumed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "introspectionSecret",
+        "x-tempera-required-scope": "sso:handoffExchange"
       }
     },
     "/v1/me": {
@@ -481,36 +456,18 @@
             }
           },
           "400": {
-            "description": "A platform staff principal supplied an invalid X-Tempera-Reference-Request-Id header.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "description": "User is not logged in",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "503": {
-            "description": "A platform staff reference-load request cannot be served because runtime source, machine, or image provenance is incomplete.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:session",
+        "description": "Error statuses: `400` A platform staff principal supplied an invalid X-Tempera-Reference-Request-Id header. `503` A platform staff reference-load request cannot be served because runtime source, machine, or image provenance is incomplete."
       }
     },
     "/v1/orgs": {
@@ -544,14 +501,7 @@
             }
           },
           "default": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
         },
         "parameters": [
@@ -561,7 +511,9 @@
           {
             "$ref": "#/components/parameters/PageToken"
           }
-        ]
+        ],
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:session"
       },
       "post": {
         "operationId": "createOrganization",
@@ -588,16 +540,12 @@
             }
           },
           "403": {
-            "description": "Operation is not permitted by the active deployment topology (e.g. creating additional organizations in a single-tenant deployment)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:session",
+        "description": "Error statuses: `403` Operation is not permitted by the active deployment topology (e.g. creating additional organizations in a single-tenant deployment)."
       }
     },
     "/v1/sessions": {
@@ -631,14 +579,7 @@
             }
           },
           "401": {
-            "description": "User is not logged in",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
         },
         "parameters": [
@@ -648,7 +589,9 @@
           {
             "$ref": "#/components/parameters/PageToken"
           }
-        ]
+        ],
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:session"
       },
       "post": {
         "operationId": "createHostedSession",
@@ -671,22 +614,16 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OAuthTokenResponse"
+                  "$ref": "#/components/schemas/SessionTokenPair"
                 }
               }
             }
           },
           "401": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "none"
       }
     },
     "/v1/sessions/{id}": {
@@ -703,26 +640,15 @@
             "description": "Session revoked or already absent"
           },
           "401": {
-            "description": "User is not logged in",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "description": "Session belongs to a different user",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:session",
+        "description": "Error statuses: `403` Session belongs to a different user."
       }
     },
     "/v1/workspace/select": {
@@ -746,22 +672,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OAuthTokenResponse"
+                  "$ref": "#/components/schemas/SessionTokenPair"
                 }
               }
             }
           },
           "403": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:session"
       }
     },
     "/v1/team/members": {
@@ -795,14 +716,7 @@
             }
           },
           "default": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
         },
         "parameters": [
@@ -812,7 +726,9 @@
           {
             "$ref": "#/components/parameters/PageToken"
           }
-        ]
+        ],
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:session"
       }
     },
     "/v1/team/members/{id}": {
@@ -857,16 +773,11 @@
             }
           },
           "default": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:orgAdmin"
       },
       "delete": {
         "operationId": "removeTeamMember",
@@ -881,16 +792,11 @@
             "description": "Team member removed"
           },
           "default": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:orgAdmin"
       }
     },
     "/v1/invites": {
@@ -924,14 +830,7 @@
             }
           },
           "default": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
         },
         "parameters": [
@@ -941,7 +840,9 @@
           {
             "$ref": "#/components/parameters/PageToken"
           }
-        ]
+        ],
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:session"
       },
       "post": {
         "operationId": "createInvite",
@@ -968,16 +869,11 @@
             }
           },
           "default": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:orgAdmin"
       }
     },
     "/v1/invites/{id}": {
@@ -994,16 +890,11 @@
             "description": "Invite cancelled"
           },
           "default": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:orgAdmin"
       }
     },
     "/v1/projects": {
@@ -1037,14 +928,7 @@
             }
           },
           "default": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
         },
         "parameters": [
@@ -1054,7 +938,9 @@
           {
             "$ref": "#/components/parameters/PageToken"
           }
-        ]
+        ],
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:session"
       },
       "post": {
         "operationId": "createProject",
@@ -1081,16 +967,11 @@
             }
           },
           "default": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:orgAdmin"
       }
     },
     "/v1/environments": {
@@ -1124,14 +1005,7 @@
             }
           },
           "default": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
         },
         "parameters": [
@@ -1141,7 +1015,9 @@
           {
             "$ref": "#/components/parameters/PageToken"
           }
-        ]
+        ],
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:session"
       },
       "post": {
         "operationId": "createEnvironment",
@@ -1168,16 +1044,11 @@
             }
           },
           "default": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:orgAdmin"
       }
     },
     "/v1/api-keys": {
@@ -1211,14 +1082,7 @@
             }
           },
           "401": {
-            "description": "User is not logged in",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
         },
         "parameters": [
@@ -1228,7 +1092,9 @@
           {
             "$ref": "#/components/parameters/PageToken"
           }
-        ]
+        ],
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:session"
       },
       "post": {
         "operationId": "createApiKey",
@@ -1255,16 +1121,11 @@
             }
           },
           "403": {
-            "description": "Token or API key is missing a required scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:credentialAdmin"
       }
     },
     "/v1/api-keys/audiences": {
@@ -1312,7 +1173,9 @@
           {
             "$ref": "#/components/parameters/PageToken"
           }
-        ]
+        ],
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:credentialAdmin"
       }
     },
     "/v1/api-keys/{id}": {
@@ -1329,16 +1192,11 @@
             "description": "API key revoked or already absent"
           },
           "default": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:credentialAdmin"
       }
     },
     "/v1/api-keys/{id}/rotate": {
@@ -1362,16 +1220,11 @@
             }
           },
           "404": {
-            "description": "Resource not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:credentialAdmin"
       }
     },
     "/v1/internal/data-source-connections:resolve": {
@@ -1405,9 +1258,11 @@
             }
           },
           "default": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "introspectionSecret",
+        "x-tempera-required-scope": "dataSource:resolve"
       }
     },
     "/v1/data-source-connections": {
@@ -1434,16 +1289,11 @@
             }
           },
           "default": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:session"
       },
       "post": {
         "operationId": "dataSourceConnections.create",
@@ -1470,16 +1320,11 @@
             }
           },
           "default": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:credentialAdmin"
       }
     },
     "/v1/data-source-connections/{id}": {
@@ -1503,16 +1348,11 @@
             }
           },
           "default": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:session"
       },
       "patch": {
         "operationId": "dataSourceConnections.update",
@@ -1559,16 +1399,11 @@
             }
           },
           "default": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:credentialAdmin"
       },
       "delete": {
         "operationId": "dataSourceConnections.revoke",
@@ -1583,16 +1418,11 @@
             "description": "Data-source connection revoked or already absent"
           },
           "default": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:credentialAdmin"
       }
     },
     "/v1/provider-connections": {
@@ -1626,24 +1456,10 @@
             }
           },
           "401": {
-            "description": "User is not logged in",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "description": "Token or API key is missing a required scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
         },
         "parameters": [
@@ -1653,7 +1469,9 @@
           {
             "$ref": "#/components/parameters/PageToken"
           }
-        ]
+        ],
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:session"
       },
       "post": {
         "operationId": "providerConnections.create",
@@ -1680,26 +1498,15 @@
             }
           },
           "403": {
-            "description": "Token or API key is missing a required scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "description": "A connection already uses the requested name in this workspace",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:credentialAdmin",
+        "description": "Error statuses: `409` A connection already uses the requested name in this workspace."
       }
     },
     "/v1/provider-connections:upload": {
@@ -1728,9 +1535,11 @@
             }
           },
           "default": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:credentialAdmin"
       }
     },
     "/v1/provider-connections/{id}": {
@@ -1747,16 +1556,11 @@
             "description": "Provider connection revoked or already absent"
           },
           "default": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:credentialAdmin"
       }
     },
     "/v1/provider-connections/{id}:rotate": {
@@ -1790,16 +1594,11 @@
             }
           },
           "404": {
-            "description": "Resource not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:credentialAdmin"
       }
     },
     "/v1/provider-connections/{id}:rotateUpload": {
@@ -1833,9 +1632,11 @@
             }
           },
           "default": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:credentialAdmin"
       }
     },
     "/v1/provider-connections/{id}:resolve": {
@@ -1869,46 +1670,22 @@
             }
           },
           "401": {
-            "description": "User is not logged in",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "description": "Token or API key is missing a required scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "description": "Resource not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "410": {
-            "description": "Provider connection is revoked",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-llm",
+        "x-tempera-required-scope": "model:invoke",
+        "description": "Error statuses: `410` Provider connection is revoked."
       }
     },
     "/v1/connector-credentials": {
@@ -1935,9 +1712,11 @@
             }
           },
           "default": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:session"
       },
       "post": {
         "operationId": "connectorCredentials.create",
@@ -1964,9 +1743,11 @@
             }
           },
           "default": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:credentialAdmin"
       }
     },
     "/v1/connector-credentials:upload": {
@@ -1995,9 +1776,11 @@
             }
           },
           "default": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:credentialAdmin"
       }
     },
     "/v1/connector-credentials/{id}": {
@@ -2014,9 +1797,11 @@
             "description": "Connector credential revoked or already absent"
           },
           "default": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:credentialAdmin"
       }
     },
     "/v1/connector-credentials/{id}:rotate": {
@@ -2050,9 +1835,11 @@
             }
           },
           "default": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:credentialAdmin"
       }
     },
     "/v1/connector-credentials/{id}:rotateUpload": {
@@ -2086,9 +1873,11 @@
             }
           },
           "default": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:credentialAdmin"
       }
     },
     "/v1/connector-credentials/{id}:resolve": {
@@ -2122,16 +1911,18 @@
             }
           },
           "default": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-connectors",
+        "x-tempera-required-scope": "connection:invoke"
       }
     },
     "/v1/experiment-provider-connections": {
       "get": {
         "operationId": "experimentProviderConnections.list",
         "summary": "List external experiment-provider metadata. Secret references and values are never returned.",
-        "x-tempera-auth-kind": "account",
         "parameters": [
           {
             "$ref": "#/components/parameters/PageSize"
@@ -2152,17 +1943,18 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:session"
       },
       "post": {
         "operationId": "experimentProviderConnections.create",
         "summary": "Register a tenant-scoped experiment provider using only an external secret reference.",
-        "x-tempera-auth-kind": "account",
         "requestBody": {
           "required": true,
           "content": {
@@ -2185,19 +1977,20 @@
             }
           },
           "403": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:credentialAdmin"
       }
     },
     "/v1/experiment-provider-connections/{id}": {
       "delete": {
         "operationId": "experimentProviderConnections.revoke",
         "summary": "Revoke an experiment-provider connection. An unknown id is a no-op.",
-        "x-tempera-auth-kind": "account",
         "parameters": [
           {
             "$ref": "#/components/parameters/id"
@@ -2208,18 +2001,17 @@
             "description": "Connection revoked or already absent"
           },
           "403": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:credentialAdmin"
       }
     },
     "/v1/experiment-provider-connections/{id}:resolve": {
       "post": {
         "operationId": "experimentProviderConnections.resolve",
         "summary": "Atomically consume an exact human approval and resolve a provider reference for tempera-workflows.",
-        "x-tempera-auth-kind": "oauthResource",
-        "x-tempera-auth-audience": "tempera-workflows",
-        "x-tempera-required-scope": "bio:experiment:submit",
         "parameters": [
           {
             "$ref": "#/components/parameters/id"
@@ -2247,24 +2039,24 @@
             }
           },
           "403": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "410": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-workflows",
+        "x-tempera-required-scope": "bio:experiment:submit"
       }
     },
     "/v1/bio-signer-keys": {
       "get": {
         "operationId": "bioSignerKeys.list",
         "summary": "List versioned public Ed25519 verifier keys for an authorized human administrator.",
-        "x-tempera-auth-kind": "oauthResource",
-        "x-tempera-auth-audience": "tempera-bio",
-        "x-tempera-required-scope": "bio:signer:manage",
         "parameters": [
           {
             "$ref": "#/components/parameters/PageSize"
@@ -2285,19 +2077,19 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-bio",
+        "x-tempera-required-scope": "bio:signer:manage"
       },
       "post": {
         "operationId": "bioSignerKeys.create",
         "summary": "Register or rotate a public Ed25519 verifier key. Private key material is rejected.",
-        "x-tempera-auth-kind": "oauthResource",
-        "x-tempera-auth-audience": "tempera-bio",
-        "x-tempera-required-scope": "bio:signer:manage",
         "requestBody": {
           "required": true,
           "content": {
@@ -2320,18 +2112,18 @@
             }
           },
           "403": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-bio",
+        "x-tempera-required-scope": "bio:signer:manage"
       }
     },
     "/v1/bio-signer-keys/{id}": {
       "delete": {
         "operationId": "bioSignerKeys.revoke",
         "summary": "Revoke a public verifier key while retaining its history.",
-        "x-tempera-auth-kind": "oauthResource",
-        "x-tempera-auth-audience": "tempera-bio",
-        "x-tempera-required-scope": "bio:signer:manage",
         "parameters": [
           {
             "$ref": "#/components/parameters/id"
@@ -2342,18 +2134,18 @@
             "description": "Key revoked or already absent"
           },
           "403": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-bio",
+        "x-tempera-required-scope": "bio:signer:manage"
       }
     },
     "/v1/experiment-approvals": {
       "get": {
         "operationId": "experimentApprovals.list",
         "summary": "List exact, single-use experiment approvals for an authorized human approver.",
-        "x-tempera-auth-kind": "oauthResource",
-        "x-tempera-auth-audience": "tempera-bio",
-        "x-tempera-required-scope": "bio:experiment:approve",
         "parameters": [
           {
             "$ref": "#/components/parameters/PageSize"
@@ -2374,19 +2166,19 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-bio",
+        "x-tempera-required-scope": "bio:experiment:approve"
       },
       "post": {
         "operationId": "experimentApprovals.create",
         "summary": "Create a short-lived human approval bound to exact proposal, protocol, provider, and MCP preparation digests.",
-        "x-tempera-auth-kind": "oauthResource",
-        "x-tempera-auth-audience": "tempera-bio",
-        "x-tempera-required-scope": "bio:experiment:approve",
         "requestBody": {
           "required": true,
           "content": {
@@ -2409,21 +2201,21 @@
             }
           },
           "403": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "410": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-bio",
+        "x-tempera-required-scope": "bio:experiment:approve"
       }
     },
     "/v1/experiment-approvals/{id}": {
       "delete": {
         "operationId": "experimentApprovals.revoke",
         "summary": "Revoke an unused experiment approval. Consumed approvals remain immutable.",
-        "x-tempera-auth-kind": "oauthResource",
-        "x-tempera-auth-audience": "tempera-bio",
-        "x-tempera-required-scope": "bio:experiment:approve",
         "parameters": [
           {
             "$ref": "#/components/parameters/id"
@@ -2434,9 +2226,12 @@
             "description": "Approval revoked, immutable, or already absent"
           },
           "403": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-bio",
+        "x-tempera-required-scope": "bio:experiment:approve"
       }
     },
     "/v1/audit-log": {
@@ -2470,14 +2265,7 @@
             }
           },
           "401": {
-            "description": "User is not logged in",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
         },
         "parameters": [
@@ -2487,7 +2275,9 @@
           {
             "$ref": "#/components/parameters/PageToken"
           }
-        ]
+        ],
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:session"
       }
     },
     "/v1/connectors": {
@@ -2521,14 +2311,7 @@
             }
           },
           "default": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
         },
         "parameters": [
@@ -2538,7 +2321,9 @@
           {
             "$ref": "#/components/parameters/PageToken"
           }
-        ]
+        ],
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:session"
       }
     },
     "/v1/connectors/{id}/status": {
@@ -2562,16 +2347,11 @@
             }
           },
           "default": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:session"
       }
     },
     "/v1/products": {
@@ -2605,14 +2385,7 @@
             }
           },
           "default": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
         },
         "parameters": [
@@ -2622,7 +2395,9 @@
           {
             "$ref": "#/components/parameters/PageToken"
           }
-        ]
+        ],
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:session"
       }
     },
     "/v1/products/{id}/status": {
@@ -2646,16 +2421,11 @@
             }
           },
           "default": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:session"
       }
     },
     "/v1/billing/status": {
@@ -2674,16 +2444,11 @@
             }
           },
           "403": {
-            "description": "Token or API key is missing a required scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:billingAdmin"
       }
     },
     "/v1/billing/checkout": {
@@ -2790,36 +2555,18 @@
             }
           },
           "400": {
-            "description": "Unsupported payment rail, plan, currency, or network",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "description": "Token or API key is missing a required scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "501": {
-            "description": "The requested feature is disabled because it is not explicitly configured for this deployment (e.g. billing rails in a vpc deployment with no in-network URLs)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:billingAdmin",
+        "description": "Error statuses: `400` Unsupported payment rail, plan, currency, or network. `501` The requested feature is disabled because it is not explicitly configured for this deployment (e.g. billing rails in a vpc deployment with no in-network URLs)."
       }
     },
     "/v1/billing/portal": {
@@ -2838,16 +2585,12 @@
             }
           },
           "501": {
-            "description": "The requested feature is disabled because it is not explicitly configured for this deployment (e.g. billing rails in a vpc deployment with no in-network URLs)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:billingAdmin",
+        "description": "Error statuses: `501` The requested feature is disabled because it is not explicitly configured for this deployment (e.g. billing rails in a vpc deployment with no in-network URLs)."
       }
     },
     "/v1/billing/credits": {
@@ -2866,16 +2609,11 @@
             }
           },
           "403": {
-            "description": "Token or API key is missing a required scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:billingAdmin"
       }
     },
     "/v1/billing/credit-packs": {
@@ -2902,12 +2640,14 @@
             }
           },
           "403": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:billingAdmin"
       }
     },
     "/v1/billing/credit-topups": {
@@ -2946,26 +2686,27 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "502": {
-            "$ref": "#/components/responses/AipError",
-            "description": "Stripe did not return a usable Checkout session. The server retains a pending fixed-pack record and the caller may retry with the same idempotency key."
+            "$ref": "#/components/responses/Error"
           },
           "503": {
-            "$ref": "#/components/responses/AipError",
-            "description": "Credit reloads are not configured. The server does not create a placeholder checkout or grant credits."
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:billingAdmin",
+        "description": "Error statuses: `502` Stripe did not return a usable Checkout session. The server retains a pending fixed-pack record and the caller may retry with the same idempotency key. `503` Credit reloads are not configured. The server does not create a placeholder checkout or grant credits."
       }
     },
     "/billing/webhook": {
@@ -3014,7 +2755,8 @@
               }
             }
           }
-        }
+        },
+        "description": "Error statuses: `401` Webhook signature failed."
       }
     },
     "/v1/model-catalog": {
@@ -3033,26 +2775,16 @@
             }
           },
           "402": {
-            "description": "Model access is not entitled for the workspace",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "description": "Token or API key is missing a required scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-code",
+        "x-tempera-required-scope": "model:read",
+        "description": "Error statuses: `402` Model access is not entitled for the workspace."
       }
     },
     "/v1/usage/events": {
@@ -3081,26 +2813,15 @@
             }
           },
           "402": {
-            "description": "Plan limit exceeded",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "description": "Idempotency key was already accepted with a different payload",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "product",
+        "x-tempera-required-scope": "usage:report",
+        "description": "Error statuses: `402` Plan limit exceeded. `409` Idempotency key was already accepted with a different payload."
       }
     },
     "/v1/usage/reservations": {
@@ -3129,36 +2850,18 @@
             }
           },
           "402": {
-            "description": "Entitlement, plan, or credit budget rejected admission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "description": "Token or API key is missing a required scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "description": "Idempotency key was already used for different admission parameters",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "product",
+        "x-tempera-required-scope": "usage:reserve",
+        "description": "Error statuses: `402` Entitlement, plan, or credit budget rejected admission. `409` Idempotency key was already used for different admission parameters."
       }
     },
     "/v1/usage/reservations/{reservationId}:commit": {
@@ -3197,26 +2900,15 @@
             }
           },
           "403": {
-            "description": "Token or API key is missing a required scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "description": "Reservation state or exact usage conflicts with a prior commit or release",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "product",
+        "x-tempera-required-scope": "usage:reserve",
+        "description": "Error statuses: `409` Reservation state or exact usage conflicts with a prior commit or release."
       }
     },
     "/v1/usage/reservations/{reservationId}:release": {
@@ -3255,26 +2947,15 @@
             }
           },
           "403": {
-            "description": "Token or API key is missing a required scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "description": "Committed reservation cannot be released",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "product",
+        "x-tempera-required-scope": "usage:reserve",
+        "description": "Error statuses: `409` Committed reservation cannot be released."
       }
     },
     "/v1/usage/reservations/{reservationId}:reconcile": {
@@ -3313,26 +2994,15 @@
             }
           },
           "403": {
-            "description": "Token or API key is missing a required scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "description": "Reservation state, config identity, or prior reconciliation evidence conflicts",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "product",
+        "x-tempera-required-scope": "usage:reserve",
+        "description": "Error statuses: `409` Reservation state, config identity, or prior reconciliation evidence conflicts."
       }
     },
     "/v1/oauth/grants": {
@@ -3366,14 +3036,7 @@
             }
           },
           "401": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
         },
         "parameters": [
@@ -3383,7 +3046,9 @@
           {
             "$ref": "#/components/parameters/PageToken"
           }
-        ]
+        ],
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:session"
       }
     },
     "/v1/oauth/grants/{id}": {
@@ -3400,16 +3065,11 @@
             "description": "OAuth grant revoked"
           },
           "404": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:session"
       }
     },
     "/oauth/authorize": {
@@ -3516,7 +3176,8 @@
               }
             }
           }
-        }
+        },
+        "description": "Error statuses: `400` Unregistered client, redirect_uri, audience, or unsupported PKCE parameters."
       },
       "post": {
         "operationId": "authorizeOAuthClient",
@@ -3587,7 +3248,7 @@
         }
       }
     },
-    "/v1/oauth/introspect": {
+    "/oauth/introspect": {
       "post": {
         "operationId": "introspectOAuthToken",
         "summary": "Validate a central access token or hosted API key for resource servers.",
@@ -3627,7 +3288,7 @@
       "post": {
         "operationId": "invokeMcpGateway",
         "summary": "Unified Tempera MCP gateway. Accepts one stateless JSON-RPC 2.0 message per request.",
-        "description": "Requires a bearer token minted for the tempera-mcp audience with the mcp:invoke scope. Auth Hub validates the caller and transparently proxies the request to the private Rust capability fabric; discovery and execution use the fabric's fixed tempera_* tools rather than product-namespaced tools. Notifications and protocol responses are produced by the fabric. Non-POST requests are rejected with 405.",
+        "description": "Requires a bearer token minted for the tempera-mcp audience with the mcp:invoke scope. Auth Hub validates the caller and transparently proxies the request to the private Rust capability fabric; discovery and execution use the fabric's fixed tempera_* tools rather than product-namespaced tools. Notifications and protocol responses are produced by the fabric. Non-POST requests are rejected with 405. Error statuses: `401` Bearer token is missing, invalid, or revoked. `403` Token audience is not tempera-mcp or the mcp:invoke scope is missing. `405` The MCP gateway is stateless and only accepts POST.",
         "security": [
           {
             "bearerAuth": []
@@ -3858,36 +3519,18 @@
             }
           },
           "401": {
-            "description": "User is not logged in",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "description": "Token or API key is missing a required scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "503": {
-            "description": "Serving runtime provenance is incomplete",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:platformStaff",
+        "description": "Error statuses: `503` Serving runtime provenance is incomplete."
       }
     },
     "/v1/admin/step-up": {
@@ -3916,26 +3559,14 @@
             }
           },
           "401": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:platformStaff"
       }
     },
     "/v1/admin/billing/credits/adjust": {
@@ -3964,46 +3595,21 @@
             }
           },
           "400": {
-            "description": "Invalid credit_micros or request body",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "description": "User is not logged in",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "description": "Platform staff or a fresh step-up is required",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "description": "Unknown organization",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:platformStaff",
+        "description": "Error statuses: `400` Invalid credit_micros or request body. `403` Platform staff or a fresh step-up is required. `404` Unknown organization."
       }
     },
     "/v1/admin/billing/orgs": {
@@ -4022,26 +3628,14 @@
             }
           },
           "401": {
-            "description": "User is not logged in",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "description": "Token or API key is missing a required scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:platformStaff"
       }
     },
     "/billing/rails/coinbase/webhook": {
@@ -4111,7 +3705,8 @@
               }
             }
           }
-        }
+        },
+        "description": "Error statuses: `400` Webhook payload is not valid JSON. `401` Webhook signature verification failed. `503` Coinbase Commerce is not configured."
       }
     },
     "/billing/rails/paypal/webhook": {
@@ -4212,7 +3807,8 @@
               }
             }
           }
-        }
+        },
+        "description": "Error statuses: `400` Webhook payload is not valid JSON. `401` Webhook signature verification failed. `503` PayPal is not configured."
       }
     },
     "/v1/github/setup-sessions": {
@@ -4241,16 +3837,12 @@
             }
           },
           "501": {
-            "description": "The requested feature is disabled because it is not explicitly configured for this deployment (e.g. billing rails in a vpc deployment with no in-network URLs)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:orgAdmin",
+        "description": "Error statuses: `501` The requested feature is disabled because it is not explicitly configured for this deployment (e.g. billing rails in a vpc deployment with no in-network URLs)."
       }
     },
     "/github/callback": {
@@ -4311,14 +3903,7 @@
             }
           },
           "default": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
         },
         "parameters": [
@@ -4328,7 +3913,9 @@
           {
             "$ref": "#/components/parameters/PageToken"
           }
-        ]
+        ],
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:orgAdmin"
       }
     },
     "/v1/github/installations/{installationId}": {
@@ -4352,16 +3939,11 @@
             }
           },
           "default": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:orgAdmin"
       }
     },
     "/v1/github/installations/{installationId}/repositories": {
@@ -4406,16 +3988,11 @@
             }
           },
           "default": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:orgAdmin"
       }
     },
     "/v1/github/installations/{installationId}/repositories/{repositoryId}:snapshot": {
@@ -4452,16 +4029,12 @@
             }
           },
           "501": {
-            "description": "The requested feature is disabled because it is not explicitly configured for this deployment (e.g. billing rails in a vpc deployment with no in-network URLs)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:orgAdmin",
+        "description": "Error statuses: `501` The requested feature is disabled because it is not explicitly configured for this deployment (e.g. billing rails in a vpc deployment with no in-network URLs)."
       }
     },
     "/github/webhook": {
@@ -4492,16 +4065,11 @@
             "description": "All account security credentials revoked"
           },
           "401": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:session"
       }
     },
     "/v1/passkeys": {
@@ -4536,14 +4104,7 @@
             }
           },
           "401": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
         },
         "parameters": [
@@ -4553,7 +4114,9 @@
           {
             "$ref": "#/components/parameters/PageToken"
           }
-        ]
+        ],
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:session"
       }
     },
     "/v1/passkeys/registration:begin": {
@@ -4572,26 +4135,14 @@
             }
           },
           "401": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:session"
       }
     },
     "/v1/passkeys/registration:finish": {
@@ -4620,26 +4171,14 @@
             }
           },
           "400": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:session"
       }
     },
     "/v1/passkeys/authentication:begin": {
@@ -4659,16 +4198,10 @@
             }
           },
           "503": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "none"
       }
     },
     "/v1/passkeys/authentication:finish": {
@@ -4692,32 +4225,19 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OAuthTokenResponse"
+                  "$ref": "#/components/schemas/SessionTokenPair"
                 }
               }
             }
           },
           "400": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "none"
       }
     },
     "/v1/step-up/passkey:begin": {
@@ -4736,26 +4256,14 @@
             }
           },
           "401": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:session"
       }
     },
     "/v1/step-up/passkey:finish": {
@@ -4784,36 +4292,17 @@
             }
           },
           "400": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:session"
       }
     },
     "/v1/passkeys:recover": {
@@ -4835,26 +4324,14 @@
             "description": "Recovery completed; sign in again"
           },
           "400": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:session"
       }
     },
     "/v1/passkeys/{credentialId}": {
@@ -4878,35 +4355,20 @@
             "description": "Passkey deleted"
           },
           "401": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "description": "Request failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:session"
       }
     },
     "/v1/clearing/admissions": {
       "post": {
         "operationId": "clearingAdmissions.create",
         "summary": "Issue a short-lived, effect-specific, single-use Clearing admission from a human approval.",
-        "x-tempera-auth-kind": "oauthResource",
-        "x-tempera-auth-audience": "tempera-clearing",
-        "x-tempera-required-scope": "clearing:actions:approve",
         "requestBody": {
           "required": true,
           "content": {
@@ -4939,65 +4401,31 @@
             }
           },
           "400": {
-            "description": "Invalid admission",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "description": "Wrong audience or invalid credential",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "description": "Human approval scope or role missing",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "description": "Admission identity is already bound differently",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "503": {
-            "description": "PostgreSQL admission authority unavailable",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-clearing",
+        "x-tempera-required-scope": "clearing:actions:approve",
+        "description": "Error statuses: `400` Invalid admission. `401` Wrong audience or invalid credential. `403` Human approval scope or role missing. `409` Admission identity is already bound differently. `503` PostgreSQL admission authority unavailable."
       }
     },
     "/v1/clearing/admissions/{admissionId}": {
       "get": {
         "operationId": "clearingAdmissions.get",
         "summary": "Read a Clearing admission from the caller's exact workspace.",
-        "x-tempera-auth-kind": "oauthResource",
-        "x-tempera-auth-audience": "tempera-clearing",
-        "x-tempera-required-scope": "clearing:actions:read",
         "parameters": [
           {
             "name": "admissionId",
@@ -5021,55 +4449,28 @@
             }
           },
           "401": {
-            "description": "Wrong audience or invalid credential",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "description": "Read scope missing",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "description": "Admission not found in the exact workspace",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "503": {
-            "description": "PostgreSQL admission authority unavailable",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-clearing",
+        "x-tempera-required-scope": "clearing:actions:read",
+        "description": "Error statuses: `401` Wrong audience or invalid credential. `403` Read scope missing. `404` Admission not found in the exact workspace. `503` PostgreSQL admission authority unavailable."
       }
     },
     "/v1/clearing/admissions/{admissionId}:claim": {
       "post": {
         "operationId": "clearingAdmissions.claim",
         "summary": "Atomically move one READY admission to a fenced lease before dispatch.",
-        "x-tempera-auth-kind": "oauthResource",
-        "x-tempera-auth-audience": "tempera-clearing",
-        "x-tempera-required-scope": "clearing:actions:commit",
         "parameters": [
           {
             "name": "admissionId",
@@ -5103,65 +4504,31 @@
             }
           },
           "400": {
-            "description": "Invalid claim",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "description": "Wrong audience or invalid credential",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "description": "Commit scope missing",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "description": "Admission is not READY, is expired, or does not match",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "503": {
-            "description": "PostgreSQL admission authority unavailable",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-clearing",
+        "x-tempera-required-scope": "clearing:actions:commit",
+        "description": "Error statuses: `400` Invalid claim. `401` Wrong audience or invalid credential. `403` Commit scope missing. `409` Admission is not READY, is expired, or does not match. `503` PostgreSQL admission authority unavailable."
       }
     },
     "/v1/clearing/admissions/{admissionId}:finalize": {
       "post": {
         "operationId": "clearingAdmissions.finalize",
         "summary": "Consume a matching lease with one durable Clearing commit identity.",
-        "x-tempera-auth-kind": "oauthResource",
-        "x-tempera-auth-audience": "tempera-clearing",
-        "x-tempera-required-scope": "clearing:actions:commit",
         "parameters": [
           {
             "name": "admissionId",
@@ -5195,75 +4562,34 @@
             }
           },
           "400": {
-            "description": "Invalid finalize request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "description": "Wrong audience or invalid credential",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "description": "Commit scope missing",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "description": "Admission not found in the exact workspace",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "description": "Lease, fence, digest, or commit identity conflicts",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "503": {
-            "description": "PostgreSQL admission authority unavailable",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-clearing",
+        "x-tempera-required-scope": "clearing:actions:commit",
+        "description": "Error statuses: `400` Invalid finalize request. `401` Wrong audience or invalid credential. `403` Commit scope missing. `404` Admission not found in the exact workspace. `409` Lease, fence, digest, or commit identity conflicts. `503` PostgreSQL admission authority unavailable."
       }
     },
     "/v1/clearing/admissions/{admissionId}:markRecoveryRequired": {
       "post": {
         "operationId": "clearingAdmissions.markRecoveryRequired",
         "summary": "Monotonically mark an expired lease as requiring authoritative reconciliation.",
-        "x-tempera-auth-kind": "oauthResource",
-        "x-tempera-auth-audience": "tempera-clearing",
-        "x-tempera-required-scope": "clearing:actions:reconcile",
         "parameters": [
           {
             "name": "admissionId",
@@ -5287,55 +4613,28 @@
             }
           },
           "401": {
-            "description": "Wrong audience or invalid credential",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "description": "Reconcile scope missing",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "description": "Admission has no expired active lease",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           },
           "503": {
-            "description": "PostgreSQL admission authority unavailable",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoogleJsonError"
-                }
-              }
-            }
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-clearing",
+        "x-tempera-required-scope": "clearing:actions:reconcile",
+        "description": "Error statuses: `401` Wrong audience or invalid credential. `403` Reconcile scope missing. `409` Admission has no expired active lease. `503` PostgreSQL admission authority unavailable."
       }
     },
     "/v1/authority/policies": {
       "get": {
         "operationId": "authorityPolicies.list",
         "summary": "List the authority policies for one workspace.",
-        "x-tempera-auth-kind": "oauthResource",
-        "x-tempera-auth-audience": "tempera-authority",
-        "x-tempera-required-scope": "authority:policies:read",
         "parameters": [
           {
             "$ref": "#/components/parameters/PageSize"
@@ -5356,19 +4655,19 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-authority",
+        "x-tempera-required-scope": "authority:policies:read"
       },
       "post": {
         "operationId": "authorityPolicies.create",
         "summary": "Create an authority policy. Requires an owner or admin human principal and a recent passkey step-up.",
-        "x-tempera-auth-kind": "oauthResource",
-        "x-tempera-auth-audience": "tempera-authority",
-        "x-tempera-required-scope": "authority:policies:write",
         "requestBody": {
           "required": true,
           "content": {
@@ -5391,24 +4690,24 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-authority",
+        "x-tempera-required-scope": "authority:policies:write"
       }
     },
     "/v1/authority/policies/{id}": {
       "patch": {
         "operationId": "authorityPolicies.update",
         "summary": "Replace an authority policy document. Requires an owner or admin human principal and a recent passkey step-up.",
-        "x-tempera-auth-kind": "oauthResource",
-        "x-tempera-auth-audience": "tempera-authority",
-        "x-tempera-required-scope": "authority:policies:write",
         "parameters": [
           {
             "$ref": "#/components/parameters/id"
@@ -5448,25 +4747,25 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-authority",
+        "x-tempera-required-scope": "authority:policies:write"
       },
       "delete": {
         "operationId": "authorityPolicies.archive",
         "summary": "Archive an authority policy. A decision already made cites the policy that made it, so the row stays readable.",
-        "x-tempera-auth-kind": "oauthResource",
-        "x-tempera-auth-audience": "tempera-authority",
-        "x-tempera-required-scope": "authority:policies:write",
         "parameters": [
           {
             "$ref": "#/components/parameters/id"
@@ -5477,18 +4776,18 @@
             "description": "Authority policy archived or already absent"
           },
           "403": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-authority",
+        "x-tempera-required-scope": "authority:policies:write"
       }
     },
     "/v1/authority/holds": {
       "get": {
         "operationId": "authorityHolds.list",
         "summary": "List the authority holds for one workspace.",
-        "x-tempera-auth-kind": "oauthResource",
-        "x-tempera-auth-audience": "tempera-authority",
-        "x-tempera-required-scope": "authority:holds:read",
         "parameters": [
           {
             "$ref": "#/components/parameters/PageSize"
@@ -5528,19 +4827,19 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-authority",
+        "x-tempera-required-scope": "authority:holds:read"
       },
       "post": {
         "operationId": "authorityHolds.create",
         "summary": "Create a hold. A duplicate call digest joins the open hold rather than asking a person twice. Evidence is reference-only; inline content is rejected.",
-        "x-tempera-auth-kind": "oauthResource",
-        "x-tempera-auth-audience": "tempera-authority",
-        "x-tempera-required-scope": "authority:holds:write",
         "requestBody": {
           "required": true,
           "content": {
@@ -5573,24 +4872,24 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-authority",
+        "x-tempera-required-scope": "authority:holds:write"
       }
     },
     "/v1/authority/holds/{id}": {
       "get": {
         "operationId": "authorityHolds.get",
         "summary": "Read one authority hold and its attributed decisions.",
-        "x-tempera-auth-kind": "oauthResource",
-        "x-tempera-auth-audience": "tempera-authority",
-        "x-tempera-required-scope": "authority:holds:read",
         "parameters": [
           {
             "$ref": "#/components/parameters/id"
@@ -5608,19 +4907,19 @@
             }
           },
           "403": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-authority",
+        "x-tempera-required-scope": "authority:holds:read"
       },
       "delete": {
         "operationId": "authorityHolds.revoke",
         "summary": "Revoke a hold. Revoked, not deleted: a question that was asked stays answerable in the ledger.",
-        "x-tempera-auth-kind": "oauthResource",
-        "x-tempera-auth-audience": "tempera-authority",
-        "x-tempera-required-scope": "authority:holds:write",
         "parameters": [
           {
             "$ref": "#/components/parameters/id"
@@ -5631,21 +4930,21 @@
             "description": "Authority hold revoked"
           },
           "403": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-authority",
+        "x-tempera-required-scope": "authority:holds:write"
       }
     },
     "/v1/authority/holds/{id}:decide": {
       "post": {
         "operationId": "authorityHolds.decide",
         "summary": "Decide a held action. Requires a fresh passkey step-up; the staff password path can never produce a decision. Returns a decision token bound to the prepared effect once the quorum is met.",
-        "x-tempera-auth-kind": "oauthResource",
-        "x-tempera-auth-audience": "tempera-authority",
-        "x-tempera-required-scope": "authority:holds:decide",
         "parameters": [
           {
             "$ref": "#/components/parameters/id"
@@ -5673,27 +4972,27 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-authority",
+        "x-tempera-required-scope": "authority:holds:decide"
       }
     },
     "/v1/authority/holds/{id}:claim": {
       "post": {
         "operationId": "authorityHolds.claim",
         "summary": "Spend the approval and take a single-use lease. Requires the decision token; a token presented for a different prepared effect digest fails closed.",
-        "x-tempera-auth-kind": "oauthResource",
-        "x-tempera-auth-audience": "tempera-authority",
-        "x-tempera-required-scope": "authority:holds:write",
         "parameters": [
           {
             "$ref": "#/components/parameters/id"
@@ -5721,27 +5020,27 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-authority",
+        "x-tempera-required-scope": "authority:holds:write"
       }
     },
     "/v1/authority/holds/{id}:finalize": {
       "post": {
         "operationId": "authorityHolds.finalize",
         "summary": "Close the hold against the outcome the lease produced. An exact retry replays; any other outcome fails closed.",
-        "x-tempera-auth-kind": "oauthResource",
-        "x-tempera-auth-audience": "tempera-authority",
-        "x-tempera-required-scope": "authority:holds:write",
         "parameters": [
           {
             "$ref": "#/components/parameters/id"
@@ -5769,27 +5068,27 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-authority",
+        "x-tempera-required-scope": "authority:holds:write"
       }
     },
     "/v1/authority/holds/{id}:markRecoveryRequired": {
       "post": {
         "operationId": "authorityHolds.markRecoveryRequired",
         "summary": "Move a hold whose lease expired to recovery_required. Lease expiry is uncertainty, never a retry.",
-        "x-tempera-auth-kind": "oauthResource",
-        "x-tempera-auth-audience": "tempera-authority",
-        "x-tempera-required-scope": "authority:holds:write",
         "parameters": [
           {
             "$ref": "#/components/parameters/id"
@@ -5807,24 +5106,24 @@
             }
           },
           "403": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-authority",
+        "x-tempera-required-scope": "authority:holds:write"
       }
     },
     "/v1/authority/credential-bindings": {
       "get": {
         "operationId": "authorityCredentialBindings.list",
         "summary": "List the credential bindings for one workspace. A binding names a cred_ row; it never carries material.",
-        "x-tempera-auth-kind": "oauthResource",
-        "x-tempera-auth-audience": "tempera-authority",
-        "x-tempera-required-scope": "authority:policies:read",
         "parameters": [
           {
             "$ref": "#/components/parameters/PageSize"
@@ -5845,19 +5144,19 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-authority",
+        "x-tempera-required-scope": "authority:policies:read"
       },
       "post": {
         "operationId": "authorityCredentialBindings.create",
         "summary": "Bind an existing connector credential to a destination and a release rule. Reference-only: a body carrying a secret is rejected by field name. Creating a binding is what makes a future release possible, so it takes the same scope, role and step-up as writing policy.",
-        "x-tempera-auth-kind": "oauthResource",
-        "x-tempera-auth-audience": "tempera-authority",
-        "x-tempera-required-scope": "authority:policies:write",
         "requestBody": {
           "required": true,
           "content": {
@@ -5880,27 +5179,27 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-authority",
+        "x-tempera-required-scope": "authority:policies:write"
       }
     },
     "/v1/authority/credential-bindings/{id}:release": {
       "post": {
         "operationId": "authorityCredentialBindings.release",
         "summary": "Release a credential against a decision. Verifies the hold is leased by this caller with a lease token that validates, then mints or resolves and returns the material exactly once. The handler that evaluates the hold has no vault client in scope and the handler that resolves the vault evaluates no policy (ADR 0002 point 3). Service credentials only: never a human OAuth session.",
-        "x-tempera-auth-kind": "oauthResource",
-        "x-tempera-auth-audience": "tempera-authority",
-        "x-tempera-required-scope": "authority:credentials:release",
         "parameters": [
           {
             "$ref": "#/components/parameters/id"
@@ -5928,24 +5227,27 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "501": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "503": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-authority",
+        "x-tempera-required-scope": "authority:credentials:release"
       }
     },
     "/v1/authority/ledger": {
@@ -5953,9 +5255,6 @@
         "operationId": "authorityLedger.export",
         "summary": "Read the authority ledger, a hash chain projected from holds, decisions and policies.",
         "description": "The ledger is a projection, not a store (ADR 0001 point 3). Every record is derived from Auth Hub rows and recomputed on request, so an export is reproducible from those rows alone and there is no ledger table.\n\nformat=json pages the chain for a console and requires authority:ledger:read. A page begins mid-chain and does not verify on its own.\n\nformat=jsonl returns the whole range as newline-delimited JSON and requires authority:ledger:export. That body is what re-verifies with the gateway's verifyLedger: sequence from 1, previousRecordDigest from the genesis digest, every recordDigest recomputed over the domain-separated canonical bytes of its record. There is deliberately no since/until filter: a chain with a hole in it does not verify, and an export that quietly stopped verifying because a date was passed would be worse than no export. pageSize and pageToken are refused with format=jsonl for the same reason.\n\nAn export emits the audit event authority.ledger.export carrying the row count and the range.",
-        "x-tempera-auth-kind": "oauthResource",
-        "x-tempera-auth-audience": "tempera-authority",
-        "x-tempera-required-scope": "authority:ledger:read",
         "parameters": [
           {
             "$ref": "#/components/parameters/PageSize"
@@ -5996,12 +5295,15 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-authority",
+        "x-tempera-required-scope": "authority:ledger:read"
       }
     },
     "/v1/authority/metrics": {
@@ -6009,9 +5311,6 @@
         "operationId": "authorityMetrics.get",
         "summary": "Read the approval-fatigue metrics for one workspace.",
         "description": "askRate7d, holdsByGate and medianTimeToDecideSeconds over a trailing window. The window is the trailing 7 days ending at the moment of the request, computed as [now - 7 days, now] against the stored timestamps. A hold counts toward askRate7d and medianTimeToDecideSeconds when its decided_at falls inside that window, and toward holdsByGate when its created_at does. When the window contains no decided holds, askRate7d and medianTimeToDecideSeconds are null, never zero: zero would read as 'nothing was approved' and 'every decision was instant', which are different statements from 'nobody was asked'.\n\naskRate7d is the approved share of decided holds. It is not the held share of agent calls: Auth Hub never observes a call that policy allowed, so that ratio has no denominator in these rows.",
-        "x-tempera-auth-kind": "oauthResource",
-        "x-tempera-auth-audience": "tempera-authority",
-        "x-tempera-required-scope": "authority:ledger:read",
         "responses": {
           "200": {
             "description": "Authority metrics",
@@ -6024,12 +5323,15 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "$ref": "#/components/responses/AipError"
+            "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-authority",
+        "x-tempera-required-scope": "authority:ledger:read"
       }
     }
   },
@@ -6392,12 +5694,20 @@
           "business:review",
           "orders:write",
           "orders:approve",
-          "offline_access"
+          "offline_access",
+          "cradle:read",
+          "cradle:write",
+          "cradle:execute",
+          "tempo:read",
+          "tempo:write",
+          "taxes:read",
+          "taxes:review",
+          "taxes:write"
         ]
       },
       "ApiKeyScope": {
         "type": "string",
-        "description": "A service-principal scope. Human-only review:resolve, review:gold:manage, training:publish, bio:experiment:approve, bio:signer:manage, clearing:actions:approve, payments:merchants:write and orders:commerce:write are intentionally excluded, as are the remaining orders:* scopes, which are reachable only through an expiring OAuth token. GET /v1/api-keys/audiences reports, per audience, which of these are issuable now and why the rest are refused. authority:holds:decide, authority:holds:write and authority:policies:write are likewise excluded: deciding and writing authority require an attributed OAuth principal, never an API key.",
+        "description": "A service-principal scope. Human-only review:resolve, review:gold:manage, training:publish, bio:experiment:approve, bio:signer:manage, clearing:actions:approve, payments:merchants:write and orders:commerce:write are intentionally excluded, as are the remaining orders:* scopes, which are reachable only through an expiring OAuth token. GET /v1/api-keys/audiences reports, per audience, which of these are issuable now and why the rest are refused. authority:holds:decide, authority:holds:write and authority:policies:write are likewise excluded: deciding and writing authority require an attributed OAuth principal, never an API key. taxes:review is excluded for the same reason: it records that the owner reviewed a tax return, which is an attributed human attestation, and a static tp_ key must not be able to forge one. cradle:execute is included: running a job in the sandbox is an unattended machine act like connector:run, eval:run and workflow:run, and is the purpose the audience exists to serve.",
         "enum": [
           "mcp:invoke",
           "memory:read",
@@ -6459,7 +5769,14 @@
           "authority:holds:read",
           "authority:policies:read",
           "authority:ledger:read",
-          "authority:ledger:export"
+          "authority:ledger:export",
+          "cradle:read",
+          "cradle:write",
+          "cradle:execute",
+          "tempo:read",
+          "tempo:write",
+          "taxes:read",
+          "taxes:write"
         ]
       },
       "ResourceAudience": {
@@ -6487,7 +5804,8 @@
           "tempera-voice",
           "tempera-clearing",
           "tempera-authority",
-          "tempera-business"
+          "tempera-business",
+          "tempera-taxes"
         ]
       },
       "TokenClaims": {
@@ -9626,7 +8944,206 @@
         "pattern": "^sha256:[a-f0-9]{64}$"
       },
       "ClearingFinalAdmission": {
-        "$ref": "./clearing-final-admission-v1.schema.json"
+        "title": "Tempera Auth Hub Clearing Final Admission v1",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema",
+          "admissionId",
+          "workspace",
+          "principalId",
+          "approverIds",
+          "audience",
+          "canonicalActionId",
+          "canonicalRequestDigest",
+          "preparedEffectId",
+          "preparedEffectDigest",
+          "operation",
+          "resourceSelectors",
+          "economicAuthority",
+          "mandateId",
+          "mandateDigest",
+          "riskAssessmentId",
+          "riskAssessmentDigest",
+          "riskReservationId",
+          "riskReservationDigest",
+          "authorizationContextDigest",
+          "consumptionKey",
+          "issuedAt",
+          "notBefore",
+          "expiresAt",
+          "singleUse",
+          "nonTransferable",
+          "decision",
+          "authorizationGranted",
+          "keyId"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.auth-hub.clearing-final-admission/v1"
+          },
+          "admissionId": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+          },
+          "workspace": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "tenantId",
+              "projectId",
+              "environmentId"
+            ],
+            "properties": {
+              "tenantId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "projectId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "environmentId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              }
+            }
+          },
+          "principalId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "approverIds": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 32,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            }
+          },
+          "audience": {
+            "const": "tempera-clearing"
+          },
+          "canonicalActionId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "canonicalRequestDigest": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          },
+          "preparedEffectId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "preparedEffectDigest": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          },
+          "operation": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "resourceSelectors": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 64,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            }
+          },
+          "economicAuthority": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$"
+            },
+            "minProperties": 1,
+            "maxProperties": 32,
+            "propertyNames": {
+              "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+            }
+          },
+          "mandateId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "mandateDigest": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          },
+          "riskAssessmentId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "riskAssessmentDigest": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          },
+          "riskReservationId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "riskReservationDigest": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          },
+          "authorizationContextDigest": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          },
+          "consumptionKey": {
+            "type": "string",
+            "minLength": 16,
+            "maxLength": 256
+          },
+          "issuedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "notBefore": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "singleUse": {
+            "const": true
+          },
+          "nonTransferable": {
+            "const": true
+          },
+          "decision": {
+            "const": "ALLOW"
+          },
+          "authorizationGranted": {
+            "const": true
+          },
+          "keyId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        },
+        "description": "Inlined copy of contracts/clearing-final-admission-v1.schema.json (https://schemas.tempera.dev/auth-hub/clearing-final-admission-v1.schema.json). A published contract has to stand on its own, so the signed-admission schema is embedded rather than referenced; scripts/check-control-plane-openapi.py fails when the two diverge."
       },
       "ClearingAdmissionCreateRequest": {
         "type": "object",
@@ -10985,6 +10502,41 @@
           }
         }
       },
+      "SessionTokenPair": {
+        "type": "object",
+        "description": "A first-party session token pair in the ordinary resource JSON spelling. /oauth/token answers with OAuthTokenResponse instead, because RFC 6749 fixes that endpoint's member names.",
+        "required": [
+          "accessToken",
+          "tokenType",
+          "expiresIn",
+          "scope"
+        ],
+        "properties": {
+          "accessToken": {
+            "type": "string"
+          },
+          "tokenType": {
+            "type": "string",
+            "const": "Bearer"
+          },
+          "expiresIn": {
+            "type": "integer",
+            "maximum": 3600
+          },
+          "refreshToken": {
+            "type": "string",
+            "description": "Absent on a token-exchange response: an exchanged token is short-lived and never refreshable."
+          },
+          "scope": {
+            "type": "string"
+          },
+          "issuedTokenType": {
+            "type": "string",
+            "const": "urn:ietf:params:oauth:token-type:access_token",
+            "description": "RFC 8693 issued token type. Present only on a token-exchange response."
+          }
+        }
+      },
       "OAuthRevokeRequest": {
         "type": "object",
         "required": [
@@ -11596,7 +11148,7 @@
         "additionalProperties": false,
         "required": [
           "handoff",
-          "transaction_nonce"
+          "transactionNonce"
         ],
         "properties": {
           "handoff": {
@@ -11605,7 +11157,7 @@
             "maxLength": 256,
             "description": "Single-use opaque code from the SAML callback. This endpoint is restricted to the first-party BFF."
           },
-          "transaction_nonce": {
+          "transactionNonce": {
             "type": "string",
             "writeOnly": true,
             "pattern": "^[A-Za-z0-9_-]{43}$",
@@ -11619,27 +11171,27 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "access_token",
-          "refresh_token",
-          "token_type",
-          "expires_in",
+          "accessToken",
+          "refreshToken",
+          "tokenType",
+          "expiresIn",
           "scope",
-          "return_url"
+          "returnUrl"
         ],
         "properties": {
-          "access_token": {
+          "accessToken": {
             "type": "string",
             "writeOnly": true
           },
-          "refresh_token": {
+          "refreshToken": {
             "type": "string",
             "writeOnly": true
           },
-          "token_type": {
+          "tokenType": {
             "type": "string",
             "const": "Bearer"
           },
-          "expires_in": {
+          "expiresIn": {
             "type": "integer",
             "minimum": 60,
             "maximum": 3600
@@ -11647,7 +11199,7 @@
           "scope": {
             "type": "string"
           },
-          "return_url": {
+          "returnUrl": {
             "type": "string",
             "pattern": "^/(?:app|en/app)(?:/[^?#]*)?$"
           }
@@ -11705,27 +11257,27 @@
       "AdminStepUpResponse": {
         "type": "object",
         "required": [
-          "token_type",
-          "access_token",
-          "expires_in",
-          "platform_step_up_exp"
+          "tokenType",
+          "accessToken",
+          "expiresIn",
+          "platformStepUpExp"
         ],
         "properties": {
-          "token_type": {
+          "tokenType": {
             "type": "string",
             "enum": [
               "Bearer"
             ]
           },
-          "access_token": {
+          "accessToken": {
             "type": "string",
             "description": "An elevated first-party account-session token carrying a short-lived step-up claim."
           },
-          "expires_in": {
+          "expiresIn": {
             "type": "integer",
             "description": "Seconds until the step-up elevation expires (60-900)."
           },
-          "platform_step_up_exp": {
+          "platformStepUpExp": {
             "type": "integer",
             "description": "Unix expiry of the step-up elevation."
           }

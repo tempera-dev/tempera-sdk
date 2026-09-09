@@ -11,7 +11,7 @@
       "spec": "specs/tempera-dropshipping.openapi.json",
       "sourceRepo": "tempera-dev/tempera-dropshipping",
       "sourceBranch": "main",
-      "sourceCommit": "e30288d7969c52668a56fe94cf9c2d402a6da1ab",
+      "sourceCommit": "2770155d27bae739527a765f070bcd5701c424ae",
       "sourceSha256": "c7b8ae66d63c3ab2c7f393e8eded19c7cb47540376bcb25e6ff09dd6399d6760"
     },
     {
@@ -21,7 +21,7 @@
       "spec": "specs/tempera-business.openapi.json",
       "sourceRepo": "tempera-dev/tempera-business",
       "sourceBranch": "main",
-      "sourceCommit": "bc4a3adcfe23241e1e49cefb723d7c23ff975905",
+      "sourceCommit": "36fb444066abeecf450dc8a83020babe9f9887de",
       "sourceSha256": "aa892f880e743f87afc5c58c20d553a67a060bf3222cbe505d68c7811982bacc"
     },
     {
@@ -31,7 +31,7 @@
       "spec": "specs/tempera-payments.openapi.json",
       "sourceRepo": "tempera-dev/tempera-payments",
       "sourceBranch": "main",
-      "sourceCommit": "aa4422fdb60a33a6eeb28727ab94ee46ef790047",
+      "sourceCommit": "b6c07326f040afaead535fcff233978d482309b8",
       "sourceSha256": "d1ddd504eb4e94067dfac0587e7091d25a1e575fa1e6ea7542270831ec75808f"
     },
     {
@@ -41,7 +41,7 @@
       "spec": "specs/tempera-voice.openapi.json",
       "sourceRepo": "tempera-dev/tempera-voice",
       "sourceBranch": "main",
-      "sourceCommit": "890fa755aae0980a24ebdcbcd4a4c975231ae542",
+      "sourceCommit": "e7636fa328e70edcd40aafa10d8681fe632d5551",
       "sourceSha256": "175e71a27f9b1553cbbb12a4f63e104bf4c840d661e6bfb9dcc9421c12feff98"
     }
   ],

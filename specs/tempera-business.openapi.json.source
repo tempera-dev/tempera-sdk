@@ -5,7 +5,7 @@
   "schema_version": 1,
   "source_blob_sha": "8ac56d7fa90b3cabbf6efad3b193eea420355429",
   "source_branch": "main",
-  "source_commit": "bc4a3adcfe23241e1e49cefb723d7c23ff975905",
+  "source_commit": "36fb444066abeecf450dc8a83020babe9f9887de",
   "source_mode": "100644",
   "source_path": "contracts/openapi/business.openapi.json",
   "source_repo": "tempera-dev/tempera-business",

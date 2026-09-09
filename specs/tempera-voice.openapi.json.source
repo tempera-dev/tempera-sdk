@@ -5,7 +5,7 @@
   "schema_version": 1,
   "source_blob_sha": "205b684bb1bf51bed3ed78c4bdaf615ab37fb30b",
   "source_branch": "main",
-  "source_commit": "890fa755aae0980a24ebdcbcd4a4c975231ae542",
+  "source_commit": "e7636fa328e70edcd40aafa10d8681fe632d5551",
   "source_mode": "100644",
   "source_path": "contracts/openapi/voice.openapi.json",
   "source_repo": "tempera-dev/tempera-voice",

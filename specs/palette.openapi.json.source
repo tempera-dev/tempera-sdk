@@ -5,7 +5,7 @@
   "schema_version": 1,
   "source_blob_sha": "beeb2261e78e6fa97981bff3e76d1aaa80f4350a",
   "source_branch": "main",
-  "source_commit": "8634190608524c9c543c51f54a6077aa57e304ed",
+  "source_commit": "777dc31d1d0ed62d4bfd5e9f4e3f8053d447000e",
   "source_mode": "100644",
   "source_path": "contracts/openapi/palette.openapi.json",
   "source_repo": "tempera-dev/palette",

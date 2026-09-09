@@ -238,7 +238,7 @@
       "migration": "Keep browser navigation and redirect handling in the dedicated SAML BFF flow rather than exposing it through the buffered aggregate SDK.",
       "operation_id": "samlSsoLogin.begin",
       "owner": "auth-hub",
-      "path": "/sso/saml/login",
+      "path": "/v1/sso/saml/login",
       "product": "controlPlane",
       "rationale": "The endpoint begins an interactive browser SAML exchange; its declared empty OpenAPI security does not make it a general SDK operation.",
       "review_after": "2026-10-01"
@@ -249,7 +249,7 @@
       "migration": "Keep SAML metadata exchange in the dedicated identity-provider/BFF configuration flow rather than the aggregate SDK.",
       "operation_id": "samlSsoMetadata.get",
       "owner": "auth-hub",
-      "path": "/sso/saml/metadata/{configId}",
+      "path": "/v1/sso/saml/metadata/{configId}",
       "product": "controlPlane",
       "rationale": "This is an identity-provider protocol endpoint, not a normal account-authenticated JSON product operation.",
       "review_after": "2026-10-01"
@@ -260,7 +260,7 @@
       "migration": "Keep assertion-consumer processing in the dedicated browser/BFF SAML flow rather than the aggregate SDK.",
       "operation_id": "samlSsoLogin.complete",
       "owner": "auth-hub",
-      "path": "/sso/saml/acs/{configId}",
+      "path": "/sso/saml/{configId}/callback",
       "product": "controlPlane",
       "rationale": "The endpoint receives an identity-provider SAML assertion and is not an outbound generic SDK operation.",
       "review_after": "2026-10-01"

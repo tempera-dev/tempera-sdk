@@ -2,10 +2,10 @@
 // Type declarations for the generated surface tables plus the typed
 // product-client interfaces used by createTemperaClient().
 
-export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code" | "tempera-llm" | "tempera-connectors" | "tempera-workflows" | "tempera-gym" | "tempera-bio" | "tempera-document" | "tempera-risk" | "tempera-investigations" | "tempera-payments" | "tempera-dropshipping" | "tempera-voice" | "tempera-clearing" | "tempera-authority" | "tempera-business";
-export type TemperaScope = "mcp:invoke" | "memory:read" | "memory:write" | "memory:manage" | "trace:read" | "trace:write" | "scenario:read" | "scenario:write" | "dataset:read" | "dataset:write" | "connector:read" | "connector:run" | "connector:manage" | "eval:run" | "training:publish" | "review:gold:manage" | "review:resolve" | "workflow:read" | "workflow:write" | "workflow:run" | "bio:source:read" | "bio:proposal:write" | "bio:measurement:verify" | "bio:decision:write" | "bio:experiment:approve" | "bio:experiment:submit" | "bio:signer:manage" | "model:read" | "model:invoke" | "usage:reserve" | "document:read" | "document:write" | "risk:read" | "risk:write" | "risk:review" | "investigation:read" | "investigation:write" | "investigation:run" | "investigation:review" | "pii:unmask" | "payments:intents:read" | "payments:intents:write" | "payments:receipts:read" | "payments:webhooks:write" | "payments:refunds:write" | "payments:admin" | "payments:merchants:read" | "payments:merchants:write" | "orders:read" | "orders:commerce:write" | "voice:read" | "voice:write" | "voice:stream" | "clearing:actions:read" | "clearing:actions:propose" | "clearing:actions:commit" | "clearing:actions:reconcile" | "clearing:receipts:read" | "clearing:actions:approve" | "connection:invoke" | "connection:write" | "connection:read" | "authority:holds:read" | "authority:holds:decide" | "authority:holds:write" | "authority:policies:read" | "authority:policies:write" | "authority:credentials:release" | "authority:ledger:read" | "authority:ledger:export" | "admin" | "business:read" | "business:write" | "business:review" | "orders:write" | "orders:approve" | "offline_access";
+export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code" | "tempera-llm" | "tempera-connectors" | "tempera-workflows" | "tempera-gym" | "tempera-bio" | "tempera-document" | "tempera-risk" | "tempera-investigations" | "tempera-payments" | "tempera-dropshipping" | "tempera-voice" | "tempera-clearing" | "tempera-authority" | "tempera-business" | "tempera-taxes";
+export type TemperaScope = "mcp:invoke" | "memory:read" | "memory:write" | "memory:manage" | "trace:read" | "trace:write" | "scenario:read" | "scenario:write" | "dataset:read" | "dataset:write" | "connector:read" | "connector:run" | "connector:manage" | "eval:run" | "training:publish" | "review:gold:manage" | "review:resolve" | "workflow:read" | "workflow:write" | "workflow:run" | "bio:source:read" | "bio:proposal:write" | "bio:measurement:verify" | "bio:decision:write" | "bio:experiment:approve" | "bio:experiment:submit" | "bio:signer:manage" | "model:read" | "model:invoke" | "usage:reserve" | "document:read" | "document:write" | "risk:read" | "risk:write" | "risk:review" | "investigation:read" | "investigation:write" | "investigation:run" | "investigation:review" | "pii:unmask" | "payments:intents:read" | "payments:intents:write" | "payments:receipts:read" | "payments:webhooks:write" | "payments:refunds:write" | "payments:admin" | "payments:merchants:read" | "payments:merchants:write" | "orders:read" | "orders:commerce:write" | "voice:read" | "voice:write" | "voice:stream" | "clearing:actions:read" | "clearing:actions:propose" | "clearing:actions:commit" | "clearing:actions:reconcile" | "clearing:receipts:read" | "clearing:actions:approve" | "connection:invoke" | "connection:write" | "connection:read" | "authority:holds:read" | "authority:holds:decide" | "authority:holds:write" | "authority:policies:read" | "authority:policies:write" | "authority:credentials:release" | "authority:ledger:read" | "authority:ledger:export" | "admin" | "business:read" | "business:write" | "business:review" | "orders:write" | "orders:approve" | "offline_access" | "cradle:read" | "cradle:write" | "cradle:execute" | "tempo:read" | "tempo:write" | "taxes:read" | "taxes:review" | "taxes:write";
 export type TemperaEnvironment = "local" | "preview" | "staging" | "production";
-export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaLlm" | "temperaVoice" | "temperaRisk" | "temperaWorkflows" | "temperaGym" | "temperaBio" | "temperaDocument" | "temperaPayments" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha" | "temperaDropshipping" | "temperaBusiness" | "temperaConnectors" | "temperaInvestigations";
+export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaLlm" | "temperaVoice" | "temperaRisk" | "temperaWorkflows" | "temperaGym" | "temperaBio" | "temperaDocument" | "temperaPayments" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha" | "temperaDropshipping" | "temperaBusiness" | "temperaConnectors" | "temperaInvestigations" | "temperaClearing";
 
 export declare const TEMPERA_SURFACE_VERSION: number;
 export declare const TEMPERA_AUDIENCES: readonly TemperaAudience[];
@@ -1243,6 +1243,25 @@ export interface TemperaInvestigationsClient extends TemperaProductClientBase {
   getOperation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Cancel long-running operation. */
   cancelOperation(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+}
+
+export interface TemperaClearingClient extends TemperaProductClientBase {
+  /** Liveness probe. */
+  getClearingHealth(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Readiness probe over the contract source lock and every hard dependency. */
+  getClearingReadiness(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Validate a canonical action envelope without persisting or dispatching it. */
+  validateClearingAction(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Persist a non-executable canonical effect before authority is issued. */
+  prepareClearingAction(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Bind exact authority and Risk evidence to a prior prepared effect. */
+  proposeClearingAction(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Read one prepared or authority-bound action. */
+  getClearingAction(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List the hash-linked events of one action. */
+  listClearingActionEvents(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Live-verify Risk evidence, then durably commit the exact previously prepared and authority-bound action. */
+  commitClearingAction(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export type PassthroughClient = TemperaProductClientBase;

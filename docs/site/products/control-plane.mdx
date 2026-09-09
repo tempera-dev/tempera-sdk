@@ -90,6 +90,7 @@ Read the active organization’s private SAML 2.0 SSO configuration status.
 
 - **Producer operationId:** `samlSsoConfigurations.get`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:orgAdmin`
 - **Call as:** TypeScript `client.controlPlane.samlSsoConfigurationsGet()` · Python `client.control_plane.saml_sso_configurations_get()` · Rust `build_request("control_plane", "saml_sso_configurations_get", params)`
 
 <CodeGroup>
@@ -118,6 +119,7 @@ Fetch the authenticated user's identity, active workspace, and roles.
 
 - **Producer operationId:** `getMe`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:session`
 - **Call as:** TypeScript `client.controlPlane.me()` · Python `client.control_plane.me()` · Rust `build_request("control_plane", "me", params)`
 
 <CodeGroup>
@@ -146,6 +148,7 @@ List the organizations the authenticated user belongs to.
 
 - **Producer operationId:** `listOrganizations`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:session`
 - **Call as:** TypeScript `client.controlPlane.listOrgs()` · Python `client.control_plane.list_orgs()` · Rust `build_request("control_plane", "list_orgs", params)`
 
 **Query parameters**
@@ -190,6 +193,7 @@ Create an organization; the caller becomes its owner.
 
 - **Producer operationId:** `createOrganization`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:session`
 - **Call as:** TypeScript `client.controlPlane.createOrg()` · Python `client.control_plane.create_org()` · Rust `build_request("control_plane", "create_org", params)`
 
 **Body parameters**
@@ -230,6 +234,7 @@ List the user's active account sessions.
 
 - **Producer operationId:** `listAccountSessions`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:session`
 - **Call as:** TypeScript `client.controlPlane.listSessions()` · Python `client.control_plane.list_sessions()` · Rust `build_request("control_plane", "list_sessions", params)`
 
 **Query parameters**
@@ -324,6 +329,7 @@ Revoke an account session and its tokens immediately (idempotent).
 
 - **Producer operationId:** `revokeAccountSession`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:session`
 - **Call as:** TypeScript `client.controlPlane.revokeSession()` · Python `client.control_plane.revoke_session()` · Rust `build_request("control_plane", "revoke_session", params)`
 
 **Path parameters**
@@ -364,6 +370,7 @@ Switch the active workspace and receive a token pair scoped to it.
 
 - **Producer operationId:** `selectWorkspace`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:session`
 - **Call as:** TypeScript `client.controlPlane.selectWorkspace()` · Python `client.control_plane.select_workspace()` · Rust `build_request("control_plane", "select_workspace", params)`
 
 **Body parameters**
@@ -412,6 +419,7 @@ List team members of the active organization.
 
 - **Producer operationId:** `listTeamMembers`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:session`
 - **Call as:** TypeScript `client.controlPlane.listTeamMembers()` · Python `client.control_plane.list_team_members()` · Rust `build_request("control_plane", "list_team_members", params)`
 
 **Query parameters**
@@ -456,6 +464,7 @@ Change a team member's role (requires an org admin role; at least one owner must
 
 - **Producer operationId:** `updateTeamMember`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:orgAdmin`
 - **Call as:** TypeScript `client.controlPlane.updateTeamMember()` · Python `client.control_plane.update_team_member()` · Rust `build_request("control_plane", "update_team_member", params)`
 
 **Path parameters**
@@ -511,6 +520,7 @@ Remove a team member from the active organization (idempotent).
 
 - **Producer operationId:** `removeTeamMember`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:orgAdmin`
 - **Call as:** TypeScript `client.controlPlane.removeTeamMember()` · Python `client.control_plane.remove_team_member()` · Rust `build_request("control_plane", "remove_team_member", params)`
 
 **Path parameters**
@@ -551,6 +561,7 @@ List invites for the active organization, newest first.
 
 - **Producer operationId:** `listInvites`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:session`
 - **Call as:** TypeScript `client.controlPlane.listInvites()` · Python `client.control_plane.list_invites()` · Rust `build_request("control_plane", "list_invites", params)`
 
 **Query parameters**
@@ -595,6 +606,7 @@ Invite a user to the active organization; the accept URL is returned once.
 
 - **Producer operationId:** `createInvite`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:orgAdmin`
 - **Call as:** TypeScript `client.controlPlane.createInvite()` · Python `client.control_plane.create_invite()` · Rust `build_request("control_plane", "create_invite", params)`
 
 **Body parameters**
@@ -639,6 +651,7 @@ Cancel a pending invite (idempotent).
 
 - **Producer operationId:** `cancelInvite`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:orgAdmin`
 - **Call as:** TypeScript `client.controlPlane.cancelInvite()` · Python `client.control_plane.cancel_invite()` · Rust `build_request("control_plane", "cancel_invite", params)`
 
 **Path parameters**
@@ -679,6 +692,7 @@ List projects across every organization the user belongs to.
 
 - **Producer operationId:** `listProjects`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:session`
 - **Call as:** TypeScript `client.controlPlane.listProjects()` · Python `client.control_plane.list_projects()` · Rust `build_request("control_plane", "list_projects", params)`
 
 **Query parameters**
@@ -723,6 +737,7 @@ Create a project in an organization (requires an org admin role).
 
 - **Producer operationId:** `createProject`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:orgAdmin`
 - **Call as:** TypeScript `client.controlPlane.createProject()` · Python `client.control_plane.create_project()` · Rust `build_request("control_plane", "create_project", params)`
 
 **Body parameters**
@@ -767,6 +782,7 @@ List environments across every project the user can access.
 
 - **Producer operationId:** `listEnvironments`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:session`
 - **Call as:** TypeScript `client.controlPlane.listEnvironments()` · Python `client.control_plane.list_environments()` · Rust `build_request("control_plane", "list_environments", params)`
 
 **Query parameters**
@@ -811,6 +827,7 @@ Create an environment in a project (requires an org admin role).
 
 - **Producer operationId:** `createEnvironment`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:orgAdmin`
 - **Call as:** TypeScript `client.controlPlane.createEnvironment()` · Python `client.control_plane.create_environment()` · Rust `build_request("control_plane", "create_environment", params)`
 
 **Body parameters**
@@ -855,6 +872,7 @@ List API keys in the active workspace; secrets are never returned.
 
 - **Producer operationId:** `listApiKeys`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:session`
 - **Call as:** TypeScript `client.controlPlane.listApiKeys()` · Python `client.control_plane.list_api_keys()` · Rust `build_request("control_plane", "list_api_keys", params)`
 
 **Query parameters**
@@ -899,6 +917,7 @@ Mint a workspace API key (tp_...); the secret is returned exactly once. The work
 
 - **Producer operationId:** `createApiKey`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:credentialAdmin`
 - **Call as:** TypeScript `client.controlPlane.createApiKey()` · Python `client.control_plane.create_api_key()` · Rust `build_request("control_plane", "create_api_key", params)`
 
 **Body parameters**
@@ -954,6 +973,7 @@ List the resource audiences this caller may mint an API key for, the scopes issu
 
 - **Producer operationId:** `listApiKeyAudiences`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:credentialAdmin`
 - **Call as:** TypeScript `client.controlPlane.listApiKeyAudiences()` · Python `client.control_plane.list_api_key_audiences()` · Rust `build_request("control_plane", "list_api_key_audiences", params)`
 
 **Query parameters**
@@ -998,6 +1018,7 @@ Revoke an API key (idempotent).
 
 - **Producer operationId:** `revokeApiKey`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:credentialAdmin`
 - **Call as:** TypeScript `client.controlPlane.revokeApiKey()` · Python `client.control_plane.revoke_api_key()` · Rust `build_request("control_plane", "revoke_api_key", params)`
 
 **Path parameters**
@@ -1038,6 +1059,7 @@ Rotate an API key's secret; the new secret is returned exactly once.
 
 - **Producer operationId:** `rotateApiKey`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:credentialAdmin`
 - **Call as:** TypeScript `client.controlPlane.rotateApiKey()` · Python `client.control_plane.rotate_api_key()` · Rust `build_request("control_plane", "rotate_api_key", params)`
 
 **Path parameters**
@@ -1077,7 +1099,9 @@ let spec = client.build_request("control_plane", "rotate_api_key", &[
 Resolve one exact active data-source connection revision for an authorized Data Engine or Connectors service; Connectors S3 resolutions require a secret-bound endpoint.
 
 - **Producer operationId:** `dataSourceConnections.resolveInternal`
-- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Auth:** Introspection secret bearer (server-side only).
+- **Scope:** `dataSource:resolve`
+- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.controlPlane.dataSourceConnectionsResolveInternal()` · Python `client.control_plane.data_source_connections_resolve_internal()` · Rust `build_request("control_plane", "data_source_connections_resolve_internal", params)`
 
 **Body parameters**
@@ -1130,6 +1154,7 @@ List redacted data-source connection metadata in the selected project and enviro
 
 - **Producer operationId:** `dataSourceConnections.list`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:session`
 - **Call as:** TypeScript `client.controlPlane.dataSourceConnectionsList()` · Python `client.control_plane.data_source_connections_list()` · Rust `build_request("control_plane", "data_source_connections_list", params)`
 
 **Query parameters**
@@ -1174,6 +1199,7 @@ Create project-bound connector metadata using only an external secret reference.
 
 - **Producer operationId:** `dataSourceConnections.create`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:credentialAdmin`
 - **Call as:** TypeScript `client.controlPlane.dataSourceConnectionsCreate()` · Python `client.control_plane.data_source_connections_create()` · Rust `build_request("control_plane", "data_source_connections_create", params)`
 
 **Body parameters**
@@ -1238,6 +1264,7 @@ Get redacted metadata for one data-source connection.
 
 - **Producer operationId:** `dataSourceConnections.get`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:session`
 - **Call as:** TypeScript `client.controlPlane.dataSourceConnectionsGet()` · Python `client.control_plane.data_source_connections_get()` · Rust `build_request("control_plane", "data_source_connections_get", params)`
 
 **Path parameters**
@@ -1278,6 +1305,7 @@ Update a connection name or secret reference with exact-revision concurrency con
 
 - **Producer operationId:** `dataSourceConnections.update`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:credentialAdmin`
 - **Call as:** TypeScript `client.controlPlane.dataSourceConnectionsUpdate()` · Python `client.control_plane.data_source_connections_update()` · Rust `build_request("control_plane", "data_source_connections_update", params)`
 
 **Path parameters**
@@ -1341,6 +1369,7 @@ Revoke a data-source connection immediately. Revoking an unknown id is a no-op.
 
 - **Producer operationId:** `dataSourceConnections.revoke`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:credentialAdmin`
 - **Call as:** TypeScript `client.controlPlane.dataSourceConnectionsRevoke()` · Python `client.control_plane.data_source_connections_revoke()` · Rust `build_request("control_plane", "data_source_connections_revoke", params)`
 
 **Path parameters**
@@ -1381,6 +1410,7 @@ List provider connection metadata using a first-party account session. Secret re
 
 - **Producer operationId:** `providerConnections.list`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:session`
 - **Call as:** TypeScript `client.controlPlane.providerConnectionsList()` · Python `client.control_plane.provider_connections_list()` · Rust `build_request("control_plane", "provider_connections_list", params)`
 
 **Query parameters**
@@ -1425,6 +1455,7 @@ Create a tenant-scoped provider connection using only an external secret referen
 
 - **Producer operationId:** `providerConnections.create`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:credentialAdmin`
 - **Call as:** TypeScript `client.controlPlane.providerConnectionsCreate()` · Python `client.control_plane.provider_connections_create()` · Rust `build_request("control_plane", "provider_connections_create", params)`
 
 **Body parameters**
@@ -1486,6 +1517,7 @@ Create a provider connection by writing one raw secret directly to the configure
 
 - **Producer operationId:** `providerConnections.upload`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:credentialAdmin`
 - **Call as:** TypeScript `client.controlPlane.providerConnectionsUpload()` · Python `client.control_plane.provider_connections_upload()` · Rust `build_request("control_plane", "provider_connections_upload", params)`
 
 **Body parameters**
@@ -1547,6 +1579,7 @@ Revoke a provider connection immediately. Revoking an unknown id is a no-op.
 
 - **Producer operationId:** `providerConnections.revoke`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:credentialAdmin`
 - **Call as:** TypeScript `client.controlPlane.providerConnectionsRevoke()` · Python `client.control_plane.provider_connections_revoke()` · Rust `build_request("control_plane", "provider_connections_revoke", params)`
 
 **Path parameters**
@@ -1587,6 +1620,7 @@ Replace a connection secret reference and increment its revision without exposin
 
 - **Producer operationId:** `providerConnections.rotate`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:credentialAdmin`
 - **Call as:** TypeScript `client.controlPlane.providerConnectionsRotate()` · Python `client.control_plane.provider_connections_rotate()` · Rust `build_request("control_plane", "provider_connections_rotate", params)`
 
 **Path parameters**
@@ -1640,6 +1674,7 @@ Rotate a provider connection by writing one raw secret directly to the configure
 
 - **Producer operationId:** `providerConnections.rotateUpload`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:credentialAdmin`
 - **Call as:** TypeScript `client.controlPlane.providerConnectionsRotateUpload()` · Python `client.control_plane.provider_connections_rotate_upload()` · Rust `build_request("control_plane", "provider_connections_rotate_upload", params)`
 
 **Path parameters**
@@ -1692,7 +1727,8 @@ let spec = client.build_request("control_plane", "provider_connections_rotate_up
 Resolve connection runtime metadata for a tenant-bound tempera-llm service credential.
 
 - **Producer operationId:** `providerConnections.resolve`
-- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-llm`.
+- **Scope:** `model:invoke`
 - **Call as:** TypeScript `client.controlPlane.providerConnectionsResolve()` · Python `client.control_plane.provider_connections_resolve()` · Rust `build_request("control_plane", "provider_connections_resolve", params)`
 
 **Path parameters**
@@ -1754,6 +1790,7 @@ List redacted generic connector credential metadata for the selected workspace.
 
 - **Producer operationId:** `connectorCredentials.list`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:session`
 - **Call as:** TypeScript `client.controlPlane.connectorCredentialsList()` · Python `client.control_plane.connector_credentials_list()` · Rust `build_request("control_plane", "connector_credentials_list", params)`
 
 **Query parameters**
@@ -1798,6 +1835,7 @@ Create generic connector credential metadata using only an external secret refer
 
 - **Producer operationId:** `connectorCredentials.create`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:credentialAdmin`
 - **Call as:** TypeScript `client.controlPlane.connectorCredentialsCreate()` · Python `client.control_plane.connector_credentials_create()` · Rust `build_request("control_plane", "connector_credentials_create", params)`
 
 **Body parameters**
@@ -1854,6 +1892,7 @@ Create a generic connector credential by writing one raw secret directly to the 
 
 - **Producer operationId:** `connectorCredentials.upload`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:credentialAdmin`
 - **Call as:** TypeScript `client.controlPlane.connectorCredentialsUpload()` · Python `client.control_plane.connector_credentials_upload()` · Rust `build_request("control_plane", "connector_credentials_upload", params)`
 
 **Body parameters**
@@ -1910,6 +1949,7 @@ Revoke a generic connector credential immediately. Revoking an unknown id is a n
 
 - **Producer operationId:** `connectorCredentials.revoke`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:credentialAdmin`
 - **Call as:** TypeScript `client.controlPlane.connectorCredentialsRevoke()` · Python `client.control_plane.connector_credentials_revoke()` · Rust `build_request("control_plane", "connector_credentials_revoke", params)`
 
 **Path parameters**
@@ -1950,6 +1990,7 @@ Replace a generic connector credential secret reference and increment its revisi
 
 - **Producer operationId:** `connectorCredentials.rotate`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:credentialAdmin`
 - **Call as:** TypeScript `client.controlPlane.connectorCredentialsRotate()` · Python `client.control_plane.connector_credentials_rotate()` · Rust `build_request("control_plane", "connector_credentials_rotate", params)`
 
 **Path parameters**
@@ -1999,6 +2040,7 @@ Rotate a generic connector credential by writing one raw secret directly to the 
 
 - **Producer operationId:** `connectorCredentials.rotateUpload`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:credentialAdmin`
 - **Call as:** TypeScript `client.controlPlane.connectorCredentialsRotateUpload()` · Python `client.control_plane.connector_credentials_rotate_upload()` · Rust `build_request("control_plane", "connector_credentials_rotate_upload", params)`
 
 **Path parameters**
@@ -2047,7 +2089,8 @@ let spec = client.build_request("control_plane", "connector_credentials_rotate_u
 Resolve one generic connector credential reference for a tenant-bound Tempera Connectors credential.
 
 - **Producer operationId:** `connectorCredentials.resolve`
-- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-connectors`.
+- **Scope:** `connection:invoke`
 - **Call as:** TypeScript `client.controlPlane.connectorCredentialsResolve()` · Python `client.control_plane.connector_credentials_resolve()` · Rust `build_request("control_plane", "connector_credentials_resolve", params)`
 
 **Path parameters**
@@ -2105,6 +2148,7 @@ List external experiment-provider metadata. Secret references and values are nev
 
 - **Producer operationId:** `experimentProviderConnections.list`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:session`
 - **Call as:** TypeScript `client.controlPlane.listExperimentProviderConnections()` · Python `client.control_plane.list_experiment_provider_connections()` · Rust `build_request("control_plane", "list_experiment_provider_connections", params)`
 
 **Query parameters**
@@ -2149,6 +2193,7 @@ Register a tenant-scoped experiment provider using only an external secret refer
 
 - **Producer operationId:** `experimentProviderConnections.create`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:credentialAdmin`
 - **Call as:** TypeScript `client.controlPlane.createExperimentProviderConnection()` · Python `client.control_plane.create_experiment_provider_connection()` · Rust `build_request("control_plane", "create_experiment_provider_connection", params)`
 
 **Body parameters**
@@ -2217,6 +2262,7 @@ Revoke an experiment-provider connection. An unknown id is a no-op.
 
 - **Producer operationId:** `experimentProviderConnections.revoke`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:credentialAdmin`
 - **Call as:** TypeScript `client.controlPlane.revokeExperimentProviderConnection()` · Python `client.control_plane.revoke_experiment_provider_connection()` · Rust `build_request("control_plane", "revoke_experiment_provider_connection", params)`
 
 **Path parameters**
@@ -2637,6 +2683,7 @@ List recent audit-log events for the user and active organization (up to 50, new
 
 - **Producer operationId:** `listAuditLog`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:session`
 - **Call as:** TypeScript `client.controlPlane.listAuditLog()` · Python `client.control_plane.list_audit_log()` · Rust `build_request("control_plane", "list_audit_log", params)`
 
 **Query parameters**
@@ -2681,6 +2728,7 @@ List the connector catalog (MCP clients, editors, and API surfaces).
 
 - **Producer operationId:** `listConnectors`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:session`
 - **Call as:** TypeScript `client.controlPlane.listConnectors()` · Python `client.control_plane.list_connectors()` · Rust `build_request("control_plane", "list_connectors", params)`
 
 **Query parameters**
@@ -2725,6 +2773,7 @@ Fetch one connector's connection status for the active workspace.
 
 - **Producer operationId:** `getConnectorStatus`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:session`
 - **Call as:** TypeScript `client.controlPlane.getConnectorStatus()` · Python `client.control_plane.get_connector_status()` · Rust `build_request("control_plane", "get_connector_status", params)`
 
 **Path parameters**
@@ -2765,6 +2814,7 @@ List the product catalog with default scopes and setup paths.
 
 - **Producer operationId:** `listProducts`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:session`
 - **Call as:** TypeScript `client.controlPlane.listProducts()` · Python `client.control_plane.list_products()` · Rust `build_request("control_plane", "list_products", params)`
 
 **Query parameters**
@@ -2809,6 +2859,7 @@ Fetch one product's activation status, entitlements, signals, and usage meters.
 
 - **Producer operationId:** `getProductStatus`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:session`
 - **Call as:** TypeScript `client.controlPlane.getProductStatus()` · Python `client.control_plane.get_product_status()` · Rust `build_request("control_plane", "get_product_status", params)`
 
 **Path parameters**
@@ -2849,6 +2900,7 @@ Fetch the organization's plan, subscription, usage meters, entitlements, invoice
 
 - **Producer operationId:** `getBillingStatus`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:billingAdmin`
 - **Call as:** TypeScript `client.controlPlane.getBillingStatus()` · Python `client.control_plane.get_billing_status()` · Rust `build_request("control_plane", "get_billing_status", params)`
 
 <CodeGroup>
@@ -2877,6 +2929,7 @@ Create a checkout handoff URL for a plan on the chosen payment rail (requires a 
 
 - **Producer operationId:** `createBillingCheckout`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:billingAdmin`
 - **Call as:** TypeScript `client.controlPlane.createBillingCheckout()` · Python `client.control_plane.create_billing_checkout()` · Rust `build_request("control_plane", "create_billing_checkout", params)`
 
 **Query parameters**
@@ -2924,6 +2977,7 @@ Fetch the billing-portal URL for the organization (requires a billing role).
 
 - **Producer operationId:** `createBillingPortal`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:billingAdmin`
 - **Call as:** TypeScript `client.controlPlane.getBillingPortal()` · Python `client.control_plane.get_billing_portal()` · Rust `build_request("control_plane", "get_billing_portal", params)`
 
 <CodeGroup>
@@ -2952,6 +3006,7 @@ Return the org credit wallet balance, grant, overage, and recent ledger for owne
 
 - **Producer operationId:** `getBillingCredits`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:billingAdmin`
 - **Call as:** TypeScript `client.controlPlane.getBillingCredits()` · Python `client.control_plane.get_billing_credits()` · Rust `build_request("control_plane", "get_billing_credits", params)`
 
 <CodeGroup>
@@ -2980,6 +3035,7 @@ List source-owned fixed prepaid credit packs available to an authenticated billi
 
 - **Producer operationId:** `listCreditTopupPacks`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:billingAdmin`
 - **Call as:** TypeScript `client.controlPlane.listCreditTopupPacks()` · Python `client.control_plane.list_credit_topup_packs()` · Rust `build_request("control_plane", "list_credit_topup_packs", params)`
 
 **Query parameters**
@@ -3024,6 +3080,7 @@ Create a one-time Stripe Checkout session for a source-owned fixed prepaid credi
 
 - **Producer operationId:** `createCreditTopup`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:billingAdmin`
 - **Call as:** TypeScript `client.controlPlane.createCreditTopup()` · Python `client.control_plane.create_credit_topup()` · Rust `build_request("control_plane", "create_credit_topup", params)`
 
 **Body parameters**
@@ -3067,7 +3124,7 @@ let spec = client.build_request("control_plane", "create_credit_topup", &[
 List the entitled Tempera Code model catalog; requires a tempera-code bearer with model:read and the model-gateway entitlement.
 
 - **Producer operationId:** `getModelCatalog`
-- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-code`.
 - **Scope:** `model:read`
 - **Call as:** TypeScript `client.controlPlane.getModelCatalog()` · Python `client.control_plane.get_model_catalog()` · Rust `build_request("control_plane", "get_model_catalog", params)`
 
@@ -3096,7 +3153,9 @@ let spec = client.build_request("control_plane", "get_model_catalog", &[])?;
 Record a usage event against a metered plan limit; requires a token carrying the meter's product scope and returns the updated meter.
 
 - **Producer operationId:** `recordUsageEvent`
-- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Scope:** `usage:report`
+- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.controlPlane.recordUsage()` · Python `client.control_plane.record_usage()` · Rust `build_request("control_plane", "record_usage", params)`
 
 **Body parameters**
@@ -3151,7 +3210,8 @@ let spec = client.build_request("control_plane", "record_usage", &[
 Atomically reserve the maximum model cost before starting a provider request.
 
 - **Producer operationId:** `usageReservations.create`
-- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Scope:** `usage:reserve`
 - **Call as:** TypeScript `client.controlPlane.usageReservationsCreate()` · Python `client.control_plane.usage_reservations_create()` · Rust `build_request("control_plane", "usage_reservations_create", params)`
 
 **Body parameters**
@@ -3225,7 +3285,8 @@ let spec = client.build_request("control_plane", "usage_reservations_create", &[
 Commit exact provider usage against an admitted reservation and release unused capacity.
 
 - **Producer operationId:** `usageReservations.commit`
-- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Scope:** `usage:reserve`
 - **Call as:** TypeScript `client.controlPlane.usageReservationsCommit()` · Python `client.control_plane.usage_reservations_commit()` · Rust `build_request("control_plane", "usage_reservations_commit", params)`
 
 **Path parameters**
@@ -3290,7 +3351,8 @@ let spec = client.build_request("control_plane", "usage_reservations_commit", &[
 Release unused capacity after provider failure or cancellation.
 
 - **Producer operationId:** `usageReservations.release`
-- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Scope:** `usage:reserve`
 - **Call as:** TypeScript `client.controlPlane.usageReservationsRelease()` · Python `client.control_plane.usage_reservations_release()` · Rust `build_request("control_plane", "usage_reservations_release", params)`
 
 **Path parameters**
@@ -3347,7 +3409,8 @@ let spec = client.build_request("control_plane", "usage_reservations_release", &
 Hold maximum capacity and record non-secret evidence when exact provider usage is unavailable.
 
 - **Producer operationId:** `usageReservations.reconcile`
-- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Auth:** Product bearer — an access token minted for audience `palette`, or a central `tp_` API key.
+- **Scope:** `usage:reserve`
 - **Call as:** TypeScript `client.controlPlane.usageReservationsReconcile()` · Python `client.control_plane.usage_reservations_reconcile()` · Rust `build_request("control_plane", "usage_reservations_reconcile", params)`
 
 **Path parameters**
@@ -3419,6 +3482,7 @@ List the OAuth grants the user has approved in the active workspace.
 
 - **Producer operationId:** `listOAuthGrants`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:session`
 - **Call as:** TypeScript `client.controlPlane.listGrants()` · Python `client.control_plane.list_grants()` · Rust `build_request("control_plane", "list_grants", params)`
 
 **Query parameters**
@@ -3463,6 +3527,7 @@ Revoke an OAuth grant and every refresh token issued under it.
 
 - **Producer operationId:** `revokeOAuthGrant`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:session`
 - **Call as:** TypeScript `client.controlPlane.revokeGrant()` · Python `client.control_plane.revoke_grant()` · Rust `build_request("control_plane", "revoke_grant", params)`
 
 **Path parameters**
@@ -3497,7 +3562,7 @@ let spec = client.build_request("control_plane", "revoke_grant", &[
 
 ### introspectToken
 
-`POST /v1/oauth/introspect`
+`POST /oauth/introspect`
 
 Introspect a token or tp_ API key server-side; requires the introspection secret and returns \{active: false\} for anything invalid.
 
@@ -3699,6 +3764,7 @@ Return fail-closed source, machine, and image provenance for the serving runtime
 
 - **Producer operationId:** `adminOperationalProvenance`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:platformStaff`
 - **Call as:** TypeScript `client.controlPlane.adminOperationalProvenance()` · Python `client.control_plane.admin_operational_provenance()` · Rust `build_request("control_plane", "admin_operational_provenance", params)`
 
 <CodeGroup>
@@ -3727,6 +3793,7 @@ Re-authenticate a platform-staff account session to mint a short-lived step-up e
 
 - **Producer operationId:** `adminStepUp`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:platformStaff`
 - **Call as:** TypeScript `client.controlPlane.adminStepUp()` · Python `client.control_plane.admin_step_up()` · Rust `build_request("control_plane", "admin_step_up", params)`
 
 **Body parameters**
@@ -3767,6 +3834,7 @@ Platform-staff credit grant/adjustment to an org wallet. Requires a fresh step-u
 
 - **Producer operationId:** `adminAdjustCredits`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:platformStaff`
 - **Call as:** TypeScript `client.controlPlane.adminAdjustCredits()` · Python `client.control_plane.admin_adjust_credits()` · Rust `build_request("control_plane", "admin_adjust_credits", params)`
 
 **Body parameters**
@@ -3816,6 +3884,7 @@ Platform-staff internal billing view: per-org wallet balances plus provider cost
 
 - **Producer operationId:** `adminBillingOrgs`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:platformStaff`
 - **Call as:** TypeScript `client.controlPlane.adminBillingOrgs()` · Python `client.control_plane.admin_billing_orgs()` · Rust `build_request("control_plane", "admin_billing_orgs", params)`
 
 <CodeGroup>
@@ -3844,6 +3913,7 @@ Create a one-time CSRF-bound GitHub App installation session.
 
 - **Producer operationId:** `githubSetupSessions.create`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:orgAdmin`
 - **Call as:** TypeScript `client.controlPlane.githubSetupSessionsCreate()` · Python `client.control_plane.github_setup_sessions_create()` · Rust `build_request("control_plane", "github_setup_sessions_create", params)`
 
 **Body parameters**
@@ -3936,6 +4006,7 @@ List active GitHub App installations for the organization.
 
 - **Producer operationId:** `githubInstallations.list`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:orgAdmin`
 - **Call as:** TypeScript `client.controlPlane.githubInstallationsList()` · Python `client.control_plane.github_installations_list()` · Rust `build_request("control_plane", "github_installations_list", params)`
 
 **Query parameters**
@@ -3980,6 +4051,7 @@ Disconnect a GitHub App installation from the workspace.
 
 - **Producer operationId:** `githubInstallations.disconnect`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:orgAdmin`
 - **Call as:** TypeScript `client.controlPlane.githubInstallationsDisconnect()` · Python `client.control_plane.github_installations_disconnect()` · Rust `build_request("control_plane", "github_installations_disconnect", params)`
 
 **Path parameters**
@@ -4020,6 +4092,7 @@ List repository metadata received for a GitHub installation.
 
 - **Producer operationId:** `githubInstallationRepositories.list`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:orgAdmin`
 - **Call as:** TypeScript `client.controlPlane.githubInstallationRepositoriesList()` · Python `client.control_plane.github_installation_repositories_list()` · Rust `build_request("control_plane", "github_installation_repositories_list", params)`
 
 **Path parameters**
@@ -4073,6 +4146,7 @@ Capture an ephemeral, immutable GitHub repository snapshot for an authorized wor
 
 - **Producer operationId:** `githubRepositorySnapshots.capture`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:orgAdmin`
 - **Call as:** TypeScript `client.controlPlane.githubRepositorySnapshotsCapture()` · Python `client.control_plane.github_repository_snapshots_capture()` · Rust `build_request("control_plane", "github_repository_snapshots_capture", params)`
 
 **Path parameters**
@@ -4154,6 +4228,7 @@ Revoke all account sessions, OAuth grants, and user-owned API keys and advance t
 
 - **Producer operationId:** `sessions.revokeAll`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:session`
 - **Call as:** TypeScript `client.controlPlane.sessionsRevokeAll()` · Python `client.control_plane.sessions_revoke_all()` · Rust `build_request("control_plane", "sessions_revoke_all", params)`
 
 <CodeGroup>
@@ -4182,6 +4257,7 @@ List passkeys enrolled for the authenticated account.
 
 - **Producer operationId:** `passkeys.list`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:session`
 - **Call as:** TypeScript `client.controlPlane.passkeysList()` · Python `client.control_plane.passkeys_list()` · Rust `build_request("control_plane", "passkeys_list", params)`
 
 **Query parameters**
@@ -4226,6 +4302,7 @@ Begin passkey registration for the authenticated account.
 
 - **Producer operationId:** `passkeys.beginRegistration`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:session`
 - **Call as:** TypeScript `client.controlPlane.passkeysBeginRegistration()` · Python `client.control_plane.passkeys_begin_registration()` · Rust `build_request("control_plane", "passkeys_begin_registration", params)`
 
 <CodeGroup>
@@ -4254,6 +4331,7 @@ Verify and persist a passkey registration.
 
 - **Producer operationId:** `passkeys.finishRegistration`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:session`
 - **Call as:** TypeScript `client.controlPlane.passkeysFinishRegistration()` · Python `client.control_plane.passkeys_finish_registration()` · Rust `build_request("control_plane", "passkeys_finish_registration", params)`
 
 **Body parameters**
@@ -4378,6 +4456,7 @@ Begin passkey step-up for a signed-in account session.
 
 - **Producer operationId:** `passkeys.beginStepUp`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:session`
 - **Call as:** TypeScript `client.controlPlane.passkeysBeginStepUp()` · Python `client.control_plane.passkeys_begin_step_up()` · Rust `build_request("control_plane", "passkeys_begin_step_up", params)`
 
 <CodeGroup>
@@ -4406,6 +4485,7 @@ Verify passkey step-up and mint a short-lived AAL2 elevation token.
 
 - **Producer operationId:** `passkeys.finishStepUp`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:session`
 - **Call as:** TypeScript `client.controlPlane.passkeysFinishStepUp()` · Python `client.control_plane.passkeys_finish_step_up()` · Rust `build_request("control_plane", "passkeys_finish_step_up", params)`
 
 **Body parameters**
@@ -4454,6 +4534,7 @@ Consume a one-time recovery code, remove passkeys, and revoke all active account
 
 - **Producer operationId:** `passkeys.recover`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:session`
 - **Call as:** TypeScript `client.controlPlane.passkeysRecover()` · Python `client.control_plane.passkeys_recover()` · Rust `build_request("control_plane", "passkeys_recover", params)`
 
 **Body parameters**
@@ -4494,6 +4575,7 @@ Delete one passkey after recent AAL2 step-up.
 
 - **Producer operationId:** `passkeys.delete`
 - **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:session`
 - **Call as:** TypeScript `client.controlPlane.passkeysDelete()` · Python `client.control_plane.passkeys_delete()` · Rust `build_request("control_plane", "passkeys_delete", params)`
 
 **Path parameters**

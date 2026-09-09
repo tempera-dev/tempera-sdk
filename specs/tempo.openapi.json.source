@@ -5,7 +5,7 @@
   "schema_version": 1,
   "source_blob_sha": "ea8a3aaa67de45b41ce9bb280381738e9402860a",
   "source_branch": "main",
-  "source_commit": "2a71a66fa9781faf3fb7afd315b91b6a07ad576d",
+  "source_commit": "ca5489150f145b6e190463e84495411586bfd7ce",
   "source_mode": "100644",
   "source_path": "contracts/openapi/tempo.openapi.json",
   "source_repo": "tempera-dev/tempo",

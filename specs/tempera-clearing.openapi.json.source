@@ -1,0 +1,13 @@
+{
+  "generated_path": "specs/tempera-clearing.openapi.json",
+  "generated_sha256": "a94031a18e1f6d43f588c0f1c9adda8b3a595e5c2a63c87759e24b85b5585918",
+  "generated_with": "sync-vendored-openapi.py@1+verbatim-openapi-copy",
+  "schema_version": 1,
+  "source_blob_sha": "5aec295e1453aae3340e28a817a214151067d8a3",
+  "source_branch": "main",
+  "source_commit": "997ab1d75a68f754632338041c4c0728083841d2",
+  "source_mode": "100644",
+  "source_path": "contracts/openapi/clearing.openapi.json",
+  "source_repo": "tempera-dev/tempera-clearing",
+  "source_sha256": "a94031a18e1f6d43f588c0f1c9adda8b3a595e5c2a63c87759e24b85b5585918"
+}
