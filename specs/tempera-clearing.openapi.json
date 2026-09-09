@@ -1,0 +1,2203 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Tempera Clearing API",
+    "version": "0.3.0-alpha",
+    "description": "Canonical preparation, authority binding, durable commit, and evidence reads for consequential Tempera actions. A prepared action is non-executable until a complete authority-bearing action is proposed and committed."
+  },
+  "servers": [
+    {
+      "url": "https://clearing.example.invalid"
+    }
+  ],
+  "security": [
+    {
+      "temperaOAuth": []
+    }
+  ],
+  "x-tempera-protocol-routes": [
+    "/healthz",
+    "/readyz"
+  ],
+  "paths": {
+    "/healthz": {
+      "get": {
+        "operationId": "getClearingHealth",
+        "summary": "Liveness probe",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Process is alive",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/readyz": {
+      "get": {
+        "operationId": "getClearingReadiness",
+        "summary": "Readiness probe over the contract source lock and every hard dependency",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Required contract and authentication dependencies are ready",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadinessReport"
+                }
+              }
+            }
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/actions:validate": {
+      "post": {
+        "operationId": "validateClearingAction",
+        "summary": "Validate a canonical action envelope without persisting or dispatching it",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-clearing",
+        "x-tempera-required-scope": "clearing:actions:propose",
+        "x-tempera-physical-action": false,
+        "security": [
+          {
+            "temperaOAuth": [
+              "clearing:actions:propose"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActionEnvelopeV1"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Action is structurally valid but was not persisted or dispatched",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/preparedActions": {
+      "post": {
+        "operationId": "prepareClearingAction",
+        "summary": "Persist a non-executable canonical effect before authority is issued",
+        "description": "Validates the prepared effect and source-locked adapter, binds it to one workspace/action/idempotency identity, and creates no provider outbox task.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-clearing",
+        "x-tempera-required-scope": "clearing:actions:propose",
+        "x-tempera-physical-action": false,
+        "security": [
+          {
+            "temperaOAuth": [
+              "clearing:actions:propose"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrepareActionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Exact replay of an existing preparation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePreparedActionResult"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Prepared effect persisted without authority or dispatch",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePreparedActionResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/actions": {
+      "post": {
+        "operationId": "proposeClearingAction",
+        "summary": "Bind exact authority and Risk evidence to a prior prepared effect",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-clearing",
+        "x-tempera-required-scope": "clearing:actions:propose",
+        "x-tempera-physical-action": false,
+        "security": [
+          {
+            "temperaOAuth": [
+              "clearing:actions:propose"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActionEnvelopeV1"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Exact replay",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateValidatedProposalResult"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Authority-bearing proposal validated and persisted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateValidatedProposalResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/actions/{id}": {
+      "get": {
+        "operationId": "getClearingAction",
+        "summary": "Read one prepared or authority-bound action",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-clearing",
+        "x-tempera-required-scope": "clearing:actions:read",
+        "x-tempera-physical-action": false,
+        "x-tempera-resource-pattern": {
+          "id": "actions/*"
+        },
+        "security": [
+          {
+            "temperaOAuth": [
+              "clearing:actions:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ActionId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Prepared or authority-bound action",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/PreparedActionRecord"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ValidatedProposalRecord"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/actions/{id}/events": {
+      "get": {
+        "operationId": "listClearingActionEvents",
+        "summary": "List the hash-linked events of one action",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-clearing",
+        "x-tempera-required-scope": "clearing:actions:read",
+        "x-tempera-physical-action": false,
+        "x-tempera-resource-pattern": {
+          "id": "actions/*"
+        },
+        "security": [
+          {
+            "temperaOAuth": [
+              "clearing:actions:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ActionId"
+          },
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "One page of hash-linked authority-bound action events",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListClearingActionEventsResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/actions/{id}:commit": {
+      "post": {
+        "operationId": "commitClearingAction",
+        "summary": "Live-verify Risk evidence, then durably commit the exact previously prepared and authority-bound action",
+        "description": "The only Clearing operation that can produce an effect outside the database. It is reachable only for an action that was already prepared and proposed, and it consumes the authority admission exactly once.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-clearing",
+        "x-tempera-required-scope": "clearing:actions:commit",
+        "x-tempera-physical-action": true,
+        "x-tempera-prepare-commit-required": true,
+        "x-tempera-resource-pattern": {
+          "id": "actions/*"
+        },
+        "security": [
+          {
+            "temperaOAuth": [
+              "clearing:actions:commit"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ActionId"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CanonicalCommitRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Exact commit replay",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CanonicalCommitResult"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Commit decision and dispatch task durably recorded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CanonicalCommitResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "temperaOAuth": {
+        "type": "oauth2",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "https://auth.example.invalid/oauth/authorize",
+            "tokenUrl": "https://auth.example.invalid/oauth/token",
+            "scopes": {
+              "clearing:actions:propose": "Prepare and propose Clearing actions",
+              "clearing:actions:read": "Read tenant-scoped Clearing actions and events",
+              "clearing:actions:commit": "Commit an exact previously prepared action",
+              "clearing:actions:reconcile": "Request reconciliation without blind redispatch",
+              "clearing:receipts:read": "Read staged Clearing receipts"
+            }
+          }
+        }
+      }
+    },
+    "parameters": {
+      "ActionId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "description": "The canonical action identifier, matching the AIP-122 pattern actions/*.",
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "PageSize": {
+        "name": "pageSize",
+        "in": "query",
+        "required": false,
+        "description": "Maximum events to return. Defaults to 50 and is capped at 500.",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500
+        }
+      },
+      "PageToken": {
+        "name": "pageToken",
+        "in": "query",
+        "required": false,
+        "description": "The nextPageToken returned by a previous call.",
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        }
+      }
+    },
+    "responses": {
+      "Error": {
+        "description": "A google.rpc.Status error envelope.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Status"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Status": {
+        "type": "object",
+        "description": "The google.rpc.Status error envelope required of every Tempera API (AIP-193).",
+        "required": [
+          "error"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": [
+              "code",
+              "status",
+              "message"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "code": {
+                "type": "integer",
+                "description": "The HTTP status code, repeated in the body so the envelope is self-describing."
+              },
+              "status": {
+                "type": "string",
+                "description": "The canonical google.rpc.Code name, for example INVALID_ARGUMENT.",
+                "enum": [
+                  "CANCELLED",
+                  "UNKNOWN",
+                  "INVALID_ARGUMENT",
+                  "DEADLINE_EXCEEDED",
+                  "NOT_FOUND",
+                  "ALREADY_EXISTS",
+                  "PERMISSION_DENIED",
+                  "UNAUTHENTICATED",
+                  "RESOURCE_EXHAUSTED",
+                  "FAILED_PRECONDITION",
+                  "ABORTED",
+                  "OUT_OF_RANGE",
+                  "UNIMPLEMENTED",
+                  "INTERNAL",
+                  "UNAVAILABLE",
+                  "DATA_LOSS"
+                ]
+              },
+              "message": {
+                "type": "string",
+                "description": "A developer-facing description that is safe to log and safe to show."
+              },
+              "details": {
+                "type": "array",
+                "description": "Structured error details. Present but empty when there are none.",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "requestId": {
+                "type": "string",
+                "description": "The server-assigned request identifier, mirrored from the x-request-id response header."
+              }
+            }
+          }
+        }
+      },
+      "ReadinessReport": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ready",
+          "authMode",
+          "admissionAuthorityMode",
+          "canonicalContract",
+          "dependencies"
+        ],
+        "properties": {
+          "ready": {
+            "const": true
+          },
+          "authMode": {
+            "type": "string"
+          },
+          "admissionAuthorityMode": {
+            "type": "string"
+          },
+          "canonicalContract": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "producerCommit",
+              "contractSetDigest"
+            ],
+            "properties": {
+              "producerCommit": {
+                "type": "string"
+              },
+              "contractSetDigest": {
+                "type": "string",
+                "pattern": "^sha256:[0-9a-f]{64}$"
+              }
+            }
+          },
+          "dependencies": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "authentication",
+              "admissionAuthority",
+              "riskLifecycle"
+            ],
+            "properties": {
+              "authentication": {
+                "type": "boolean"
+              },
+              "admissionAuthority": {
+                "type": "boolean"
+              },
+              "riskLifecycle": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      },
+      "Workspace": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tenantId",
+          "projectId",
+          "environmentId"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "projectId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "environmentId": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "PrepareActionRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema",
+          "actionId",
+          "workspace",
+          "idempotencyKey",
+          "preparedEffect"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.clearing.prepare-action-request/v1"
+          },
+          "actionId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "workspace": {
+            "$ref": "#/components/schemas/Workspace"
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "preparedEffect": {
+            "$ref": "#/components/schemas/PreparedEffectV1"
+          }
+        }
+      },
+      "CanonicalCommitRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "action",
+          "riskEvidenceEnvelope"
+        ],
+        "properties": {
+          "action": {
+            "$ref": "#/components/schemas/ActionEnvelopeV1"
+          },
+          "riskEvidenceEnvelope": {
+            "type": "object",
+            "description": "The original signed Risk Clearing evidence envelope. Clearing verifies it against Risk's live reservation before consuming final admission, then persists the exact envelope for durable outcome transitions. It is evidence, never execution authority."
+          }
+        }
+      },
+      "PreparedActionRecord": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": [
+          "schema",
+          "actionId",
+          "workspace",
+          "idempotencyKey",
+          "preparedEffectId",
+          "preparedEffectDigest",
+          "status",
+          "version",
+          "preparedEffect",
+          "normalizedEffect",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.clearing.prepared-action-record/v1"
+          },
+          "actionId": {
+            "type": "string"
+          },
+          "workspace": {
+            "$ref": "#/components/schemas/Workspace"
+          },
+          "idempotencyKey": {
+            "type": "string"
+          },
+          "preparedEffectId": {
+            "type": "string"
+          },
+          "preparedEffectDigest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "status": {
+            "const": "PREPARED_UNBOUND"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "preparedEffect": {
+            "$ref": "#/components/schemas/PreparedEffectV1"
+          },
+          "normalizedEffect": {
+            "type": "object"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CreatePreparedActionResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "action",
+          "replayed"
+        ],
+        "properties": {
+          "action": {
+            "$ref": "#/components/schemas/PreparedActionRecord"
+          },
+          "replayed": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ValidatedProposalRecord": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema",
+          "actionId",
+          "workspace",
+          "idempotencyKey",
+          "requestDigest",
+          "preparedEffectId",
+          "preparedEffectDigest",
+          "status",
+          "version",
+          "envelope",
+          "normalizedAction",
+          "validationEventDigest",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.clearing.validated-action-record/v1"
+          },
+          "actionId": {
+            "type": "string"
+          },
+          "workspace": {
+            "$ref": "#/components/schemas/Workspace"
+          },
+          "idempotencyKey": {
+            "type": "string"
+          },
+          "requestDigest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "preparedEffectId": {
+            "type": "string"
+          },
+          "preparedEffectDigest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "status": {
+            "const": "VALIDATED"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "envelope": {
+            "$ref": "#/components/schemas/ActionEnvelopeV1"
+          },
+          "normalizedAction": {
+            "type": "object"
+          },
+          "validationEventDigest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CreateValidatedProposalResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "action",
+          "replayed"
+        ],
+        "properties": {
+          "action": {
+            "$ref": "#/components/schemas/ValidatedProposalRecord"
+          },
+          "replayed": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ListClearingActionEventsResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "events",
+          "nextPageToken"
+        ],
+        "properties": {
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ActionEventV1"
+            }
+          },
+          "nextPageToken": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The token to pass as pageToken for the next page, or null on the last page."
+          }
+        }
+      },
+      "AdmissionConsumptionOutcome": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "admissionId",
+          "admissionDigest",
+          "clearingCommitDigest",
+          "leaseFence",
+          "replayed",
+          "authorityMode"
+        ],
+        "properties": {
+          "admissionId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "admissionDigest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "clearingCommitDigest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "leaseFence": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "replayed": {
+            "type": "boolean"
+          },
+          "authorityMode": {
+            "type": "string",
+            "enum": [
+              "auth-hub",
+              "local-contract-only"
+            ]
+          }
+        }
+      },
+      "CanonicalCommitResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "action",
+          "replayed",
+          "proposalValidationEventDigest",
+          "canonicalActionId",
+          "requestDigest",
+          "preparedEffectDigest",
+          "providerIdempotencyKey",
+          "authorityConsumption",
+          "contractSetDigest"
+        ],
+        "properties": {
+          "action": {
+            "type": "object"
+          },
+          "replayed": {
+            "type": "boolean"
+          },
+          "proposalValidationEventDigest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "canonicalActionId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "requestDigest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "preparedEffectDigest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "providerIdempotencyKey": {
+            "type": "string",
+            "pattern": "^tc_[0-9a-f]{48}$"
+          },
+          "authorityConsumption": {
+            "$ref": "#/components/schemas/AdmissionConsumptionOutcome"
+          },
+          "contractSetDigest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          }
+        }
+      },
+      "ValidationResult": {
+        "type": "object",
+        "required": [
+          "contractSchema",
+          "valid",
+          "persisted",
+          "dispatched",
+          "action"
+        ],
+        "properties": {
+          "contractSchema": {
+            "type": "string"
+          },
+          "valid": {
+            "const": true
+          },
+          "persisted": {
+            "const": false
+          },
+          "dispatched": {
+            "const": false
+          },
+          "action": {
+            "type": "object"
+          }
+        }
+      },
+      "ActionEnvelopeV1": {
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "else": {
+              "properties": {
+                "causality": {
+                  "properties": {
+                    "parentActionId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "if": {
+              "properties": {
+                "causality": {
+                  "properties": {
+                    "relationship": {
+                      "const": "ROOT"
+                    }
+                  }
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "causality": {
+                  "properties": {
+                    "parentActionId": {
+                      "type": "null"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "properties": {
+          "actionId": {
+            "$ref": "#/components/schemas/CommonResourceIdV1"
+          },
+          "actor": {
+            "$ref": "#/components/schemas/CommonActorV1"
+          },
+          "authorityAdmission": {
+            "$ref": "#/components/schemas/AuthorityAdmissionV1"
+          },
+          "causality": {
+            "additionalProperties": false,
+            "properties": {
+              "parentActionId": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/CommonResourceIdV1"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "relationship": {
+                "enum": [
+                  "ROOT",
+                  "COMPENSATES",
+                  "RECOVERS",
+                  "REPLACES_NO_EFFECT"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "relationship",
+              "parentActionId"
+            ],
+            "type": "object"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/CommonEvidenceRefV1"
+            },
+            "maxItems": 128,
+            "minItems": 1,
+            "type": "array"
+          },
+          "expiresAt": {
+            "$ref": "#/components/schemas/CommonDateTimeV1"
+          },
+          "idempotencyKey": {
+            "pattern": "^[A-Za-z0-9._:-]{8,200}$",
+            "type": "string"
+          },
+          "mandate": {
+            "$ref": "#/components/schemas/MandateBindingV1"
+          },
+          "preparedEffect": {
+            "$ref": "#/components/schemas/PreparedEffectV1"
+          },
+          "principal": {
+            "additionalProperties": false,
+            "properties": {
+              "delegationId": {
+                "$ref": "#/components/schemas/CommonResourceIdV1"
+              },
+              "principalId": {
+                "$ref": "#/components/schemas/CommonResourceIdV1"
+              },
+              "subjectId": {
+                "$ref": "#/components/schemas/CommonResourceIdV1"
+              }
+            },
+            "required": [
+              "principalId",
+              "subjectId",
+              "delegationId"
+            ],
+            "type": "object"
+          },
+          "purpose": {
+            "additionalProperties": false,
+            "properties": {
+              "reference": {
+                "maxLength": 512,
+                "minLength": 1,
+                "type": "string"
+              },
+              "requestedOutcomeDigest": {
+                "$ref": "#/components/schemas/CommonDigestV1"
+              },
+              "type": {
+                "$ref": "#/components/schemas/CommonOperationNameV1"
+              }
+            },
+            "required": [
+              "type",
+              "reference",
+              "requestedOutcomeDigest"
+            ],
+            "type": "object"
+          },
+          "requestDigest": {
+            "$ref": "#/components/schemas/CommonDigestV1"
+          },
+          "risk": {
+            "$ref": "#/components/schemas/RiskBindingV1"
+          },
+          "schema": {
+            "const": "tempera.clearing.action-envelope/v1"
+          },
+          "workspace": {
+            "$ref": "#/components/schemas/CommonWorkspaceV1"
+          }
+        },
+        "required": [
+          "schema",
+          "actionId",
+          "workspace",
+          "principal",
+          "actor",
+          "purpose",
+          "idempotencyKey",
+          "causality",
+          "preparedEffect",
+          "mandate",
+          "authorityAdmission",
+          "risk",
+          "evidence",
+          "expiresAt",
+          "requestDigest"
+        ],
+        "title": "Tempera Clearing action envelope v1",
+        "type": "object"
+      },
+      "ActionEventV1": {
+        "additionalProperties": false,
+        "properties": {
+          "actionId": {
+            "$ref": "#/components/schemas/CommonResourceIdV1"
+          },
+          "actor": {
+            "$ref": "#/components/schemas/CommonActorV1"
+          },
+          "commandId": {
+            "$ref": "#/components/schemas/CommonResourceIdV1"
+          },
+          "eventDigest": {
+            "$ref": "#/components/schemas/CommonDigestV1"
+          },
+          "eventId": {
+            "$ref": "#/components/schemas/CommonResourceIdV1"
+          },
+          "eventType": {
+            "pattern": "^[A-Z][A-Z0-9_]{0,127}$",
+            "type": "string"
+          },
+          "evidenceDigests": {
+            "items": {
+              "$ref": "#/components/schemas/CommonDigestV1"
+            },
+            "maxItems": 128,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "fromStatus": {
+            "oneOf": [
+              {
+                "enum": [
+                  "PROPOSED",
+                  "VALIDATED",
+                  "PREPARED",
+                  "APPROVAL_REQUIRED",
+                  "READY",
+                  "COMMIT_DECIDED",
+                  "DISPATCHING",
+                  "OUTCOME_UNKNOWN",
+                  "EFFECT_OBSERVED",
+                  "VERIFYING",
+                  "COMPENSATION_REQUIRED",
+                  "COMPENSATING",
+                  "COMPENSATION_FAILED",
+                  "DISPUTE_OPEN",
+                  "SETTLED",
+                  "COMPENSATED",
+                  "REJECTED",
+                  "EXPIRED",
+                  "CANCELLED_BEFORE_DISPATCH",
+                  "TERMINAL_FAILURE"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "occurredAt": {
+            "$ref": "#/components/schemas/CommonDateTimeV1"
+          },
+          "payloadDigest": {
+            "$ref": "#/components/schemas/CommonDigestV1"
+          },
+          "previousEventDigest": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CommonDigestV1"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "schema": {
+            "const": "tempera.clearing.action-event/v1"
+          },
+          "sequence": {
+            "maximum": 10000000,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "toStatus": {
+            "enum": [
+              "PROPOSED",
+              "VALIDATED",
+              "PREPARED",
+              "APPROVAL_REQUIRED",
+              "READY",
+              "COMMIT_DECIDED",
+              "DISPATCHING",
+              "OUTCOME_UNKNOWN",
+              "EFFECT_OBSERVED",
+              "VERIFYING",
+              "COMPENSATION_REQUIRED",
+              "COMPENSATING",
+              "COMPENSATION_FAILED",
+              "DISPUTE_OPEN",
+              "SETTLED",
+              "COMPENSATED",
+              "REJECTED",
+              "EXPIRED",
+              "CANCELLED_BEFORE_DISPATCH",
+              "TERMINAL_FAILURE"
+            ],
+            "type": "string"
+          },
+          "workspace": {
+            "$ref": "#/components/schemas/CommonWorkspaceV1"
+          }
+        },
+        "required": [
+          "schema",
+          "eventId",
+          "actionId",
+          "workspace",
+          "sequence",
+          "eventType",
+          "fromStatus",
+          "toStatus",
+          "actor",
+          "commandId",
+          "payloadDigest",
+          "evidenceDigests",
+          "previousEventDigest",
+          "occurredAt",
+          "eventDigest"
+        ],
+        "title": "Tempera Clearing action event v1",
+        "type": "object"
+      },
+      "AuthHubClearingFinalAdmissionV1": {
+        "title": "Tempera Auth Hub Clearing Final Admission v1",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema",
+          "admissionId",
+          "workspace",
+          "principalId",
+          "approverIds",
+          "audience",
+          "canonicalActionId",
+          "canonicalRequestDigest",
+          "preparedEffectId",
+          "preparedEffectDigest",
+          "operation",
+          "resourceSelectors",
+          "economicAuthority",
+          "mandateId",
+          "mandateDigest",
+          "riskAssessmentId",
+          "riskAssessmentDigest",
+          "riskReservationId",
+          "riskReservationDigest",
+          "authorizationContextDigest",
+          "consumptionKey",
+          "issuedAt",
+          "notBefore",
+          "expiresAt",
+          "singleUse",
+          "nonTransferable",
+          "decision",
+          "authorizationGranted",
+          "keyId"
+        ],
+        "properties": {
+          "schema": {
+            "const": "tempera.auth-hub.clearing-final-admission/v1"
+          },
+          "admissionId": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+          },
+          "workspace": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "tenantId",
+              "projectId",
+              "environmentId"
+            ],
+            "properties": {
+              "tenantId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "projectId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "environmentId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              }
+            }
+          },
+          "principalId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "approverIds": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 32,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            }
+          },
+          "audience": {
+            "const": "tempera-clearing"
+          },
+          "canonicalActionId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "canonicalRequestDigest": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          },
+          "preparedEffectId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "preparedEffectDigest": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          },
+          "operation": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "resourceSelectors": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 64,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            }
+          },
+          "economicAuthority": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$"
+            },
+            "minProperties": 1,
+            "maxProperties": 32,
+            "propertyNames": {
+              "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+            }
+          },
+          "mandateId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "mandateDigest": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          },
+          "riskAssessmentId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "riskAssessmentDigest": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          },
+          "riskReservationId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "riskReservationDigest": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          },
+          "authorizationContextDigest": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          },
+          "consumptionKey": {
+            "type": "string",
+            "minLength": 16,
+            "maxLength": 256
+          },
+          "issuedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "notBefore": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "singleUse": {
+            "const": true
+          },
+          "nonTransferable": {
+            "const": true
+          },
+          "decision": {
+            "const": "ALLOW"
+          },
+          "authorizationGranted": {
+            "const": true
+          },
+          "keyId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        }
+      },
+      "AuthorityAdmissionV1": {
+        "additionalProperties": false,
+        "properties": {
+          "admission": {
+            "$ref": "#/components/schemas/AuthHubClearingFinalAdmissionV1"
+          },
+          "admissionDigest": {
+            "$ref": "#/components/schemas/CommonDigestV1"
+          }
+        },
+        "required": [
+          "admission",
+          "admissionDigest"
+        ],
+        "title": "Tempera Clearing Auth Hub final-admission binding v1",
+        "type": "object"
+      },
+      "CommonActorV1": {
+        "additionalProperties": false,
+        "properties": {
+          "actorId": {
+            "$ref": "#/components/schemas/CommonResourceIdV1"
+          },
+          "actorType": {
+            "enum": [
+              "HUMAN",
+              "AGENT",
+              "SERVICE",
+              "SYSTEM"
+            ],
+            "type": "string"
+          },
+          "modelRef": {
+            "oneOf": [
+              {
+                "maxLength": 256,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "version": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "actorId",
+          "actorType",
+          "version",
+          "modelRef"
+        ],
+        "type": "object"
+      },
+      "CommonConditionV1": {
+        "additionalProperties": false,
+        "properties": {
+          "conditionId": {
+            "$ref": "#/components/schemas/CommonResourceIdV1"
+          },
+          "expectedDigest": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CommonDigestV1"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "inputDigest": {
+            "$ref": "#/components/schemas/CommonDigestV1"
+          },
+          "kind": {
+            "enum": [
+              "STATE_MATCH",
+              "SCHEMA_VALID",
+              "POLICY_PREDICATE",
+              "PROVIDER_FACT",
+              "LEDGER_INVARIANT",
+              "CUSTOM_VERIFIER"
+            ],
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "verifierRef": {
+            "maxLength": 512,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "conditionId",
+          "kind",
+          "verifierRef",
+          "inputDigest",
+          "expectedDigest",
+          "required"
+        ],
+        "type": "object"
+      },
+      "CommonDateTimeV1": {
+        "format": "date-time",
+        "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\.[0-9]{1,9})?Z$",
+        "type": "string"
+      },
+      "CommonDigestV1": {
+        "pattern": "^sha256:[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "CommonEffectClassV1": {
+        "enum": [
+          "DATA_MUTATION",
+          "FINANCIAL",
+          "IDENTITY",
+          "EXTERNAL_COMMUNICATION",
+          "CODE_DEPLOYMENT",
+          "INFRASTRUCTURE",
+          "CONTRACTUAL",
+          "PHYSICAL"
+        ],
+        "type": "string"
+      },
+      "CommonEvidenceRefV1": {
+        "additionalProperties": false,
+        "properties": {
+          "classification": {
+            "enum": [
+              "PUBLIC",
+              "INTERNAL",
+              "CONFIDENTIAL",
+              "RESTRICTED",
+              "SECRET_REFERENCE"
+            ],
+            "type": "string"
+          },
+          "digest": {
+            "$ref": "#/components/schemas/CommonDigestV1"
+          },
+          "mediaType": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          },
+          "producer": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "ref": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "ref",
+          "digest",
+          "classification",
+          "producer"
+        ],
+        "type": "object"
+      },
+      "CommonExactUnsignedV1": {
+        "maxLength": 40,
+        "pattern": "^(?:0|[1-9][0-9]{0,39})$",
+        "type": "string"
+      },
+      "CommonExactVectorV1": {
+        "additionalProperties": {
+          "$ref": "#/components/schemas/CommonExactUnsignedV1"
+        },
+        "maxProperties": 64,
+        "minProperties": 1,
+        "propertyNames": {
+          "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+        },
+        "type": "object"
+      },
+      "CommonOperationNameV1": {
+        "maxLength": 128,
+        "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+){0,15}$",
+        "type": "string"
+      },
+      "CommonResourceIdV1": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,255}$",
+        "type": "string"
+      },
+      "CommonWorkspaceV1": {
+        "additionalProperties": false,
+        "properties": {
+          "environmentId": {
+            "$ref": "#/components/schemas/CommonResourceIdV1"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/CommonResourceIdV1"
+          },
+          "tenantId": {
+            "$ref": "#/components/schemas/CommonResourceIdV1"
+          }
+        },
+        "required": [
+          "tenantId",
+          "projectId",
+          "environmentId"
+        ],
+        "type": "object"
+      },
+      "MandateBindingV1": {
+        "additionalProperties": false,
+        "properties": {
+          "allowedEffectClasses": {
+            "items": {
+              "$ref": "#/components/schemas/CommonEffectClassV1"
+            },
+            "maxItems": 16,
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "allowedOperations": {
+            "items": {
+              "$ref": "#/components/schemas/CommonOperationNameV1"
+            },
+            "maxItems": 128,
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "audience": {
+            "const": "tempera-clearing"
+          },
+          "expiresAt": {
+            "$ref": "#/components/schemas/CommonDateTimeV1"
+          },
+          "issuedAt": {
+            "$ref": "#/components/schemas/CommonDateTimeV1"
+          },
+          "issuer": {
+            "maxLength": 512,
+            "minLength": 1,
+            "type": "string"
+          },
+          "limits": {
+            "$ref": "#/components/schemas/CommonExactVectorV1"
+          },
+          "mandateDigest": {
+            "$ref": "#/components/schemas/CommonDigestV1"
+          },
+          "mandateId": {
+            "$ref": "#/components/schemas/CommonResourceIdV1"
+          },
+          "principalId": {
+            "$ref": "#/components/schemas/CommonResourceIdV1"
+          },
+          "resourceSelectors": {
+            "items": {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 128,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "schema": {
+            "const": "tempera.clearing.mandate-binding/v1"
+          },
+          "subjectId": {
+            "$ref": "#/components/schemas/CommonResourceIdV1"
+          },
+          "workspace": {
+            "$ref": "#/components/schemas/CommonWorkspaceV1"
+          }
+        },
+        "required": [
+          "schema",
+          "mandateId",
+          "mandateDigest",
+          "workspace",
+          "issuer",
+          "principalId",
+          "subjectId",
+          "audience",
+          "allowedEffectClasses",
+          "allowedOperations",
+          "limits",
+          "resourceSelectors",
+          "issuedAt",
+          "expiresAt"
+        ],
+        "title": "Tempera Clearing mandate binding v1",
+        "type": "object"
+      },
+      "PreparedEffectV1": {
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "effectClass": {
+                  "const": "FINANCIAL"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "economicValue": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        ],
+        "properties": {
+          "adapter": {
+            "additionalProperties": false,
+            "properties": {
+              "adapterId": {
+                "$ref": "#/components/schemas/CommonResourceIdV1"
+              },
+              "adapterVersion": {
+                "maxLength": 128,
+                "minLength": 1,
+                "type": "string"
+              },
+              "manifestDigest": {
+                "$ref": "#/components/schemas/CommonDigestV1"
+              }
+            },
+            "required": [
+              "adapterId",
+              "adapterVersion",
+              "manifestDigest"
+            ],
+            "type": "object"
+          },
+          "economicValue": {
+            "oneOf": [
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "asset": {
+                    "maxLength": 128,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "atomicAmount": {
+                    "$ref": "#/components/schemas/CommonExactUnsignedV1"
+                  },
+                  "decimals": {
+                    "maximum": 38,
+                    "minimum": 0,
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "asset",
+                  "atomicAmount",
+                  "decimals"
+                ],
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "effectClass": {
+            "$ref": "#/components/schemas/CommonEffectClassV1"
+          },
+          "expiresAt": {
+            "$ref": "#/components/schemas/CommonDateTimeV1"
+          },
+          "operation": {
+            "additionalProperties": false,
+            "properties": {
+              "arguments": {
+                "additionalProperties": true,
+                "maxProperties": 128,
+                "type": "object"
+              },
+              "name": {
+                "$ref": "#/components/schemas/CommonOperationNameV1"
+              },
+              "target": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "maxLength": 512,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "type": {
+                    "$ref": "#/components/schemas/CommonResourceIdV1"
+                  },
+                  "version": {
+                    "oneOf": [
+                      {
+                        "maxLength": 256,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "type",
+                  "id",
+                  "version"
+                ],
+                "type": "object"
+              },
+              "version": {
+                "maxLength": 128,
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "version",
+              "target",
+              "arguments"
+            ],
+            "type": "object"
+          },
+          "postconditions": {
+            "items": {
+              "$ref": "#/components/schemas/CommonConditionV1"
+            },
+            "maxItems": 64,
+            "minItems": 1,
+            "type": "array"
+          },
+          "preconditions": {
+            "items": {
+              "$ref": "#/components/schemas/CommonConditionV1"
+            },
+            "maxItems": 64,
+            "type": "array"
+          },
+          "preparedAt": {
+            "$ref": "#/components/schemas/CommonDateTimeV1"
+          },
+          "preparedEffectDigest": {
+            "$ref": "#/components/schemas/CommonDigestV1"
+          },
+          "preparedEffectId": {
+            "$ref": "#/components/schemas/CommonResourceIdV1"
+          },
+          "recoveryProfile": {
+            "additionalProperties": false,
+            "properties": {
+              "authoritativeObservationRequired": {
+                "type": "boolean"
+              },
+              "compensationMode": {
+                "enum": [
+                  "NONE",
+                  "DIRECT_REVERSAL",
+                  "FORWARD_ACTION",
+                  "HUMAN_RECOVERY"
+                ],
+                "type": "string"
+              },
+              "negativeProofRequiredBeforeRedispatch": {
+                "type": "boolean"
+              },
+              "pointOfNoReturn": {
+                "enum": [
+                  "BEFORE_DISPATCH",
+                  "PROVIDER_ACCEPTANCE",
+                  "PUBLICATION",
+                  "PHYSICAL_ACTUATION",
+                  "UNKNOWN"
+                ],
+                "type": "string"
+              },
+              "residualLossPossible": {
+                "type": "boolean"
+              },
+              "reversibility": {
+                "enum": [
+                  "REVERSIBLE",
+                  "COMPENSABLE",
+                  "DELAYABLE",
+                  "ESCROWABLE",
+                  "IRREVERSIBLE",
+                  "SAFETY_CRITICAL"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "reversibility",
+              "pointOfNoReturn",
+              "compensationMode",
+              "authoritativeObservationRequired",
+              "negativeProofRequiredBeforeRedispatch",
+              "residualLossPossible"
+            ],
+            "type": "object"
+          },
+          "schema": {
+            "const": "tempera.clearing.prepared-effect/v1"
+          },
+          "secretRefs": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "purpose": {
+                  "maxLength": 256,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "secretRef": {
+                  "maxLength": 512,
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "secretRef",
+                "purpose"
+              ],
+              "type": "object"
+            },
+            "maxItems": 32,
+            "type": "array"
+          },
+          "workspace": {
+            "$ref": "#/components/schemas/CommonWorkspaceV1"
+          }
+        },
+        "required": [
+          "schema",
+          "preparedEffectId",
+          "workspace",
+          "effectClass",
+          "adapter",
+          "operation",
+          "economicValue",
+          "preconditions",
+          "postconditions",
+          "recoveryProfile",
+          "secretRefs",
+          "preparedAt",
+          "expiresAt",
+          "preparedEffectDigest"
+        ],
+        "title": "Tempera Clearing prepared effect v1",
+        "type": "object"
+      },
+      "RiskBindingV1": {
+        "additionalProperties": false,
+        "properties": {
+          "assessment": {
+            "additionalProperties": false,
+            "properties": {
+              "assessmentDigest": {
+                "$ref": "#/components/schemas/CommonDigestV1"
+              },
+              "assessmentId": {
+                "$ref": "#/components/schemas/CommonResourceIdV1"
+              },
+              "decision": {
+                "enum": [
+                  "ALLOW",
+                  "DENY",
+                  "HOLD",
+                  "REVIEW"
+                ],
+                "type": "string"
+              },
+              "expiresAt": {
+                "$ref": "#/components/schemas/CommonDateTimeV1"
+              },
+              "issuedAt": {
+                "$ref": "#/components/schemas/CommonDateTimeV1"
+              },
+              "nonAuthorizing": {
+                "const": true
+              },
+              "policyVersion": {
+                "maxLength": 256,
+                "minLength": 1,
+                "type": "string"
+              },
+              "preparedEffectDigest": {
+                "$ref": "#/components/schemas/CommonDigestV1"
+              }
+            },
+            "required": [
+              "assessmentId",
+              "assessmentDigest",
+              "preparedEffectDigest",
+              "decision",
+              "policyVersion",
+              "issuedAt",
+              "expiresAt",
+              "nonAuthorizing"
+            ],
+            "type": "object"
+          },
+          "reservation": {
+            "additionalProperties": false,
+            "properties": {
+              "assessmentDigest": {
+                "$ref": "#/components/schemas/CommonDigestV1"
+              },
+              "audience": {
+                "const": "tempera-clearing"
+              },
+              "budgetDigest": {
+                "$ref": "#/components/schemas/CommonDigestV1"
+              },
+              "budgetId": {
+                "$ref": "#/components/schemas/CommonResourceIdV1"
+              },
+              "budgetVersion": {
+                "maxLength": 128,
+                "minLength": 1,
+                "type": "string"
+              },
+              "consumption": {
+                "$ref": "#/components/schemas/CommonExactVectorV1"
+              },
+              "correlationTags": {
+                "items": {
+                  "maxLength": 128,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "maxItems": 32,
+                "type": "array",
+                "uniqueItems": true
+              },
+              "expiresAt": {
+                "$ref": "#/components/schemas/CommonDateTimeV1"
+              },
+              "issuedAt": {
+                "$ref": "#/components/schemas/CommonDateTimeV1"
+              },
+              "nonAuthorizing": {
+                "const": true
+              },
+              "preparedEffectDigest": {
+                "$ref": "#/components/schemas/CommonDigestV1"
+              },
+              "reservationDigest": {
+                "$ref": "#/components/schemas/CommonDigestV1"
+              },
+              "reservationId": {
+                "$ref": "#/components/schemas/CommonResourceIdV1"
+              },
+              "state": {
+                "const": "RESERVED"
+              }
+            },
+            "required": [
+              "reservationId",
+              "reservationDigest",
+              "preparedEffectDigest",
+              "assessmentDigest",
+              "audience",
+              "budgetId",
+              "budgetVersion",
+              "budgetDigest",
+              "consumption",
+              "correlationTags",
+              "issuedAt",
+              "expiresAt",
+              "state",
+              "nonAuthorizing"
+            ],
+            "type": "object"
+          },
+          "schema": {
+            "const": "tempera.clearing.risk-binding/v1"
+          }
+        },
+        "required": [
+          "schema",
+          "assessment",
+          "reservation"
+        ],
+        "title": "Tempera Clearing normalized Risk bindings v1",
+        "type": "object"
+      }
+    }
+  }
+}

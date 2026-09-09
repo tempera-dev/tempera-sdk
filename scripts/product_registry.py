@@ -47,7 +47,7 @@ PRODUCTS: tuple[Product, ...] = (
     Product(
         key="controlPlane",
         source_repo="tempera-dev/auth-hub",
-        source_path="contracts/control-plane.openapi.json",
+        source_path="contracts/openapi/control-plane.openapi.json",
         spec="control-plane.openapi.json",
         audience="control-plane",
         default_auth="account",
@@ -116,6 +116,14 @@ PRODUCTS: tuple[Product, ...] = (
         source_path="contracts/openapi/business.openapi.json",
         spec="tempera-business.openapi.json",
         audience="tempera-business",
+        default_auth="oauthResource",
+    ),
+    Product(
+        key="temperaClearing",
+        source_repo="tempera-dev/tempera-clearing",
+        source_path="contracts/openapi/clearing.openapi.json",
+        spec="tempera-clearing.openapi.json",
+        audience="tempera-clearing",
         default_auth="oauthResource",
     ),
     Product(

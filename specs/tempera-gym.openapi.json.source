@@ -5,7 +5,7 @@
   "schema_version": 1,
   "source_blob_sha": "f1b78a1d28408274bdfafca51248b250dddf8388",
   "source_branch": "main",
-  "source_commit": "c0132e644aa70e2c9d513a1191af0fd59e0d450d",
+  "source_commit": "278d4ba1ca37620f4d18ae15e52deaef65949db1",
   "source_mode": "100644",
   "source_path": "contracts/openapi/gym.openapi.json",
   "source_repo": "tempera-dev/tempera-gym",

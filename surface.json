@@ -114,6 +114,13 @@
     "orders:approve",
     "offline_access"
   ],
+  "accountPermissions": [
+    "account:session",
+    "account:orgAdmin",
+    "account:billingAdmin",
+    "account:credentialAdmin",
+    "account:platformStaff"
+  ],
   "audienceGaps": {
     "tempera-business": {
       "owner": "tempera-business",
@@ -152,6 +159,18 @@
       "reportedDate": "2026-09-08",
       "status": "staged",
       "migration": "Tempo's canonical contract at contracts/openapi/tempo.openapi.json declares this scope. Add it to the Scope enum in the Auth Hub control-plane contract, re-vendor controlPlane, then drop this gap."
+    },
+    "usage:report": {
+      "owner": "auth-hub",
+      "reportedDate": "2026-09-09",
+      "status": "staged",
+      "migration": "POST /v1/usage/events has no single required scope: usageMeterForCredential enforces whatever scope is registered on the metric being reported. The contract names usage:report so the extension is not empty, but the server does not check that string. Either register it and enforce it, or give the operation a scope the runtime actually reads."
+    },
+    "dataSource:resolve": {
+      "owner": "auth-hub",
+      "reportedDate": "2026-09-09",
+      "status": "staged",
+      "migration": "POST /v1/internal/data-source-connections:resolve is fenced by a static per-service token rather than an introspected OAuth grant, so this string is a label for what that secret authorizes rather than a grantable scope. Decide whether the route should move onto a real credential; if it should not, the SDK needs a way to say 'service secret, not a scope'."
     }
   },
   "environments": {
@@ -429,6 +448,14 @@
       "audience": "tempera-investigations",
       "auth": "bearer minted for audience tempera-investigations with the operation's investigation:read/investigation:write/investigation:run/investigation:review scope",
       "description": "Long-running investigations with profiles, agentic and deterministic runs, findings, reviews and a replayable dossier."
+    },
+    "temperaClearing": {
+      "name": "tempera-clearing",
+      "repository": "https://github.com/tempera-dev/tempera-clearing",
+      "envVar": "TEMPERA_CLEARING_URL",
+      "audience": "tempera-clearing",
+      "auth": "bearer minted for audience tempera-clearing with the operation's clearing:actions:read/clearing:actions:propose/clearing:actions:commit scope",
+      "description": "Two-phase clearing of proposed actions: a proposal is recorded, reviewed, then committed or abandoned, so an irreversible effect never rides on a single call."
     }
   },
   "operations": {
@@ -461,7 +488,8 @@
         "description": "Read the active organization’s private SAML 2.0 SSO configuration status.",
         "upstreamOperationId": "samlSsoConfigurations.get",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "scope": "account:orgAdmin"
       },
       {
         "id": "me",
@@ -474,7 +502,8 @@
         "safeRetry": "read",
         "headers": [
           "X-Tempera-Reference-Request-Id"
-        ]
+        ],
+        "scope": "account:session"
       },
       {
         "id": "listOrgs",
@@ -488,7 +517,8 @@
           "pageToken"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "scope": "account:session"
       },
       {
         "id": "createOrg",
@@ -505,7 +535,8 @@
         "upstreamOperationId": "createOrganization",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:session"
       },
       {
         "id": "listSessions",
@@ -519,7 +550,8 @@
           "pageToken"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "scope": "account:session"
       },
       {
         "id": "createHostedSession",
@@ -554,7 +586,8 @@
         "description": "Revoke an account session and its tokens immediately (idempotent).",
         "upstreamOperationId": "revokeAccountSession",
         "requestBodyKind": "none",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:session"
       },
       {
         "id": "selectWorkspace",
@@ -575,7 +608,8 @@
         "upstreamOperationId": "selectWorkspace",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:session"
       },
       {
         "id": "listTeamMembers",
@@ -589,7 +623,8 @@
           "pageToken"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "scope": "account:session"
       },
       {
         "id": "updateTeamMember",
@@ -615,7 +650,8 @@
         "requiredQuery": [
           "updateMask"
         ],
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:orgAdmin"
       },
       {
         "id": "removeTeamMember",
@@ -628,7 +664,8 @@
         "description": "Remove a team member from the active organization (idempotent).",
         "upstreamOperationId": "removeTeamMember",
         "requestBodyKind": "none",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:orgAdmin"
       },
       {
         "id": "listInvites",
@@ -642,7 +679,8 @@
           "pageToken"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "scope": "account:session"
       },
       {
         "id": "createInvite",
@@ -661,7 +699,8 @@
         "upstreamOperationId": "createInvite",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:orgAdmin"
       },
       {
         "id": "cancelInvite",
@@ -674,7 +713,8 @@
         "description": "Cancel a pending invite (idempotent).",
         "upstreamOperationId": "cancelInvite",
         "requestBodyKind": "none",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:orgAdmin"
       },
       {
         "id": "listProjects",
@@ -688,7 +728,8 @@
           "pageToken"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "scope": "account:session"
       },
       {
         "id": "createProject",
@@ -707,7 +748,8 @@
         "upstreamOperationId": "createProject",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:orgAdmin"
       },
       {
         "id": "listEnvironments",
@@ -721,7 +763,8 @@
           "pageToken"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "scope": "account:session"
       },
       {
         "id": "createEnvironment",
@@ -740,7 +783,8 @@
         "upstreamOperationId": "createEnvironment",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:orgAdmin"
       },
       {
         "id": "listApiKeys",
@@ -754,7 +798,8 @@
           "pageToken"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "scope": "account:session"
       },
       {
         "id": "createApiKey",
@@ -780,7 +825,8 @@
         "upstreamOperationId": "createApiKey",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:credentialAdmin"
       },
       {
         "id": "listApiKeyAudiences",
@@ -794,7 +840,8 @@
           "pageToken"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "scope": "account:credentialAdmin"
       },
       {
         "id": "revokeApiKey",
@@ -807,7 +854,8 @@
         "description": "Revoke an API key (idempotent).",
         "upstreamOperationId": "revokeApiKey",
         "requestBodyKind": "none",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:credentialAdmin"
       },
       {
         "id": "rotateApiKey",
@@ -820,13 +868,14 @@
         "description": "Rotate an API key's secret; the new secret is returned exactly once.",
         "upstreamOperationId": "rotateApiKey",
         "requestBodyKind": "none",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:credentialAdmin"
       },
       {
         "id": "dataSourceConnectionsResolveInternal",
         "method": "POST",
         "path": "/v1/internal/data-source-connections:resolve",
-        "auth": "account",
+        "auth": "introspectionSecret",
         "description": "Resolve one exact active data-source connection revision for an authorized Data Engine or Connectors service; Connectors S3 resolutions require a secret-bound endpoint.",
         "upstreamOperationId": "dataSourceConnections.resolveInternal",
         "body": [
@@ -843,7 +892,8 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "dataSource:resolve"
       },
       {
         "id": "dataSourceConnectionsList",
@@ -857,7 +907,8 @@
           "pageToken"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "scope": "account:session"
       },
       {
         "id": "dataSourceConnectionsCreate",
@@ -886,7 +937,8 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:credentialAdmin"
       },
       {
         "id": "dataSourceConnectionsGet",
@@ -899,7 +951,8 @@
           "id"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "scope": "account:session"
       },
       {
         "id": "dataSourceConnectionsUpdate",
@@ -927,7 +980,8 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:credentialAdmin"
       },
       {
         "id": "dataSourceConnectionsRevoke",
@@ -940,7 +994,8 @@
           "id"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:credentialAdmin"
       },
       {
         "id": "providerConnectionsList",
@@ -954,7 +1009,8 @@
           "pageToken"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "scope": "account:session"
       },
       {
         "id": "providerConnectionsCreate",
@@ -982,7 +1038,8 @@
         "upstreamOperationId": "providerConnections.create",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:credentialAdmin"
       },
       {
         "id": "providerConnectionsUpload",
@@ -1010,7 +1067,8 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:credentialAdmin"
       },
       {
         "id": "providerConnectionsRevoke",
@@ -1023,7 +1081,8 @@
         ],
         "upstreamOperationId": "providerConnections.revoke",
         "requestBodyKind": "none",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:credentialAdmin"
       },
       {
         "id": "providerConnectionsRotate",
@@ -1044,7 +1103,8 @@
         "upstreamOperationId": "providerConnections.rotate",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:credentialAdmin"
       },
       {
         "id": "providerConnectionsRotateUpload",
@@ -1065,13 +1125,14 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:credentialAdmin"
       },
       {
         "id": "providerConnectionsResolve",
         "method": "POST",
         "path": "/v1/provider-connections/{id}:resolve",
-        "auth": "account",
+        "auth": "oauthResource",
         "description": "Resolve connection runtime metadata for a tenant-bound tempera-llm service credential.",
         "pathParams": [
           "id"
@@ -1091,7 +1152,9 @@
         "upstreamOperationId": "providerConnections.resolve",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "authAudience": "tempera-llm",
+        "scope": "model:invoke"
       },
       {
         "id": "connectorCredentialsList",
@@ -1105,7 +1168,8 @@
           "pageToken"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "scope": "account:session"
       },
       {
         "id": "connectorCredentialsCreate",
@@ -1130,7 +1194,8 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:credentialAdmin"
       },
       {
         "id": "connectorCredentialsUpload",
@@ -1155,7 +1220,8 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:credentialAdmin"
       },
       {
         "id": "connectorCredentialsRevoke",
@@ -1168,7 +1234,8 @@
           "id"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:credentialAdmin"
       },
       {
         "id": "connectorCredentialsRotate",
@@ -1188,7 +1255,8 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:credentialAdmin"
       },
       {
         "id": "connectorCredentialsRotateUpload",
@@ -1208,13 +1276,14 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:credentialAdmin"
       },
       {
         "id": "connectorCredentialsResolve",
         "method": "POST",
         "path": "/v1/connector-credentials/{id}:resolve",
-        "auth": "account",
+        "auth": "oauthResource",
         "description": "Resolve one generic connector credential reference for a tenant-bound Tempera Connectors credential.",
         "upstreamOperationId": "connectorCredentials.resolve",
         "pathParams": [
@@ -1232,7 +1301,9 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "authAudience": "tempera-connectors",
+        "scope": "connection:invoke"
       },
       {
         "id": "listExperimentProviderConnections",
@@ -1246,7 +1317,8 @@
           "pageToken"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "scope": "account:session"
       },
       {
         "id": "createExperimentProviderConnection",
@@ -1277,7 +1349,8 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:credentialAdmin"
       },
       {
         "id": "revokeExperimentProviderConnection",
@@ -1290,7 +1363,8 @@
           "id"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:credentialAdmin"
       },
       {
         "id": "resolveExperimentProviderConnection",
@@ -1464,7 +1538,8 @@
           "pageToken"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "scope": "account:session"
       },
       {
         "id": "listConnectors",
@@ -1478,7 +1553,8 @@
           "pageToken"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "scope": "account:session"
       },
       {
         "id": "getConnectorStatus",
@@ -1491,7 +1567,8 @@
         "description": "Fetch one connector's connection status for the active workspace.",
         "upstreamOperationId": "getConnectorStatus",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "scope": "account:session"
       },
       {
         "id": "listProducts",
@@ -1505,7 +1582,8 @@
           "pageToken"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "scope": "account:session"
       },
       {
         "id": "getProductStatus",
@@ -1518,7 +1596,8 @@
         "description": "Fetch one product's activation status, entitlements, signals, and usage meters.",
         "upstreamOperationId": "getProductStatus",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "scope": "account:session"
       },
       {
         "id": "getBillingStatus",
@@ -1528,7 +1607,8 @@
         "description": "Fetch the organization's plan, subscription, usage meters, entitlements, invoices, and pricing (requires a billing role).",
         "upstreamOperationId": "getBillingStatus",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "scope": "account:billingAdmin"
       },
       {
         "id": "createBillingCheckout",
@@ -1545,7 +1625,8 @@
         "description": "Create a checkout handoff URL for a plan on the chosen payment rail (requires a billing role).",
         "upstreamOperationId": "createBillingCheckout",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "scope": "account:billingAdmin"
       },
       {
         "id": "getBillingPortal",
@@ -1555,7 +1636,8 @@
         "description": "Fetch the billing-portal URL for the organization (requires a billing role).",
         "upstreamOperationId": "createBillingPortal",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "scope": "account:billingAdmin"
       },
       {
         "id": "getBillingCredits",
@@ -1565,7 +1647,8 @@
         "description": "Return the org credit wallet balance, grant, overage, and recent ledger for owner, admin, or billing users. Internal cost/margin fields are redacted from the ledger for non-staff callers and returned in full only to platform staff.",
         "upstreamOperationId": "getBillingCredits",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "scope": "account:billingAdmin"
       },
       {
         "id": "listCreditTopupPacks",
@@ -1579,7 +1662,8 @@
           "pageToken"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "scope": "account:billingAdmin"
       },
       {
         "id": "createCreditTopup",
@@ -1598,24 +1682,26 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "idempotent"
+        "safeRetry": "idempotent",
+        "scope": "account:billingAdmin"
       },
       {
         "id": "getModelCatalog",
         "method": "GET",
         "path": "/v1/model-catalog",
-        "auth": "account",
+        "auth": "oauthResource",
         "scope": "model:read",
         "description": "List the entitled Tempera Code model catalog; requires a tempera-code bearer with model:read and the model-gateway entitlement.",
         "upstreamOperationId": "getModelCatalog",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "authAudience": "tempera-code"
       },
       {
         "id": "recordUsage",
         "method": "POST",
         "path": "/v1/usage/events",
-        "auth": "account",
+        "auth": "product",
         "body": [
           "orgId",
           "projectId",
@@ -1635,13 +1721,14 @@
         "upstreamOperationId": "recordUsageEvent",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "idempotent"
+        "safeRetry": "idempotent",
+        "scope": "usage:report"
       },
       {
         "id": "usageReservationsCreate",
         "method": "POST",
         "path": "/v1/usage/reservations",
-        "auth": "account",
+        "auth": "product",
         "description": "Atomically reserve the maximum model cost before starting a provider request.",
         "body": [
           "orgId",
@@ -1670,13 +1757,14 @@
         "upstreamOperationId": "usageReservations.create",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "idempotent"
+        "safeRetry": "idempotent",
+        "scope": "usage:reserve"
       },
       {
         "id": "usageReservationsCommit",
         "method": "POST",
         "path": "/v1/usage/reservations/{reservationId}:commit",
-        "auth": "account",
+        "auth": "product",
         "description": "Commit exact provider usage against an admitted reservation and release unused capacity.",
         "pathParams": [
           "reservationId"
@@ -1698,13 +1786,14 @@
         "upstreamOperationId": "usageReservations.commit",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "usage:reserve"
       },
       {
         "id": "usageReservationsRelease",
         "method": "POST",
         "path": "/v1/usage/reservations/{reservationId}:release",
-        "auth": "account",
+        "auth": "product",
         "description": "Release unused capacity after provider failure or cancellation.",
         "pathParams": [
           "reservationId"
@@ -1722,13 +1811,14 @@
         "upstreamOperationId": "usageReservations.release",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "usage:reserve"
       },
       {
         "id": "usageReservationsReconcile",
         "method": "POST",
         "path": "/v1/usage/reservations/{reservationId}:reconcile",
-        "auth": "account",
+        "auth": "product",
         "description": "Hold maximum capacity and record non-secret evidence when exact provider usage is unavailable.",
         "pathParams": [
           "reservationId"
@@ -1754,7 +1844,8 @@
         "upstreamOperationId": "usageReservations.reconcile",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "usage:reserve"
       },
       {
         "id": "listGrants",
@@ -1768,7 +1859,8 @@
           "pageToken"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "scope": "account:session"
       },
       {
         "id": "revokeGrant",
@@ -1781,12 +1873,13 @@
         "description": "Revoke an OAuth grant and every refresh token issued under it.",
         "upstreamOperationId": "revokeOAuthGrant",
         "requestBodyKind": "none",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:session"
       },
       {
         "id": "introspectToken",
         "method": "POST",
-        "path": "/v1/oauth/introspect",
+        "path": "/oauth/introspect",
         "auth": "introspectionSecret",
         "body": [
           "token",
@@ -1862,7 +1955,8 @@
         "description": "Return fail-closed source, machine, and image provenance for the serving runtime to a platform-staff account session.",
         "upstreamOperationId": "adminOperationalProvenance",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "scope": "account:platformStaff"
       },
       {
         "id": "adminStepUp",
@@ -1879,7 +1973,8 @@
         "upstreamOperationId": "adminStepUp",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:platformStaff"
       },
       {
         "id": "adminAdjustCredits",
@@ -1900,7 +1995,8 @@
         "upstreamOperationId": "adminAdjustCredits",
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:platformStaff"
       },
       {
         "id": "adminBillingOrgs",
@@ -1910,7 +2006,8 @@
         "description": "Platform-staff internal billing view: per-org wallet balances plus provider cost, customer charge, and margin economics.",
         "upstreamOperationId": "adminBillingOrgs",
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "scope": "account:platformStaff"
       },
       {
         "id": "githubSetupSessionsCreate",
@@ -1926,7 +2023,8 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:orgAdmin"
       },
       {
         "id": "githubSetupSessionsComplete",
@@ -1958,7 +2056,8 @@
           "pageToken"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "scope": "account:orgAdmin"
       },
       {
         "id": "githubInstallationsDisconnect",
@@ -1971,7 +2070,8 @@
           "installationId"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:orgAdmin"
       },
       {
         "id": "githubInstallationRepositoriesList",
@@ -1988,7 +2088,8 @@
           "pageToken"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "scope": "account:orgAdmin"
       },
       {
         "id": "githubRepositorySnapshotsCapture",
@@ -2006,7 +2107,8 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:orgAdmin"
       },
       {
         "id": "githubWebhooksAccept",
@@ -2026,7 +2128,8 @@
         "description": "Revoke all account sessions, OAuth grants, and user-owned API keys and advance the account security epoch.",
         "upstreamOperationId": "sessions.revokeAll",
         "requestBodyKind": "none",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:session"
       },
       {
         "id": "passkeysList",
@@ -2040,7 +2143,8 @@
           "pageToken"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "read"
+        "safeRetry": "read",
+        "scope": "account:session"
       },
       {
         "id": "passkeysBeginRegistration",
@@ -2050,7 +2154,8 @@
         "description": "Begin passkey registration for the authenticated account.",
         "upstreamOperationId": "passkeys.beginRegistration",
         "requestBodyKind": "none",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:session"
       },
       {
         "id": "passkeysFinishRegistration",
@@ -2070,7 +2175,8 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:session"
       },
       {
         "id": "passkeysBeginAuthentication",
@@ -2110,7 +2216,8 @@
         "description": "Begin passkey step-up for a signed-in account session.",
         "upstreamOperationId": "passkeys.beginStepUp",
         "requestBodyKind": "none",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:session"
       },
       {
         "id": "passkeysFinishStepUp",
@@ -2130,7 +2237,8 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:session"
       },
       {
         "id": "passkeysRecover",
@@ -2147,7 +2255,8 @@
         ],
         "requestBodyKind": "json",
         "requestContentType": "application/json",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:session"
       },
       {
         "id": "passkeysDelete",
@@ -2160,7 +2269,8 @@
           "credentialId"
         ],
         "requestBodyKind": "none",
-        "safeRetry": "none"
+        "safeRetry": "none",
+        "scope": "account:session"
       },
       {
         "id": "clearingAdmissionsCreate",
@@ -12688,6 +12798,219 @@
         "requestBodyKind": "none",
         "authAudience": "tempera-investigations",
         "scope": "investigation:run",
+        "safeRetry": "none"
+      }
+    ],
+    "temperaClearing": [
+      {
+        "id": "getClearingHealth",
+        "method": "GET",
+        "path": "/healthz",
+        "auth": "none",
+        "description": "Liveness probe.",
+        "upstreamOperationId": "getClearingHealth",
+        "requestBodyKind": "none",
+        "safeRetry": "read"
+      },
+      {
+        "id": "getClearingReadiness",
+        "method": "GET",
+        "path": "/readyz",
+        "auth": "none",
+        "description": "Readiness probe over the contract source lock and every hard dependency.",
+        "upstreamOperationId": "getClearingReadiness",
+        "requestBodyKind": "none",
+        "safeRetry": "read"
+      },
+      {
+        "id": "validateClearingAction",
+        "method": "POST",
+        "path": "/v1/actions:validate",
+        "auth": "oauthResource",
+        "description": "Validate a canonical action envelope without persisting or dispatching it.",
+        "upstreamOperationId": "validateClearingAction",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "body": [
+          "actionId",
+          "actor",
+          "authorityAdmission",
+          "causality",
+          "evidence",
+          "expiresAt",
+          "idempotencyKey",
+          "mandate",
+          "preparedEffect",
+          "principal",
+          "purpose",
+          "requestDigest",
+          "risk",
+          "schema",
+          "workspace"
+        ],
+        "requiredBody": [
+          "schema",
+          "actionId",
+          "workspace",
+          "principal",
+          "actor",
+          "purpose",
+          "idempotencyKey",
+          "causality",
+          "preparedEffect",
+          "mandate",
+          "authorityAdmission",
+          "risk",
+          "evidence",
+          "expiresAt",
+          "requestDigest"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-clearing",
+        "scope": "clearing:actions:propose",
+        "safeRetry": "idempotent"
+      },
+      {
+        "id": "prepareClearingAction",
+        "method": "POST",
+        "path": "/v1/preparedActions",
+        "auth": "oauthResource",
+        "description": "Persist a non-executable canonical effect before authority is issued.",
+        "upstreamOperationId": "prepareClearingAction",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "body": [
+          "schema",
+          "actionId",
+          "workspace",
+          "idempotencyKey",
+          "preparedEffect"
+        ],
+        "requiredBody": [
+          "schema",
+          "actionId",
+          "workspace",
+          "idempotencyKey",
+          "preparedEffect"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-clearing",
+        "scope": "clearing:actions:propose",
+        "safeRetry": "idempotent"
+      },
+      {
+        "id": "proposeClearingAction",
+        "method": "POST",
+        "path": "/v1/actions",
+        "auth": "oauthResource",
+        "description": "Bind exact authority and Risk evidence to a prior prepared effect.",
+        "upstreamOperationId": "proposeClearingAction",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "body": [
+          "actionId",
+          "actor",
+          "authorityAdmission",
+          "causality",
+          "evidence",
+          "expiresAt",
+          "idempotencyKey",
+          "mandate",
+          "preparedEffect",
+          "principal",
+          "purpose",
+          "requestDigest",
+          "risk",
+          "schema",
+          "workspace"
+        ],
+        "requiredBody": [
+          "schema",
+          "actionId",
+          "workspace",
+          "principal",
+          "actor",
+          "purpose",
+          "idempotencyKey",
+          "causality",
+          "preparedEffect",
+          "mandate",
+          "authorityAdmission",
+          "risk",
+          "evidence",
+          "expiresAt",
+          "requestDigest"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-clearing",
+        "scope": "clearing:actions:propose",
+        "safeRetry": "idempotent"
+      },
+      {
+        "id": "getClearingAction",
+        "method": "GET",
+        "path": "/v1/actions/{id}",
+        "auth": "oauthResource",
+        "description": "Read one prepared or authority-bound action.",
+        "upstreamOperationId": "getClearingAction",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "pathParams": [
+          "id"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-clearing",
+        "scope": "clearing:actions:read",
+        "safeRetry": "read"
+      },
+      {
+        "id": "listClearingActionEvents",
+        "method": "GET",
+        "path": "/v1/actions/{id}/events",
+        "auth": "oauthResource",
+        "description": "List the hash-linked events of one action.",
+        "upstreamOperationId": "listClearingActionEvents",
+        "physicalAction": false,
+        "prepareCommitRequired": false,
+        "pathParams": [
+          "id"
+        ],
+        "query": [
+          "pageSize",
+          "pageToken"
+        ],
+        "requestBodyKind": "none",
+        "authAudience": "tempera-clearing",
+        "scope": "clearing:actions:read",
+        "safeRetry": "read"
+      },
+      {
+        "id": "commitClearingAction",
+        "method": "POST",
+        "path": "/v1/actions/{id}:commit",
+        "auth": "oauthResource",
+        "description": "Live-verify Risk evidence, then durably commit the exact previously prepared and authority-bound action.",
+        "upstreamOperationId": "commitClearingAction",
+        "physicalAction": true,
+        "prepareCommitRequired": true,
+        "pathParams": [
+          "id"
+        ],
+        "body": [
+          "action",
+          "riskEvidenceEnvelope"
+        ],
+        "requiredBody": [
+          "action",
+          "riskEvidenceEnvelope"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "authAudience": "tempera-clearing",
+        "scope": "clearing:actions:commit",
         "safeRetry": "none"
       }
     ]

@@ -2,7 +2,7 @@
   "schema_version": 3,
   "source_repo": "tempera-dev/data-engine",
   "source_branch": "main",
-  "source_commit": "f5084f785308ddf7392d3da6145d8f7753968aef",
+  "source_commit": "56b03e18023e0d61a97460522f07ffd961a714bb",
   "source_path": "contracts/openapi/data-engine.openapi.json",
   "source_blob_sha": "0b3be446c7ff93baba7f2294ea3c2f0de860d123",
   "source_sha256": "5cb5e6b3c1a12c975018e9059b4aae7ba6f399915549b89786d43b079d14ab31",

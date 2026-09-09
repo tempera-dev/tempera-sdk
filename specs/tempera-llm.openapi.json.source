@@ -5,7 +5,7 @@
   "schema_version": 1,
   "source_blob_sha": "6a8a3312926076f6708b06278b70672865aaa295",
   "source_branch": "main",
-  "source_commit": "e269982b13b8d7af066eac5717c613bbf62084f5",
+  "source_commit": "bc280b11c93826474850d9c99ae82343c888ca9a",
   "source_mode": "100644",
   "source_path": "contracts/openapi/llm.openapi.json",
   "source_repo": "tempera-dev/tempera-llm",

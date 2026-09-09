@@ -11,15 +11,21 @@ import re
 import sys
 from pathlib import Path
 
+from product_registry import BY_KEY
 from staged_source import validate_exact_local_source
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DESTINATION = ROOT / "specs/control-plane.openapi.json"
+# The control plane is vendored by this script rather than by
+# sync-vendored-openapi.py, because its contract needs more than a byte copy.
+# Its coordinates still come from the one registry, so a producer that moves
+# its contract cannot leave a second, stale copy of the path here.
+_PRODUCT = BY_KEY["controlPlane"]
+DESTINATION = ROOT / _PRODUCT.generated_path
 LOCK = DESTINATION.with_name(DESTINATION.name + ".source")
-SOURCE_PATH = "contracts/control-plane.openapi.json"
-SOURCE_REPO = "tempera-dev/auth-hub"
-SOURCE_BRANCH = "main"
+SOURCE_PATH = _PRODUCT.source_path
+SOURCE_REPO = _PRODUCT.source_repo
+SOURCE_BRANCH = _PRODUCT.source_branch
 GENERATOR = "sync-control-plane-openapi.py@1+verbatim"
 SOURCE_LOCK_SCRIPT = (
     ROOT

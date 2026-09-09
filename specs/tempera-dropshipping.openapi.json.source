@@ -5,7 +5,7 @@
   "schema_version": 1,
   "source_blob_sha": "bcb71a1b1dd193fae1345bf3f0ec7b0a3c7896c9",
   "source_branch": "main",
-  "source_commit": "e30288d7969c52668a56fe94cf9c2d402a6da1ab",
+  "source_commit": "2770155d27bae739527a765f070bcd5701c424ae",
   "source_mode": "100644",
   "source_path": "contracts/openapi/dropshipping.openapi.json",
   "source_repo": "tempera-dev/tempera-dropshipping",

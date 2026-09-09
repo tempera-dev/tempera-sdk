@@ -5,7 +5,7 @@
   "schema_version": 1,
   "source_blob_sha": "c64e2325f9e0f66bfaf489e304bdfe1061914e92",
   "source_branch": "main",
-  "source_commit": "53f3732066edca9f20ffc646f0cc7b52b119e22e",
+  "source_commit": "fe1efa6e5702c3893de2518e5a6e8995684f34d1",
   "source_mode": "100644",
   "source_path": "contracts/openapi/risk.openapi.json",
   "source_repo": "tempera-dev/tempera-risk",

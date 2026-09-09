@@ -5,7 +5,7 @@
   "schema_version": 1,
   "source_blob_sha": "6ba901d894963aff051e3d51a35a83f07624c733",
   "source_branch": "main",
-  "source_commit": "291e0107cc5e3dafe2f1d75479ca2bf8ccf72336",
+  "source_commit": "a820bff6e92457d23add10be934ec55ac64afacf",
   "source_mode": "100644",
   "source_path": "contracts/openapi/bio.openapi.json",
   "source_repo": "tempera-dev/tempera-bio",

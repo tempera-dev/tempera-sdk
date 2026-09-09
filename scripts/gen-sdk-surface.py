@@ -122,7 +122,28 @@ def validate(surface: dict) -> list[str]:
                     f"{label}: authAudience is only valid with oauthResource auth"
                 )
             scope = op.get("scope")
-            if scope and scope not in surface["scopes"] and scope not in surface.get("scopeGaps", {}):
+            # An account-plane operation does not carry an OAuth scope. The
+            # Auth Hub fences those routes by workspace role instead, and
+            # deliberately does not make the roles grantable -- a long-lived
+            # tp_ key must never be able to administer an organization. The
+            # producer contract still has to name the guard the route runs, so
+            # it names the permission. Checking those against the OAuth scope
+            # registry would either fail forever or, worse, be silenced by
+            # registering permissions as scopes, which is the mistake this
+            # separation exists to prevent.
+            account_permissions = surface.get("accountPermissions", [])
+            if scope and op.get("auth") == "account":
+                if scope not in account_permissions:
+                    problems.append(
+                        f"{label}: unregistered account permission {scope!r}; "
+                        "add it to accountPermissions"
+                    )
+                elif scope in surface["scopes"]:
+                    problems.append(
+                        f"{label}: {scope!r} is both an account permission and an "
+                        "OAuth scope; it must be exactly one"
+                    )
+            elif scope and scope not in surface["scopes"] and scope not in surface.get("scopeGaps", {}):
                 problems.append(f"{label}: unregistered scope {scope!r} lacks an explicit scopeGaps entry")
             physical_action = op.get("physicalAction", False)
             prepare_commit_required = op.get("prepareCommitRequired", False)

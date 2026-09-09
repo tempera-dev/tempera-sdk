@@ -411,10 +411,17 @@ class AipConformanceTest(unittest.TestCase):
         )
 
     def test_exact_oauth_introspection_operation_is_protocol_native(self) -> None:
+        # RFC 7662 introspection moved from /v1/oauth/introspect to
+        # /oauth/introspect alongside /oauth/token and /oauth/revoke, and the
+        # Auth Hub now declares it in x-tempera-protocol-routes. So the
+        # exemption comes from the producer saying what the route is, checked
+        # against the exemptible shapes, rather than from a hand-listed
+        # operation exception in this repository that someone had to remember.
         spec = {
             "openapi": "3.1.0",
+            "x-tempera-protocol-routes": ["/oauth/introspect"],
             "paths": {
-                "/v1/oauth/introspect": {
+                "/oauth/introspect": {
                     "post": {
                         "operationId": "introspectOAuthToken",
                         "requestBody": {
@@ -447,7 +454,10 @@ class AipConformanceTest(unittest.TestCase):
                 }
             },
         }
-        self.assertEqual(MODULE.discover_violations({"controlPlane": spec}, MODULE.SDK_EXEMPTIONS), {})
+        specs = {"controlPlane": spec}
+        exemptions, declaration_issues = MODULE.exemptions_for(specs)
+        self.assertEqual(declaration_issues, [])
+        self.assertEqual(MODULE.discover_violations(specs, exemptions), {})
 
     def test_embedded_oauth_response_only_exempts_json_spelling(self) -> None:
         spec = {

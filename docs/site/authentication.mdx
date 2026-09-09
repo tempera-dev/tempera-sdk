@@ -198,7 +198,7 @@ is the default when none is specified.
 | `tempera-payments` | tempera-payments |
 | `tempera-dropshipping` | tempera-dropshipping |
 | `tempera-voice` | tempera-voice |
-| `tempera-clearing` | — |
+| `tempera-clearing` | tempera-clearing |
 | `tempera-authority` | — |
 | `tempera-business` | tempera-business |
 
@@ -234,8 +234,8 @@ is the default when none is specified.
 | `bio:experiment:submit` | auth-hub: `resolveExperimentProviderConnection`; tempera-workflows: `createExperimentSubmission`, `reconcileExperimentSubmission` |
 | `bio:signer:manage` | auth-hub: `createBioSignerKey`, `listBioSignerKeys`, `revokeBioSignerKey` |
 | `model:read` | auth-hub: `getModelCatalog`; tempera-llm: `listModels` |
-| `model:invoke` | tempera-llm: `createChatCompletion`, `createResponse` |
-| `usage:reserve` | No typed SDK operation declares it yet; enforced server-side. |
+| `model:invoke` | auth-hub: `providerConnectionsResolve`; tempera-llm: `createChatCompletion`, `createResponse` |
+| `usage:reserve` | auth-hub: `usageReservationsCommit`, `usageReservationsCreate`, `usageReservationsReconcile`, `usageReservationsRelease` |
 | `document:read` | tempera-document: `documentUnitsList`, `documentsGet`, `documentsGetGraph`, `documentsSearch`, `operationsGet`, `uploadsGet` |
 | `document:write` | tempera-document: `documentsCreate`, `documentsExportEvidence`, `documentsExtract`, `documentsPrepareRetrieval`, `documentsProcess`, `uploadsComplete`, `uploadsCreate`, `uploadsWrite` |
 | `risk:read` | tempera-risk: `exportAudit`, `getCase`, `getCaseDossier`, `getDecision`, `getResearchJob`, `getResearchJobResult`, `getSourceCoverage`, `getSourcePack`, `getSubject`, `listCases`, `listResearchJobEvents`, `listSourcePacks`, `listSubjects`, `streamResearchJobEvents` |
@@ -259,13 +259,13 @@ is the default when none is specified.
 | `voice:read` | tempera-voice: `downloadVoiceArtifact`, `getDefaultVoiceAgent`, `getVoiceAgent`, `getVoiceCapabilities`, `getVoiceSession`, `listVoiceAgents`, `listVoiceSessionActions`, `listVoiceSessionEvents`, `listVoiceSessions` |
 | `voice:write` | tempera-voice: `createVoiceAgent`, `createVoiceSession`, `endVoiceSession`, `resolveVoiceAction`, `updateVoiceAgent`, `uploadVoiceArtifact` |
 | `voice:stream` | No typed SDK operation declares it yet; enforced server-side. |
-| `clearing:actions:read` | auth-hub: `clearingAdmissionsGet` |
-| `clearing:actions:propose` | No typed SDK operation declares it yet; enforced server-side. |
-| `clearing:actions:commit` | auth-hub: `clearingAdmissionsClaim`, `clearingAdmissionsFinalize` |
+| `clearing:actions:read` | auth-hub: `clearingAdmissionsGet`; tempera-clearing: `getClearingAction`, `listClearingActionEvents` |
+| `clearing:actions:propose` | tempera-clearing: `prepareClearingAction`, `proposeClearingAction`, `validateClearingAction` |
+| `clearing:actions:commit` | auth-hub: `clearingAdmissionsClaim`, `clearingAdmissionsFinalize`; tempera-clearing: `commitClearingAction` |
 | `clearing:actions:reconcile` | auth-hub: `clearingAdmissionsMarkRecoveryRequired` |
 | `clearing:receipts:read` | No typed SDK operation declares it yet; enforced server-side. |
 | `clearing:actions:approve` | auth-hub: `clearingAdmissionsCreate` |
-| `connection:invoke` | tempera-connectors: `connectionsInvoke` |
+| `connection:invoke` | auth-hub: `connectorCredentialsResolve`; tempera-connectors: `connectionsInvoke` |
 | `connection:write` | tempera-connectors: `connectionsCreate`, `connectionsImportOpenApi`, `connectionsTest` |
 | `connection:read` | tempera-connectors: `connectionsGet`, `connectionsList`, `connectorsList` |
 | `authority:holds:read` | auth-hub: `authorityHoldsGet`, `authorityHoldsList` |
@@ -307,6 +307,13 @@ is the default when none is specified.
 - **Reported:** 2026-09-08.
 - **Migration:** Cradle's canonical contract at contracts/openapi/cradle.openapi.json declares this scope. Add it to the Scope enum in the Auth Hub control-plane contract, re-vendor controlPlane, then drop this gap.
 
+### `dataSource:resolve`
+
+- **Status:** staged.
+- **Owner:** auth-hub.
+- **Reported:** 2026-09-09.
+- **Migration:** POST /v1/internal/data-source-connections:resolve is fenced by a static per-service token rather than an introspected OAuth grant, so this string is a label for what that secret authorizes rather than a grantable scope. Decide whether the route should move onto a real credential; if it should not, the SDK needs a way to say 'service secret, not a scope'.
+
 ### `tempo:read`
 
 - **Status:** staged.
@@ -320,6 +327,13 @@ is the default when none is specified.
 - **Owner:** tempo.
 - **Reported:** 2026-09-08.
 - **Migration:** Tempo's canonical contract at contracts/openapi/tempo.openapi.json declares this scope. Add it to the Scope enum in the Auth Hub control-plane contract, re-vendor controlPlane, then drop this gap.
+
+### `usage:report`
+
+- **Status:** staged.
+- **Owner:** auth-hub.
+- **Reported:** 2026-09-09.
+- **Migration:** POST /v1/usage/events has no single required scope: usageMeterForCredential enforces whatever scope is registered on the metric being reported. The contract names usage:report so the extension is not empty, but the server does not check that string. Either register it and enforce it, or give the operation a scope the runtime actually reads.
 
 
 ## Issuer endpoints
