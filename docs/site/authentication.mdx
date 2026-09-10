@@ -248,12 +248,12 @@ is the default when none is specified.
 | `investigation:review` | tempera-investigations: `createInvestigationReview` |
 | `pii:unmask` | palette PII unmasking — pass `unmask` + `reason` on trace/span reads (`getTrace`, `getSpan`, `getSpanIo`). |
 | `payments:intents:read` | tempera-payments: `getPaymentIntent`, `listPaymentIntents` |
-| `payments:intents:write` | tempera-payments: `createCardSession`, `createPayPalCheckout`, `createPaymentIntent`, `createPaymentMethodCharge`, `createStripeCheckout` |
+| `payments:intents:write` | tempera-payments: `createCardSession`, `createCoinbaseCheckout`, `createPayPalCheckout`, `createPaymentIntent`, `createPaymentMethodCharge`, `createStripeCheckout` |
 | `payments:receipts:read` | tempera-payments: `getPaymentSettlementReceipt` |
 | `payments:webhooks:write` | tempera-payments: `createWebhookEndpoint`, `deleteWebhookEndpoint` |
 | `payments:refunds:write` | tempera-payments: `createRefund` |
 | `payments:admin` | No typed SDK operation declares it yet; enforced server-side. |
-| `payments:merchants:read` | tempera-payments: `getMerchant`, `getMerchantWorkspace`, `getWorkspaceMerchant`, `refreshMerchantEligibility` |
+| `payments:merchants:read` | tempera-payments: `getMerchant`, `getMerchantBalance`, `getMerchantWorkspace`, `getWorkspaceMerchant`, `listMerchantPayouts`, `refreshMerchantEligibility` |
 | `payments:merchants:write` | tempera-payments: `createMerchant`, `createMerchantOnboardingLink` |
 | `orders:read` | tempera-dropshipping: `evaluateOrder`, `getBusinessSummary`, `getBusinessWorkspace`, `getCatalogOffer`, `getOrder`, `getProposal`, `getSaleOrder`, `getStore`, `listCatalogOffers`, `listEvents`, `listInbox`, `listOrderAuditEvents`, `listOrderEventProjections`, `listOrders`, `listSaleOrders`, `listStores` |
 | `orders:commerce:write` | tempera-dropshipping: `createCatalogOffer`, `createSaleOrder` |
@@ -316,12 +316,33 @@ is the default when none is specified.
 - **Reported:** 2026-09-09.
 - **Migration:** tempera-payments PR #47 fences creating customers, starting setup sessions, and deleting saved payment methods with payments:customers:write, but the Auth Hub scope registry vendored here predates it: the scope is registered in auth-hub#140 (branch codex/billing-via-payments) and is not yet on auth-hub main. Registered in auth-hub#140; remove after control-plane re-vendor.
 
+### `payments:disputes:read`
+
+- **Status:** staged.
+- **Owner:** jadenfix.
+- **Reported:** 2026-09-09.
+- **Migration:** tempera-payments PR #47 fences reading disputes, both the per-intent list and the workspace-wide list and get, with payments:disputes:read, but the Auth Hub scope registry vendored here predates it: the scope is registered in auth-hub#140 (branch codex/billing-via-payments) and is not yet on auth-hub main. Registered in auth-hub#140; remove after control-plane re-vendor.
+
 ### `payments:refunds:read`
 
 - **Status:** staged.
 - **Owner:** jadenfix.
 - **Reported:** 2026-09-09.
 - **Migration:** tempera-payments PR #47 fences reading refunds for a payment intent with payments:refunds:read, but the Auth Hub scope registry vendored here predates it: the scope is registered in auth-hub#140 (branch codex/billing-via-payments) and is not yet on auth-hub main. Registered in auth-hub#140; remove after control-plane re-vendor.
+
+### `payments:subscriptions:read`
+
+- **Status:** staged.
+- **Owner:** jadenfix.
+- **Reported:** 2026-09-09.
+- **Migration:** tempera-payments PR #47 fences reading subscriptions and their billing periods with payments:subscriptions:read, but the Auth Hub scope registry vendored here predates it: the scope is registered in auth-hub#140 (branch codex/billing-via-payments) and is not yet on auth-hub main. Registered in auth-hub#140; remove after control-plane re-vendor.
+
+### `payments:subscriptions:write`
+
+- **Status:** staged.
+- **Owner:** jadenfix.
+- **Reported:** 2026-09-09.
+- **Migration:** tempera-payments PR #47 fences creating subscriptions and cancelling, pausing, and resuming them with payments:subscriptions:write, but the Auth Hub scope registry vendored here predates it: the scope is registered in auth-hub#140 (branch codex/billing-via-payments) and is not yet on auth-hub main. Registered in auth-hub#140; remove after control-plane re-vendor.
 
 ### `payments:webhooks:read`
 

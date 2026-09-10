@@ -6,32 +6,55 @@
 - Compatibility class: additive endpoints; package `0.13.0`, surface version
   `6`. No existing Payments operation changed id, method, path, auth kind, or
   scope.
-- Producer: `tempera-dev/tempera-payments@782f0435f757166d36d3e5e4bf783429042a0caf`
+- Producer: `tempera-dev/tempera-payments@fa57d4b57222c938eeda7aa9401dfdc2929373bb`
   on branch `codex/billing-engine-consolidation`. **This is a staged, non-main
   lock**: the commit is pushed and under review as tempera-payments#47, it is
   not merged, released, or deployed. The pin is admitted by
   `contracts/sdk-staged-sources.json`, expires 2026-10-09, and is qualified by
   `python3 scripts/check-sdk-surface.py --staged-local`. The default release
   gate still refuses it, which is the intended behaviour until #47 merges.
-- Added: 18 operations, taking Payments from 13 to 31 in every generated
-  client — `listPaymentIntents`, `createPaymentMethodCharge`,
+- Added: 33 operations, taking Payments from 13 to 46 in every generated
+  client. Payment intents, PayPal, refunds, webhook endpoints, customers and
+  saved payment methods — `listPaymentIntents`, `createPaymentMethodCharge`,
   `createPayPalCheckout`, `receivePayPalWebhook`, `createRefund`,
   `listRefunds`, `getRefund`, `createWebhookEndpoint`, `listWebhookEndpoints`,
   `getWebhookEndpoint`, `deleteWebhookEndpoint`, `listWebhookDeliveries`,
   `createCustomer`, `listCustomers`, `getCustomer`, `createSetupSession`,
-  `listPaymentMethods`, `deletePaymentMethod`.
+  `listPaymentMethods`, `deletePaymentMethod`. Then Coinbase, disputes,
+  subscriptions, merchant balance and payouts, and Stripe Connect —
+  `createCoinbaseCheckout`, `receiveCoinbaseWebhook`,
+  `listPaymentIntentDisputes`, `listDisputes`, `getDispute`,
+  `createSubscription`, `listSubscriptions`, `getSubscription`,
+  `cancelSubscription`, `pauseSubscription`, `resumeSubscription`,
+  `listSubscriptionPeriods`, `getMerchantBalance`, `listMerchantPayouts`,
+  `receiveStripeConnectWebhook`.
+- Shape of the surface: 46 operations over 14 scopes. Five operations declare
+  no scope — `getPaymentsHealth` and the four provider callback routes
+  (`receiveStripeWebhook`, `receivePayPalWebhook`, `receiveCoinbaseWebhook`,
+  `receiveStripeConnectWebhook`), which are authenticated by provider webhook
+  signature rather than by an OAuth grant.
 - Scope gaps: `payments:refunds:read`, `payments:webhooks:read`,
-  `payments:customers:read`, and `payments:customers:write` are declared in
-  `surface.json` `scopeGaps`. They are registered in auth-hub#140 and not yet
-  on auth-hub `main`, so the vendored control-plane `Scope` enum does not
-  carry them. `payments:refunds:write` and `payments:webhooks:write` were
-  already registered.
+  `payments:customers:read`, `payments:customers:write`,
+  `payments:disputes:read`, `payments:subscriptions:read`, and
+  `payments:subscriptions:write` are declared in `surface.json` `scopeGaps`.
+  They are registered in auth-hub#140 and not yet on auth-hub `main`, so the
+  vendored control-plane `Scope` enum does not carry them.
+  `payments:refunds:write` and `payments:webhooks:write` were already
+  registered.
+- `payments:admin`: the producer contract no longer declares this scope on any
+  operation, and it never did at the previously staged commit either. Nothing
+  the SDK derives from the Payments contract depends on it. The scope remains
+  in `surface.json` `scopes` because that list is derived from the vendored
+  auth-hub control-plane registry, where `payments:admin` is still registered;
+  the generated scope table in `docs/site/authentication.mdx` continues to
+  report it as claimed by no typed SDK operation and enforced server-side.
+  Retiring the scope, if that is wanted, is an auth-hub change, not an SDK one.
 - Claims boundary: the generated clients transport these calls. They do not
-  claim the Payments billing engine is deployed, that the four scopes are
-  mintable today, or that #47 is merged.
+  claim the Payments billing engine is deployed, that the seven staged scopes
+  are mintable today, or that #47 is merged.
 - Rollout: when tempera-payments#47 merges, re-vendor at the main SHA, delete
   the staged-source entry, and — once auth-hub#140 has merged and the control
-  plane is re-vendored — delete the four `scopeGaps` entries and regenerate.
+  plane is re-vendored — delete the seven `scopeGaps` entries and regenerate.
 - Rollback: revert this SDK commit as a unit. Do not keep the generated
   operations while dropping the staged-source entry, and do not keep the
   scope gaps after the control-plane enum carries the scopes.
