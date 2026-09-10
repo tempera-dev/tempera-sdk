@@ -47,7 +47,7 @@ test("initialize, ping, and tools/list send well-formed JSON-RPC with the bearer
   }
   assert.equal(calls[0].request.method, "server/discover");
   assert.equal(calls[0].request.params._meta["io.modelcontextprotocol/protocolVersion"], "2026-07-28");
-  assert.deepEqual(calls[0].request.params._meta["io.modelcontextprotocol/clientInfo"], { name: "tempera-sdk", version: "0.12.0" });
+  assert.deepEqual(calls[0].request.params._meta["io.modelcontextprotocol/clientInfo"], { name: "tempera-sdk", version: "0.13.0" });
   for (const call of calls) {
     assert.equal(call.options.headers["mcp-protocol-version"], "2026-07-28");
     assert.equal(call.options.headers["mcp-method"], call.request.method);

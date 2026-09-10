@@ -935,7 +935,7 @@ static void test_mcp(void)
     CHECK_STR(body,
               "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{\"protocol"
               "Version\":\"2025-06-18\",\"capabilities\":{},\"clientInfo\":{\"name\":\"tempera-"
-              "sdk\",\"version\":\"0.12.0\"}}}");
+              "sdk\",\"version\":\"0.13.0\"}}}");
     tempera_string_free(body);
 
     body = tempera_mcp_ping_body(&builder, &id);

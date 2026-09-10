@@ -30,9 +30,9 @@
       "envVar": "TEMPERA_PAYMENTS_URL",
       "spec": "specs/tempera-payments.openapi.json",
       "sourceRepo": "tempera-dev/tempera-payments",
-      "sourceBranch": "main",
-      "sourceCommit": "b6c07326f040afaead535fcff233978d482309b8",
-      "sourceSha256": "d1ddd504eb4e94067dfac0587e7091d25a1e575fa1e6ea7542270831ec75808f"
+      "sourceBranch": "codex/billing-engine-consolidation",
+      "sourceCommit": "782f0435f757166d36d3e5e4bf783429042a0caf",
+      "sourceSha256": "8eedb396f90d4dad2c9bbc647c6af57fa2d97eb67dc7404e99a6dc33c70dc9e7"
     },
     {
       "product": "temperaVoice",

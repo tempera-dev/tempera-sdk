@@ -1,13 +1,13 @@
 {
   "generated_path": "specs/tempera-payments.openapi.json",
-  "generated_sha256": "d1ddd504eb4e94067dfac0587e7091d25a1e575fa1e6ea7542270831ec75808f",
+  "generated_sha256": "8eedb396f90d4dad2c9bbc647c6af57fa2d97eb67dc7404e99a6dc33c70dc9e7",
   "generated_with": "sync-vendored-openapi.py@1+verbatim-openapi-copy",
   "schema_version": 1,
-  "source_blob_sha": "5212fb28dc9558810fbe087bdcbb2af02661ff64",
-  "source_branch": "main",
-  "source_commit": "b6c07326f040afaead535fcff233978d482309b8",
+  "source_blob_sha": "c796a5e771bc090977ccd5d5baa1045d3c7a19dd",
+  "source_branch": "codex/billing-engine-consolidation",
+  "source_commit": "782f0435f757166d36d3e5e4bf783429042a0caf",
   "source_mode": "100644",
   "source_path": "contracts/openapi/payments.openapi.json",
   "source_repo": "tempera-dev/tempera-payments",
-  "source_sha256": "d1ddd504eb4e94067dfac0587e7091d25a1e575fa1e6ea7542270831ec75808f"
+  "source_sha256": "8eedb396f90d4dad2c9bbc647c6af57fa2d97eb67dc7404e99a6dc33c70dc9e7"
 }

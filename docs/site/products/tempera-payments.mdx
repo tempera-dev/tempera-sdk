@@ -21,7 +21,7 @@ Provider-neutral fiat checkout and blockchain settlement platform with source-lo
 | Audience | `tempera-payments` |
 | Auth | bearer minted for audience tempera-payments with the operation's payments scope, or a central tp_ API key |
 | Client | TypeScript `client.temperaPayments` · Python `client.tempera_payments` · Rust `build_request("tempera_payments", ...)` |
-| Typed operations | 13 |
+| Typed operations | 31 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.temperaPayments.request(path, options)` (TypeScript) /
@@ -79,6 +79,8 @@ Create a canonical payment intent.
 | `asset` | yes | — |
 | `amount` | yes | — |
 | `expiresInSeconds` | yes | — |
+| `reference` | no | — |
+| `customerId` | no | — |
 
 <CodeGroup>
 
@@ -115,6 +117,58 @@ let spec = client.build_request("tempera_payments", "create_payment_intent", &[
     ("asset", "<asset>".into()),
     ("amount", "<amount>".into()),
     ("expiresInSeconds", "<expiresInSeconds>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listPaymentIntents
+
+`GET /v1/paymentIntents`
+
+List a tenant's payment intents by consumer reference, status, or creation window.
+
+- **Producer operationId:** `listPaymentIntents`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
+- **Scope:** `payments:intents:read`
+- **Call as:** TypeScript `client.temperaPayments.listPaymentIntents()` · Python `client.tempera_payments.list_payment_intents()` · Rust `build_request("tempera_payments", "list_payment_intents", params)`
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `tenantId` | yes | — |
+| `referenceKind` | no | — |
+| `referenceId` | no | — |
+| `referenceConsumer` | no | — |
+| `status` | no | — |
+| `createdAfter` | no | — |
+| `createdBefore` | no | — |
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaPayments.listPaymentIntents({
+  tenantId: "<tenantId>",
+  referenceKind: "<referenceKind>",
+});
+```
+
+```python Python
+result = client.tempera_payments.list_payment_intents({
+    "tenantId": "<tenantId>",
+    "referenceKind": "<referenceKind>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_payments", "list_payment_intents", &[
+    ("tenantId", "<tenantId>".into()),
+    ("referenceKind", "<referenceKind>".into()),
 ])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
@@ -656,6 +710,910 @@ result = client.tempera_payments.receive_stripe_webhook()
 
 ```rust Rust
 let spec = client.build_request("tempera_payments", "receive_stripe_webhook", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### createRefund
+
+`POST /v1/paymentIntents/{paymentIntentId}/refunds`
+
+Refund a settled payment intent.
+
+- **Producer operationId:** `createRefund`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
+- **Scope:** `payments:refunds:write`
+- **Call as:** TypeScript `client.temperaPayments.createRefund()` · Python `client.tempera_payments.create_refund()` · Rust `build_request("tempera_payments", "create_refund", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `paymentIntentId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `tenantId` | yes | — |
+| `idempotencyKey` | yes | — |
+| `amount` | no | — |
+| `reason` | no | — |
+| `metadata` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaPayments.createRefund({
+  paymentIntentId: "<paymentIntentId>",
+  tenantId: "<tenantId>",
+  idempotencyKey: "<idempotencyKey>",
+  amount: "<amount>",
+});
+```
+
+```python Python
+result = client.tempera_payments.create_refund({
+    "paymentIntentId": "<paymentIntentId>",
+    "tenantId": "<tenantId>",
+    "idempotencyKey": "<idempotencyKey>",
+    "amount": "<amount>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_payments", "create_refund", &[
+    ("paymentIntentId", "<paymentIntentId>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("idempotencyKey", "<idempotencyKey>".into()),
+    ("amount", "<amount>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listRefunds
+
+`GET /v1/paymentIntents/{paymentIntentId}/refunds`
+
+List the refunds of one payment intent.
+
+- **Producer operationId:** `listRefunds`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
+- **Scope:** `payments:refunds:read`
+- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
+- **Call as:** TypeScript `client.temperaPayments.listRefunds()` · Python `client.tempera_payments.list_refunds()` · Rust `build_request("tempera_payments", "list_refunds", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `paymentIntentId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `tenantId` | yes | — |
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaPayments.listRefunds({
+  paymentIntentId: "<paymentIntentId>",
+  tenantId: "<tenantId>",
+  pageSize: "<pageSize>",
+});
+```
+
+```python Python
+result = client.tempera_payments.list_refunds({
+    "paymentIntentId": "<paymentIntentId>",
+    "tenantId": "<tenantId>",
+    "pageSize": "<pageSize>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_payments", "list_refunds", &[
+    ("paymentIntentId", "<paymentIntentId>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("pageSize", "<pageSize>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getRefund
+
+`GET /v1/paymentIntents/{paymentIntentId}/refunds/{refundId}`
+
+Read one refund.
+
+- **Producer operationId:** `getRefund`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
+- **Scope:** `payments:refunds:read`
+- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
+- **Call as:** TypeScript `client.temperaPayments.getRefund()` · Python `client.tempera_payments.get_refund()` · Rust `build_request("tempera_payments", "get_refund", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `paymentIntentId` | yes | Substituted into the URL path (percent-encoded). |
+| `refundId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `tenantId` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaPayments.getRefund({
+  paymentIntentId: "<paymentIntentId>",
+  refundId: "<refundId>",
+  tenantId: "<tenantId>",
+});
+```
+
+```python Python
+result = client.tempera_payments.get_refund({
+    "paymentIntentId": "<paymentIntentId>",
+    "refundId": "<refundId>",
+    "tenantId": "<tenantId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_payments", "get_refund", &[
+    ("paymentIntentId", "<paymentIntentId>".into()),
+    ("refundId", "<refundId>".into()),
+    ("tenantId", "<tenantId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### createPayPalCheckout
+
+`POST /v1/paymentIntents/{paymentIntentId}/paypalCheckout`
+
+Create an idempotent hosted PayPal order for a fiat payment intent.
+
+- **Producer operationId:** `createPayPalCheckout`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
+- **Physical action:** Yes. This operation may cause an external real-world action.
+- **Scope:** `payments:intents:write`
+- **Call as:** TypeScript `client.temperaPayments.createPayPalCheckout()` · Python `client.tempera_payments.create_pay_pal_checkout()` · Rust `build_request("tempera_payments", "create_pay_pal_checkout", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `paymentIntentId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `tenantId` | yes | — |
+| `returnUrl` | yes | — |
+| `cancelUrl` | yes | — |
+| `idempotencyKey` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaPayments.createPayPalCheckout({
+  paymentIntentId: "<paymentIntentId>",
+  tenantId: "<tenantId>",
+  returnUrl: "<returnUrl>",
+  cancelUrl: "<cancelUrl>",
+  idempotencyKey: "<idempotencyKey>",
+});
+```
+
+```python Python
+result = client.tempera_payments.create_pay_pal_checkout({
+    "paymentIntentId": "<paymentIntentId>",
+    "tenantId": "<tenantId>",
+    "returnUrl": "<returnUrl>",
+    "cancelUrl": "<cancelUrl>",
+    "idempotencyKey": "<idempotencyKey>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_payments", "create_pay_pal_checkout", &[
+    ("paymentIntentId", "<paymentIntentId>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("returnUrl", "<returnUrl>".into()),
+    ("cancelUrl", "<cancelUrl>".into()),
+    ("idempotencyKey", "<idempotencyKey>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### receivePayPalWebhook
+
+`POST /v1/webhooks/paypal/callback`
+
+Verify and durably deduplicate a PayPal webhook using its raw body.
+
+- **Producer operationId:** `receivePayPalWebhook`
+- **Auth:** None (public endpoint).
+- **Call as:** TypeScript `client.temperaPayments.receivePayPalWebhook()` · Python `client.tempera_payments.receive_pay_pal_webhook()` · Rust `build_request("tempera_payments", "receive_pay_pal_webhook", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaPayments.receivePayPalWebhook();
+```
+
+```python Python
+result = client.tempera_payments.receive_pay_pal_webhook()
+```
+
+```rust Rust
+let spec = client.build_request("tempera_payments", "receive_pay_pal_webhook", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### createWebhookEndpoint
+
+`POST /v1/webhookEndpoints`
+
+Register a destination for signed payment events.
+
+- **Producer operationId:** `createWebhookEndpoint`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
+- **Scope:** `payments:webhooks:write`
+- **Call as:** TypeScript `client.temperaPayments.createWebhookEndpoint()` · Python `client.tempera_payments.create_webhook_endpoint()` · Rust `build_request("tempera_payments", "create_webhook_endpoint", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `tenantId` | yes | — |
+| `url` | yes | — |
+| `eventTypes` | yes | — |
+| `description` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaPayments.createWebhookEndpoint({
+  tenantId: "<tenantId>",
+  url: "<url>",
+  eventTypes: "<eventTypes>",
+});
+```
+
+```python Python
+result = client.tempera_payments.create_webhook_endpoint({
+    "tenantId": "<tenantId>",
+    "url": "<url>",
+    "eventTypes": "<eventTypes>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_payments", "create_webhook_endpoint", &[
+    ("tenantId", "<tenantId>".into()),
+    ("url", "<url>".into()),
+    ("eventTypes", "<eventTypes>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listWebhookEndpoints
+
+`GET /v1/webhookEndpoints`
+
+List the webhook endpoints of one workspace.
+
+- **Producer operationId:** `listWebhookEndpoints`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
+- **Scope:** `payments:webhooks:read`
+- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
+- **Call as:** TypeScript `client.temperaPayments.listWebhookEndpoints()` · Python `client.tempera_payments.list_webhook_endpoints()` · Rust `build_request("tempera_payments", "list_webhook_endpoints", params)`
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `tenantId` | yes | — |
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaPayments.listWebhookEndpoints({
+  tenantId: "<tenantId>",
+  pageSize: "<pageSize>",
+});
+```
+
+```python Python
+result = client.tempera_payments.list_webhook_endpoints({
+    "tenantId": "<tenantId>",
+    "pageSize": "<pageSize>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_payments", "list_webhook_endpoints", &[
+    ("tenantId", "<tenantId>".into()),
+    ("pageSize", "<pageSize>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getWebhookEndpoint
+
+`GET /v1/webhookEndpoints/{webhookEndpointId}`
+
+Read one webhook endpoint.
+
+- **Producer operationId:** `getWebhookEndpoint`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
+- **Scope:** `payments:webhooks:read`
+- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
+- **Call as:** TypeScript `client.temperaPayments.getWebhookEndpoint()` · Python `client.tempera_payments.get_webhook_endpoint()` · Rust `build_request("tempera_payments", "get_webhook_endpoint", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `webhookEndpointId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `tenantId` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaPayments.getWebhookEndpoint({
+  webhookEndpointId: "<webhookEndpointId>",
+  tenantId: "<tenantId>",
+});
+```
+
+```python Python
+result = client.tempera_payments.get_webhook_endpoint({
+    "webhookEndpointId": "<webhookEndpointId>",
+    "tenantId": "<tenantId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_payments", "get_webhook_endpoint", &[
+    ("webhookEndpointId", "<webhookEndpointId>".into()),
+    ("tenantId", "<tenantId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### deleteWebhookEndpoint
+
+`DELETE /v1/webhookEndpoints/{webhookEndpointId}`
+
+Stop delivering to a webhook endpoint.
+
+- **Producer operationId:** `deleteWebhookEndpoint`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
+- **Scope:** `payments:webhooks:write`
+- **Call as:** TypeScript `client.temperaPayments.deleteWebhookEndpoint()` · Python `client.tempera_payments.delete_webhook_endpoint()` · Rust `build_request("tempera_payments", "delete_webhook_endpoint", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `webhookEndpointId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `tenantId` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaPayments.deleteWebhookEndpoint({
+  webhookEndpointId: "<webhookEndpointId>",
+  tenantId: "<tenantId>",
+});
+```
+
+```python Python
+result = client.tempera_payments.delete_webhook_endpoint({
+    "webhookEndpointId": "<webhookEndpointId>",
+    "tenantId": "<tenantId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_payments", "delete_webhook_endpoint", &[
+    ("webhookEndpointId", "<webhookEndpointId>".into()),
+    ("tenantId", "<tenantId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listWebhookDeliveries
+
+`GET /v1/webhookEndpoints/{webhookEndpointId}/deliveries`
+
+List delivery attempts for one webhook endpoint.
+
+- **Producer operationId:** `listWebhookDeliveries`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
+- **Scope:** `payments:webhooks:read`
+- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
+- **Call as:** TypeScript `client.temperaPayments.listWebhookDeliveries()` · Python `client.tempera_payments.list_webhook_deliveries()` · Rust `build_request("tempera_payments", "list_webhook_deliveries", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `webhookEndpointId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `tenantId` | yes | — |
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaPayments.listWebhookDeliveries({
+  webhookEndpointId: "<webhookEndpointId>",
+  tenantId: "<tenantId>",
+  pageSize: "<pageSize>",
+});
+```
+
+```python Python
+result = client.tempera_payments.list_webhook_deliveries({
+    "webhookEndpointId": "<webhookEndpointId>",
+    "tenantId": "<tenantId>",
+    "pageSize": "<pageSize>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_payments", "list_webhook_deliveries", &[
+    ("webhookEndpointId", "<webhookEndpointId>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("pageSize", "<pageSize>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### createPaymentMethodCharge
+
+`POST /v1/paymentIntents/{paymentIntentId}/paymentMethodCharges`
+
+Charge a saved payment method off-session for an authorized payment intent.
+
+- **Producer operationId:** `createPaymentMethodCharge`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
+- **Physical action:** Yes. This operation may cause an external real-world action.
+- **Scope:** `payments:intents:write`
+- **Call as:** TypeScript `client.temperaPayments.createPaymentMethodCharge()` · Python `client.tempera_payments.create_payment_method_charge()` · Rust `build_request("tempera_payments", "create_payment_method_charge", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `paymentIntentId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `tenantId` | yes | — |
+| `paymentMethodId` | yes | — |
+| `idempotencyKey` | yes | — |
+| `offSession` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaPayments.createPaymentMethodCharge({
+  paymentIntentId: "<paymentIntentId>",
+  tenantId: "<tenantId>",
+  paymentMethodId: "<paymentMethodId>",
+  idempotencyKey: "<idempotencyKey>",
+});
+```
+
+```python Python
+result = client.tempera_payments.create_payment_method_charge({
+    "paymentIntentId": "<paymentIntentId>",
+    "tenantId": "<tenantId>",
+    "paymentMethodId": "<paymentMethodId>",
+    "idempotencyKey": "<idempotencyKey>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_payments", "create_payment_method_charge", &[
+    ("paymentIntentId", "<paymentIntentId>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("paymentMethodId", "<paymentMethodId>".into()),
+    ("idempotencyKey", "<idempotencyKey>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### createCustomer
+
+`POST /v1/customers`
+
+Create a customer for one workspace.
+
+- **Producer operationId:** `createCustomer`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
+- **Scope:** `payments:customers:write`
+- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
+- **Call as:** TypeScript `client.temperaPayments.createCustomer()` · Python `client.tempera_payments.create_customer()` · Rust `build_request("tempera_payments", "create_customer", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `tenantId` | yes | — |
+| `externalId` | no | — |
+| `email` | no | — |
+| `name` | no | — |
+| `metadata` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaPayments.createCustomer({
+  tenantId: "<tenantId>",
+  externalId: "<externalId>",
+  email: "<email>",
+});
+```
+
+```python Python
+result = client.tempera_payments.create_customer({
+    "tenantId": "<tenantId>",
+    "externalId": "<externalId>",
+    "email": "<email>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_payments", "create_customer", &[
+    ("tenantId", "<tenantId>".into()),
+    ("externalId", "<externalId>".into()),
+    ("email", "<email>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listCustomers
+
+`GET /v1/customers`
+
+List customers of one workspace by an exact externalId or email.
+
+- **Producer operationId:** `listCustomers`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
+- **Scope:** `payments:customers:read`
+- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
+- **Call as:** TypeScript `client.temperaPayments.listCustomers()` · Python `client.tempera_payments.list_customers()` · Rust `build_request("tempera_payments", "list_customers", params)`
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `tenantId` | yes | — |
+| `externalId` | no | — |
+| `email` | no | — |
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaPayments.listCustomers({
+  tenantId: "<tenantId>",
+  externalId: "<externalId>",
+});
+```
+
+```python Python
+result = client.tempera_payments.list_customers({
+    "tenantId": "<tenantId>",
+    "externalId": "<externalId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_payments", "list_customers", &[
+    ("tenantId", "<tenantId>".into()),
+    ("externalId", "<externalId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getCustomer
+
+`GET /v1/customers/{customerId}`
+
+Read one customer.
+
+- **Producer operationId:** `getCustomer`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
+- **Scope:** `payments:customers:read`
+- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
+- **Call as:** TypeScript `client.temperaPayments.getCustomer()` · Python `client.tempera_payments.get_customer()` · Rust `build_request("tempera_payments", "get_customer", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `customerId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `tenantId` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaPayments.getCustomer({
+  customerId: "<customerId>",
+  tenantId: "<tenantId>",
+});
+```
+
+```python Python
+result = client.tempera_payments.get_customer({
+    "customerId": "<customerId>",
+    "tenantId": "<tenantId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_payments", "get_customer", &[
+    ("customerId", "<customerId>".into()),
+    ("tenantId", "<tenantId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### createSetupSession
+
+`POST /v1/customers/{customerId}/setupSessions`
+
+Create a provider-hosted session that saves a card for this customer.
+
+- **Producer operationId:** `createSetupSession`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
+- **Physical action:** Yes. This operation may cause an external real-world action.
+- **Scope:** `payments:customers:write`
+- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
+- **Call as:** TypeScript `client.temperaPayments.createSetupSession()` · Python `client.tempera_payments.create_setup_session()` · Rust `build_request("tempera_payments", "create_setup_session", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `customerId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `tenantId` | yes | — |
+| `successUrl` | yes | — |
+| `cancelUrl` | yes | — |
+| `idempotencyKey` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaPayments.createSetupSession({
+  customerId: "<customerId>",
+  tenantId: "<tenantId>",
+  successUrl: "<successUrl>",
+  cancelUrl: "<cancelUrl>",
+  idempotencyKey: "<idempotencyKey>",
+});
+```
+
+```python Python
+result = client.tempera_payments.create_setup_session({
+    "customerId": "<customerId>",
+    "tenantId": "<tenantId>",
+    "successUrl": "<successUrl>",
+    "cancelUrl": "<cancelUrl>",
+    "idempotencyKey": "<idempotencyKey>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_payments", "create_setup_session", &[
+    ("customerId", "<customerId>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("successUrl", "<successUrl>".into()),
+    ("cancelUrl", "<cancelUrl>".into()),
+    ("idempotencyKey", "<idempotencyKey>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listPaymentMethods
+
+`GET /v1/customers/{customerId}/paymentMethods`
+
+List the payment methods saved for one customer.
+
+- **Producer operationId:** `listPaymentMethods`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
+- **Scope:** `payments:customers:read`
+- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
+- **Call as:** TypeScript `client.temperaPayments.listPaymentMethods()` · Python `client.tempera_payments.list_payment_methods()` · Rust `build_request("tempera_payments", "list_payment_methods", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `customerId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `tenantId` | yes | — |
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaPayments.listPaymentMethods({
+  customerId: "<customerId>",
+  tenantId: "<tenantId>",
+  pageSize: "<pageSize>",
+});
+```
+
+```python Python
+result = client.tempera_payments.list_payment_methods({
+    "customerId": "<customerId>",
+    "tenantId": "<tenantId>",
+    "pageSize": "<pageSize>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_payments", "list_payment_methods", &[
+    ("customerId", "<customerId>".into()),
+    ("tenantId", "<tenantId>".into()),
+    ("pageSize", "<pageSize>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### deletePaymentMethod
+
+`DELETE /v1/customers/{customerId}/paymentMethods/{paymentMethodId}`
+
+Detach a saved payment method.
+
+- **Producer operationId:** `deletePaymentMethod`
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
+- **Physical action:** Yes. This operation may cause an external real-world action.
+- **Scope:** `payments:customers:write`
+- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
+- **Call as:** TypeScript `client.temperaPayments.deletePaymentMethod()` · Python `client.tempera_payments.delete_payment_method()` · Rust `build_request("tempera_payments", "delete_payment_method", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `customerId` | yes | Substituted into the URL path (percent-encoded). |
+| `paymentMethodId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `tenantId` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaPayments.deletePaymentMethod({
+  customerId: "<customerId>",
+  paymentMethodId: "<paymentMethodId>",
+  tenantId: "<tenantId>",
+});
+```
+
+```python Python
+result = client.tempera_payments.delete_payment_method({
+    "customerId": "<customerId>",
+    "paymentMethodId": "<paymentMethodId>",
+    "tenantId": "<tenantId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("tempera_payments", "delete_payment_method", &[
+    ("customerId", "<customerId>".into()),
+    ("paymentMethodId", "<paymentMethodId>".into()),
+    ("tenantId", "<tenantId>".into()),
+])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```

@@ -10886,7 +10886,9 @@ export const TEMPERA_OPERATIONS = Object.freeze(
         "recipient",
         "asset",
         "amount",
-        "expiresInSeconds"
+        "expiresInSeconds",
+        "reference",
+        "customerId"
       ],
       "forbiddenBody": [],
       "requiredBody": [
@@ -10906,6 +10908,43 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "prepareCommitRequired": false,
       "safeRetry": "none",
       "description": "Create a canonical payment intent."
+    },
+    {
+      "id": "listPaymentIntents",
+      "upstreamOperationId": "listPaymentIntents",
+      "method": "GET",
+      "path": "/v1/paymentIntents",
+      "auth": "oauthResource",
+      "authAudience": "tempera-payments",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [
+        "tenantId",
+        "referenceKind",
+        "referenceId",
+        "referenceConsumer",
+        "status",
+        "createdAfter",
+        "createdBefore",
+        "pageSize",
+        "pageToken"
+      ],
+      "requiredQuery": [
+        "tenantId"
+      ],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "payments:intents:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "List a tenant's payment intents by consumer reference, status, or creation window."
     },
     {
       "id": "getPaymentIntent",
@@ -11273,6 +11312,576 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "prepareCommitRequired": false,
       "safeRetry": "none",
       "description": "Verify and durably deduplicate a Stripe webhook using its raw body."
+    },
+    {
+      "id": "createRefund",
+      "upstreamOperationId": "createRefund",
+      "method": "POST",
+      "path": "/v1/paymentIntents/{paymentIntentId}/refunds",
+      "auth": "oauthResource",
+      "authAudience": "tempera-payments",
+      "pathParams": [
+        "paymentIntentId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [
+        "tenantId",
+        "idempotencyKey",
+        "amount",
+        "reason",
+        "metadata"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "tenantId",
+        "idempotencyKey"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "payments:refunds:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
+      "description": "Refund a settled payment intent."
+    },
+    {
+      "id": "listRefunds",
+      "upstreamOperationId": "listRefunds",
+      "method": "GET",
+      "path": "/v1/paymentIntents/{paymentIntentId}/refunds",
+      "auth": "oauthResource",
+      "authAudience": "tempera-payments",
+      "pathParams": [
+        "paymentIntentId"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "tenantId",
+        "pageSize",
+        "pageToken"
+      ],
+      "requiredQuery": [
+        "tenantId"
+      ],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "payments:refunds:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "List the refunds of one payment intent."
+    },
+    {
+      "id": "getRefund",
+      "upstreamOperationId": "getRefund",
+      "method": "GET",
+      "path": "/v1/paymentIntents/{paymentIntentId}/refunds/{refundId}",
+      "auth": "oauthResource",
+      "authAudience": "tempera-payments",
+      "pathParams": [
+        "paymentIntentId",
+        "refundId"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "tenantId"
+      ],
+      "requiredQuery": [
+        "tenantId"
+      ],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "payments:refunds:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Read one refund."
+    },
+    {
+      "id": "createPayPalCheckout",
+      "upstreamOperationId": "createPayPalCheckout",
+      "method": "POST",
+      "path": "/v1/paymentIntents/{paymentIntentId}/paypalCheckout",
+      "auth": "oauthResource",
+      "authAudience": "tempera-payments",
+      "pathParams": [
+        "paymentIntentId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [
+        "tenantId",
+        "returnUrl",
+        "cancelUrl",
+        "idempotencyKey"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "tenantId",
+        "returnUrl",
+        "cancelUrl",
+        "idempotencyKey"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "payments:intents:write",
+      "physicalAction": true,
+      "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
+      "description": "Create an idempotent hosted PayPal order for a fiat payment intent."
+    },
+    {
+      "id": "receivePayPalWebhook",
+      "upstreamOperationId": "receivePayPalWebhook",
+      "method": "POST",
+      "path": "/v1/webhooks/paypal/callback",
+      "auth": "none",
+      "authAudience": null,
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [
+        "PayPal-Transmission-Id",
+        "PayPal-Transmission-Time",
+        "PayPal-Transmission-Sig",
+        "PayPal-Cert-Url",
+        "PayPal-Auth-Algo"
+      ],
+      "requiredHeaders": [
+        "PayPal-Transmission-Id",
+        "PayPal-Transmission-Time",
+        "PayPal-Transmission-Sig",
+        "PayPal-Cert-Url",
+        "PayPal-Auth-Algo"
+      ],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": null,
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Verify and durably deduplicate a PayPal webhook using its raw body."
+    },
+    {
+      "id": "createWebhookEndpoint",
+      "upstreamOperationId": "createWebhookEndpoint",
+      "method": "POST",
+      "path": "/v1/webhookEndpoints",
+      "auth": "oauthResource",
+      "authAudience": "tempera-payments",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [
+        "tenantId",
+        "url",
+        "eventTypes",
+        "description"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "tenantId",
+        "url",
+        "eventTypes"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "payments:webhooks:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Register a destination for signed payment events."
+    },
+    {
+      "id": "listWebhookEndpoints",
+      "upstreamOperationId": "listWebhookEndpoints",
+      "method": "GET",
+      "path": "/v1/webhookEndpoints",
+      "auth": "oauthResource",
+      "authAudience": "tempera-payments",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [
+        "tenantId",
+        "pageSize",
+        "pageToken"
+      ],
+      "requiredQuery": [
+        "tenantId"
+      ],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "payments:webhooks:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "List the webhook endpoints of one workspace."
+    },
+    {
+      "id": "getWebhookEndpoint",
+      "upstreamOperationId": "getWebhookEndpoint",
+      "method": "GET",
+      "path": "/v1/webhookEndpoints/{webhookEndpointId}",
+      "auth": "oauthResource",
+      "authAudience": "tempera-payments",
+      "pathParams": [
+        "webhookEndpointId"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "tenantId"
+      ],
+      "requiredQuery": [
+        "tenantId"
+      ],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "payments:webhooks:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Read one webhook endpoint."
+    },
+    {
+      "id": "deleteWebhookEndpoint",
+      "upstreamOperationId": "deleteWebhookEndpoint",
+      "method": "DELETE",
+      "path": "/v1/webhookEndpoints/{webhookEndpointId}",
+      "auth": "oauthResource",
+      "authAudience": "tempera-payments",
+      "pathParams": [
+        "webhookEndpointId"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "tenantId"
+      ],
+      "requiredQuery": [
+        "tenantId"
+      ],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "payments:webhooks:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Stop delivering to a webhook endpoint."
+    },
+    {
+      "id": "listWebhookDeliveries",
+      "upstreamOperationId": "listWebhookDeliveries",
+      "method": "GET",
+      "path": "/v1/webhookEndpoints/{webhookEndpointId}/deliveries",
+      "auth": "oauthResource",
+      "authAudience": "tempera-payments",
+      "pathParams": [
+        "webhookEndpointId"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "tenantId",
+        "pageSize",
+        "pageToken"
+      ],
+      "requiredQuery": [
+        "tenantId"
+      ],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "payments:webhooks:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "List delivery attempts for one webhook endpoint."
+    },
+    {
+      "id": "createPaymentMethodCharge",
+      "upstreamOperationId": "createPaymentMethodCharge",
+      "method": "POST",
+      "path": "/v1/paymentIntents/{paymentIntentId}/paymentMethodCharges",
+      "auth": "oauthResource",
+      "authAudience": "tempera-payments",
+      "pathParams": [
+        "paymentIntentId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [
+        "tenantId",
+        "paymentMethodId",
+        "idempotencyKey",
+        "offSession"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "tenantId",
+        "paymentMethodId",
+        "idempotencyKey"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "payments:intents:write",
+      "physicalAction": true,
+      "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
+      "description": "Charge a saved payment method off-session for an authorized payment intent."
+    },
+    {
+      "id": "createCustomer",
+      "upstreamOperationId": "createCustomer",
+      "method": "POST",
+      "path": "/v1/customers",
+      "auth": "oauthResource",
+      "authAudience": "tempera-payments",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [
+        "tenantId",
+        "externalId",
+        "email",
+        "name",
+        "metadata"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "tenantId"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "payments:customers:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Create a customer for one workspace."
+    },
+    {
+      "id": "listCustomers",
+      "upstreamOperationId": "listCustomers",
+      "method": "GET",
+      "path": "/v1/customers",
+      "auth": "oauthResource",
+      "authAudience": "tempera-payments",
+      "pathParams": [],
+      "pathParamTemplates": {},
+      "query": [
+        "tenantId",
+        "externalId",
+        "email",
+        "pageSize",
+        "pageToken"
+      ],
+      "requiredQuery": [
+        "tenantId"
+      ],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "payments:customers:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "List customers of one workspace by an exact externalId or email."
+    },
+    {
+      "id": "getCustomer",
+      "upstreamOperationId": "getCustomer",
+      "method": "GET",
+      "path": "/v1/customers/{customerId}",
+      "auth": "oauthResource",
+      "authAudience": "tempera-payments",
+      "pathParams": [
+        "customerId"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "tenantId"
+      ],
+      "requiredQuery": [
+        "tenantId"
+      ],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "payments:customers:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Read one customer."
+    },
+    {
+      "id": "createSetupSession",
+      "upstreamOperationId": "createSetupSession",
+      "method": "POST",
+      "path": "/v1/customers/{customerId}/setupSessions",
+      "auth": "oauthResource",
+      "authAudience": "tempera-payments",
+      "pathParams": [
+        "customerId"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [
+        "tenantId",
+        "successUrl",
+        "cancelUrl",
+        "idempotencyKey"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "tenantId",
+        "successUrl",
+        "cancelUrl",
+        "idempotencyKey"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "payments:customers:write",
+      "physicalAction": true,
+      "prepareCommitRequired": false,
+      "safeRetry": "idempotent",
+      "description": "Create a provider-hosted session that saves a card for this customer."
+    },
+    {
+      "id": "listPaymentMethods",
+      "upstreamOperationId": "listPaymentMethods",
+      "method": "GET",
+      "path": "/v1/customers/{customerId}/paymentMethods",
+      "auth": "oauthResource",
+      "authAudience": "tempera-payments",
+      "pathParams": [
+        "customerId"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "tenantId",
+        "pageSize",
+        "pageToken"
+      ],
+      "requiredQuery": [
+        "tenantId"
+      ],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "payments:customers:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "List the payment methods saved for one customer."
+    },
+    {
+      "id": "deletePaymentMethod",
+      "upstreamOperationId": "deletePaymentMethod",
+      "method": "DELETE",
+      "path": "/v1/customers/{customerId}/paymentMethods/{paymentMethodId}",
+      "auth": "oauthResource",
+      "authAudience": "tempera-payments",
+      "pathParams": [
+        "customerId",
+        "paymentMethodId"
+      ],
+      "pathParamTemplates": {},
+      "query": [
+        "tenantId"
+      ],
+      "requiredQuery": [
+        "tenantId"
+      ],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "payments:customers:write",
+      "physicalAction": true,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Detach a saved payment method."
     }
   ],
   "temperaDocument": [

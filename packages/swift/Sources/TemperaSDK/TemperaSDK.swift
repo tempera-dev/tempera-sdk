@@ -16,7 +16,7 @@
 public enum TemperaSDK {
     /// Package version, kept in step with the TypeScript, Python, Rust, and
     /// Kotlin packages.
-    public static let version = "0.12.0"
+    public static let version = "0.13.0"
 
     /// The `surface.json` schema version the generated tables came from.
     public static let surfaceVersion = TemperaSurface.version

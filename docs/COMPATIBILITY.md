@@ -1,5 +1,41 @@
 # SDK compatibility ledger
 
+## 2026-09-09 — staged Payments billing-engine consolidation
+
+- Owner: jadenfix (SDK), tempera-payments#47 (producer), auth-hub#140 (scopes).
+- Compatibility class: additive endpoints; package `0.13.0`, surface version
+  `6`. No existing Payments operation changed id, method, path, auth kind, or
+  scope.
+- Producer: `tempera-dev/tempera-payments@782f0435f757166d36d3e5e4bf783429042a0caf`
+  on branch `codex/billing-engine-consolidation`. **This is a staged, non-main
+  lock**: the commit is pushed and under review as tempera-payments#47, it is
+  not merged, released, or deployed. The pin is admitted by
+  `contracts/sdk-staged-sources.json`, expires 2026-10-09, and is qualified by
+  `python3 scripts/check-sdk-surface.py --staged-local`. The default release
+  gate still refuses it, which is the intended behaviour until #47 merges.
+- Added: 18 operations, taking Payments from 13 to 31 in every generated
+  client — `listPaymentIntents`, `createPaymentMethodCharge`,
+  `createPayPalCheckout`, `receivePayPalWebhook`, `createRefund`,
+  `listRefunds`, `getRefund`, `createWebhookEndpoint`, `listWebhookEndpoints`,
+  `getWebhookEndpoint`, `deleteWebhookEndpoint`, `listWebhookDeliveries`,
+  `createCustomer`, `listCustomers`, `getCustomer`, `createSetupSession`,
+  `listPaymentMethods`, `deletePaymentMethod`.
+- Scope gaps: `payments:refunds:read`, `payments:webhooks:read`,
+  `payments:customers:read`, and `payments:customers:write` are declared in
+  `surface.json` `scopeGaps`. They are registered in auth-hub#140 and not yet
+  on auth-hub `main`, so the vendored control-plane `Scope` enum does not
+  carry them. `payments:refunds:write` and `payments:webhooks:write` were
+  already registered.
+- Claims boundary: the generated clients transport these calls. They do not
+  claim the Payments billing engine is deployed, that the four scopes are
+  mintable today, or that #47 is merged.
+- Rollout: when tempera-payments#47 merges, re-vendor at the main SHA, delete
+  the staged-source entry, and — once auth-hub#140 has merged and the control
+  plane is re-vendored — delete the four `scopeGaps` entries and regenerate.
+- Rollback: revert this SDK commit as a unit. Do not keep the generated
+  operations while dropping the staged-source entry, and do not keep the
+  scope gaps after the control-plane enum carries the scopes.
+
 ## 2026-07-24 — physical experiment provider boundary
 
 - Owner: Discovery release train across Tempera Workflows, SDK, MCP, Auth Hub,

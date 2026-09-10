@@ -1,6 +1,6 @@
 # Tempera SDK for C
 
-Version `0.12.0`. C99, no dependencies, no HTTP client.
+Version `0.13.0`. C99, no dependencies, no HTTP client.
 
 Like the Rust package, this is a **request builder**. C has no standard HTTP
 client, so the library never opens a socket: it turns

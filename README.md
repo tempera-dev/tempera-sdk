@@ -46,6 +46,7 @@ availability, a live hosted service, or an undocumented endpoint.
 | `palette` | [palette](https://github.com/tempera-dev/palette) | 61 | `palette` |
 | `temperaRisk` | [tempera-risk](https://github.com/tempera-dev/tempera-risk) | 44 | `tempera-risk` |
 | `temperaDropshipping` | [tempera-dropshipping](https://github.com/tempera-dev/tempera-dropshipping) | 31 | `tempera-dropshipping` |
+| `temperaPayments` | [tempera-payments](https://github.com/tempera-dev/tempera-payments) | 31 | `tempera-payments` |
 | `tempo` | [tempo](https://github.com/tempera-dev/tempo) | 27 | `tempo` |
 | `temperaInvestigations` | [tempera-investigations](https://github.com/tempera-dev/tempera-investigations) | 24 | `tempera-investigations` |
 | `temperaVoice` | [tempera-voice](https://github.com/tempera-dev/tempera-voice) | 24 | `tempera-voice` |
@@ -55,7 +56,6 @@ availability, a live hosted service, or an undocumented endpoint.
 | `temperaBusiness` | [tempera-business](https://github.com/tempera-dev/tempera-business) | 15 | `tempera-business` |
 | `temperaDocument` | [tempera-document](https://github.com/tempera-dev/tempera-document) | 15 | `tempera-document` |
 | `temperaBio` | [tempera-bio](https://github.com/tempera-dev/tempera-bio) | 14 | `tempera-bio` |
-| `temperaPayments` | [tempera-payments](https://github.com/tempera-dev/tempera-payments) | 13 | `tempera-payments` |
 | `remi` | [remi](https://github.com/tempera-dev/remi) | 11 | `remi` |
 | `temperaClearing` | [tempera-clearing](https://github.com/tempera-dev/tempera-clearing) | 8 | `tempera-clearing` |
 | `temperaConnectors` | [tempera-connectors](https://github.com/tempera-dev/tempera-connectors-runtime) | 8 | `tempera-connectors` |

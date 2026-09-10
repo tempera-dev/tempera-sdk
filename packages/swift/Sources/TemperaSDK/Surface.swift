@@ -580,6 +580,7 @@ public enum TemperaSurface {
         + temperaOperationChunk11
         + temperaOperationChunk12
         + temperaOperationChunk13
+        + temperaOperationChunk14
 
     /// Every MCP gateway method.
     public static let mcpMethods: [TemperaMcpMethodSpec] = [
@@ -9041,7 +9042,7 @@ private let temperaOperationChunk7: [TemperaOperationSpec] = [
         requiredQuery: [],
         headers: ["Idempotency-Key"],
         requiredHeaders: ["Idempotency-Key"],
-        body: ["tenantId", "merchantId", "riskSubjectId", "recipient", "asset", "amount", "expiresInSeconds"],
+        body: ["tenantId", "merchantId", "riskSubjectId", "recipient", "asset", "amount", "expiresInSeconds", "reference", "customerId"],
         forbiddenBody: [],
         requiredBody: ["tenantId", "merchantId", "riskSubjectId", "recipient", "asset", "amount", "expiresInSeconds"],
         bodyDefaults: [],
@@ -9053,6 +9054,35 @@ private let temperaOperationChunk7: [TemperaOperationSpec] = [
         safeRetry: "none",
         description: "Create a canonical payment intent."
     ),
+    TemperaOperationSpec(
+        product: "temperaPayments",
+        id: "listPaymentIntents",
+        upstreamOperationId: "listPaymentIntents",
+        method: "GET",
+        path: "/v1/paymentIntents",
+        auth: "oauthResource",
+        authAudience: "tempera-payments",
+        pathParams: [],
+        pathParamTemplates: [],
+        query: ["tenantId", "referenceKind", "referenceId", "referenceConsumer", "status", "createdAfter", "createdBefore", "pageSize", "pageToken"],
+        requiredQuery: ["tenantId"],
+        headers: [],
+        requiredHeaders: [],
+        body: [],
+        forbiddenBody: [],
+        requiredBody: [],
+        bodyDefaults: [],
+        requestBodyKind: "none",
+        requestContentType: nil,
+        scope: "payments:intents:read",
+        physicalAction: false,
+        prepareCommitRequired: false,
+        safeRetry: "read",
+        description: "List a tenant's payment intents by consumer reference, status, or creation window."
+    ),
+]
+
+private let temperaOperationChunk8: [TemperaOperationSpec] = [
     TemperaOperationSpec(
         product: "temperaPayments",
         id: "getPaymentIntent",
@@ -9079,9 +9109,6 @@ private let temperaOperationChunk7: [TemperaOperationSpec] = [
         safeRetry: "read",
         description: "Read the canonical payment-intent projection."
     ),
-]
-
-private let temperaOperationChunk8: [TemperaOperationSpec] = [
     TemperaOperationSpec(
         product: "temperaPayments",
         id: "getPaymentSettlementReceipt",
@@ -9341,6 +9368,448 @@ private let temperaOperationChunk8: [TemperaOperationSpec] = [
         prepareCommitRequired: false,
         safeRetry: "none",
         description: "Verify and durably deduplicate a Stripe webhook using its raw body."
+    ),
+    TemperaOperationSpec(
+        product: "temperaPayments",
+        id: "createRefund",
+        upstreamOperationId: "createRefund",
+        method: "POST",
+        path: "/v1/paymentIntents/{paymentIntentId}/refunds",
+        auth: "oauthResource",
+        authAudience: "tempera-payments",
+        pathParams: ["paymentIntentId"],
+        pathParamTemplates: [],
+        query: [],
+        requiredQuery: [],
+        headers: [],
+        requiredHeaders: [],
+        body: ["tenantId", "idempotencyKey", "amount", "reason", "metadata"],
+        forbiddenBody: [],
+        requiredBody: ["tenantId", "idempotencyKey"],
+        bodyDefaults: [],
+        requestBodyKind: "json",
+        requestContentType: "application/json",
+        scope: "payments:refunds:write",
+        physicalAction: false,
+        prepareCommitRequired: false,
+        safeRetry: "idempotent",
+        description: "Refund a settled payment intent."
+    ),
+    TemperaOperationSpec(
+        product: "temperaPayments",
+        id: "listRefunds",
+        upstreamOperationId: "listRefunds",
+        method: "GET",
+        path: "/v1/paymentIntents/{paymentIntentId}/refunds",
+        auth: "oauthResource",
+        authAudience: "tempera-payments",
+        pathParams: ["paymentIntentId"],
+        pathParamTemplates: [],
+        query: ["tenantId", "pageSize", "pageToken"],
+        requiredQuery: ["tenantId"],
+        headers: [],
+        requiredHeaders: [],
+        body: [],
+        forbiddenBody: [],
+        requiredBody: [],
+        bodyDefaults: [],
+        requestBodyKind: "none",
+        requestContentType: nil,
+        scope: "payments:refunds:read",
+        physicalAction: false,
+        prepareCommitRequired: false,
+        safeRetry: "read",
+        description: "List the refunds of one payment intent."
+    ),
+    TemperaOperationSpec(
+        product: "temperaPayments",
+        id: "getRefund",
+        upstreamOperationId: "getRefund",
+        method: "GET",
+        path: "/v1/paymentIntents/{paymentIntentId}/refunds/{refundId}",
+        auth: "oauthResource",
+        authAudience: "tempera-payments",
+        pathParams: ["paymentIntentId", "refundId"],
+        pathParamTemplates: [],
+        query: ["tenantId"],
+        requiredQuery: ["tenantId"],
+        headers: [],
+        requiredHeaders: [],
+        body: [],
+        forbiddenBody: [],
+        requiredBody: [],
+        bodyDefaults: [],
+        requestBodyKind: "none",
+        requestContentType: nil,
+        scope: "payments:refunds:read",
+        physicalAction: false,
+        prepareCommitRequired: false,
+        safeRetry: "read",
+        description: "Read one refund."
+    ),
+    TemperaOperationSpec(
+        product: "temperaPayments",
+        id: "createPayPalCheckout",
+        upstreamOperationId: "createPayPalCheckout",
+        method: "POST",
+        path: "/v1/paymentIntents/{paymentIntentId}/paypalCheckout",
+        auth: "oauthResource",
+        authAudience: "tempera-payments",
+        pathParams: ["paymentIntentId"],
+        pathParamTemplates: [],
+        query: [],
+        requiredQuery: [],
+        headers: [],
+        requiredHeaders: [],
+        body: ["tenantId", "returnUrl", "cancelUrl", "idempotencyKey"],
+        forbiddenBody: [],
+        requiredBody: ["tenantId", "returnUrl", "cancelUrl", "idempotencyKey"],
+        bodyDefaults: [],
+        requestBodyKind: "json",
+        requestContentType: "application/json",
+        scope: "payments:intents:write",
+        physicalAction: true,
+        prepareCommitRequired: false,
+        safeRetry: "idempotent",
+        description: "Create an idempotent hosted PayPal order for a fiat payment intent."
+    ),
+    TemperaOperationSpec(
+        product: "temperaPayments",
+        id: "receivePayPalWebhook",
+        upstreamOperationId: "receivePayPalWebhook",
+        method: "POST",
+        path: "/v1/webhooks/paypal/callback",
+        auth: "none",
+        authAudience: nil,
+        pathParams: [],
+        pathParamTemplates: [],
+        query: [],
+        requiredQuery: [],
+        headers: ["PayPal-Transmission-Id", "PayPal-Transmission-Time", "PayPal-Transmission-Sig", "PayPal-Cert-Url", "PayPal-Auth-Algo"],
+        requiredHeaders: ["PayPal-Transmission-Id", "PayPal-Transmission-Time", "PayPal-Transmission-Sig", "PayPal-Cert-Url", "PayPal-Auth-Algo"],
+        body: [],
+        forbiddenBody: [],
+        requiredBody: [],
+        bodyDefaults: [],
+        requestBodyKind: "json",
+        requestContentType: "application/json",
+        scope: nil,
+        physicalAction: false,
+        prepareCommitRequired: false,
+        safeRetry: "none",
+        description: "Verify and durably deduplicate a PayPal webhook using its raw body."
+    ),
+    TemperaOperationSpec(
+        product: "temperaPayments",
+        id: "createWebhookEndpoint",
+        upstreamOperationId: "createWebhookEndpoint",
+        method: "POST",
+        path: "/v1/webhookEndpoints",
+        auth: "oauthResource",
+        authAudience: "tempera-payments",
+        pathParams: [],
+        pathParamTemplates: [],
+        query: [],
+        requiredQuery: [],
+        headers: [],
+        requiredHeaders: [],
+        body: ["tenantId", "url", "eventTypes", "description"],
+        forbiddenBody: [],
+        requiredBody: ["tenantId", "url", "eventTypes"],
+        bodyDefaults: [],
+        requestBodyKind: "json",
+        requestContentType: "application/json",
+        scope: "payments:webhooks:write",
+        physicalAction: false,
+        prepareCommitRequired: false,
+        safeRetry: "none",
+        description: "Register a destination for signed payment events."
+    ),
+    TemperaOperationSpec(
+        product: "temperaPayments",
+        id: "listWebhookEndpoints",
+        upstreamOperationId: "listWebhookEndpoints",
+        method: "GET",
+        path: "/v1/webhookEndpoints",
+        auth: "oauthResource",
+        authAudience: "tempera-payments",
+        pathParams: [],
+        pathParamTemplates: [],
+        query: ["tenantId", "pageSize", "pageToken"],
+        requiredQuery: ["tenantId"],
+        headers: [],
+        requiredHeaders: [],
+        body: [],
+        forbiddenBody: [],
+        requiredBody: [],
+        bodyDefaults: [],
+        requestBodyKind: "none",
+        requestContentType: nil,
+        scope: "payments:webhooks:read",
+        physicalAction: false,
+        prepareCommitRequired: false,
+        safeRetry: "read",
+        description: "List the webhook endpoints of one workspace."
+    ),
+    TemperaOperationSpec(
+        product: "temperaPayments",
+        id: "getWebhookEndpoint",
+        upstreamOperationId: "getWebhookEndpoint",
+        method: "GET",
+        path: "/v1/webhookEndpoints/{webhookEndpointId}",
+        auth: "oauthResource",
+        authAudience: "tempera-payments",
+        pathParams: ["webhookEndpointId"],
+        pathParamTemplates: [],
+        query: ["tenantId"],
+        requiredQuery: ["tenantId"],
+        headers: [],
+        requiredHeaders: [],
+        body: [],
+        forbiddenBody: [],
+        requiredBody: [],
+        bodyDefaults: [],
+        requestBodyKind: "none",
+        requestContentType: nil,
+        scope: "payments:webhooks:read",
+        physicalAction: false,
+        prepareCommitRequired: false,
+        safeRetry: "read",
+        description: "Read one webhook endpoint."
+    ),
+    TemperaOperationSpec(
+        product: "temperaPayments",
+        id: "deleteWebhookEndpoint",
+        upstreamOperationId: "deleteWebhookEndpoint",
+        method: "DELETE",
+        path: "/v1/webhookEndpoints/{webhookEndpointId}",
+        auth: "oauthResource",
+        authAudience: "tempera-payments",
+        pathParams: ["webhookEndpointId"],
+        pathParamTemplates: [],
+        query: ["tenantId"],
+        requiredQuery: ["tenantId"],
+        headers: [],
+        requiredHeaders: [],
+        body: [],
+        forbiddenBody: [],
+        requiredBody: [],
+        bodyDefaults: [],
+        requestBodyKind: "none",
+        requestContentType: nil,
+        scope: "payments:webhooks:write",
+        physicalAction: false,
+        prepareCommitRequired: false,
+        safeRetry: "none",
+        description: "Stop delivering to a webhook endpoint."
+    ),
+    TemperaOperationSpec(
+        product: "temperaPayments",
+        id: "listWebhookDeliveries",
+        upstreamOperationId: "listWebhookDeliveries",
+        method: "GET",
+        path: "/v1/webhookEndpoints/{webhookEndpointId}/deliveries",
+        auth: "oauthResource",
+        authAudience: "tempera-payments",
+        pathParams: ["webhookEndpointId"],
+        pathParamTemplates: [],
+        query: ["tenantId", "pageSize", "pageToken"],
+        requiredQuery: ["tenantId"],
+        headers: [],
+        requiredHeaders: [],
+        body: [],
+        forbiddenBody: [],
+        requiredBody: [],
+        bodyDefaults: [],
+        requestBodyKind: "none",
+        requestContentType: nil,
+        scope: "payments:webhooks:read",
+        physicalAction: false,
+        prepareCommitRequired: false,
+        safeRetry: "read",
+        description: "List delivery attempts for one webhook endpoint."
+    ),
+    TemperaOperationSpec(
+        product: "temperaPayments",
+        id: "createPaymentMethodCharge",
+        upstreamOperationId: "createPaymentMethodCharge",
+        method: "POST",
+        path: "/v1/paymentIntents/{paymentIntentId}/paymentMethodCharges",
+        auth: "oauthResource",
+        authAudience: "tempera-payments",
+        pathParams: ["paymentIntentId"],
+        pathParamTemplates: [],
+        query: [],
+        requiredQuery: [],
+        headers: [],
+        requiredHeaders: [],
+        body: ["tenantId", "paymentMethodId", "idempotencyKey", "offSession"],
+        forbiddenBody: [],
+        requiredBody: ["tenantId", "paymentMethodId", "idempotencyKey"],
+        bodyDefaults: [],
+        requestBodyKind: "json",
+        requestContentType: "application/json",
+        scope: "payments:intents:write",
+        physicalAction: true,
+        prepareCommitRequired: false,
+        safeRetry: "idempotent",
+        description: "Charge a saved payment method off-session for an authorized payment intent."
+    ),
+    TemperaOperationSpec(
+        product: "temperaPayments",
+        id: "createCustomer",
+        upstreamOperationId: "createCustomer",
+        method: "POST",
+        path: "/v1/customers",
+        auth: "oauthResource",
+        authAudience: "tempera-payments",
+        pathParams: [],
+        pathParamTemplates: [],
+        query: [],
+        requiredQuery: [],
+        headers: [],
+        requiredHeaders: [],
+        body: ["tenantId", "externalId", "email", "name", "metadata"],
+        forbiddenBody: [],
+        requiredBody: ["tenantId"],
+        bodyDefaults: [],
+        requestBodyKind: "json",
+        requestContentType: "application/json",
+        scope: "payments:customers:write",
+        physicalAction: false,
+        prepareCommitRequired: false,
+        safeRetry: "none",
+        description: "Create a customer for one workspace."
+    ),
+    TemperaOperationSpec(
+        product: "temperaPayments",
+        id: "listCustomers",
+        upstreamOperationId: "listCustomers",
+        method: "GET",
+        path: "/v1/customers",
+        auth: "oauthResource",
+        authAudience: "tempera-payments",
+        pathParams: [],
+        pathParamTemplates: [],
+        query: ["tenantId", "externalId", "email", "pageSize", "pageToken"],
+        requiredQuery: ["tenantId"],
+        headers: [],
+        requiredHeaders: [],
+        body: [],
+        forbiddenBody: [],
+        requiredBody: [],
+        bodyDefaults: [],
+        requestBodyKind: "none",
+        requestContentType: nil,
+        scope: "payments:customers:read",
+        physicalAction: false,
+        prepareCommitRequired: false,
+        safeRetry: "read",
+        description: "List customers of one workspace by an exact externalId or email."
+    ),
+    TemperaOperationSpec(
+        product: "temperaPayments",
+        id: "getCustomer",
+        upstreamOperationId: "getCustomer",
+        method: "GET",
+        path: "/v1/customers/{customerId}",
+        auth: "oauthResource",
+        authAudience: "tempera-payments",
+        pathParams: ["customerId"],
+        pathParamTemplates: [],
+        query: ["tenantId"],
+        requiredQuery: ["tenantId"],
+        headers: [],
+        requiredHeaders: [],
+        body: [],
+        forbiddenBody: [],
+        requiredBody: [],
+        bodyDefaults: [],
+        requestBodyKind: "none",
+        requestContentType: nil,
+        scope: "payments:customers:read",
+        physicalAction: false,
+        prepareCommitRequired: false,
+        safeRetry: "read",
+        description: "Read one customer."
+    ),
+    TemperaOperationSpec(
+        product: "temperaPayments",
+        id: "createSetupSession",
+        upstreamOperationId: "createSetupSession",
+        method: "POST",
+        path: "/v1/customers/{customerId}/setupSessions",
+        auth: "oauthResource",
+        authAudience: "tempera-payments",
+        pathParams: ["customerId"],
+        pathParamTemplates: [],
+        query: [],
+        requiredQuery: [],
+        headers: [],
+        requiredHeaders: [],
+        body: ["tenantId", "successUrl", "cancelUrl", "idempotencyKey"],
+        forbiddenBody: [],
+        requiredBody: ["tenantId", "successUrl", "cancelUrl", "idempotencyKey"],
+        bodyDefaults: [],
+        requestBodyKind: "json",
+        requestContentType: "application/json",
+        scope: "payments:customers:write",
+        physicalAction: true,
+        prepareCommitRequired: false,
+        safeRetry: "idempotent",
+        description: "Create a provider-hosted session that saves a card for this customer."
+    ),
+    TemperaOperationSpec(
+        product: "temperaPayments",
+        id: "listPaymentMethods",
+        upstreamOperationId: "listPaymentMethods",
+        method: "GET",
+        path: "/v1/customers/{customerId}/paymentMethods",
+        auth: "oauthResource",
+        authAudience: "tempera-payments",
+        pathParams: ["customerId"],
+        pathParamTemplates: [],
+        query: ["tenantId", "pageSize", "pageToken"],
+        requiredQuery: ["tenantId"],
+        headers: [],
+        requiredHeaders: [],
+        body: [],
+        forbiddenBody: [],
+        requiredBody: [],
+        bodyDefaults: [],
+        requestBodyKind: "none",
+        requestContentType: nil,
+        scope: "payments:customers:read",
+        physicalAction: false,
+        prepareCommitRequired: false,
+        safeRetry: "read",
+        description: "List the payment methods saved for one customer."
+    ),
+    TemperaOperationSpec(
+        product: "temperaPayments",
+        id: "deletePaymentMethod",
+        upstreamOperationId: "deletePaymentMethod",
+        method: "DELETE",
+        path: "/v1/customers/{customerId}/paymentMethods/{paymentMethodId}",
+        auth: "oauthResource",
+        authAudience: "tempera-payments",
+        pathParams: ["customerId", "paymentMethodId"],
+        pathParamTemplates: [],
+        query: ["tenantId"],
+        requiredQuery: ["tenantId"],
+        headers: [],
+        requiredHeaders: [],
+        body: [],
+        forbiddenBody: [],
+        requiredBody: [],
+        bodyDefaults: [],
+        requestBodyKind: "none",
+        requestContentType: nil,
+        scope: "payments:customers:write",
+        physicalAction: true,
+        prepareCommitRequired: false,
+        safeRetry: "none",
+        description: "Detach a saved payment method."
     ),
     TemperaOperationSpec(
         product: "temperaDocument",
@@ -9654,6 +10123,9 @@ private let temperaOperationChunk8: [TemperaOperationSpec] = [
         safeRetry: "none",
         description: "Create a resumable upload resource."
     ),
+]
+
+private let temperaOperationChunk9: [TemperaOperationSpec] = [
     TemperaOperationSpec(
         product: "temperaDocument",
         id: "uploadsGet",
@@ -10122,9 +10594,6 @@ private let temperaOperationChunk8: [TemperaOperationSpec] = [
         safeRetry: "none",
         description: "Cancel a queued or running sandbox job (idempotent for already-cancelled jobs)."
     ),
-]
-
-private let temperaOperationChunk9: [TemperaOperationSpec] = [
     TemperaOperationSpec(
         product: "cradle",
         id: "getJob",
@@ -10697,6 +11166,9 @@ private let temperaOperationChunk9: [TemperaOperationSpec] = [
         safeRetry: "read",
         description: "List a project's data campaigns with pagination."
     ),
+]
+
+private let temperaOperationChunk10: [TemperaOperationSpec] = [
     TemperaOperationSpec(
         product: "dataEngine",
         id: "transitionCampaign",
@@ -11165,9 +11637,6 @@ private let temperaOperationChunk9: [TemperaOperationSpec] = [
         safeRetry: "read",
         description: "List a project's artifacts with cursor pagination, expanded to the requested view (BASIC or FULL)."
     ),
-]
-
-private let temperaOperationChunk10: [TemperaOperationSpec] = [
     TemperaOperationSpec(
         product: "dataEngine",
         id: "getArtifact",
@@ -11740,6 +12209,9 @@ private let temperaOperationChunk10: [TemperaOperationSpec] = [
         safeRetry: "none",
         description: "Extract bounded objects or records from a configured source connector."
     ),
+]
+
+private let temperaOperationChunk11: [TemperaOperationSpec] = [
     TemperaOperationSpec(
         product: "dataEngine",
         id: "listConnectors",
@@ -12208,9 +12680,6 @@ private let temperaOperationChunk10: [TemperaOperationSpec] = [
         safeRetry: "read",
         description: "Fetch one immutable executable research catalog entry by content hash."
     ),
-]
-
-private let temperaOperationChunk11: [TemperaOperationSpec] = [
     TemperaOperationSpec(
         product: "humanData",
         id: "getHumanDataHealth",
@@ -12783,6 +13252,9 @@ private let temperaOperationChunk11: [TemperaOperationSpec] = [
         safeRetry: "read",
         description: "List Eval Profiles."
     ),
+]
+
+private let temperaOperationChunk12: [TemperaOperationSpec] = [
     TemperaOperationSpec(
         product: "temperaVoice",
         id: "sealVoiceEvalResult",
@@ -13251,9 +13723,6 @@ private let temperaOperationChunk11: [TemperaOperationSpec] = [
         safeRetry: "none",
         description: "Create Order."
     ),
-]
-
-private let temperaOperationChunk12: [TemperaOperationSpec] = [
     TemperaOperationSpec(
         product: "temperaDropshipping",
         id: "listInbox",
@@ -13826,6 +14295,9 @@ private let temperaOperationChunk12: [TemperaOperationSpec] = [
         safeRetry: "read",
         description: "Get Case."
     ),
+]
+
+private let temperaOperationChunk13: [TemperaOperationSpec] = [
     TemperaOperationSpec(
         product: "temperaBusiness",
         id: "businessCasesUpdateIntake",
@@ -14294,9 +14766,6 @@ private let temperaOperationChunk12: [TemperaOperationSpec] = [
         safeRetry: "none",
         description: "Normalize a caller-supplied OpenAPI 3 document into a draft connection."
     ),
-]
-
-private let temperaOperationChunk13: [TemperaOperationSpec] = [
     TemperaOperationSpec(
         product: "temperaConnectors",
         id: "connectorsList",
@@ -14869,6 +15338,9 @@ private let temperaOperationChunk13: [TemperaOperationSpec] = [
         safeRetry: "read",
         description: "Get agentic run."
     ),
+]
+
+private let temperaOperationChunk14: [TemperaOperationSpec] = [
     TemperaOperationSpec(
         product: "temperaInvestigations",
         id: "getInvestigationDossier",

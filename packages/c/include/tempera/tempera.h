@@ -51,7 +51,7 @@ extern "C" {
 #endif
 
 /* Package version; identical across every Tempera SDK language package. */
-#define TEMPERA_SDK_VERSION "0.12.0"
+#define TEMPERA_SDK_VERSION "0.13.0"
 
 /* MCP protocol revision sent in initialize requests. */
 #define TEMPERA_MCP_PROTOCOL_VERSION "2025-06-18"

@@ -598,7 +598,7 @@ public val TemperaClient.temperaClearing: TemperaProductClient
 // capped at 64 KiB of bytecode and every class at 65535 constant-pool
 // entries, and one 489-element initializer would risk both.
 private fun buildOperations(): List<TemperaOperationSpec> {
-    val all = ArrayList<TemperaOperationSpec>(553)
+    val all = ArrayList<TemperaOperationSpec>(571)
     all.addAll(TemperaOperationChunk0.items)
     all.addAll(TemperaOperationChunk1.items)
     all.addAll(TemperaOperationChunk2.items)
@@ -8969,7 +8969,7 @@ private object TemperaOperationChunk12 {
             requiredQuery = emptyList(),
             headers = listOf("Idempotency-Key"),
             requiredHeaders = listOf("Idempotency-Key"),
-            body = listOf("tenantId", "merchantId", "riskSubjectId", "recipient", "asset", "amount", "expiresInSeconds"),
+            body = listOf("tenantId", "merchantId", "riskSubjectId", "recipient", "asset", "amount", "expiresInSeconds", "reference", "customerId"),
             forbiddenBody = emptyList(),
             requiredBody = listOf("tenantId", "merchantId", "riskSubjectId", "recipient", "asset", "amount", "expiresInSeconds"),
             bodyDefaults = emptyList(),
@@ -8980,6 +8980,32 @@ private object TemperaOperationChunk12 {
             prepareCommitRequired = false,
             safeRetry = "none",
             description = "Create a canonical payment intent.",
+        ),
+        TemperaOperationSpec(
+            product = "temperaPayments",
+            id = "listPaymentIntents",
+            upstreamOperationId = "listPaymentIntents",
+            method = "GET",
+            path = "/v1/paymentIntents",
+            auth = "oauthResource",
+            authAudience = "tempera-payments",
+            pathParams = emptyList(),
+            pathParamTemplates = emptyList(),
+            query = listOf("tenantId", "referenceKind", "referenceId", "referenceConsumer", "status", "createdAfter", "createdBefore", "pageSize", "pageToken"),
+            requiredQuery = listOf("tenantId"),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = emptyList(),
+            forbiddenBody = emptyList(),
+            requiredBody = emptyList(),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "none",
+            requestContentType = null,
+            scope = "payments:intents:read",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "read",
+            description = "List a tenant's payment intents by consumer reference, status, or creation window.",
         ),
         TemperaOperationSpec(
             product = "temperaPayments",
@@ -9111,6 +9137,11 @@ private object TemperaOperationChunk12 {
             safeRetry = "read",
             description = "Recover the centrally authenticated workspace and optional merchant.",
         ),
+    )
+}
+
+private object TemperaOperationChunk13 {
+    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaPayments",
             id = "getWorkspaceMerchant",
@@ -9137,11 +9168,6 @@ private object TemperaOperationChunk12 {
             safeRetry = "read",
             description = "Read the merchant onboarding projection for one workspace.",
         ),
-    )
-}
-
-private object TemperaOperationChunk13 {
-    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaPayments",
             id = "createMerchant",
@@ -9273,6 +9299,448 @@ private object TemperaOperationChunk13 {
             description = "Verify and durably deduplicate a Stripe webhook using its raw body.",
         ),
         TemperaOperationSpec(
+            product = "temperaPayments",
+            id = "createRefund",
+            upstreamOperationId = "createRefund",
+            method = "POST",
+            path = "/v1/paymentIntents/{paymentIntentId}/refunds",
+            auth = "oauthResource",
+            authAudience = "tempera-payments",
+            pathParams = listOf("paymentIntentId"),
+            pathParamTemplates = emptyList(),
+            query = emptyList(),
+            requiredQuery = emptyList(),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = listOf("tenantId", "idempotencyKey", "amount", "reason", "metadata"),
+            forbiddenBody = emptyList(),
+            requiredBody = listOf("tenantId", "idempotencyKey"),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "json",
+            requestContentType = "application/json",
+            scope = "payments:refunds:write",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "idempotent",
+            description = "Refund a settled payment intent.",
+        ),
+        TemperaOperationSpec(
+            product = "temperaPayments",
+            id = "listRefunds",
+            upstreamOperationId = "listRefunds",
+            method = "GET",
+            path = "/v1/paymentIntents/{paymentIntentId}/refunds",
+            auth = "oauthResource",
+            authAudience = "tempera-payments",
+            pathParams = listOf("paymentIntentId"),
+            pathParamTemplates = emptyList(),
+            query = listOf("tenantId", "pageSize", "pageToken"),
+            requiredQuery = listOf("tenantId"),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = emptyList(),
+            forbiddenBody = emptyList(),
+            requiredBody = emptyList(),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "none",
+            requestContentType = null,
+            scope = "payments:refunds:read",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "read",
+            description = "List the refunds of one payment intent.",
+        ),
+        TemperaOperationSpec(
+            product = "temperaPayments",
+            id = "getRefund",
+            upstreamOperationId = "getRefund",
+            method = "GET",
+            path = "/v1/paymentIntents/{paymentIntentId}/refunds/{refundId}",
+            auth = "oauthResource",
+            authAudience = "tempera-payments",
+            pathParams = listOf("paymentIntentId", "refundId"),
+            pathParamTemplates = emptyList(),
+            query = listOf("tenantId"),
+            requiredQuery = listOf("tenantId"),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = emptyList(),
+            forbiddenBody = emptyList(),
+            requiredBody = emptyList(),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "none",
+            requestContentType = null,
+            scope = "payments:refunds:read",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "read",
+            description = "Read one refund.",
+        ),
+        TemperaOperationSpec(
+            product = "temperaPayments",
+            id = "createPayPalCheckout",
+            upstreamOperationId = "createPayPalCheckout",
+            method = "POST",
+            path = "/v1/paymentIntents/{paymentIntentId}/paypalCheckout",
+            auth = "oauthResource",
+            authAudience = "tempera-payments",
+            pathParams = listOf("paymentIntentId"),
+            pathParamTemplates = emptyList(),
+            query = emptyList(),
+            requiredQuery = emptyList(),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = listOf("tenantId", "returnUrl", "cancelUrl", "idempotencyKey"),
+            forbiddenBody = emptyList(),
+            requiredBody = listOf("tenantId", "returnUrl", "cancelUrl", "idempotencyKey"),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "json",
+            requestContentType = "application/json",
+            scope = "payments:intents:write",
+            physicalAction = true,
+            prepareCommitRequired = false,
+            safeRetry = "idempotent",
+            description = "Create an idempotent hosted PayPal order for a fiat payment intent.",
+        ),
+        TemperaOperationSpec(
+            product = "temperaPayments",
+            id = "receivePayPalWebhook",
+            upstreamOperationId = "receivePayPalWebhook",
+            method = "POST",
+            path = "/v1/webhooks/paypal/callback",
+            auth = "none",
+            authAudience = null,
+            pathParams = emptyList(),
+            pathParamTemplates = emptyList(),
+            query = emptyList(),
+            requiredQuery = emptyList(),
+            headers = listOf("PayPal-Transmission-Id", "PayPal-Transmission-Time", "PayPal-Transmission-Sig", "PayPal-Cert-Url", "PayPal-Auth-Algo"),
+            requiredHeaders = listOf("PayPal-Transmission-Id", "PayPal-Transmission-Time", "PayPal-Transmission-Sig", "PayPal-Cert-Url", "PayPal-Auth-Algo"),
+            body = emptyList(),
+            forbiddenBody = emptyList(),
+            requiredBody = emptyList(),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "json",
+            requestContentType = "application/json",
+            scope = null,
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "none",
+            description = "Verify and durably deduplicate a PayPal webhook using its raw body.",
+        ),
+        TemperaOperationSpec(
+            product = "temperaPayments",
+            id = "createWebhookEndpoint",
+            upstreamOperationId = "createWebhookEndpoint",
+            method = "POST",
+            path = "/v1/webhookEndpoints",
+            auth = "oauthResource",
+            authAudience = "tempera-payments",
+            pathParams = emptyList(),
+            pathParamTemplates = emptyList(),
+            query = emptyList(),
+            requiredQuery = emptyList(),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = listOf("tenantId", "url", "eventTypes", "description"),
+            forbiddenBody = emptyList(),
+            requiredBody = listOf("tenantId", "url", "eventTypes"),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "json",
+            requestContentType = "application/json",
+            scope = "payments:webhooks:write",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "none",
+            description = "Register a destination for signed payment events.",
+        ),
+        TemperaOperationSpec(
+            product = "temperaPayments",
+            id = "listWebhookEndpoints",
+            upstreamOperationId = "listWebhookEndpoints",
+            method = "GET",
+            path = "/v1/webhookEndpoints",
+            auth = "oauthResource",
+            authAudience = "tempera-payments",
+            pathParams = emptyList(),
+            pathParamTemplates = emptyList(),
+            query = listOf("tenantId", "pageSize", "pageToken"),
+            requiredQuery = listOf("tenantId"),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = emptyList(),
+            forbiddenBody = emptyList(),
+            requiredBody = emptyList(),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "none",
+            requestContentType = null,
+            scope = "payments:webhooks:read",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "read",
+            description = "List the webhook endpoints of one workspace.",
+        ),
+        TemperaOperationSpec(
+            product = "temperaPayments",
+            id = "getWebhookEndpoint",
+            upstreamOperationId = "getWebhookEndpoint",
+            method = "GET",
+            path = "/v1/webhookEndpoints/{webhookEndpointId}",
+            auth = "oauthResource",
+            authAudience = "tempera-payments",
+            pathParams = listOf("webhookEndpointId"),
+            pathParamTemplates = emptyList(),
+            query = listOf("tenantId"),
+            requiredQuery = listOf("tenantId"),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = emptyList(),
+            forbiddenBody = emptyList(),
+            requiredBody = emptyList(),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "none",
+            requestContentType = null,
+            scope = "payments:webhooks:read",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "read",
+            description = "Read one webhook endpoint.",
+        ),
+        TemperaOperationSpec(
+            product = "temperaPayments",
+            id = "deleteWebhookEndpoint",
+            upstreamOperationId = "deleteWebhookEndpoint",
+            method = "DELETE",
+            path = "/v1/webhookEndpoints/{webhookEndpointId}",
+            auth = "oauthResource",
+            authAudience = "tempera-payments",
+            pathParams = listOf("webhookEndpointId"),
+            pathParamTemplates = emptyList(),
+            query = listOf("tenantId"),
+            requiredQuery = listOf("tenantId"),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = emptyList(),
+            forbiddenBody = emptyList(),
+            requiredBody = emptyList(),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "none",
+            requestContentType = null,
+            scope = "payments:webhooks:write",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "none",
+            description = "Stop delivering to a webhook endpoint.",
+        ),
+        TemperaOperationSpec(
+            product = "temperaPayments",
+            id = "listWebhookDeliveries",
+            upstreamOperationId = "listWebhookDeliveries",
+            method = "GET",
+            path = "/v1/webhookEndpoints/{webhookEndpointId}/deliveries",
+            auth = "oauthResource",
+            authAudience = "tempera-payments",
+            pathParams = listOf("webhookEndpointId"),
+            pathParamTemplates = emptyList(),
+            query = listOf("tenantId", "pageSize", "pageToken"),
+            requiredQuery = listOf("tenantId"),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = emptyList(),
+            forbiddenBody = emptyList(),
+            requiredBody = emptyList(),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "none",
+            requestContentType = null,
+            scope = "payments:webhooks:read",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "read",
+            description = "List delivery attempts for one webhook endpoint.",
+        ),
+        TemperaOperationSpec(
+            product = "temperaPayments",
+            id = "createPaymentMethodCharge",
+            upstreamOperationId = "createPaymentMethodCharge",
+            method = "POST",
+            path = "/v1/paymentIntents/{paymentIntentId}/paymentMethodCharges",
+            auth = "oauthResource",
+            authAudience = "tempera-payments",
+            pathParams = listOf("paymentIntentId"),
+            pathParamTemplates = emptyList(),
+            query = emptyList(),
+            requiredQuery = emptyList(),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = listOf("tenantId", "paymentMethodId", "idempotencyKey", "offSession"),
+            forbiddenBody = emptyList(),
+            requiredBody = listOf("tenantId", "paymentMethodId", "idempotencyKey"),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "json",
+            requestContentType = "application/json",
+            scope = "payments:intents:write",
+            physicalAction = true,
+            prepareCommitRequired = false,
+            safeRetry = "idempotent",
+            description = "Charge a saved payment method off-session for an authorized payment intent.",
+        ),
+        TemperaOperationSpec(
+            product = "temperaPayments",
+            id = "createCustomer",
+            upstreamOperationId = "createCustomer",
+            method = "POST",
+            path = "/v1/customers",
+            auth = "oauthResource",
+            authAudience = "tempera-payments",
+            pathParams = emptyList(),
+            pathParamTemplates = emptyList(),
+            query = emptyList(),
+            requiredQuery = emptyList(),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = listOf("tenantId", "externalId", "email", "name", "metadata"),
+            forbiddenBody = emptyList(),
+            requiredBody = listOf("tenantId"),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "json",
+            requestContentType = "application/json",
+            scope = "payments:customers:write",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "none",
+            description = "Create a customer for one workspace.",
+        ),
+        TemperaOperationSpec(
+            product = "temperaPayments",
+            id = "listCustomers",
+            upstreamOperationId = "listCustomers",
+            method = "GET",
+            path = "/v1/customers",
+            auth = "oauthResource",
+            authAudience = "tempera-payments",
+            pathParams = emptyList(),
+            pathParamTemplates = emptyList(),
+            query = listOf("tenantId", "externalId", "email", "pageSize", "pageToken"),
+            requiredQuery = listOf("tenantId"),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = emptyList(),
+            forbiddenBody = emptyList(),
+            requiredBody = emptyList(),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "none",
+            requestContentType = null,
+            scope = "payments:customers:read",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "read",
+            description = "List customers of one workspace by an exact externalId or email.",
+        ),
+        TemperaOperationSpec(
+            product = "temperaPayments",
+            id = "getCustomer",
+            upstreamOperationId = "getCustomer",
+            method = "GET",
+            path = "/v1/customers/{customerId}",
+            auth = "oauthResource",
+            authAudience = "tempera-payments",
+            pathParams = listOf("customerId"),
+            pathParamTemplates = emptyList(),
+            query = listOf("tenantId"),
+            requiredQuery = listOf("tenantId"),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = emptyList(),
+            forbiddenBody = emptyList(),
+            requiredBody = emptyList(),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "none",
+            requestContentType = null,
+            scope = "payments:customers:read",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "read",
+            description = "Read one customer.",
+        ),
+        TemperaOperationSpec(
+            product = "temperaPayments",
+            id = "createSetupSession",
+            upstreamOperationId = "createSetupSession",
+            method = "POST",
+            path = "/v1/customers/{customerId}/setupSessions",
+            auth = "oauthResource",
+            authAudience = "tempera-payments",
+            pathParams = listOf("customerId"),
+            pathParamTemplates = emptyList(),
+            query = emptyList(),
+            requiredQuery = emptyList(),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = listOf("tenantId", "successUrl", "cancelUrl", "idempotencyKey"),
+            forbiddenBody = emptyList(),
+            requiredBody = listOf("tenantId", "successUrl", "cancelUrl", "idempotencyKey"),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "json",
+            requestContentType = "application/json",
+            scope = "payments:customers:write",
+            physicalAction = true,
+            prepareCommitRequired = false,
+            safeRetry = "idempotent",
+            description = "Create a provider-hosted session that saves a card for this customer.",
+        ),
+        TemperaOperationSpec(
+            product = "temperaPayments",
+            id = "listPaymentMethods",
+            upstreamOperationId = "listPaymentMethods",
+            method = "GET",
+            path = "/v1/customers/{customerId}/paymentMethods",
+            auth = "oauthResource",
+            authAudience = "tempera-payments",
+            pathParams = listOf("customerId"),
+            pathParamTemplates = emptyList(),
+            query = listOf("tenantId", "pageSize", "pageToken"),
+            requiredQuery = listOf("tenantId"),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = emptyList(),
+            forbiddenBody = emptyList(),
+            requiredBody = emptyList(),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "none",
+            requestContentType = null,
+            scope = "payments:customers:read",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "read",
+            description = "List the payment methods saved for one customer.",
+        ),
+        TemperaOperationSpec(
+            product = "temperaPayments",
+            id = "deletePaymentMethod",
+            upstreamOperationId = "deletePaymentMethod",
+            method = "DELETE",
+            path = "/v1/customers/{customerId}/paymentMethods/{paymentMethodId}",
+            auth = "oauthResource",
+            authAudience = "tempera-payments",
+            pathParams = listOf("customerId", "paymentMethodId"),
+            pathParamTemplates = emptyList(),
+            query = listOf("tenantId"),
+            requiredQuery = listOf("tenantId"),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = emptyList(),
+            forbiddenBody = emptyList(),
+            requiredBody = emptyList(),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "none",
+            requestContentType = null,
+            scope = "payments:customers:write",
+            physicalAction = true,
+            prepareCommitRequired = false,
+            safeRetry = "none",
+            description = "Detach a saved payment method.",
+        ),
+        TemperaOperationSpec(
             product = "temperaDocument",
             id = "healthGet",
             upstreamOperationId = "health.get",
@@ -9324,6 +9792,11 @@ private object TemperaOperationChunk13 {
             safeRetry = "none",
             description = "Create an immutable document version from a completed upload.",
         ),
+    )
+}
+
+private object TemperaOperationChunk14 {
+    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaDocument",
             id = "documentsGet",
@@ -9792,11 +10265,6 @@ private object TemperaOperationChunk13 {
             safeRetry = "none",
             description = "Call POST /v1/browser/adapter/launch/plan.",
         ),
-    )
-}
-
-private object TemperaOperationChunk14 {
-    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "cradle",
             id = "projectsBrowserAdaptersRegister",
@@ -9979,6 +10447,11 @@ private object TemperaOperationChunk14 {
             safeRetry = "read",
             description = "Check sandbox-daemon liveness; returns status, version, and uptime.",
         ),
+    )
+}
+
+private object TemperaOperationChunk15 {
+    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "cradle",
             id = "getIntegrationContract",
@@ -10447,11 +10920,6 @@ private object TemperaOperationChunk14 {
             safeRetry = "read",
             description = "Check data-engine liveness; returns the service status.",
         ),
-    )
-}
-
-private object TemperaOperationChunk15 {
-    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "dataEngine",
             id = "listUseCases",
@@ -10634,6 +11102,11 @@ private object TemperaOperationChunk15 {
             safeRetry = "read",
             description = "List a project's data campaigns with pagination.",
         ),
+    )
+}
+
+private object TemperaOperationChunk16 {
+    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "dataEngine",
             id = "transitionCampaign",
@@ -11102,11 +11575,6 @@ private object TemperaOperationChunk15 {
             safeRetry = "read",
             description = "List a project's artifacts with cursor pagination, expanded to the requested view (BASIC or FULL).",
         ),
-    )
-}
-
-private object TemperaOperationChunk16 {
-    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "dataEngine",
             id = "getArtifact",
@@ -11289,6 +11757,11 @@ private object TemperaOperationChunk16 {
             safeRetry = "read",
             description = "Fetch one emitted product bundle with its status and manifest URL.",
         ),
+    )
+}
+
+private object TemperaOperationChunk17 {
+    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "dataEngine",
             id = "validateProduct",
@@ -11757,11 +12230,6 @@ private object TemperaOperationChunk16 {
             safeRetry = "read",
             description = "List stored custom tools and their usage statistics.",
         ),
-    )
-}
-
-private object TemperaOperationChunk17 {
-    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "dataEngine",
             id = "getTool",
@@ -11944,6 +12412,11 @@ private object TemperaOperationChunk17 {
             safeRetry = "read",
             description = "List immutable shared evidence records with bounded cursor pagination.",
         ),
+    )
+}
+
+private object TemperaOperationChunk18 {
+    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "dataEngine",
             id = "getEvidenceRecord",
@@ -12412,11 +12885,6 @@ private object TemperaOperationChunk17 {
             safeRetry = "read",
             description = "Get Agent.",
         ),
-    )
-}
-
-private object TemperaOperationChunk18 {
-    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaVoice",
             id = "createVoiceSession",
@@ -12599,6 +13067,11 @@ private object TemperaOperationChunk18 {
             safeRetry = "none",
             description = "Resolve Action.",
         ),
+    )
+}
+
+private object TemperaOperationChunk19 {
+    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaVoice",
             id = "endVoiceSession",
@@ -13067,11 +13540,6 @@ private object TemperaOperationChunk18 {
             safeRetry = "read",
             description = "List Sale Orders.",
         ),
-    )
-}
-
-private object TemperaOperationChunk19 {
-    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaDropshipping",
             id = "getSaleOrder",
@@ -13254,6 +13722,11 @@ private object TemperaOperationChunk19 {
             safeRetry = "read",
             description = "Operating Summary.",
         ),
+    )
+}
+
+private object TemperaOperationChunk20 {
+    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaDropshipping",
             id = "getOrder",
@@ -13722,11 +14195,6 @@ private object TemperaOperationChunk19 {
             safeRetry = "idempotent",
             description = "Create.",
         ),
-    )
-}
-
-private object TemperaOperationChunk20 {
-    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaBusiness",
             id = "businessCasesList",
@@ -13909,6 +14377,11 @@ private object TemperaOperationChunk20 {
             safeRetry = "read",
             description = "Audit.",
         ),
+    )
+}
+
+private object TemperaOperationChunk21 {
+    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaBusiness",
             id = "businessProfileGet",
@@ -14377,11 +14850,6 @@ private object TemperaOperationChunk20 {
             safeRetry = "none",
             description = "Update investigation profile.",
         ),
-    )
-}
-
-private object TemperaOperationChunk21 {
-    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaInvestigations",
             id = "deleteInvestigationProfile",
@@ -14564,6 +15032,11 @@ private object TemperaOperationChunk21 {
             safeRetry = "none",
             description = "Run hybrid investigation.",
         ),
+    )
+}
+
+private object TemperaOperationChunk22 {
+    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaInvestigations",
             id = "cancelInvestigation",
@@ -15032,11 +15505,6 @@ private object TemperaOperationChunk21 {
             safeRetry = "idempotent",
             description = "Bind exact authority and Risk evidence to a prior prepared effect.",
         ),
-    )
-}
-
-private object TemperaOperationChunk22 {
-    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaClearing",
             id = "getClearingAction",

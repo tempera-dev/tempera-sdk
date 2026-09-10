@@ -117,7 +117,7 @@ class SurfaceConformanceTest {
         assertFalse(TemperaSurface.audiences.isEmpty())
         assertTrue(TemperaSurface.audiences.contains(TemperaSurface.defaultAudience))
         assertEquals(TemperaSurface.version, TemperaSdk.SURFACE_VERSION)
-        assertEquals("0.12.0", TemperaSdk.VERSION)
+        assertEquals("0.13.0", TemperaSdk.VERSION)
 
         for (op in TemperaSurface.operations) {
             assertNotNull(TemperaSurface.findProduct(op.product), op.product + " is registered")
