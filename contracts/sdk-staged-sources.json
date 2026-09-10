@@ -6,10 +6,10 @@
       "generated_path": "specs/tempera-payments.openapi.json",
       "source_repo": "tempera-dev/tempera-payments",
       "source_branch": "codex/billing-engine-consolidation",
-      "source_commit": "fa57d4b57222c938eeda7aa9401dfdc2929373bb",
-      "published_digest": "a0aeadc8e0c78a0ceae89f1b116135b93b9a84adf4708236ad4c98c16d77a13e",
+      "source_commit": "1b9b869b12d56326deaa7619e71f5c4358bc2bce",
+      "published_digest": "34ae4e84409f33f633373b22c95de5920152cb70ad72a74bda8161f08c2f87ec",
       "owner": "jadenfix",
-      "rationale": "tempera-payments#47 (branch codex/billing-engine-consolidation) consolidates billing onto Payments and grows the producer contract from 13 to 46 operations and from 5 to 14 scopes. The SDK stages that exact commit now so every generated client carries the refunds, webhook-endpoint, customer, saved-payment-method, PayPal, Coinbase, dispute, subscription and merchant-payout operations while the producer PR is in review. The pin asserts provenance only: fa57d4b57222c938eeda7aa9401dfdc2929373bb is not merged, released, or deployed.",
+      "rationale": "tempera-payments#47 (branch codex/billing-engine-consolidation) consolidates billing onto Payments and grows the producer contract from 13 to 47 operations and from 5 to 14 scopes. The SDK stages that exact commit now so every generated client carries the refunds, webhook-endpoint, customer, saved-payment-method, PayPal, Coinbase, dispute, subscription and merchant-payout operations, plus the `/readyz` readiness probe, while the producer PR is in review. The pin asserts provenance only: 1b9b869b12d56326deaa7619e71f5c4358bc2bce is not merged, released, or deployed.",
       "migration": "retire this pin and re-vendor at the main SHA when #47 merges",
       "review_after": "2026-10-09"
     }

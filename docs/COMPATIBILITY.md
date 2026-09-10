@@ -6,14 +6,14 @@
 - Compatibility class: additive endpoints; package `0.13.0`, surface version
   `6`. No existing Payments operation changed id, method, path, auth kind, or
   scope.
-- Producer: `tempera-dev/tempera-payments@fa57d4b57222c938eeda7aa9401dfdc2929373bb`
+- Producer: `tempera-dev/tempera-payments@1b9b869b12d56326deaa7619e71f5c4358bc2bce`
   on branch `codex/billing-engine-consolidation`. **This is a staged, non-main
   lock**: the commit is pushed and under review as tempera-payments#47, it is
   not merged, released, or deployed. The pin is admitted by
   `contracts/sdk-staged-sources.json`, expires 2026-10-09, and is qualified by
   `python3 scripts/check-sdk-surface.py --staged-local`. The default release
   gate still refuses it, which is the intended behaviour until #47 merges.
-- Added: 33 operations, taking Payments from 13 to 46 in every generated
+- Added: 34 operations, taking Payments from 13 to 47 in every generated
   client. Payment intents, PayPal, refunds, webhook endpoints, customers and
   saved payment methods — `listPaymentIntents`, `createPaymentMethodCharge`,
   `createPayPalCheckout`, `receivePayPalWebhook`, `createRefund`,
@@ -27,12 +27,20 @@
   `createSubscription`, `listSubscriptions`, `getSubscription`,
   `cancelSubscription`, `pauseSubscription`, `resumeSubscription`,
   `listSubscriptionPeriods`, `getMerchantBalance`, `listMerchantPayouts`,
-  `receiveStripeConnectWebhook`.
-- Shape of the surface: 46 operations over 14 scopes. Five operations declare
-  no scope — `getPaymentsHealth` and the four provider callback routes
-  (`receiveStripeWebhook`, `receivePayPalWebhook`, `receiveCoinbaseWebhook`,
-  `receiveStripeConnectWebhook`), which are authenticated by provider webhook
-  signature rather than by an OAuth grant.
+  `receiveStripeConnectWebhook`. And the readiness probe —
+  `getPaymentsReadiness` (`GET /readyz`), which reports durable-storage
+  reachability and, as booleans only, which settlement rails and which signer
+  the process was started with.
+- Shape of the surface: 47 operations over 14 scopes. Six operations declare
+  no scope — `getPaymentsHealth`, `getPaymentsReadiness`, and the four
+  provider callback routes (`receiveStripeWebhook`, `receivePayPalWebhook`,
+  `receiveCoinbaseWebhook`, `receiveStripeConnectWebhook`), which are
+  authenticated by provider webhook signature rather than by an OAuth grant.
+  All six are declared in the producer's `x-tempera-protocol-routes`, which
+  exempts them from the AIP path and error rules but does not exclude them
+  from generation: they are real routes a caller invokes, so the SDK types
+  them, exactly as `getPaymentsHealth` and the callbacks were typed at the
+  previously staged commit.
 - Scope gaps: `payments:refunds:read`, `payments:webhooks:read`,
   `payments:customers:read`, `payments:customers:write`,
   `payments:disputes:read`, `payments:subscriptions:read`, and

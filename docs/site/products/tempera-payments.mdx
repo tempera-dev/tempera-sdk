@@ -21,7 +21,7 @@ Provider-neutral fiat checkout and blockchain settlement platform with source-lo
 | Audience | `tempera-payments` |
 | Auth | bearer minted for audience tempera-payments with the operation's payments scope, or a central tp_ API key |
 | Client | TypeScript `client.temperaPayments` · Python `client.tempera_payments` · Rust `build_request("tempera_payments", ...)` |
-| Typed operations | 46 |
+| Typed operations | 47 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.temperaPayments.request(path, options)` (TypeScript) /
@@ -51,6 +51,34 @@ result = client.tempera_payments.get_payments_health()
 
 ```rust Rust
 let spec = client.build_request("tempera_payments", "get_payments_health", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getPaymentsReadiness
+
+`GET /readyz`
+
+Report durable-storage readiness and which rails this process is configured for.
+
+- **Producer operationId:** `getPaymentsReadiness`
+- **Auth:** None (public endpoint).
+- **Call as:** TypeScript `client.temperaPayments.getPaymentsReadiness()` · Python `client.tempera_payments.get_payments_readiness()` · Rust `build_request("tempera_payments", "get_payments_readiness", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.temperaPayments.getPaymentsReadiness();
+```
+
+```python Python
+result = client.tempera_payments.get_payments_readiness()
+```
+
+```rust Rust
+let spec = client.build_request("tempera_payments", "get_payments_readiness", &[])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```

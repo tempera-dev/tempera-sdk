@@ -44,7 +44,7 @@ availability, a live hosted service, or an undocumented endpoint.
 | `controlPlane` | [auth-hub](https://github.com/tempera-dev/auth-hub) | 123 | — |
 | `dataEngine` | [data-engine](https://github.com/tempera-dev/data-engine) | 66 | `data-engine` |
 | `palette` | [palette](https://github.com/tempera-dev/palette) | 61 | `palette` |
-| `temperaPayments` | [tempera-payments](https://github.com/tempera-dev/tempera-payments) | 46 | `tempera-payments` |
+| `temperaPayments` | [tempera-payments](https://github.com/tempera-dev/tempera-payments) | 47 | `tempera-payments` |
 | `temperaRisk` | [tempera-risk](https://github.com/tempera-dev/tempera-risk) | 44 | `tempera-risk` |
 | `temperaDropshipping` | [tempera-dropshipping](https://github.com/tempera-dev/tempera-dropshipping) | 31 | `tempera-dropshipping` |
 | `tempo` | [tempo](https://github.com/tempera-dev/tempo) | 27 | `tempo` |

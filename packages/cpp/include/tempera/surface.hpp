@@ -858,7 +858,7 @@ inline constexpr StrPair kPairs0[] = {StrPair{"parent", "projects/*"}};
 }  // namespace detail
 
 /// Every operation of every product, flat, carrying its product key.
-inline constexpr std::array<OperationSpec, 586> OPERATIONS{{
+inline constexpr std::array<OperationSpec, 587> OPERATIONS{{
     OperationSpec{
         .product = "control_plane",
         .id = "health",
@@ -9126,6 +9126,32 @@ inline constexpr std::array<OperationSpec, 586> OPERATIONS{{
         .prepare_commit_required = false,
         .safe_retry = "read",
         .description = "Report that the process is reachable.",
+    },
+    OperationSpec{
+        .product = "tempera_payments",
+        .id = "get_payments_readiness",
+        .upstream_operation_id = "getPaymentsReadiness",
+        .method = "GET",
+        .path = "/readyz",
+        .auth = "none",
+        .auth_audience = std::nullopt,
+        .path_params = {},
+        .path_param_templates = {},
+        .query = {},
+        .required_query = {},
+        .headers = {},
+        .required_headers = {},
+        .body = {},
+        .forbidden_body = {},
+        .required_body = {},
+        .body_defaults = {},
+        .request_body_kind = "none",
+        .request_content_type = std::nullopt,
+        .scope = std::nullopt,
+        .physical_action = false,
+        .prepare_commit_required = false,
+        .safe_retry = "read",
+        .description = "Report durable-storage readiness and which rails this process is configured for.",
     },
     OperationSpec{
         .product = "tempera_payments",

@@ -9030,6 +9030,32 @@ private let temperaOperationChunk7: [TemperaOperationSpec] = [
     ),
     TemperaOperationSpec(
         product: "temperaPayments",
+        id: "getPaymentsReadiness",
+        upstreamOperationId: "getPaymentsReadiness",
+        method: "GET",
+        path: "/readyz",
+        auth: "none",
+        authAudience: nil,
+        pathParams: [],
+        pathParamTemplates: [],
+        query: [],
+        requiredQuery: [],
+        headers: [],
+        requiredHeaders: [],
+        body: [],
+        forbiddenBody: [],
+        requiredBody: [],
+        bodyDefaults: [],
+        requestBodyKind: "none",
+        requestContentType: nil,
+        scope: nil,
+        physicalAction: false,
+        prepareCommitRequired: false,
+        safeRetry: "read",
+        description: "Report durable-storage readiness and which rails this process is configured for."
+    ),
+    TemperaOperationSpec(
+        product: "temperaPayments",
         id: "createPaymentIntent",
         upstreamOperationId: "createPaymentIntent",
         method: "POST",
@@ -9054,6 +9080,9 @@ private let temperaOperationChunk7: [TemperaOperationSpec] = [
         safeRetry: "none",
         description: "Create a canonical payment intent."
     ),
+]
+
+private let temperaOperationChunk8: [TemperaOperationSpec] = [
     TemperaOperationSpec(
         product: "temperaPayments",
         id: "listPaymentIntents",
@@ -9080,9 +9109,6 @@ private let temperaOperationChunk7: [TemperaOperationSpec] = [
         safeRetry: "read",
         description: "List a tenant's payment intents by consumer reference, status, or creation window."
     ),
-]
-
-private let temperaOperationChunk8: [TemperaOperationSpec] = [
     TemperaOperationSpec(
         product: "temperaPayments",
         id: "getPaymentIntent",
@@ -10097,6 +10123,9 @@ private let temperaOperationChunk8: [TemperaOperationSpec] = [
         safeRetry: "none",
         description: "Resume a paused subscription."
     ),
+]
+
+private let temperaOperationChunk9: [TemperaOperationSpec] = [
     TemperaOperationSpec(
         product: "temperaPayments",
         id: "listSubscriptionPeriods",
@@ -10123,9 +10152,6 @@ private let temperaOperationChunk8: [TemperaOperationSpec] = [
         safeRetry: "read",
         description: "List the billing periods of one subscription."
     ),
-]
-
-private let temperaOperationChunk9: [TemperaOperationSpec] = [
     TemperaOperationSpec(
         product: "temperaPayments",
         id: "getMerchantBalance",
@@ -11140,6 +11166,9 @@ private let temperaOperationChunk9: [TemperaOperationSpec] = [
         safeRetry: "read",
         description: "Fetch deep store health: schema version, integrity checks, and graph consistency."
     ),
+]
+
+private let temperaOperationChunk10: [TemperaOperationSpec] = [
     TemperaOperationSpec(
         product: "remi",
         id: "getStats",
@@ -11166,9 +11195,6 @@ private let temperaOperationChunk9: [TemperaOperationSpec] = [
         safeRetry: "read",
         description: "Fetch memory-store statistics: ledger events, nodes, and token counts by kind."
     ),
-]
-
-private let temperaOperationChunk10: [TemperaOperationSpec] = [
     TemperaOperationSpec(
         product: "remi",
         id: "getMetrics",
@@ -12183,6 +12209,9 @@ private let temperaOperationChunk10: [TemperaOperationSpec] = [
         safeRetry: "read",
         description: "List the deterministic label results a job produced."
     ),
+]
+
+private let temperaOperationChunk11: [TemperaOperationSpec] = [
     TemperaOperationSpec(
         product: "dataEngine",
         id: "getProduct",
@@ -12209,9 +12238,6 @@ private let temperaOperationChunk10: [TemperaOperationSpec] = [
         safeRetry: "read",
         description: "Fetch one emitted product bundle with its status and manifest URL."
     ),
-]
-
-private let temperaOperationChunk11: [TemperaOperationSpec] = [
     TemperaOperationSpec(
         product: "dataEngine",
         id: "validateProduct",
@@ -13226,6 +13252,9 @@ private let temperaOperationChunk11: [TemperaOperationSpec] = [
         safeRetry: "read",
         description: "Capabilities."
     ),
+]
+
+private let temperaOperationChunk12: [TemperaOperationSpec] = [
     TemperaOperationSpec(
         product: "temperaVoice",
         id: "createVoiceAgent",
@@ -13252,9 +13281,6 @@ private let temperaOperationChunk11: [TemperaOperationSpec] = [
         safeRetry: "none",
         description: "Create Agent."
     ),
-]
-
-private let temperaOperationChunk12: [TemperaOperationSpec] = [
     TemperaOperationSpec(
         product: "temperaVoice",
         id: "listVoiceAgents",
@@ -14269,6 +14295,9 @@ private let temperaOperationChunk12: [TemperaOperationSpec] = [
         safeRetry: "none",
         description: "Prepare."
     ),
+]
+
+private let temperaOperationChunk13: [TemperaOperationSpec] = [
     TemperaOperationSpec(
         product: "temperaDropshipping",
         id: "getProposal",
@@ -14295,9 +14324,6 @@ private let temperaOperationChunk12: [TemperaOperationSpec] = [
         safeRetry: "read",
         description: "Get Proposal."
     ),
-]
-
-private let temperaOperationChunk13: [TemperaOperationSpec] = [
     TemperaOperationSpec(
         product: "temperaDropshipping",
         id: "approveProposal",
@@ -15312,6 +15338,9 @@ private let temperaOperationChunk13: [TemperaOperationSpec] = [
         safeRetry: "none",
         description: "Delete investigation profile."
     ),
+]
+
+private let temperaOperationChunk14: [TemperaOperationSpec] = [
     TemperaOperationSpec(
         product: "temperaInvestigations",
         id: "createInvestigation",
@@ -15338,9 +15367,6 @@ private let temperaOperationChunk13: [TemperaOperationSpec] = [
         safeRetry: "none",
         description: "Create investigation."
     ),
-]
-
-private let temperaOperationChunk14: [TemperaOperationSpec] = [
     TemperaOperationSpec(
         product: "temperaInvestigations",
         id: "listInvestigations",

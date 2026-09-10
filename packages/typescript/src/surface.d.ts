@@ -759,6 +759,8 @@ export interface TemperaBioClient extends TemperaProductClientBase {
 export interface TemperaPaymentsClient extends TemperaProductClientBase {
   /** Report that the process is reachable. */
   getPaymentsHealth(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Report durable-storage readiness and which rails this process is configured for. */
+  getPaymentsReadiness(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Create a canonical payment intent. */
   createPaymentIntent(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List a tenant's payment intents by consumer reference, status, or creation window. */

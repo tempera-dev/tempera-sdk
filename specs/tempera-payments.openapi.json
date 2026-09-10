@@ -13,6 +13,7 @@
   "security": [],
   "x-tempera-protocol-routes": [
     "/healthz",
+    "/readyz",
     "/v1/webhooks/stripe/callback",
     "/v1/webhooks/paypal/callback",
     "/v1/webhooks/coinbase/callback",
@@ -36,6 +37,29 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/readyz": {
+      "get": {
+        "operationId": "getPaymentsReadiness",
+        "summary": "Report durable-storage readiness and which rails this process is configured for",
+        "description": "The readiness probe. It performs a live round trip to durable storage and reports, as booleans only, which settlement rails and which signer this process was started with. It performs no authorization, reads no tenant state, and never returns a credential, a key, or a provider endpoint.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Durable storage is reachable and the configured posture is reported",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Readiness"
+                }
+              }
+            }
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -3516,6 +3540,92 @@
                 "description": "The server-assigned request identifier, mirrored from the x-request-id response header."
               }
             }
+          }
+        }
+      },
+      "Readiness": {
+        "type": "object",
+        "description": "Readiness posture for one payments process. Booleans only; never a credential, a key, or a provider endpoint.",
+        "required": [
+          "ok",
+          "storage",
+          "rails",
+          "receiptSigner",
+          "risk",
+          "merchantOnboarding"
+        ],
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "const": true
+          },
+          "storage": {
+            "type": "string",
+            "const": "reachable",
+            "description": "Present only after a live query against the payments database succeeded."
+          },
+          "sourceCommit": {
+            "type": "string",
+            "description": "The exact commit this image was built from, when the deployment supplied TEMPERA_SOURCE_COMMIT."
+          },
+          "deploymentEnvironment": {
+            "type": "string",
+            "description": "The declared deployment environment, e.g. production or staging."
+          },
+          "rails": {
+            "type": "object",
+            "description": "Which settlement rails this process can transact on. A rail is true only when every value it needs was present at startup.",
+            "required": [
+              "stripe",
+              "stripeWebhook",
+              "stripeConnectWebhook",
+              "paypal",
+              "coinbase",
+              "adyen",
+              "checkoutCom"
+            ],
+            "properties": {
+              "stripe": {
+                "type": "boolean",
+                "description": "A Stripe server key is configured."
+              },
+              "stripeWebhook": {
+                "type": "boolean",
+                "description": "At least one Stripe platform endpoint secret is configured."
+              },
+              "stripeConnectWebhook": {
+                "type": "boolean",
+                "description": "At least one Stripe Connect account endpoint secret is configured."
+              },
+              "paypal": {
+                "type": "boolean",
+                "description": "PayPal credentials and a webhook id are configured together."
+              },
+              "coinbase": {
+                "type": "boolean",
+                "description": "Coinbase Commerce credentials and a webhook secret are configured together."
+              },
+              "adyen": {
+                "type": "boolean",
+                "description": "An Adyen acquirer is configured."
+              },
+              "checkoutCom": {
+                "type": "boolean",
+                "description": "A Checkout.com acquirer is configured."
+              }
+            }
+          },
+          "receiptSigner": {
+            "type": "boolean",
+            "description": "This process can sign economic evidence itself. False means refunds answer 503 and inline provider settlement is refused."
+          },
+          "risk": {
+            "type": "boolean",
+            "description": "A tempera-risk decision client is configured. False means intent creation fails closed."
+          },
+          "merchantOnboarding": {
+            "type": "boolean",
+            "description": "Stripe Connect merchant onboarding is configured."
           }
         }
       },

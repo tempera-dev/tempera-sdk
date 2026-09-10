@@ -7679,6 +7679,16 @@
         "safeRetry": "read"
       },
       {
+        "id": "getPaymentsReadiness",
+        "method": "GET",
+        "path": "/readyz",
+        "auth": "none",
+        "description": "Report durable-storage readiness and which rails this process is configured for.",
+        "upstreamOperationId": "getPaymentsReadiness",
+        "requestBodyKind": "none",
+        "safeRetry": "read"
+      },
+      {
         "id": "createPaymentIntent",
         "method": "POST",
         "path": "/v1/paymentIntents",
