@@ -13,7 +13,11 @@
   "security": [],
   "x-tempera-protocol-routes": [
     "/healthz",
-    "/v1/webhooks/stripe/callback"
+    "/readyz",
+    "/v1/webhooks/stripe/callback",
+    "/v1/webhooks/paypal/callback",
+    "/v1/webhooks/coinbase/callback",
+    "/v1/webhooks/stripe/connect/callback"
   ],
   "paths": {
     "/healthz": {
@@ -33,6 +37,29 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/readyz": {
+      "get": {
+        "operationId": "getPaymentsReadiness",
+        "summary": "Report durable-storage readiness and which rails this process is configured for",
+        "description": "The readiness probe. It performs a live round trip to durable storage and reports, as booleans only, which settlement rails and which signer this process was started with. It performs no authorization, reads no tenant state, and never returns a credential, a key, or a provider endpoint.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Durable storage is reachable and the configured posture is reported",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Readiness"
+                }
+              }
+            }
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -104,6 +131,159 @@
             "$ref": "#/components/responses/Error"
           },
           "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      },
+      "get": {
+        "operationId": "listPaymentIntents",
+        "summary": "List a tenant's payment intents by consumer reference, status, or creation window",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:intents:read",
+        "security": [
+          {
+            "oauth2": [
+              "payments:intents:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tenantId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          {
+            "name": "referenceKind",
+            "in": "query",
+            "required": false,
+            "description": "Return only intents whose reference has this kind.",
+            "schema": {
+              "$ref": "#/components/schemas/ReferenceKind"
+            }
+          },
+          {
+            "name": "referenceId",
+            "in": "query",
+            "required": false,
+            "description": "Return only intents whose reference carries this consumer-owned identifier. Usable on its own, so a consumer that owns one identifier space does not have to send referenceKind.",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255,
+              "pattern": "^[!-~]+$"
+            }
+          },
+          {
+            "name": "referenceConsumer",
+            "in": "query",
+            "required": false,
+            "description": "Return only intents bound to this registered consumer service, for example `auth-hub`.",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64,
+              "pattern": "^[a-z0-9]([a-z0-9-]*[a-z0-9])?$"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "description": "Return only intents whose current projection has this lifecycle status.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "CREATED",
+                "RISK_PENDING",
+                "AUTHORIZED",
+                "PREPARED",
+                "SIGNED",
+                "BROADCAST",
+                "OBSERVED",
+                "CONFIRMED",
+                "FINALIZED",
+                "DENIED",
+                "HELD",
+                "REVIEW_REQUIRED",
+                "FAILED",
+                "EXPIRED",
+                "REVERSED",
+                "REFUND_PENDING",
+                "REFUNDED"
+              ]
+            }
+          },
+          {
+            "name": "createdAfter",
+            "in": "query",
+            "required": false,
+            "description": "Inclusive RFC3339 lower bound on intent creation time.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "createdBefore",
+            "in": "query",
+            "required": false,
+            "description": "Exclusive RFC3339 upper bound on intent creation time.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "description": "Maximum intents to return. Out-of-range values are rejected rather than clamped.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 25
+            }
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "description": "`nextPageToken` from the previous page, replayed with the identical filters. A token presented with a different filter set is rejected with reason `INVALID_PAGE_TOKEN`.",
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "One page of the tenant's matching payment intents",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListPaymentIntentsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
             "$ref": "#/components/responses/Error"
           },
           "503": {
@@ -277,7 +457,8 @@
               "type": "string",
               "minLength": 1,
               "maxLength": 255
-            }
+            },
+            "description": "Tenant-scoped idempotency key. Required here, and required as a header rather than as a body field; the PayPal and Coinbase checkout creates take an `idempotencyKey` body field instead and ignore this header."
           }
         ],
         "requestBody": {
@@ -332,7 +513,8 @@
           "503": {
             "$ref": "#/components/responses/Error"
           }
-        }
+        },
+        "description": "Prepares one hosted Stripe Checkout session for an authorized iso4217 payment intent whose asset reference matches `currency` case-insensitively, and returns the session id and the buyer redirect URL in `checkoutUrl`. Returns 503 when the Stripe rail is not configured.\n\n**Idempotency: the `Idempotency-Key` header (required).** This operation is the only hosted-checkout create that takes its key in a header; `createPayPalCheckout` and `createCoinbaseCheckout` take an `idempotencyKey` field in the request body instead. The difference is historical and is not going to be reconciled, because seven generated SDK clients are already built against these shapes. Neither route reads the other's placement: a body `idempotencyKey` on this route is not read, and an `Idempotency-Key` header on the PayPal or Coinbase route is ignored. In all three cases the key is tenant-scoped, an equivalent replay returns the original response with `200` instead of `201`, and a replay with a different request body is a `409`.\n\nHosted checkout surfaces are not shaped alike across rails and are not being renamed: send the buyer to `StripeCheckout.checkoutUrl`, `PayPalCheckout.approvalUrl`, or `CoinbaseCheckout.hostedUrl`."
       }
     },
     "/v1/paymentIntents/{paymentIntentId}/cardSession": {
@@ -883,6 +1065,2390 @@
           }
         }
       }
+    },
+    "/v1/paymentIntents/{paymentIntentId}/refunds": {
+      "post": {
+        "operationId": "createRefund",
+        "summary": "Refund a settled payment intent",
+        "description": "Issues one refund against the original provider settlement and commits it through the same correctness kernel the refund worker uses: the refund budget is reserved before the provider is contacted, the provider Refund object is retrieved authoritatively, and only then are the compensating journal and the signed operation receipt written. Answers 200 once the refund is economically committed and 202 with a pending refund while the provider outcome is not final or could not be observed; replaying the same tenantId, payment intent, idempotencyKey, and body returns the same refund and never refunds twice.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:refunds:write",
+        "x-tempera-resource-pattern": {
+          "paymentIntentId": "paymentIntents/*"
+        },
+        "security": [
+          {
+            "oauth2": [
+              "payments:refunds:write"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "paymentIntentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRefund"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Refund committed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Refund"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Refund accepted; the provider outcome is not final yet",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Refund"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "502": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      },
+      "get": {
+        "operationId": "listRefunds",
+        "summary": "List the refunds of one payment intent",
+        "description": "Refunds are returned newest first, ordered by createdAt.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:refunds:read",
+        "x-tempera-resource-pattern": {
+          "paymentIntentId": "paymentIntents/*"
+        },
+        "security": [
+          {
+            "oauth2": [
+              "payments:refunds:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "paymentIntentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "tenantId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50
+            }
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Refunds of this payment intent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListRefundsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/paymentIntents/{paymentIntentId}/refunds/{refundId}": {
+      "get": {
+        "operationId": "getRefund",
+        "summary": "Read one refund",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:refunds:read",
+        "x-tempera-resource-pattern": {
+          "paymentIntentId": "paymentIntents/*",
+          "refundId": "paymentIntents/*/refunds/*"
+        },
+        "security": [
+          {
+            "oauth2": [
+              "payments:refunds:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "paymentIntentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "refundId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "tenantId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current refund projection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Refund"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/paymentIntents/{paymentIntentId}/paypalCheckout": {
+      "post": {
+        "operationId": "createPayPalCheckout",
+        "summary": "Create an idempotent hosted PayPal order for a fiat payment intent",
+        "description": "Prepares one PayPal CAPTURE-intent order for an authorized iso4217 payment intent and returns the buyer approval URL. The order carries the Tempera payment intent id in custom_id and an idempotency-derived invoice_id, which are the bindings the settlement reconciler re-checks against PayPal's authoritative capture. Returns 503 when the PayPal rail is not configured.\n\n**Idempotency: the `idempotencyKey` body field (required).** This operation takes its key in the request body, not in the `Idempotency-Key` header that `createStripeCheckout` (and `createPaymentIntent`) require. The difference is historical and is not going to be reconciled, because seven generated SDK clients are already built against these shapes. An `Idempotency-Key` header sent to this route is ignored — it is neither read nor rejected, and it does not have to match the body field. In all three cases the key is tenant-scoped, an equivalent replay returns the original response with `200` instead of `201`, and a replay with a different request body is a `409`.\n\nHosted checkout surfaces are not shaped alike across rails and are not being renamed: send the buyer to `StripeCheckout.checkoutUrl`, `PayPalCheckout.approvalUrl`, or `CoinbaseCheckout.hostedUrl`.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:intents:write",
+        "x-tempera-physical-action": true,
+        "x-tempera-resource-pattern": {
+          "paymentIntentId": "paymentIntents/*"
+        },
+        "security": [
+          {
+            "oauth2": [
+              "payments:intents:write"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "paymentIntentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePayPalCheckout"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "PayPal order created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PayPalCheckout"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Equivalent idempotent replay",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PayPalCheckout"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "502": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/webhooks/paypal/callback": {
+      "post": {
+        "operationId": "receivePayPalWebhook",
+        "summary": "Verify and durably deduplicate a PayPal webhook using its raw body",
+        "description": "A PayPal-authored protocol receiver, not a Tempera resource method. It is authenticated by PayPal's own verify-webhook-signature call over the exact raw body and the configured webhook id, never by a Tempera bearer token, and its request body is PayPal's own event envelope. The event is durable evidence and a reconciliation hint only: settlement is committed from an independently retrieved PayPal order or capture.",
+        "security": [],
+        "parameters": [
+          {
+            "name": "PayPal-Transmission-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "PayPal-Transmission-Time",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "PayPal-Transmission-Sig",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "PayPal-Cert-Url",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "PayPal-Auth-Algo",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Durably accepted or duplicate"
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "502": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/paymentIntents/{paymentIntentId}/coinbaseCheckout": {
+      "post": {
+        "operationId": "createCoinbaseCheckout",
+        "summary": "Create an idempotent hosted Coinbase Commerce charge for a fiat payment intent",
+        "description": "Prepares one fixed-price Coinbase Commerce charge for an authorized iso4217 payment intent and returns the hosted payment URL. The charge is quoted in the intent's own fiat currency and its metadata carries the Tempera payment intent id, tenant id, and an attempt-derived key, which are the bindings the settlement reconciler re-checks against Coinbase's authoritative charge. Coinbase Commerce has no provider-side request idempotency, so the durable attempt is what stops a retried create from opening a second hosted page. Returns 503 when the Coinbase rail is not configured.\n\n**Idempotency: the `idempotencyKey` body field (required).** This operation takes its key in the request body, not in the `Idempotency-Key` header that `createStripeCheckout` (and `createPaymentIntent`) require. The difference is historical and is not going to be reconciled, because seven generated SDK clients are already built against these shapes. An `Idempotency-Key` header sent to this route is ignored — it is neither read nor rejected, and it does not have to match the body field. In all three cases the key is tenant-scoped, an equivalent replay returns the original response with `200` instead of `201`, and a replay with a different request body is a `409`.\n\nHosted checkout surfaces are not shaped alike across rails and are not being renamed: send the buyer to `StripeCheckout.checkoutUrl`, `PayPalCheckout.approvalUrl`, or `CoinbaseCheckout.hostedUrl`.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:intents:write",
+        "x-tempera-physical-action": true,
+        "x-tempera-resource-pattern": {
+          "paymentIntentId": "paymentIntents/*"
+        },
+        "security": [
+          {
+            "oauth2": [
+              "payments:intents:write"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "paymentIntentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCoinbaseCheckout"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Coinbase charge created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoinbaseCheckout"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Equivalent idempotent replay",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoinbaseCheckout"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "502": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/webhooks/coinbase/callback": {
+      "post": {
+        "operationId": "receiveCoinbaseWebhook",
+        "summary": "Verify and durably deduplicate a Coinbase Commerce webhook using its raw body",
+        "description": "A Coinbase-authored protocol receiver, not a Tempera resource method. It is authenticated by the X-CC-Webhook-Signature HMAC-SHA256 over the exact raw body and the configured shared webhook secret, never by a Tempera bearer token, and its request body is Coinbase's own event envelope. The event is durable evidence and a reconciliation hint only: settlement is committed from an independently retrieved Coinbase charge, and a pending, delayed, failed, underpaid, or overpaid charge never settles.",
+        "security": [],
+        "parameters": [
+          {
+            "name": "X-CC-Webhook-Signature",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Durably accepted or duplicate"
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "502": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/webhookEndpoints": {
+      "post": {
+        "operationId": "createWebhookEndpoint",
+        "summary": "Register a destination for signed payment events",
+        "description": "Registers a URL this workspace controls as a destination for the signed `payment.settled` and `payment.refunded` events it subscribes to. The endpoint is delivered exactly the bytes that were signed, with the same `tempera-event-*` headers an internal consumer receives. A workspace may keep at most 10 active endpoints, and one URL may be active at most once.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:webhooks:write",
+        "security": [
+          {
+            "oauth2": [
+              "payments:webhooks:write"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateWebhookEndpoint"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Webhook endpoint registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookEndpoint"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      },
+      "get": {
+        "operationId": "listWebhookEndpoints",
+        "summary": "List the webhook endpoints of one workspace",
+        "description": "Returns active and disabled endpoints, newest first. A disabled endpoint is kept so its delivery history stays readable.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:webhooks:read",
+        "security": [
+          {
+            "oauth2": [
+              "payments:webhooks:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tenantId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 100
+            }
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "The nextPageToken of the previous page. Pages are keyset ordered newest first."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Webhook endpoints of this workspace",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListWebhookEndpointsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/webhookEndpoints/{webhookEndpointId}": {
+      "get": {
+        "operationId": "getWebhookEndpoint",
+        "summary": "Read one webhook endpoint",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:webhooks:read",
+        "x-tempera-resource-pattern": {
+          "webhookEndpointId": "webhookEndpoints/*"
+        },
+        "security": [
+          {
+            "oauth2": [
+              "payments:webhooks:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "webhookEndpointId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "tenantId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The webhook endpoint",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookEndpoint"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteWebhookEndpoint",
+        "summary": "Stop delivering to a webhook endpoint",
+        "description": "Disables the endpoint. The row is never removed, so its delivery history stays coherent, and an event already fanned out to it is dead-lettered with `ENDPOINT_DISABLED` rather than posted to a withdrawn URL.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:webhooks:write",
+        "x-tempera-resource-pattern": {
+          "webhookEndpointId": "webhookEndpoints/*"
+        },
+        "security": [
+          {
+            "oauth2": [
+              "payments:webhooks:write"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "webhookEndpointId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "tenantId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Webhook endpoint disabled"
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/webhookEndpoints/{webhookEndpointId}/deliveries": {
+      "get": {
+        "operationId": "listWebhookDeliveries",
+        "summary": "List delivery attempts for one webhook endpoint",
+        "description": "The delivery record of each event fanned out to this endpoint, newest first, so a brand can debug its own receiver.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:webhooks:read",
+        "x-tempera-resource-pattern": {
+          "webhookEndpointId": "webhookEndpoints/*"
+        },
+        "security": [
+          {
+            "oauth2": [
+              "payments:webhooks:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "webhookEndpointId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "tenantId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 100
+            }
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "The nextPageToken of the previous page. Pages are keyset ordered newest first."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delivery records for this endpoint",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListWebhookDeliveriesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/paymentIntents/{paymentIntentId}/paymentMethodCharges": {
+      "post": {
+        "operationId": "createPaymentMethodCharge",
+        "summary": "Charge a saved payment method off-session for an authorized payment intent",
+        "description": "Creates and confirms one provider charge against a payment method the intent's customer already saved, records the provider attempt, and returns. It settles nothing: the ledger journal, the signed receipt, and the `payment.settled` consumer event are produced by the same verified-webhook reconciliation path hosted checkout uses. A `requiresAction` charge needs the brand's own provider client-side authentication flow; Tempera does not perform it.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:intents:write",
+        "security": [
+          {
+            "oauth2": [
+              "payments:intents:write"
+            ]
+          }
+        ],
+        "x-tempera-physical-action": true,
+        "x-tempera-resource-pattern": {
+          "paymentIntentId": "paymentIntents/*"
+        },
+        "parameters": [
+          {
+            "name": "paymentIntentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePaymentMethodCharge"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Provider charge attempt created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentMethodCharge"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Equivalent idempotent replay",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentMethodCharge"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "502": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/customers": {
+      "post": {
+        "operationId": "createCustomer",
+        "summary": "Create a customer for one workspace",
+        "description": "Creates Tempera's record of the brand's shopper. It performs no provider call: the provider customer is created lazily by the first setup session. When `externalId` is present the call is idempotent on `(tenantId, externalId)` and returns 200 for an identical replay, or 409 when the stored customer differs.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:customers:write",
+        "security": [
+          {
+            "oauth2": [
+              "payments:customers:write"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCustomer"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Customer created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Customer"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Equivalent idempotent replay of an existing externalId",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Customer"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      },
+      "get": {
+        "operationId": "listCustomers",
+        "summary": "List customers of one workspace by an exact externalId or email",
+        "description": "At least one of `externalId` or `email` is required and is matched exactly; this is a lookup, not a directory export.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:customers:read",
+        "security": [
+          {
+            "oauth2": [
+              "payments:customers:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tenantId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          {
+            "name": "externalId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255,
+              "pattern": "^[!-~]+$"
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 3,
+              "maxLength": 320
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "description": "Maximum customers to return. Defaults to 100, which is also the maximum.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "description": "A `nextPageToken` this API issued. Tokens are server-issued and are not caller-constructible.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Matching customers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListCustomersResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/customers/{customerId}": {
+      "get": {
+        "operationId": "getCustomer",
+        "summary": "Read one customer",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:customers:read",
+        "security": [
+          {
+            "oauth2": [
+              "payments:customers:read"
+            ]
+          }
+        ],
+        "x-tempera-resource-pattern": {
+          "customerId": "customers/*"
+        },
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "tenantId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Customer",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Customer"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/customers/{customerId}/setupSessions": {
+      "post": {
+        "operationId": "createSetupSession",
+        "summary": "Create a provider-hosted session that saves a card for this customer",
+        "description": "Creates or reuses this customer's provider customer, then a provider-hosted `setup` session bound to it. The shopper enters their card on the provider's page; Tempera never receives PAN or CVV. The saved payment method appears only after the verified provider webhook has been authoritatively re-read. Replays on `idempotencyKey`.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:customers:write",
+        "security": [
+          {
+            "oauth2": [
+              "payments:customers:write"
+            ]
+          }
+        ],
+        "x-tempera-physical-action": true,
+        "x-tempera-resource-pattern": {
+          "customerId": "customers/*"
+        },
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSetupSession"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Provider-hosted setup session created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SetupSession"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Equivalent idempotent replay",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SetupSession"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "502": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/customers/{customerId}/paymentMethods": {
+      "get": {
+        "operationId": "listPaymentMethods",
+        "summary": "List the payment methods saved for one customer",
+        "description": "Returns provider handles and the non-sensitive display fields the provider publishes. Detached methods remain listed with status `detached`.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:customers:read",
+        "security": [
+          {
+            "oauth2": [
+              "payments:customers:read"
+            ]
+          }
+        ],
+        "x-tempera-resource-pattern": {
+          "customerId": "customers/*"
+        },
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "tenantId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "description": "Maximum customers to return. Defaults to 100, which is also the maximum.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "description": "A `nextPageToken` this API issued. Tokens are server-issued and are not caller-constructible.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Saved payment methods",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListPaymentMethodsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/customers/{customerId}/paymentMethods/{paymentMethodId}": {
+      "delete": {
+        "operationId": "deletePaymentMethod",
+        "summary": "Detach a saved payment method",
+        "description": "Detaches the handle at the provider and records the method as `detached`. The row is never deleted, so a later charge attempt against it is refused rather than silently unrecognized. Detaching an already-detached method succeeds without calling the provider again.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:customers:write",
+        "security": [
+          {
+            "oauth2": [
+              "payments:customers:write"
+            ]
+          }
+        ],
+        "x-tempera-physical-action": true,
+        "x-tempera-resource-pattern": {
+          "customerId": "customers/*",
+          "paymentMethodId": "customers/*/paymentMethods/*"
+        },
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "paymentMethodId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "tenantId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Detached"
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "502": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/paymentIntents/{paymentIntentId}/disputes": {
+      "get": {
+        "operationId": "listPaymentIntentDisputes",
+        "summary": "List the disputes of one payment intent",
+        "description": "Returns every chargeback recorded against this payment intent, newest first. A dispute exists only after Tempera authoritatively retrieved it from the provider and bound it to this intent through its verified settlement.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:disputes:read",
+        "x-tempera-resource-pattern": {
+          "paymentIntentId": "paymentIntents/*"
+        },
+        "security": [
+          {
+            "oauth2": [
+              "payments:disputes:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "paymentIntentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "tenantId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50
+            }
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "The nextPageToken of the previous page. Pages are keyset ordered newest first."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Disputes of this payment intent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListDisputesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/disputes": {
+      "get": {
+        "operationId": "listDisputes",
+        "summary": "List the disputes of one workspace",
+        "description": "Returns this workspace's chargebacks, newest first, optionally narrowed to one status. Pages are keyset ordered so a concurrent dispute cannot make a caller skip or repeat one while walking the list.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:disputes:read",
+        "security": [
+          {
+            "oauth2": [
+              "payments:disputes:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tenantId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/DisputeStatus"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50
+            }
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "The nextPageToken of the previous page. Pages are keyset ordered newest first."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Disputes of this workspace",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListDisputesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/disputes/{disputeId}": {
+      "get": {
+        "operationId": "getDispute",
+        "summary": "Read one dispute",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:disputes:read",
+        "x-tempera-resource-pattern": {
+          "disputeId": "disputes/*"
+        },
+        "security": [
+          {
+            "oauth2": [
+              "payments:disputes:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "disputeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "tenantId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current dispute projection",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Dispute"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/subscriptions": {
+      "post": {
+        "operationId": "createSubscription",
+        "summary": "Create a recurring charge schedule against a saved payment method",
+        "description": "Creates the schedule only: no provider call is made and no money moves here. The customer must belong to this workspace and the payment method must be an active method of that customer. The call is idempotent on `(tenantId, idempotencyKey)` and answers 200 for an identical replay or 409 when the key was reused with a different request.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:subscriptions:write",
+        "security": [
+          {
+            "oauth2": [
+              "payments:subscriptions:write"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSubscription"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Subscription created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscription"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Equivalent idempotent replay of an existing idempotencyKey",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscription"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      },
+      "get": {
+        "operationId": "listSubscriptions",
+        "summary": "List the subscriptions of one workspace",
+        "description": "Keyset paging over `(createdAt DESC, id DESC)`. A `pageToken` is bound to the filter set that minted it; replaying it with different filters is refused with `INVALID_PAGE_TOKEN`.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:subscriptions:read",
+        "security": [
+          {
+            "oauth2": [
+              "payments:subscriptions:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tenantId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          {
+            "name": "customerId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/SubscriptionStatus"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "description": "Maximum rows to return. Defaults to 25; the maximum is 100.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "description": "A `nextPageToken` this API issued for the identical filters. Tokens are server-issued, bound to the filter set that minted them, and are not caller-constructible.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Matching subscriptions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListSubscriptionsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/subscriptions/{subscriptionId}": {
+      "get": {
+        "operationId": "getSubscription",
+        "summary": "Read one subscription",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:subscriptions:read",
+        "security": [
+          {
+            "oauth2": [
+              "payments:subscriptions:read"
+            ]
+          }
+        ],
+        "x-tempera-resource-pattern": {
+          "subscriptionId": "subscriptions/*"
+        },
+        "parameters": [
+          {
+            "name": "subscriptionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "tenantId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Subscription",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscription"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/subscriptions/{subscriptionId}/cancel": {
+      "post": {
+        "operationId": "cancelSubscription",
+        "summary": "Cancel a subscription",
+        "description": "Terminal: an active, past-due, or paused subscription becomes `canceled` and nothing is ever due again. Canceling a canceled subscription is 409.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:subscriptions:write",
+        "security": [
+          {
+            "oauth2": [
+              "payments:subscriptions:write"
+            ]
+          }
+        ],
+        "x-tempera-resource-pattern": {
+          "subscriptionId": "subscriptions/*"
+        },
+        "parameters": [
+          {
+            "name": "subscriptionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubscriptionTransitionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The subscription after the transition",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscription"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/subscriptions/{subscriptionId}/pause": {
+      "post": {
+        "operationId": "pauseSubscription",
+        "summary": "Pause a subscription",
+        "description": "An active or past-due subscription becomes `paused` and is no longer claimed by the scheduler. Its `nextChargeAt` is preserved so resuming picks the schedule back up where it was. Pausing a paused or canceled subscription is 409.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:subscriptions:write",
+        "security": [
+          {
+            "oauth2": [
+              "payments:subscriptions:write"
+            ]
+          }
+        ],
+        "x-tempera-resource-pattern": {
+          "subscriptionId": "subscriptions/*"
+        },
+        "parameters": [
+          {
+            "name": "subscriptionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubscriptionTransitionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The subscription after the transition",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscription"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/subscriptions/{subscriptionId}/resume": {
+      "post": {
+        "operationId": "resumeSubscription",
+        "summary": "Resume a paused subscription",
+        "description": "A paused subscription becomes `active`. If its `nextChargeAt` is already in the past, the next scheduler pass charges it. Resuming anything but a paused subscription is 409.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:subscriptions:write",
+        "security": [
+          {
+            "oauth2": [
+              "payments:subscriptions:write"
+            ]
+          }
+        ],
+        "x-tempera-resource-pattern": {
+          "subscriptionId": "subscriptions/*"
+        },
+        "parameters": [
+          {
+            "name": "subscriptionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubscriptionTransitionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The subscription after the transition",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscription"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/subscriptions/{subscriptionId}/periods": {
+      "get": {
+        "operationId": "listSubscriptionPeriods",
+        "summary": "List the billing periods of one subscription",
+        "description": "Keyset paging over `(periodStart DESC, id DESC)`. A period reaches `settled` only once its payment intent has settled through the verified provider webhook path.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:subscriptions:read",
+        "security": [
+          {
+            "oauth2": [
+              "payments:subscriptions:read"
+            ]
+          }
+        ],
+        "x-tempera-resource-pattern": {
+          "subscriptionId": "subscriptions/*"
+        },
+        "parameters": [
+          {
+            "name": "subscriptionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "tenantId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "description": "Maximum rows to return. Defaults to 25; the maximum is 100.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "description": "A `nextPageToken` this API issued for the identical filters. Tokens are server-issued, bound to the filter set that minted them, and are not caller-constructible.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Billing periods, newest first",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListSubscriptionPeriodsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/merchants/{merchantId}/balance": {
+      "get": {
+        "operationId": "getMerchantBalance",
+        "summary": "Read one merchant's balance",
+        "description": "Computes the merchant's position from the ledger: everything settlement recognised for it, the platform fees taken from those settlements, what refunds gave back, and what is therefore owed. `paidOut` is separate and comes from the payouts the provider reported for the connected account; it is an observation, never a ledger position, so `payable` does not decrease when a payout is paid.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:merchants:read",
+        "x-tempera-resource-pattern": {
+          "merchantId": "merchants/*"
+        },
+        "security": [
+          {
+            "oauth2": [
+              "payments:merchants:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "merchantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "tenantId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Merchant balance",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MerchantBalance"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/merchants/{merchantId}/payouts": {
+      "get": {
+        "operationId": "listMerchantPayouts",
+        "summary": "List the payouts observed for one merchant",
+        "description": "Payouts are returned newest first, ordered by createdAt. Every row is an observation Stripe reported for the connected account on the Connect webhook endpoint; Tempera never initiates a payout, and a row here is not evidence that Tempera moved money.",
+        "x-tempera-auth-kind": "oauthResource",
+        "x-tempera-auth-audience": "tempera-payments",
+        "x-tempera-required-scope": "payments:merchants:read",
+        "x-tempera-resource-pattern": {
+          "merchantId": "merchants/*"
+        },
+        "security": [
+          {
+            "oauth2": [
+              "payments:merchants:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "merchantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "tenantId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50
+            }
+          },
+          {
+            "name": "pageToken",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Payouts observed for this merchant",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListMerchantPayoutsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/v1/webhooks/stripe/connect/callback": {
+      "post": {
+        "operationId": "receiveStripeConnectWebhook",
+        "summary": "Verify a Stripe Connect account event and record an observed payout",
+        "description": "A Stripe-authored protocol receiver for connected-account events, not a Tempera resource method. It is authenticated by the Stripe-Signature HMAC over the exact raw body using the Connect endpoint's own secrets, never by a Tempera bearer token. Only `payout.paid` and `payout.failed` are consumed, and only to record what the provider reported; every other event is deduplicated and acknowledged.",
+        "security": [],
+        "parameters": [
+          {
+            "name": "Stripe-Signature",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Durably accepted or duplicate"
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -898,7 +3464,16 @@
               "payments:intents:read": "Read payment intents",
               "payments:receipts:read": "Read verified payment settlement receipts",
               "payments:merchants:read": "Read merchant onboarding eligibility",
-              "payments:merchants:write": "Create merchant onboarding records and links"
+              "payments:merchants:write": "Create merchant onboarding records and links",
+              "payments:refunds:write": "Issue refunds against settled payment intents",
+              "payments:refunds:read": "Read refunds issued against payment intents",
+              "payments:webhooks:read": "Read tenant-registered webhook endpoints and their delivery history",
+              "payments:webhooks:write": "Register and remove tenant webhook endpoints for signed payment events",
+              "payments:customers:read": "Read customers and their saved payment methods",
+              "payments:customers:write": "Create customers, save payment methods, and charge them off-session",
+              "payments:disputes:read": "Read chargebacks recorded against settled payment intents",
+              "payments:subscriptions:read": "Read recurring charge schedules and their billing periods",
+              "payments:subscriptions:write": "Create, pause, resume, and cancel recurring charge schedules"
             }
           }
         }
@@ -968,6 +3543,92 @@
           }
         }
       },
+      "Readiness": {
+        "type": "object",
+        "description": "Readiness posture for one payments process. Booleans only; never a credential, a key, or a provider endpoint.",
+        "required": [
+          "ok",
+          "storage",
+          "rails",
+          "receiptSigner",
+          "risk",
+          "merchantOnboarding"
+        ],
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "const": true
+          },
+          "storage": {
+            "type": "string",
+            "const": "reachable",
+            "description": "Present only after a live query against the payments database succeeded."
+          },
+          "sourceCommit": {
+            "type": "string",
+            "description": "The exact commit this image was built from, when the deployment supplied TEMPERA_SOURCE_COMMIT."
+          },
+          "deploymentEnvironment": {
+            "type": "string",
+            "description": "The declared deployment environment, e.g. production or staging."
+          },
+          "rails": {
+            "type": "object",
+            "description": "Which settlement rails this process can transact on. A rail is true only when every value it needs was present at startup.",
+            "required": [
+              "stripe",
+              "stripeWebhook",
+              "stripeConnectWebhook",
+              "paypal",
+              "coinbase",
+              "adyen",
+              "checkoutCom"
+            ],
+            "properties": {
+              "stripe": {
+                "type": "boolean",
+                "description": "A Stripe server key is configured."
+              },
+              "stripeWebhook": {
+                "type": "boolean",
+                "description": "At least one Stripe platform endpoint secret is configured."
+              },
+              "stripeConnectWebhook": {
+                "type": "boolean",
+                "description": "At least one Stripe Connect account endpoint secret is configured."
+              },
+              "paypal": {
+                "type": "boolean",
+                "description": "PayPal credentials and a webhook id are configured together."
+              },
+              "coinbase": {
+                "type": "boolean",
+                "description": "Coinbase Commerce credentials and a webhook secret are configured together."
+              },
+              "adyen": {
+                "type": "boolean",
+                "description": "An Adyen acquirer is configured."
+              },
+              "checkoutCom": {
+                "type": "boolean",
+                "description": "A Checkout.com acquirer is configured."
+              }
+            }
+          },
+          "receiptSigner": {
+            "type": "boolean",
+            "description": "This process can sign economic evidence itself. False means refunds answer 503 and inline provider settlement is refused."
+          },
+          "risk": {
+            "type": "boolean",
+            "description": "A tempera-risk decision client is configured. False means intent creation fails closed."
+          },
+          "merchantOnboarding": {
+            "type": "boolean",
+            "description": "Stripe Connect merchant onboarding is configured."
+          }
+        }
+      },
       "AtomicAmount": {
         "type": "string",
         "pattern": "^[0-9]+$",
@@ -984,19 +3645,69 @@
           "network": {
             "type": "string",
             "examples": [
+              "iso4217",
               "eip155:8453"
-            ]
+            ],
+            "description": "The rail namespace this asset lives in. `iso4217` for fiat — the exact, lowercase literal every fiat rail checks for (`asset.network != \"iso4217\"` refuses Stripe, PayPal, Coinbase, and card checkout), so `ISO4217` is stored but will never produce a fiat checkout. Otherwise a CAIP-2 chain identifier such as `eip155:8453`. No pattern is declared because the field is free-form storage: any string is accepted and preserved, and only the rails constrain it."
           },
           "reference": {
             "type": "string",
             "examples": [
-              "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
-            ]
+              "usd",
+              "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+              "native"
+            ],
+            "description": "The asset within the network: the ISO-4217 currency code when `network` is `iso4217`, otherwise the issuer contract or mint address (`native` for a chain's native asset). Never a display symbol.\n\n**Case:** stored and returned verbatim. The fiat rails compare it case-insensitively — Stripe Checkout against `CreateStripeCheckout.currency` (`eq_ignore_ascii_case`), and PayPal, Coinbase, and card checkout by upper-casing it before looking up the currency exponent — so `usd` and `USD` both create a valid checkout. Neither the intent nor the receipt nor the consumer event is rewritten to that casing: whatever was sent is what comes back. Consumers that compare exactly should send lowercase, as Auth Hub and Orders do. No pattern is declared here because the server accepts any string, including chain addresses that are not three letters."
           },
           "decimals": {
             "type": "integer",
             "minimum": 0,
-            "maximum": 255
+            "maximum": 255,
+            "description": "Minor units per whole unit, as an exponent: `amount` is an integer count of 10^-decimals units. It is caller-declared and stored verbatim; the fiat rails then refuse a mismatch rather than correcting it, so it must already equal the ISO-4217 exponent of `reference` (2 for `usd`, 0 for `jpy`) and the token's own decimals on a chain rail.",
+            "examples": [
+              2,
+              6
+            ]
+          }
+        },
+        "description": "Asset identity. The three fields are stored exactly as supplied on `createPaymentIntent` and echoed back byte-for-byte in every `PaymentIntent` projection, in every signed receipt, and inside every consumer event. The server never normalizes, canonicalizes, or case-folds any of them, so a consumer that compares an asset field exactly (Auth Hub and Orders both do) must send the same bytes it will later compare. Tempera's own consumers use lowercase `iso4217` references (`usd`), which is why the examples here do."
+      },
+      "ReferenceKind": {
+        "type": "string",
+        "enum": [
+          "order",
+          "creditTopUp",
+          "subscriptionPeriod",
+          "invoice",
+          "custom"
+        ],
+        "description": "What the payment is for, in the consumer's vocabulary."
+      },
+      "PaymentReference": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "id"
+        ],
+        "description": "Optional consumer binding. It routes signed settlement and refund events back to the named consumer service and never changes the economics of the intent.\n\nIt is deliberately excluded from the signed settlement receipt, whose evidence covers money facts only. It survives on the intent, which is projected into every `PaymentIntent` response and into the `paymentIntent` of every consumer event — that projection is where a consumer recovers the money-fact-to-order binding. Because the reference is not signed, it identifies a candidate record but never authorizes an effect on its own: store the returned `paymentIntent.id` when you create the intent and require the event's `paymentIntent.id` to match it, then re-check tenant, asset, amount, and settled status before acting, and deduplicate on `journalId` or `operation.id`. `#/components/schemas/SignedSettlementReceipt` spells the full sequence out. It is also indexed by `(tenantId, kind, id)` for `listPaymentIntents`, which is a reconciliation convenience and not a settlement signal.",
+        "properties": {
+          "kind": {
+            "$ref": "#/components/schemas/ReferenceKind"
+          },
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "pattern": "^[!-~]+$",
+            "description": "Consumer-owned identifier such as an order ID, a credit top-up ID, or an invoice number."
+          },
+          "consumer": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "pattern": "^[a-z0-9]([a-z0-9-]*[a-z0-9])?$",
+            "description": "Registered consumer service that receives signed `payment.settled` and `payment.refunded` events for this intent, for example `auth-hub`. Omitted means the event is recorded but not delivered to a service."
           }
         }
       },
@@ -1036,6 +3747,14 @@
             "type": "integer",
             "minimum": 1,
             "maximum": 86400
+          },
+          "reference": {
+            "$ref": "#/components/schemas/PaymentReference"
+          },
+          "customerId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Customer this intent is for. It must name a customer of the same tenant and never changes the economics of the intent."
           }
         }
       },
@@ -1097,6 +3816,26 @@
               "REVERSED",
               "REFUND_PENDING",
               "REFUNDED"
+            ],
+            "description": "The intent's mutable lifecycle projection.\n\n**Money is settled in exactly two values: `CONFIRMED` and `FINALIZED`.** That is the set `commit_verified_settlement` can leave an intent in once it has posted the balanced ledger journal, persisted the signed settlement receipt, and recorded the `payment.settled` consumer event, and it is the identical set every Tempera consumer treats as paid — Auth Hub's `temperaPaymentsEvent` receiver (`PAYMENTS_SETTLED_STATUSES`) and the Orders receiver (`SETTLED_STATUSES`). No other value means money moved: `SIGNED`, `BROADCAST`, and `OBSERVED` are work in flight, and `PREPARED` only means a hosted surface exists.\n\n**Terminal** (no further transition is possible): `DENIED`, `EXPIRED`, `FAILED`, `REFUNDED`.\n\n**Transient** (every remaining value): `CREATED`, `RISK_PENDING`, `AUTHORIZED`, `PREPARED`, `SIGNED`, `BROADCAST`, `OBSERVED`, `HELD`, `REVIEW_REQUIRED`, `REVERSED`, `REFUND_PENDING`. `CONFIRMED` and `FINALIZED` are settled but not terminal: a settled intent can still move to `REVERSED` (from `CONFIRMED`) or to `REFUND_PENDING`.\n\n`REFUND_PENDING` and `REFUNDED` are not settled values even though a settlement normally precedes them; the money fact for a refund is the signed `payment.refunded` event and its operation receipt.\n\nThis projection is mutable and is never a settlement signal on its own. Credit an order, a wallet, or a subscription period only from a signed consumer event (`x-tempera-consumer-events`, `#/components/schemas/ConsumerEvent`), then check this status against the settled set as part of binding that event to your own record.",
+            "x-enum-descriptions": [
+              "Transient. The intent record exists and nothing has been authorized yet. No money has moved. Next: RISK_PENDING, DENIED, or EXPIRED.",
+              "Transient. The versioned tempera-risk decision that authorizes creation is being made. No money has moved. Next: AUTHORIZED, DENIED, HELD, REVIEW_REQUIRED, or EXPIRED.",
+              "Transient. Risk allowed the intent and policyDecisionId is set, so a rail may now be prepared for it. Nothing has been collected from the payer. Next: PREPARED, FAILED, EXPIRED, or REFUND_PENDING.",
+              "Transient. Exactly one provider or chain attempt exists for this intent — a hosted Stripe Checkout session, a PayPal order, a Coinbase Commerce charge, or unsigned chain material. The payer has not paid. Next: SIGNED, OBSERVED, FAILED, or EXPIRED.",
+              "Transient, chain rails only. The payment transaction has been signed and not yet broadcast. Next: BROADCAST, FAILED, or EXPIRED.",
+              "Transient, chain rails only. The signed transaction was submitted to the network; inclusion is not proven. Next: OBSERVED, FAILED, or EXPIRED.",
+              "Transient. The rail reported a payment, but Tempera has not yet committed the balanced ledger journal and the signed settlement receipt. This is NOT settled: nothing here has been reconciled against the provider's authoritative record. Next: CONFIRMED, REVERSED, or FAILED.",
+              "SETTLED. commit_verified_settlement posted the balanced ledger journal, persisted the signed settlement receipt, and recorded the payment.settled consumer event, all in one transaction. Every rail in this service today (hosted Stripe Checkout, PayPal Checkout, Coinbase Commerce, x402, EVM, Bitcoin) settles to CONFIRMED, so this is the value a consumer sees on a settled intent. Not terminal: it can still move to FINALIZED, REVERSED, or REFUND_PENDING.",
+              "SETTLED. The same committed settlement on a rail that separately proves finality (the settlement carries finalize=true, e.g. a chain confirmation depth). It is reserved for that case; no rail in this service sets it today. Not terminal: it can still move to REFUND_PENDING.",
+              "Terminal. The risk decision refused the intent. No money moved and none will; there is no receipt and no event.",
+              "Transient. Risk put the intent on hold. Next: AUTHORIZED, DENIED, or EXPIRED.",
+              "Transient. Risk requires a manual review before the intent may proceed. Same exits as HELD: AUTHORIZED, DENIED, or EXPIRED.",
+              "Terminal. The rail attempt failed and no settlement was committed for it. A payer who was nevertheless charged is reconciled through a refund operation, never by this value.",
+              "Terminal. expiresAt passed before the intent settled.",
+              "Transient. An observed or confirmed payment was undone by the rail (a chain reorg or a provider reversal). History is not edited; compensating journals carry the money fact. Next: BROADCAST or FAILED.",
+              "Transient. A refund has been opened against this intent. It is reachable from AUTHORIZED, CONFIRMED, and FINALIZED. It is not a settled value, and it does not retract the original payment.settled event. Next: REFUNDED or FAILED.",
+              "Terminal. Every committed refund operation of this intent is durable. It is not a settled value: how much was actually returned is carried by the signed payment.refunded event and its operation receipt, not by this projection."
             ]
           },
           "version": {
@@ -1106,6 +3845,14 @@
           "expiresAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "reference": {
+            "$ref": "#/components/schemas/PaymentReference"
+          },
+          "customerId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Customer this intent is for. It must name a customer of the same tenant and never changes the economics of the intent."
           }
         }
       },
@@ -1128,7 +3875,8 @@
             "pattern": "^[A-Za-z]{3}$",
             "examples": [
               "usd"
-            ]
+            ],
+            "description": "ISO-4217 currency code for the Stripe session. It is compared case-insensitively against the intent's `asset.reference`, and lower-cased for Stripe, so `usd` and `USD` are interchangeable here. It does not change what the intent stores: `asset.reference` is returned exactly as it was created. The intent's `asset.decimals` must be 2."
           },
           "productName": {
             "type": "string",
@@ -1156,13 +3904,16 @@
         ],
         "properties": {
           "stripeSessionId": {
-            "type": "string"
+            "type": "string",
+            "description": "The Stripe Checkout session id (`cs_...`). It is the provider reference the settlement is committed under, and it is not a redirect URL."
           },
           "checkoutUrl": {
             "type": "string",
-            "format": "uri"
+            "format": "uri",
+            "description": "The Stripe-hosted payment page. This is the URL to redirect the buyer to."
           }
-        }
+        },
+        "description": "A hosted Stripe Checkout session. **`checkoutUrl` is the redirect URL** — send the buyer there. The three hosted rails name this field differently and are not being renamed: Stripe `checkoutUrl`, PayPal `approvalUrl`, Coinbase `hostedUrl`."
       },
       "CardAcquirer": {
         "type": "string",
@@ -1297,6 +4048,12 @@
           },
           "category": {
             "$ref": "#/components/schemas/MerchantCategory"
+          },
+          "platformFeeBps": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000,
+            "description": "The platform's share of this merchant's destination charges, in basis points. Omitted takes the server-configured default. It is fixed at creation."
           }
         }
       },
@@ -1369,7 +4126,8 @@
           "pendingVerification",
           "disabledReason",
           "nextAction",
-          "providerObservedAt"
+          "providerObservedAt",
+          "platformFeeBps"
         ],
         "properties": {
           "id": {
@@ -1442,6 +4200,12 @@
             ],
             "format": "int64",
             "description": "Provider observation Unix timestamp in seconds, or null when no provider observation exists."
+          },
+          "platformFeeBps": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000,
+            "description": "The platform's share of this merchant's destination charges, in basis points. It never describes a payout and never authorizes a charge."
           }
         }
       },
@@ -1564,6 +4328,1975 @@
             "type": "string",
             "pattern": "^[0-9a-f]{64}$"
           }
+        },
+        "description": "The signed settlement receipt exactly as persisted, and exactly as it appears in the `receipt` of a `payment.settled` consumer event.\n\nThe signature covers a canonical field map of `evidence` only, so the receipt deliberately carries no `reference`: a consumer-owned order id or top-up id is not a money fact and is not signed. **The order binding therefore lives in the event's `paymentIntent.reference`, not in the receipt.**\n\nTo bind an event to your own record, do what Auth Hub and Orders do:\n1. Store the Tempera `paymentIntent.id` on your record when you create the intent, and put your own identifier in `reference` (`{kind, id, consumer}`).\n2. On an event, verify the Ed25519 signature over the raw body first.\n3. Look your record up by `paymentIntent.reference.id` (and check `reference.kind` and `reference.consumer`), then require `paymentIntent.id` to equal the intent id you stored. The reference alone is never sufficient.\n4. Re-check the money facts against your record: `tenantId` and `paymentIntent.tenantId` are your platform tenant, `paymentIntent.asset` matches field for field (`network`, `reference`, `decimals`), `paymentIntent.amount` is the exact atomic string you expected, and `paymentIntent.status` is `CONFIRMED` or `FINALIZED`.\n5. Apply the effect once per money fact: `journalId` for a settlement, `operation.id` for a refund. Delivery is at-least-once.\n\n`evidence.paymentIntentId` and `evidence.amount` let step 4 be repeated against the signed bytes themselves. See docs/CONSUMER_EVENTS.md."
+      },
+      "ListPaymentIntentsResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "paymentIntents"
+        ],
+        "description": "One keyset page of payment intents, ordered by `createdAt` then `id`, both descending. That pair is a total order, so paging cannot skip or repeat an intent while other intents are being created.",
+        "properties": {
+          "paymentIntents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentIntent"
+            }
+          },
+          "nextPageToken": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Opaque cursor for the next page, absent on the last page. Replay it unchanged with the identical filters."
+          }
+        }
+      },
+      "RefundReason": {
+        "type": "string",
+        "enum": [
+          "requestedByCustomer",
+          "duplicate",
+          "fraudulent",
+          "other"
+        ],
+        "description": "Caller-declared context. It never changes the economics of the refund."
+      },
+      "RefundStatus": {
+        "type": "string",
+        "enum": [
+          "pending",
+          "succeeded",
+          "failed"
+        ],
+        "description": "succeeded is set only after the compensating journal and the signed operation receipt are durable. pending covers every non-final provider state, including an outcome Tempera has not observed yet."
+      },
+      "CreateRefund": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tenantId",
+          "idempotencyKey"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[!-~]+$"
+          },
+          "amount": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AtomicAmount"
+              }
+            ],
+            "description": "Omit to refund the whole remaining refundable balance."
+          },
+          "reason": {
+            "$ref": "#/components/schemas/RefundReason"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "maxLength": 256
+            },
+            "maxProperties": 20
+          }
+        }
+      },
+      "RefundReceiptEvidence": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schemaVersion",
+          "receiptId",
+          "operationId",
+          "providerAttemptId",
+          "paymentIntentId",
+          "journalId",
+          "requestHash",
+          "policyDecisionId",
+          "operationKind",
+          "asset",
+          "amount",
+          "merchantId",
+          "provider",
+          "providerReference",
+          "transactionId",
+          "finality",
+          "observedAt",
+          "keyId",
+          "signature"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "receiptId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "operationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "providerAttemptId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "paymentIntentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "journalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "requestHash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "policyDecisionId": {
+            "type": "string"
+          },
+          "operationKind": {
+            "type": "string",
+            "const": "REFUND"
+          },
+          "asset": {
+            "$ref": "#/components/schemas/AssetId"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/AtomicAmount"
+          },
+          "merchantId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "provider": {
+            "type": "string",
+            "minLength": 1
+          },
+          "providerReference": {
+            "type": "string",
+            "minLength": 1
+          },
+          "transactionId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "finality": {
+            "type": "string",
+            "minLength": 1
+          },
+          "observedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "keyId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "signature": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "RefundReceipt": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "algorithm",
+          "publicKeyHex",
+          "evidence"
+        ],
+        "description": "The signed operation receipt as persisted, rendered in this API's lowerCamel field convention. The Ed25519 signature covers the canonical evidence field map, not this serialization.",
+        "properties": {
+          "algorithm": {
+            "type": "string",
+            "enum": [
+              "Ed25519"
+            ]
+          },
+          "publicKeyHex": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "evidence": {
+            "$ref": "#/components/schemas/RefundReceiptEvidence"
+          }
+        }
+      },
+      "Refund": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "paymentIntentId",
+          "tenantId",
+          "status",
+          "amount",
+          "asset",
+          "provider",
+          "metadata",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The durable REFUND payment operation that owns this refund."
+          },
+          "paymentIntentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RefundStatus"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/AtomicAmount"
+          },
+          "asset": {
+            "$ref": "#/components/schemas/AssetId"
+          },
+          "provider": {
+            "type": "string",
+            "minLength": 1
+          },
+          "providerReference": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reason": {
+            "$ref": "#/components/schemas/RefundReason"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "journalId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Present once the compensating journal is durable."
+          },
+          "receipt": {
+            "$ref": "#/components/schemas/RefundReceipt"
+          },
+          "failureCode": {
+            "type": "string",
+            "minLength": 1
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ListRefundsResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "refunds"
+        ],
+        "properties": {
+          "refunds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Refund"
+            }
+          },
+          "nextPageToken": {
+            "type": "string",
+            "description": "Pass as pageToken to read the next page. Absent on the last page."
+          }
+        }
+      },
+      "CreatePayPalCheckout": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tenantId",
+          "returnUrl",
+          "cancelUrl",
+          "idempotencyKey"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "returnUrl": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https://"
+          },
+          "cancelUrl": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https://"
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "description": "Tenant-scoped idempotency key. An equivalent replay returns the original order; a changed replay is a conflict. It also derives the PayPal-Request-Id and invoice_id, so an interrupted create resumes on PayPal's side instead of creating a second order. It is a body field, not the `Idempotency-Key` header `createStripeCheckout` takes; a header sent here is ignored."
+          }
+        }
+      },
+      "PayPalCheckout": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "approvalUrl",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The PayPal order id. It is the provider reference the settlement is committed under, and it is not a redirect URL."
+          },
+          "approvalUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "The PayPal-hosted approval page. This is the URL to redirect the buyer to."
+          },
+          "status": {
+            "type": "string",
+            "minLength": 1,
+            "description": "PayPal's order status at creation, e.g. CREATED or PAYER_ACTION_REQUIRED. It is never settlement evidence."
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "PayPal's order expiration time, when PayPal supplies one."
+          }
+        },
+        "description": "A hosted PayPal order. **`approvalUrl` is the redirect URL** — send the buyer there. The three hosted rails name this field differently and are not being renamed: Stripe `checkoutUrl`, PayPal `approvalUrl`, Coinbase `hostedUrl`."
+      },
+      "CreateCoinbaseCheckout": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tenantId",
+          "redirectUrl",
+          "cancelUrl",
+          "idempotencyKey"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "redirectUrl": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https://"
+          },
+          "cancelUrl": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https://"
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "description": "Tenant-scoped idempotency key. An equivalent replay returns the original charge; a changed replay is a conflict. Coinbase Commerce has no request-idempotency header, so this key and the durable attempt row are the only thing that stops a retried create from opening a second hosted payment page for one intent. It is a body field, not the `Idempotency-Key` header `createStripeCheckout` takes; a header sent here is ignored."
+          }
+        }
+      },
+      "CoinbaseCheckout": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "hostedUrl",
+          "expiresAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The Coinbase Commerce charge code. It is also the provider reference the settlement is committed under."
+          },
+          "hostedUrl": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https://",
+            "description": "The Coinbase-hosted payment page. This is the URL to redirect the buyer to. Tempera holds no key and takes no custody on this rail."
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the hosted page stops accepting payment. A charge response without one is refused rather than returned as an open-ended payment window."
+          }
+        },
+        "description": "A hosted Coinbase Commerce charge. **`hostedUrl` is the redirect URL** — send the buyer there. The three hosted rails name this field differently and are not being renamed: Stripe `checkoutUrl`, PayPal `approvalUrl`, Coinbase `hostedUrl`."
+      },
+      "WebhookEventType": {
+        "type": "string",
+        "enum": [
+          "payment.settled",
+          "payment.refunded",
+          "payment.disputed",
+          "payment.dispute_resolved"
+        ],
+        "description": "A signed event type a webhook endpoint may subscribe to."
+      },
+      "WebhookEndpointStatus": {
+        "type": "string",
+        "enum": [
+          "active",
+          "disabled"
+        ],
+        "description": "`disabled` endpoints keep their delivery history and receive nothing."
+      },
+      "WebhookDeliveryStatus": {
+        "type": "string",
+        "enum": [
+          "pending",
+          "delivered",
+          "retrying",
+          "dead"
+        ]
+      },
+      "WebhookSigningKey": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "keyId",
+          "algorithm",
+          "publicKeyHex"
+        ],
+        "description": "A platform public key a delivered event may be signed with. Verify Ed25519 over `\"tempera-payments:consumer-event:v1\\n\" || body` against the raw request body.",
+        "properties": {
+          "keyId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "algorithm": {
+            "type": "string",
+            "const": "Ed25519"
+          },
+          "publicKeyHex": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      },
+      "CreateWebhookEndpoint": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tenantId",
+          "url",
+          "eventTypes"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "minLength": 1,
+            "maxLength": 2048,
+            "description": "Absolute HTTPS URL with no user information and no fragment. Plain HTTP is accepted for loopback hosts only."
+          },
+          "eventTypes": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 4,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/components/schemas/WebhookEventType"
+            }
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 255
+          }
+        }
+      },
+      "WebhookEndpoint": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "tenantId",
+          "url",
+          "eventTypes",
+          "status",
+          "signingKeys",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tenantId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "maxLength": 2048
+          },
+          "eventTypes": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/WebhookEventType"
+            }
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "status": {
+            "$ref": "#/components/schemas/WebhookEndpointStatus"
+          },
+          "signingKeys": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WebhookSigningKey"
+            },
+            "description": "The platform verify keys currently configured, so a delivery can be verified without a second call. All listed keys are trusted; match the delivered `tempera-event-signature` keyId."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ListWebhookEndpointsResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "webhookEndpoints"
+        ],
+        "properties": {
+          "webhookEndpoints": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WebhookEndpoint"
+            }
+          },
+          "nextPageToken": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Absent when this is the last page."
+          }
+        }
+      },
+      "WebhookDelivery": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "eventId",
+          "eventType",
+          "status",
+          "attempts",
+          "createdAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "eventId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The `id` of the signed event, matching the delivered `tempera-event-id` header."
+          },
+          "eventType": {
+            "$ref": "#/components/schemas/WebhookEventType"
+          },
+          "status": {
+            "$ref": "#/components/schemas/WebhookDeliveryStatus"
+          },
+          "attempts": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "lastStatusCode": {
+            "type": "integer",
+            "description": "HTTP status the receiver last answered with, when it answered."
+          },
+          "lastErrorCode": {
+            "type": "string",
+            "description": "Stable failure identifier, for example `WEBHOOK_HTTP_500`, `WEBHOOK_TIMEOUT`, or `ENDPOINT_DISABLED`."
+          },
+          "nextAttemptAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deliveredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ListWebhookDeliveriesResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "deliveries"
+        ],
+        "properties": {
+          "deliveries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WebhookDelivery"
+            }
+          },
+          "nextPageToken": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Absent when this is the last page."
+          }
+        }
+      },
+      "CustomerProviderBinding": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "provider",
+          "providerCustomerId"
+        ],
+        "properties": {
+          "provider": {
+            "type": "string",
+            "enum": [
+              "stripe"
+            ]
+          },
+          "providerCustomerId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          }
+        }
+      },
+      "CreateCustomer": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tenantId"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "externalId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "pattern": "^[!-~]+$",
+            "description": "The brand's own customer identifier. Unique per tenant when present, which is what makes creation idempotent."
+          },
+          "email": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 320
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "metadata": {
+            "type": "object",
+            "description": "At most 20 brand-owned string entries. Keys are 1 to 64 characters of [A-Za-z0-9_.-]; values are at most 255 characters and carry no control characters.",
+            "additionalProperties": {
+              "type": "string",
+              "maxLength": 255
+            }
+          }
+        }
+      },
+      "Customer": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "tenantId",
+          "metadata",
+          "providerBindings",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tenantId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "externalId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "email": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 320
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "metadata": {
+            "type": "object",
+            "description": "At most 20 brand-owned string entries. Keys are 1 to 64 characters of [A-Za-z0-9_.-]; values are at most 255 characters and carry no control characters.",
+            "additionalProperties": {
+              "type": "string",
+              "maxLength": 255
+            }
+          },
+          "providerBindings": {
+            "type": "array",
+            "description": "Provider customers bound to this customer. Empty until the first setup session creates one.",
+            "items": {
+              "$ref": "#/components/schemas/CustomerProviderBinding"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ListCustomersResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "customers"
+        ],
+        "properties": {
+          "customers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Customer"
+            }
+          },
+          "nextPageToken": {
+            "type": "string",
+            "description": "Present only when more customers match. Pass it back as `pageToken`."
+          }
+        }
+      },
+      "CreateSetupSession": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tenantId",
+          "successUrl",
+          "cancelUrl",
+          "idempotencyKey"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "successUrl": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https://"
+          },
+          "cancelUrl": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https://"
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "pattern": "^[!-~]+$",
+            "description": "Reuse this key when retrying; an identical retry replays the original session and a changed one is a conflict."
+          }
+        }
+      },
+      "SetupSession": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "url",
+          "provider",
+          "expiresAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Short-lived provider-hosted bearer URL. Do not persist, cache, or log it."
+          },
+          "provider": {
+            "type": "string",
+            "enum": [
+              "stripe"
+            ]
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PaymentMethodCard": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "The non-sensitive display fields the provider publishes. There is no field here that can carry a PAN or CVV.",
+        "required": [
+          "brand",
+          "last4",
+          "expMonth",
+          "expYear"
+        ],
+        "properties": {
+          "brand": {
+            "type": "string"
+          },
+          "last4": {
+            "type": "string",
+            "pattern": "^[0-9]{4}$"
+          },
+          "expMonth": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 12
+          },
+          "expYear": {
+            "type": "integer",
+            "minimum": 1970
+          },
+          "funding": {
+            "type": "string"
+          }
+        }
+      },
+      "PaymentMethod": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "customerId",
+          "provider",
+          "providerPaymentMethodId",
+          "type",
+          "status",
+          "createdAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "customerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "provider": {
+            "type": "string",
+            "enum": [
+              "stripe"
+            ]
+          },
+          "providerPaymentMethodId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "card"
+            ]
+          },
+          "card": {
+            "$ref": "#/components/schemas/PaymentMethodCard"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "detached"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ListPaymentMethodsResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "paymentMethods"
+        ],
+        "properties": {
+          "paymentMethods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentMethod"
+            }
+          },
+          "nextPageToken": {
+            "type": "string",
+            "description": "Present only when more payment methods remain. Pass it back as `pageToken`."
+          }
+        }
+      },
+      "CreatePaymentMethodCharge": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tenantId",
+          "paymentMethodId",
+          "idempotencyKey"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "paymentMethodId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "A saved payment method belonging to the customer named by the payment intent."
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "pattern": "^[!-~]+$"
+          },
+          "offSession": {
+            "type": "boolean",
+            "default": true,
+            "description": "True when the shopper is not present. Defaults to true, which is what a one-click reorder is."
+          }
+        }
+      },
+      "PaymentMethodCharge": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "paymentIntentId",
+          "provider",
+          "providerReference",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "paymentIntentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "provider": {
+            "type": "string",
+            "enum": [
+              "stripe"
+            ]
+          },
+          "providerReference": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "description": "The provider charge object this attempt created. Settlement is validated against an independent retrieval of it, never against this response."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "processing",
+              "requiresAction",
+              "succeeded",
+              "failed"
+            ],
+            "description": "The provider attempt outcome. `succeeded` means the provider accepted the charge; it is not a Tempera settlement, which is only produced by verified webhook reconciliation."
+          },
+          "nextActionUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "Present only for `requiresAction`. The brand completes authentication with its own provider client-side flow."
+          }
+        }
+      },
+      "DisputeStatus": {
+        "type": "string",
+        "enum": [
+          "needsResponse",
+          "underReview",
+          "won",
+          "lost",
+          "warningNeedsResponse",
+          "warningUnderReview",
+          "warningClosed"
+        ],
+        "description": "The provider dispute lifecycle. A warning* status is a card-network inquiry that can still be answered and has taken no money; won, lost, and warningClosed are terminal and are the only statuses that stop blocking a refund."
+      },
+      "Dispute": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "tenantId",
+          "paymentIntentId",
+          "provider",
+          "providerReference",
+          "amount",
+          "asset",
+          "reason",
+          "status",
+          "fundsWithdrawn",
+          "fundsReinstated",
+          "journalIds",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The durable Tempera dispute."
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "paymentIntentId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The settled payment intent this chargeback is against, bound through its verified settlement rather than through provider webhook metadata."
+          },
+          "provider": {
+            "type": "string",
+            "minLength": 1
+          },
+          "providerReference": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The provider's own dispute identifier, e.g. a Stripe dp_..."
+          },
+          "amount": {
+            "$ref": "#/components/schemas/AtomicAmount"
+          },
+          "asset": {
+            "$ref": "#/components/schemas/AssetId"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The provider's own dispute reason, e.g. fraudulent."
+          },
+          "status": {
+            "$ref": "#/components/schemas/DisputeStatus"
+          },
+          "fundsWithdrawn": {
+            "type": "boolean",
+            "description": "True once the provider withdrew the disputed funds and the balanced withdrawal journal is durable."
+          },
+          "fundsReinstated": {
+            "type": "boolean",
+            "description": "True once the provider gave the funds back and the reversing journal is durable."
+          },
+          "evidenceDueBy": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the provider requires evidence, if it set a deadline. Evidence is submitted in the provider's own dashboard; this API does not accept it."
+          },
+          "journalIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "The balanced ledger journals this dispute posted, oldest first: the withdrawal, then the reinstatement."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "closedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Present once the dispute reached a terminal status."
+          }
+        }
+      },
+      "ListDisputesResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "disputes"
+        ],
+        "properties": {
+          "disputes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Dispute"
+            }
+          },
+          "nextPageToken": {
+            "type": "string",
+            "description": "Pass as pageToken to read the next page. Absent on the last page."
+          }
+        }
+      },
+      "IntervalUnit": {
+        "type": "string",
+        "enum": [
+          "day",
+          "week",
+          "month",
+          "year"
+        ],
+        "description": "The calendar unit a billing interval is counted in."
+      },
+      "SubscriptionInterval": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "unit",
+          "count"
+        ],
+        "description": "How long one billing period lasts. Month and year arithmetic is calendar arithmetic that clamps to the end of the target month, so a schedule anchored on the 31st bills on the 30th, 29th, or 28th rather than skipping a month, and one anchored on 29 February bills on 28 February in a common year.",
+        "properties": {
+          "unit": {
+            "$ref": "#/components/schemas/IntervalUnit"
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 365
+          }
+        }
+      },
+      "SubscriptionStatus": {
+        "type": "string",
+        "enum": [
+          "active",
+          "pastDue",
+          "paused",
+          "canceled"
+        ],
+        "description": "`active` is billing normally. `pastDue` is a failed period with a retry scheduled. `paused` is excluded from the scheduler while keeping its place. `canceled` is terminal."
+      },
+      "SubscriptionPeriodStatus": {
+        "type": "string",
+        "enum": [
+          "scheduled",
+          "charging",
+          "settled",
+          "failed",
+          "skipped"
+        ],
+        "description": "`charging` means one off-session provider charge exists and settlement is awaited; `settled` means that period's payment intent settled through the verified webhook path. `skipped` is reserved for an operator-recorded skip and is not produced by the scheduler today."
+      },
+      "CreateSubscription": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tenantId",
+          "customerId",
+          "paymentMethodId",
+          "merchantId",
+          "riskSubjectId",
+          "recipient",
+          "amount",
+          "asset",
+          "expiresInSeconds",
+          "interval",
+          "idempotencyKey"
+        ],
+        "properties": {
+          "tenantId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "customerId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "A customer of this workspace."
+          },
+          "paymentMethodId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "An active saved payment method of that customer."
+          },
+          "merchantId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "description": "Carried onto every period's payment intent unchanged."
+          },
+          "riskSubjectId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "description": "Pre-registered Tempera Risk subject. Every period is authorized by a deterministic risk decision for this subject, exactly as a one-off intent is."
+          },
+          "recipient": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "amount": {
+            "$ref": "#/components/schemas/AtomicAmount"
+          },
+          "asset": {
+            "$ref": "#/components/schemas/AssetId"
+          },
+          "expiresInSeconds": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 86400,
+            "description": "Expiry carried onto each period's payment intent."
+          },
+          "interval": {
+            "$ref": "#/components/schemas/SubscriptionInterval"
+          },
+          "startAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "RFC3339 instant the first period starts at. Defaults to now. It must be within one day in the past and one year in the future."
+          },
+          "consumer": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "pattern": "^[a-z0-9]([a-z0-9-]*[a-z0-9])?$",
+            "description": "Registered consumer service copied onto every period's `PaymentReference`, for example `auth-hub`."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "At most 20 brand-owned string entries. Keys are 1 to 64 characters of [A-Za-z0-9_.-]; values are at most 255 characters and carry no control characters.",
+            "additionalProperties": {
+              "type": "string",
+              "maxLength": 255
+            }
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "pattern": "^[!-~]+$"
+          }
+        }
+      },
+      "Subscription": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "tenantId",
+          "customerId",
+          "paymentMethodId",
+          "merchantId",
+          "riskSubjectId",
+          "recipient",
+          "amount",
+          "asset",
+          "expiresInSeconds",
+          "interval",
+          "status",
+          "metadata",
+          "currentPeriodStart",
+          "currentPeriodEnd",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tenantId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "customerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "paymentMethodId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "merchantId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "riskSubjectId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "recipient": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "amount": {
+            "$ref": "#/components/schemas/AtomicAmount"
+          },
+          "asset": {
+            "$ref": "#/components/schemas/AssetId"
+          },
+          "expiresInSeconds": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 86400
+          },
+          "interval": {
+            "$ref": "#/components/schemas/SubscriptionInterval"
+          },
+          "status": {
+            "$ref": "#/components/schemas/SubscriptionStatus"
+          },
+          "consumer": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "maxLength": 255
+            }
+          },
+          "currentPeriodStart": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "currentPeriodEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "nextChargeAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Absent when nothing is due: the subscription is canceled, or its current period has been charged and is waiting on provider settlement."
+          },
+          "lastFailureCode": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "description": "Stable machine identifier of the most recent failed charge, for example `charge_failed` or `charge_requires_action`."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "canceledAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "SubscriptionTransitionRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tenantId"
+        ],
+        "description": "The body of the `cancel`, `pause`, and `resume` custom methods. They take no other input: the transition is decided by the durable state machine.",
+        "properties": {
+          "tenantId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        }
+      },
+      "SubscriptionPeriod": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "periodStart",
+          "periodEnd",
+          "status",
+          "attempts"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "periodStart": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "periodEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "paymentIntentId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The payment intent minted for this period. Its `reference` is `{kind: subscriptionPeriod, id: \"<subscriptionId>/<periodStart>\"}`."
+          },
+          "chargeId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The off-session charge attempt against the saved payment method."
+          },
+          "status": {
+            "$ref": "#/components/schemas/SubscriptionPeriodStatus"
+          },
+          "attempts": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Charge attempts made for this period. The fourth failed attempt cancels the subscription."
+          },
+          "lastFailureCode": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "nextAttemptAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the next retry is due: one, three, and then seven days after the failing attempt."
+          }
+        }
+      },
+      "ListSubscriptionsResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "subscriptions"
+        ],
+        "properties": {
+          "subscriptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Subscription"
+            }
+          },
+          "nextPageToken": {
+            "type": "string",
+            "description": "Present only when more subscriptions match. Pass it back as `pageToken` with the identical filters."
+          }
+        }
+      },
+      "ListSubscriptionPeriodsResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "periods"
+        ],
+        "properties": {
+          "periods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SubscriptionPeriod"
+            }
+          },
+          "nextPageToken": {
+            "type": "string",
+            "description": "Present only when more periods match. Pass it back as `pageToken`."
+          }
+        }
+      },
+      "MerchantBalance": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "merchantId",
+          "asset",
+          "settledGross",
+          "platformFees",
+          "refunded",
+          "payable",
+          "paidOut",
+          "asOf"
+        ],
+        "properties": {
+          "merchantId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "asset": {
+            "$ref": "#/components/schemas/AssetId"
+          },
+          "settledGross": {
+            "$ref": "#/components/schemas/AtomicAmount"
+          },
+          "platformFees": {
+            "$ref": "#/components/schemas/AtomicAmount"
+          },
+          "refunded": {
+            "$ref": "#/components/schemas/AtomicAmount"
+          },
+          "payable": {
+            "$ref": "#/components/schemas/AtomicAmount"
+          },
+          "paidOut": {
+            "$ref": "#/components/schemas/AtomicAmount"
+          },
+          "asOf": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "description": "One merchant's money position. settledGross is everything settlement recognised for it before platform fees; platformFees is what the platform took from those settlements, net of the shares refunds gave back; refunded is gross refunded including that fee share; payable is settledGross minus platformFees minus refunded. paidOut is separate: it is what the provider reported paying out of the connected account, an observation rather than a ledger position, so payable does not decrease when a payout is paid."
+      },
+      "MerchantPayoutStatus": {
+        "type": "string",
+        "enum": [
+          "paid",
+          "failed"
+        ]
+      },
+      "MerchantPayout": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "merchantId",
+          "provider",
+          "providerPayoutId",
+          "amount",
+          "currency",
+          "status",
+          "createdAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "merchantId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "provider": {
+            "type": "string",
+            "const": "stripe"
+          },
+          "providerPayoutId": {
+            "type": "string"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/AtomicAmount"
+          },
+          "currency": {
+            "type": "string",
+            "const": "usd"
+          },
+          "status": {
+            "$ref": "#/components/schemas/MerchantPayoutStatus"
+          },
+          "failureMessage": {
+            "type": "string",
+            "description": "The provider's reason for a failed payout, when it published one."
+          },
+          "arrivalDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "When the provider expects the payout to arrive, or null when it published none."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ListMerchantPayoutsResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "merchantPayouts"
+        ],
+        "properties": {
+          "merchantPayouts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MerchantPayout"
+            }
+          },
+          "nextPageToken": {
+            "type": "string",
+            "description": "Pass as pageToken to read the next page. Absent on the last page."
+          }
+        }
+      },
+      "ConsumerEventType": {
+        "type": "string",
+        "enum": [
+          "payment.settled",
+          "payment.refunded",
+          "payment.disputed",
+          "payment.dispute_resolved"
+        ],
+        "description": "The economic fact a signed consumer event reports. One event is recorded per committed fact, inside the same transaction that commits it, and deduplicated on that fact: `payment.settled` per settlement journal (`payment.settled:<journalId>`), `payment.refunded` per refund operation (`payment.refunded:<operation.id>`), and the two dispute events per dispute (`payment.disputed:<dispute.id>`, `payment.dispute_resolved:<dispute.id>`). These are the same values a tenant webhook endpoint subscribes to through `#/components/schemas/WebhookEventType`."
+      },
+      "ConsumerEventOperation": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "kind",
+          "asset",
+          "amount"
+        ],
+        "description": "The economic operation an event reports, on operation-scoped events only (refunds today). Deduplicate a `payment.refunded` event on `id`.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The durable Tempera payment operation. It is the refund's money-fact identity."
+          },
+          "kind": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The operation kind, e.g. REFUND.",
+            "examples": [
+              "REFUND"
+            ]
+          },
+          "asset": {
+            "$ref": "#/components/schemas/AssetId"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/AtomicAmount",
+            "description": "The amount this operation moved, which for a partial refund is less than the intent's amount."
+          }
+        }
+      },
+      "ConsumerEventDispute": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "providerReference",
+          "amount",
+          "asset",
+          "reason",
+          "status"
+        ],
+        "description": "The chargeback a `payment.disputed` or `payment.dispute_resolved` event reports, reduced to what a consumer needs in order to act. Deduplicate on `id`. The full record is served by `getDispute`.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The durable Tempera dispute, and the money-fact identity of both dispute events."
+          },
+          "providerReference": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The provider's own dispute identifier, e.g. a Stripe dp_..."
+          },
+          "amount": {
+            "$ref": "#/components/schemas/AtomicAmount"
+          },
+          "asset": {
+            "$ref": "#/components/schemas/AssetId"
+          },
+          "reason": {
+            "type": "string",
+            "description": "The provider's own dispute reason, e.g. fraudulent. It may be an empty string when the provider supplied none."
+          },
+          "status": {
+            "$ref": "#/components/schemas/DisputeStatus",
+            "description": "The dispute lifecycle status at the moment the event was recorded."
+          },
+          "outcome": {
+            "type": "string",
+            "enum": [
+              "won",
+              "lost",
+              "warningClosed"
+            ],
+            "description": "How the dispute ended. Present only on payment.dispute_resolved; absent on payment.disputed."
+          },
+          "evidenceDueBy": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the provider requires evidence, if it set a deadline. Evidence is submitted in the provider's own dashboard."
+          }
+        }
+      },
+      "ConsumerEventOperationReceipt": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "evidence",
+          "algorithm",
+          "public_key_hex"
+        ],
+        "description": "The signed operation receipt as it appears inside a `payment.refunded` consumer event: the persisted `operation_receipts.receipt_json` verbatim, which is the Rust `SignedOperationReceipt` serialization.\n\n**Its field names are snake_case**, unlike everything else on this API. The event carries the stored receipt unaltered so its bytes stay comparable with the durable row; `getRefund` renders the identical receipt in this API's lowerCamel convention as `#/components/schemas/RefundReceipt`. A consumer reading a refund event wants `evidence.operation_id`, `evidence.amount`, and `evidence.receipt_id`.",
+        "properties": {
+          "evidence": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "schema_version",
+              "receipt_id",
+              "operation_id",
+              "provider_attempt_id",
+              "payment_intent_id",
+              "journal_id",
+              "request_hash",
+              "policy_decision_id",
+              "operation_kind",
+              "asset",
+              "amount",
+              "merchant_id",
+              "provider",
+              "provider_reference",
+              "transaction_id",
+              "finality",
+              "observed_at",
+              "key_id",
+              "signature"
+            ],
+            "properties": {
+              "schema_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "receipt_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "operation_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "provider_attempt_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "payment_intent_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "journal_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "request_hash": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "policy_decision_id": {
+                "type": "string"
+              },
+              "operation_kind": {
+                "type": "string",
+                "minLength": 1
+              },
+              "asset": {
+                "$ref": "#/components/schemas/AssetId"
+              },
+              "amount": {
+                "$ref": "#/components/schemas/AtomicAmount"
+              },
+              "merchant_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "provider": {
+                "type": "string",
+                "minLength": 1
+              },
+              "provider_reference": {
+                "type": "string",
+                "minLength": 1
+              },
+              "transaction_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "finality": {
+                "type": "string",
+                "minLength": 1
+              },
+              "observed_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "key_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "signature": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "algorithm": {
+            "type": "string",
+            "enum": [
+              "Ed25519"
+            ]
+          },
+          "public_key_hex": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      },
+      "ConsumerEvent": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schemaVersion",
+          "id",
+          "type",
+          "occurredAt",
+          "tenantId",
+          "provider",
+          "providerReference",
+          "paymentIntent",
+          "journalId",
+          "receipt"
+        ],
+        "description": "The signed envelope Tempera Payments delivers to a consumer service or a tenant webhook endpoint. It is the exact JSON body of the POST; no route of this API returns it, which is why the schema is published here and pointed at by the `x-tempera-consumer-events` document extension rather than by a response.\n\n**Delivery.** `POST` with `content-type: application/json` to the configured consumer endpoint or the registered `#/components/schemas/WebhookEndpoint` URL, carrying three headers:\n- `tempera-event-id`: this envelope's `id`.\n- `tempera-event-type`: this envelope's `type`.\n- `tempera-event-signature`: `keyId=<key id>,alg=Ed25519,sig=<unpadded base64url>`, comma-separated `name=value` pairs in that order.\n\n**Signature.** Ed25519 over `\"tempera-payments:consumer-event:v1\\n\" || body`, where `body` is the **raw delivered bytes** — never a re-serialized JSON value. The domain prefix means a consumer-event signature can never be replayed as a settlement-receipt signature even though both use the same platform key. Match the delivered `keyId` against the trusted keys, which are distributed in the same `key-id=64hex[,...]` format as `TEMPERA_RECEIPT_VERIFY_KEYS` and are also served on a webhook endpoint's `signingKeys`. Answer any `2xx` to acknowledge; a `4xx` other than 408, 423, or 429 dead-letters the delivery, and everything else is retried with capped exponential backoff (30 seconds to 6 hours, at most 20 attempts).\n\n**Idempotency.** Delivery is at-least-once. Deduplicate on the money fact the event names — `journalId` for `payment.settled`, `operation.id` for `payment.refunded`, `dispute.id` for the two dispute events — not on `id`, which is minted per envelope.\n\nBinding an event to a consumer-side record is described on `#/components/schemas/SignedSettlementReceipt`; see also docs/CONSUMER_EVENTS.md.",
+        "properties": {
+          "schemaVersion": {
+            "type": "integer",
+            "const": 1,
+            "description": "Envelope version. Reject an envelope whose version you do not implement."
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "This envelope's identifier (UUID v7), also delivered as the tempera-event-id header. It is not the deduplication key: a redelivery reuses it, but the money fact is what makes an event unique."
+          },
+          "type": {
+            "$ref": "#/components/schemas/ConsumerEventType"
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "RFC 3339 instant the underlying fact was observed: the settlement's, refund's, or dispute's observedAt, not the delivery time."
+          },
+          "tenantId": {
+            "type": "string",
+            "description": "The workspace the money belongs to. It always equals paymentIntent.tenantId; check both against your own configured tenant."
+          },
+          "provider": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The provider or rail that authoritatively owns the underlying fact, e.g. stripe, paypal, coinbase."
+          },
+          "providerReference": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The provider's settlement, refund, or dispute identifier bound to the journal, e.g. a Stripe cs_... session or a dp_... dispute."
+          },
+          "paymentIntent": {
+            "$ref": "#/components/schemas/PaymentIntent",
+            "description": "The intent projection as committed, including its typed reference. This is where the money-fact-to-order binding survives, since reference is not part of the signed receipt. Its status is CONFIRMED or FINALIZED on payment.settled."
+          },
+          "operation": {
+            "$ref": "#/components/schemas/ConsumerEventOperation",
+            "description": "Present only on operation-scoped events (payment.refunded today); absent otherwise."
+          },
+          "dispute": {
+            "$ref": "#/components/schemas/ConsumerEventDispute",
+            "description": "Present only on payment.disputed and payment.dispute_resolved; absent otherwise."
+          },
+          "journalId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The balanced ledger journal this event is about: the settlement journal for payment.settled, the refund journal for payment.refunded, and the payment's original settlement journal for the two dispute events. It is the deduplication key for a settlement."
+          },
+          "receipt": {
+            "description": "The signed receipt exactly as persisted. `payment.settled` and both dispute events carry the settlement receipt of the payment — a dispute event mints no receipt of its own, it reports what is happening to money a settlement already proved — and `payment.refunded` carries the refund's operation receipt, whose field names are snake_case. `receipt.evidence.receiptId` (settlement) and `receipt.evidence.receipt_id` (refund) are the durable receipt identity consumers record alongside the grant they made.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/SignedSettlementReceipt"
+              },
+              {
+                "$ref": "#/components/schemas/ConsumerEventOperationReceipt"
+              }
+            ]
+          }
         }
       }
     },
@@ -1579,5 +6312,33 @@
         }
       }
     }
+  },
+  "x-tempera-consumer-events": {
+    "description": "Signed events this service delivers outbound. They are not served by any route of this API, so they appear here rather than under `paths`: one immutable event is recorded per committed economic fact, inside the commit transaction, and delivered asynchronously and at-least-once to internal consumers named by an intent's `reference.consumer` and to every active tenant webhook endpoint subscribed to the type.",
+    "envelopeSchema": "#/components/schemas/ConsumerEvent",
+    "eventTypeSchema": "#/components/schemas/ConsumerEventType",
+    "eventTypes": [
+      "payment.settled",
+      "payment.refunded",
+      "payment.disputed",
+      "payment.dispute_resolved"
+    ],
+    "transport": {
+      "method": "POST",
+      "contentType": "application/json",
+      "successStatuses": "any 2xx"
+    },
+    "headers": {
+      "tempera-event-id": "The envelope id.",
+      "tempera-event-type": "The envelope type.",
+      "tempera-event-signature": "keyId=<key id>,alg=Ed25519,sig=<unpadded base64url>"
+    },
+    "signature": {
+      "algorithm": "Ed25519",
+      "message": "\"tempera-payments:consumer-event:v1\\n\" || raw request body",
+      "encoding": "unpadded URL-safe base64",
+      "publicKeyFormat": "key-id=64hex[,key-id=64hex...], the same map as TEMPERA_RECEIPT_VERIFY_KEYS"
+    },
+    "documentation": "docs/CONSUMER_EVENTS.md"
   }
 }

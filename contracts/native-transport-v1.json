@@ -30,9 +30,9 @@
       "envVar": "TEMPERA_PAYMENTS_URL",
       "spec": "specs/tempera-payments.openapi.json",
       "sourceRepo": "tempera-dev/tempera-payments",
-      "sourceBranch": "main",
-      "sourceCommit": "b6c07326f040afaead535fcff233978d482309b8",
-      "sourceSha256": "d1ddd504eb4e94067dfac0587e7091d25a1e575fa1e6ea7542270831ec75808f"
+      "sourceBranch": "codex/billing-engine-consolidation",
+      "sourceCommit": "1b9b869b12d56326deaa7619e71f5c4358bc2bce",
+      "sourceSha256": "34ae4e84409f33f633373b22c95de5920152cb70ad72a74bda8161f08c2f87ec"
     },
     {
       "product": "temperaVoice",
@@ -808,7 +808,7 @@
         "Idempotency-Key"
       ],
       "requestDigest": "079aa0fa31f02610b0d5245e6298af8fa2a3c2f9fad584287ec4e2ab63b587bc",
-      "responseDigest": "eb6585f6565ba2dfd000b31f88dea7fc68e65c5c7b3b055bf40b0d59d85810ca"
+      "responseDigest": "7e02d5f579ba95aaaf0f69ce7ab640c7fd739b633ef1da01752c0eebfcf02e77"
     },
     {
       "operation": "temperaPayments.createMerchantOnboardingLink",
@@ -844,7 +844,7 @@
       "headers": [],
       "requiredHeaders": [],
       "requestDigest": "149e87e3d99172a88417f4b1976dc3d0d274bc700e3bdb3139ef8e80009c7b46",
-      "responseDigest": "eb6585f6565ba2dfd000b31f88dea7fc68e65c5c7b3b055bf40b0d59d85810ca"
+      "responseDigest": "7e02d5f579ba95aaaf0f69ce7ab640c7fd739b633ef1da01752c0eebfcf02e77"
     },
     {
       "operation": "temperaPayments.getMerchantWorkspace",
@@ -876,7 +876,7 @@
       "headers": [],
       "requiredHeaders": [],
       "requestDigest": "dd01f7af639cd828535887e34a91bb97239b6e68aec9f03e6ee0dd29542ee28c",
-      "responseDigest": "eb6585f6565ba2dfd000b31f88dea7fc68e65c5c7b3b055bf40b0d59d85810ca"
+      "responseDigest": "7e02d5f579ba95aaaf0f69ce7ab640c7fd739b633ef1da01752c0eebfcf02e77"
     },
     {
       "operation": "temperaPayments.refreshMerchantEligibility",
@@ -892,7 +892,7 @@
       "headers": [],
       "requiredHeaders": [],
       "requestDigest": "1240a420b7ec1f33f989e1a55f8dfe182f71daff56b2b1eca821d340a15c8876",
-      "responseDigest": "eb6585f6565ba2dfd000b31f88dea7fc68e65c5c7b3b055bf40b0d59d85810ca"
+      "responseDigest": "7e02d5f579ba95aaaf0f69ce7ab640c7fd739b633ef1da01752c0eebfcf02e77"
     },
     {
       "operation": "temperaVoice.createVoiceSession",

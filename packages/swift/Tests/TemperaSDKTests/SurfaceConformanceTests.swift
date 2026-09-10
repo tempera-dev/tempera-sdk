@@ -94,7 +94,7 @@ final class SurfaceConformanceTests: XCTestCase {
         XCTAssertFalse(TemperaSurface.audiences.isEmpty)
         XCTAssertTrue(TemperaSurface.audiences.contains(TemperaSurface.defaultAudience))
         XCTAssertEqual(TemperaSDK.surfaceVersion, TemperaSurface.version)
-        XCTAssertEqual(TemperaSDK.version, "0.12.0")
+        XCTAssertEqual(TemperaSDK.version, "0.13.0")
 
         // Every operation belongs to a registered product, names a registered
         // audience when it pins one, and carries a known retry classification.

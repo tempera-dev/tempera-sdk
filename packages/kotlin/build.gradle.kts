@@ -18,7 +18,7 @@ group = "dev.tempera"
 
 // Kept in step with packages/typescript/package.json, packages/python/pyproject.toml,
 // packages/rust/Cargo.toml, and TemperaSdk.VERSION.
-version = "0.12.0"
+version = "0.13.0"
 
 repositories {
     mavenCentral()

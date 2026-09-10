@@ -759,8 +759,12 @@ export interface TemperaBioClient extends TemperaProductClientBase {
 export interface TemperaPaymentsClient extends TemperaProductClientBase {
   /** Report that the process is reachable. */
   getPaymentsHealth(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Report durable-storage readiness and which rails this process is configured for. */
+  getPaymentsReadiness(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Create a canonical payment intent. */
   createPaymentIntent(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List a tenant's payment intents by consumer reference, status, or creation window. */
+  listPaymentIntents(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Read the canonical payment-intent projection. */
   getPaymentIntent(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Read and cryptographically re-verify the canonical settlement receipt. */
@@ -783,6 +787,70 @@ export interface TemperaPaymentsClient extends TemperaProductClientBase {
   createMerchantOnboardingLink(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Verify and durably deduplicate a Stripe webhook using its raw body. */
   receiveStripeWebhook(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Refund a settled payment intent. */
+  createRefund(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List the refunds of one payment intent. */
+  listRefunds(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Read one refund. */
+  getRefund(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create an idempotent hosted PayPal order for a fiat payment intent. */
+  createPayPalCheckout(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Verify and durably deduplicate a PayPal webhook using its raw body. */
+  receivePayPalWebhook(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create an idempotent hosted Coinbase Commerce charge for a fiat payment intent. */
+  createCoinbaseCheckout(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Verify and durably deduplicate a Coinbase Commerce webhook using its raw body. */
+  receiveCoinbaseWebhook(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Register a destination for signed payment events. */
+  createWebhookEndpoint(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List the webhook endpoints of one workspace. */
+  listWebhookEndpoints(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Read one webhook endpoint. */
+  getWebhookEndpoint(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Stop delivering to a webhook endpoint. */
+  deleteWebhookEndpoint(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List delivery attempts for one webhook endpoint. */
+  listWebhookDeliveries(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Charge a saved payment method off-session for an authorized payment intent. */
+  createPaymentMethodCharge(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create a customer for one workspace. */
+  createCustomer(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List customers of one workspace by an exact externalId or email. */
+  listCustomers(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Read one customer. */
+  getCustomer(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create a provider-hosted session that saves a card for this customer. */
+  createSetupSession(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List the payment methods saved for one customer. */
+  listPaymentMethods(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Detach a saved payment method. */
+  deletePaymentMethod(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List the disputes of one payment intent. */
+  listPaymentIntentDisputes(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List the disputes of one workspace. */
+  listDisputes(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Read one dispute. */
+  getDispute(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create a recurring charge schedule against a saved payment method. */
+  createSubscription(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List the subscriptions of one workspace. */
+  listSubscriptions(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Read one subscription. */
+  getSubscription(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Cancel a subscription. */
+  cancelSubscription(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Pause a subscription. */
+  pauseSubscription(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Resume a paused subscription. */
+  resumeSubscription(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List the billing periods of one subscription. */
+  listSubscriptionPeriods(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Read one merchant's balance. */
+  getMerchantBalance(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List the payouts observed for one merchant. */
+  listMerchantPayouts(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Verify a Stripe Connect account event and record an observed payout. */
+  receiveStripeConnectWebhook(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export interface TemperaDocumentClient extends TemperaProductClientBase {

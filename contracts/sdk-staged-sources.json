@@ -1,6 +1,18 @@
 {
   "schema_version": 1,
   "policy": "A vendored producer contract may be pinned to an unmerged producer branch only while it is listed here. The entry names the exact producer branch and commit, the producer-published contract digest, an owner, a migration back to a trusted main lock, and an expiry. Nothing here claims that the pinned commit is merged, released, or deployed.",
-  "staged_sources": [],
-  "$comment": "Empty by design. Every vendored producer now pins its own main. A staged pin means the SDK ships a contract that is not released, so it must name an owner, a migration, and an expiry -- and be retired the moment the producer branch merges."
+  "staged_sources": [
+    {
+      "generated_path": "specs/tempera-payments.openapi.json",
+      "source_repo": "tempera-dev/tempera-payments",
+      "source_branch": "codex/billing-engine-consolidation",
+      "source_commit": "1b9b869b12d56326deaa7619e71f5c4358bc2bce",
+      "published_digest": "34ae4e84409f33f633373b22c95de5920152cb70ad72a74bda8161f08c2f87ec",
+      "owner": "jadenfix",
+      "rationale": "tempera-payments#47 (branch codex/billing-engine-consolidation) consolidates billing onto Payments and grows the producer contract from 13 to 47 operations and from 5 to 14 scopes. The SDK stages that exact commit now so every generated client carries the refunds, webhook-endpoint, customer, saved-payment-method, PayPal, Coinbase, dispute, subscription and merchant-payout operations, plus the `/readyz` readiness probe, while the producer PR is in review. The pin asserts provenance only: 1b9b869b12d56326deaa7619e71f5c4358bc2bce is not merged, released, or deployed.",
+      "migration": "retire this pin and re-vendor at the main SHA when #47 merges",
+      "review_after": "2026-10-09"
+    }
+  ],
+  "$comment": "A staged pin means the SDK ships a contract that is not released, so it must name an owner, a migration, and an expiry -- and be retired the moment the producer branch merges. Every other vendored producer pins its own main."
 }

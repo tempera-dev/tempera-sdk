@@ -247,13 +247,13 @@ is the default when none is specified.
 | `investigation:run` | tempera-investigations: `cancelOperation`, `evaluateInvestigationDeterministically`, `replayInvestigation`, `runInvestigation`, `runInvestigationAgentic` |
 | `investigation:review` | tempera-investigations: `createInvestigationReview` |
 | `pii:unmask` | palette PII unmasking — pass `unmask` + `reason` on trace/span reads (`getTrace`, `getSpan`, `getSpanIo`). |
-| `payments:intents:read` | tempera-payments: `getPaymentIntent` |
-| `payments:intents:write` | tempera-payments: `createCardSession`, `createPaymentIntent`, `createStripeCheckout` |
+| `payments:intents:read` | tempera-payments: `getPaymentIntent`, `listPaymentIntents` |
+| `payments:intents:write` | tempera-payments: `createCardSession`, `createCoinbaseCheckout`, `createPayPalCheckout`, `createPaymentIntent`, `createPaymentMethodCharge`, `createStripeCheckout` |
 | `payments:receipts:read` | tempera-payments: `getPaymentSettlementReceipt` |
-| `payments:webhooks:write` | No typed SDK operation declares it yet; enforced server-side. |
-| `payments:refunds:write` | No typed SDK operation declares it yet; enforced server-side. |
+| `payments:webhooks:write` | tempera-payments: `createWebhookEndpoint`, `deleteWebhookEndpoint` |
+| `payments:refunds:write` | tempera-payments: `createRefund` |
 | `payments:admin` | No typed SDK operation declares it yet; enforced server-side. |
-| `payments:merchants:read` | tempera-payments: `getMerchant`, `getMerchantWorkspace`, `getWorkspaceMerchant`, `refreshMerchantEligibility` |
+| `payments:merchants:read` | tempera-payments: `getMerchant`, `getMerchantBalance`, `getMerchantWorkspace`, `getWorkspaceMerchant`, `listMerchantPayouts`, `refreshMerchantEligibility` |
 | `payments:merchants:write` | tempera-payments: `createMerchant`, `createMerchantOnboardingLink` |
 | `orders:read` | tempera-dropshipping: `evaluateOrder`, `getBusinessSummary`, `getBusinessWorkspace`, `getCatalogOffer`, `getOrder`, `getProposal`, `getSaleOrder`, `getStore`, `listCatalogOffers`, `listEvents`, `listInbox`, `listOrderAuditEvents`, `listOrderEventProjections`, `listOrders`, `listSaleOrders`, `listStores` |
 | `orders:commerce:write` | tempera-dropshipping: `createCatalogOffer`, `createSaleOrder` |
@@ -301,6 +301,55 @@ is the default when none is specified.
 - **Owner:** auth-hub.
 - **Reported:** 2026-09-09.
 - **Migration:** POST /v1/internal/data-source-connections:resolve is fenced by a static per-service token rather than an introspected OAuth grant, so this string is a label for what that secret authorizes rather than a grantable scope. Decide whether the route should move onto a real credential; if it should not, the SDK needs a way to say 'service secret, not a scope'.
+
+### `payments:customers:read`
+
+- **Status:** staged.
+- **Owner:** jadenfix.
+- **Reported:** 2026-09-09.
+- **Migration:** tempera-payments PR #47 fences reading stored customers and their saved payment methods with payments:customers:read, but the Auth Hub scope registry vendored here predates it: the scope is registered in auth-hub#140 (branch codex/billing-via-payments) and is not yet on auth-hub main. Registered in auth-hub#140; remove after control-plane re-vendor.
+
+### `payments:customers:write`
+
+- **Status:** staged.
+- **Owner:** jadenfix.
+- **Reported:** 2026-09-09.
+- **Migration:** tempera-payments PR #47 fences creating customers, starting setup sessions, and deleting saved payment methods with payments:customers:write, but the Auth Hub scope registry vendored here predates it: the scope is registered in auth-hub#140 (branch codex/billing-via-payments) and is not yet on auth-hub main. Registered in auth-hub#140; remove after control-plane re-vendor.
+
+### `payments:disputes:read`
+
+- **Status:** staged.
+- **Owner:** jadenfix.
+- **Reported:** 2026-09-09.
+- **Migration:** tempera-payments PR #47 fences reading disputes, both the per-intent list and the workspace-wide list and get, with payments:disputes:read, but the Auth Hub scope registry vendored here predates it: the scope is registered in auth-hub#140 (branch codex/billing-via-payments) and is not yet on auth-hub main. Registered in auth-hub#140; remove after control-plane re-vendor.
+
+### `payments:refunds:read`
+
+- **Status:** staged.
+- **Owner:** jadenfix.
+- **Reported:** 2026-09-09.
+- **Migration:** tempera-payments PR #47 fences reading refunds for a payment intent with payments:refunds:read, but the Auth Hub scope registry vendored here predates it: the scope is registered in auth-hub#140 (branch codex/billing-via-payments) and is not yet on auth-hub main. Registered in auth-hub#140; remove after control-plane re-vendor.
+
+### `payments:subscriptions:read`
+
+- **Status:** staged.
+- **Owner:** jadenfix.
+- **Reported:** 2026-09-09.
+- **Migration:** tempera-payments PR #47 fences reading subscriptions and their billing periods with payments:subscriptions:read, but the Auth Hub scope registry vendored here predates it: the scope is registered in auth-hub#140 (branch codex/billing-via-payments) and is not yet on auth-hub main. Registered in auth-hub#140; remove after control-plane re-vendor.
+
+### `payments:subscriptions:write`
+
+- **Status:** staged.
+- **Owner:** jadenfix.
+- **Reported:** 2026-09-09.
+- **Migration:** tempera-payments PR #47 fences creating subscriptions and cancelling, pausing, and resuming them with payments:subscriptions:write, but the Auth Hub scope registry vendored here predates it: the scope is registered in auth-hub#140 (branch codex/billing-via-payments) and is not yet on auth-hub main. Registered in auth-hub#140; remove after control-plane re-vendor.
+
+### `payments:webhooks:read`
+
+- **Status:** staged.
+- **Owner:** jadenfix.
+- **Reported:** 2026-09-09.
+- **Migration:** tempera-payments PR #47 fences reading webhook endpoints and their delivery attempts with payments:webhooks:read, but the Auth Hub scope registry vendored here predates it: the scope is registered in auth-hub#140 (branch codex/billing-via-payments) and is not yet on auth-hub main. Registered in auth-hub#140; remove after control-plane re-vendor.
 
 ### `usage:report`
 

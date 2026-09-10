@@ -680,7 +680,7 @@ void test_mcp() {
     CHECK_EQ(initialize,
              std::string("{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":"
                          "{\"protocolVersion\":\"2025-06-18\",\"capabilities\":{},\"clientInfo\":"
-                         "{\"name\":\"tempera-sdk\",\"version\":\"0.12.0\"}}}"));
+                         "{\"name\":\"tempera-sdk\",\"version\":\"0.13.0\"}}}"));
 
     auto [ping_id, ping] = builder.ping_body();
     CHECK(ping_id == 2, "ids do not increment");
