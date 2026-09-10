@@ -1,0 +1,53 @@
+name: Bio canonical domain v2 SDK staging consumer
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/bio-canonical-domain-v2-consumer.yml"
+      - "contracts/bio-canonical-domain-v2-*.json"
+      - "packages/python/src/tempera_sdk/bio_canonical_domain_v2.py"
+      - "packages/python/tests/test_bio_canonical_domain_v2.py"
+  push:
+    paths:
+      - ".github/workflows/bio-canonical-domain-v2-consumer.yml"
+      - "contracts/bio-canonical-domain-v2-*.json"
+      - "packages/python/src/tempera_sdk/bio_canonical_domain_v2.py"
+      - "packages/python/tests/test_bio_canonical_domain_v2.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-unexported-v2-consumer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: "3.12.13"
+      - name: Compile and replay adversarial SDK tests
+        run: |
+          python -m compileall -q packages/python/src/tempera_sdk/bio_canonical_domain_v2.py packages/python/tests/test_bio_canonical_domain_v2.py
+          for seed in 1 2 97 211 99991; do
+            PYTHONHASHSEED="$seed" python packages/python/tests/test_bio_canonical_domain_v2.py
+          done
+      - name: Reproduce committed SDK receipt
+        run: |
+          first="$(mktemp)"
+          second="$(mktemp)"
+          PYTHONHASHSEED=17 python packages/python/src/tempera_sdk/bio_canonical_domain_v2.py > "$first"
+          PYTHONHASHSEED=65537 python packages/python/src/tempera_sdk/bio_canonical_domain_v2.py > "$second"
+          cmp --silent "$first" "$second"
+          cmp --silent "$first" contracts/bio-canonical-domain-v2-sdk-consumer-verification.json
+      - name: Enforce unexported receipt-only boundary
+        run: |
+          if grep -Ein 'GraphEngine|GraphImporter|register_(tool|resource|prompt)|MagicMock|patch\(|urlopen\(|requests|socket|subprocess' packages/python/src/tempera_sdk/bio_canonical_domain_v2.py; then
+            echo "SDK staging consumer crossed its receipt-only boundary" >&2
+            exit 1
+          fi
+          if test -e packages/python/src/tempera_sdk/__init__.py && grep -E 'bio_canonical_domain_v2' packages/python/src/tempera_sdk/__init__.py; then
+            echo "staging verifier was exported from package root" >&2
+            exit 1
+          fi

@@ -1,0 +1,84 @@
+{
+  "authority": {
+    "benchmark_release": false,
+    "evidence_stage_promotion": false,
+    "graph_write": false,
+    "merge": false,
+    "physical_action": false,
+    "proof_promotion": false,
+    "scientific_truth": false,
+    "source_admission": false
+  },
+  "claim_ceiling": "independent_mcp_v2_receipt_conformance",
+  "compatibility": {
+    "affected_consumers": [
+      "tempera-sdk-python-staging-tests"
+    ],
+    "dependencies": "stdlib-only",
+    "owner": "tempera-sdk",
+    "python": ">=3.10,<4",
+    "rollback": "remove unexported v2 verifier and sealed receipt",
+    "rollout": "staging-verification-only"
+  },
+  "consumer": {
+    "graph_write": false,
+    "implementation": "packages/python/src/tempera_sdk/bio_canonical_domain_v2.py",
+    "mcp_tool_registered": false,
+    "network": "denied",
+    "package_root_export": false,
+    "physical_action": false,
+    "proof_promotion": false,
+    "runtime_route_registered": false,
+    "sdk_adapter_registered": false,
+    "source_admission": false,
+    "workflow_registered": false
+  },
+  "content_digest": "sha256:fbca4999727db22ab60ed59fdfc5247436fe4c2cff027d266de4da74cc1e4d8c",
+  "fixture": {
+    "bytes": 2870,
+    "consumer_path": "contracts/bio-canonical-domain-v2-mcp.producer.json",
+    "content_digest": "sha256:8f2062dd40321585c1f27e40129052fc1a57b69cc3fcf9cb82e2904b52bb9e21",
+    "git_blob": "14061ffc59a66980824993c8d005fe130d0a832b",
+    "producer_path": "contracts/bio-canonical-domain-inspector-v2-consumer-verification.json",
+    "sha256": "82543a8517408ef34ff47235f7322c786a308b7960b86e280129f63f83afb270"
+  },
+  "schema_version": "tempera.sdk.bio-canonical-domain-v2-staging-lock/v1",
+  "status": "staging_mcp_v2_locked_not_exported",
+  "upstream": {
+    "artifacts": {
+      ".github/workflows/bio-canonical-domain-inspector-v2-consumer.yml": {
+        "bytes": 2216,
+        "git_blob": "b3cdc2e91072a0fc1b90ae526cb7b9171969b17c",
+        "sha256": "0756280e940399dcaf469a0cfd6528a1a20bf9b99be5c86835448d617b9b04ee"
+      },
+      "contracts/bio-canonical-domain-inspector-v2-consumer-verification.json": {
+        "bytes": 2870,
+        "git_blob": "14061ffc59a66980824993c8d005fe130d0a832b",
+        "sha256": "82543a8517408ef34ff47235f7322c786a308b7960b86e280129f63f83afb270"
+      },
+      "contracts/bio-canonical-domain-inspector-v2.producer.json": {
+        "bytes": 5763,
+        "git_blob": "5b1c1f277168b7ef066906df5ce2298f4a000889",
+        "sha256": "4b7d299dc19e7a9a06112d971bff95192b24c6d1560de4cd0176182b86be2586"
+      },
+      "contracts/bio-canonical-domain-inspector-v2.staging.lock.json": {
+        "bytes": 3888,
+        "git_blob": "b0b9f4124992863339cd4f110a843505167fd9d6",
+        "sha256": "6f688e6fb165db794d1c8a43f0a1242b3a8384ceea98b318c9e13e1a26d1ddd4"
+      },
+      "scripts/test-verify-bio-canonical-domain-inspector-v2.py": {
+        "bytes": 11129,
+        "git_blob": "069e37adf5e4c3f6535956e432dfcb23418ba681",
+        "sha256": "87a97a4ec99eaf18fde4d4bd168c203230b728e3834a4cc48bb1065aa9cdc50c"
+      },
+      "scripts/verify-bio-canonical-domain-inspector-v2.py": {
+        "bytes": 13256,
+        "git_blob": "19ea910e70e60bcff4c3c81d2dcae124b36c09a1",
+        "sha256": "4a12d918636dc37c9024f630fb369d157b756f471534f8cc1dec1834a9d8a4db"
+      }
+    },
+    "branch": "codex/bio-source-inspection-consumer-v1",
+    "commit": "15fae3667b2898c95b592caab16b55ed67b17638",
+    "repository": "tempera-dev/tempera-mcp"
+  }
+}
