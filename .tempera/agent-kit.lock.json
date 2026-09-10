@@ -30,11 +30,11 @@
     {
       "destination": ".claude/skills/tempera-aip-sdk-contract/references/producer-contract.md",
       "output_mode": "100644",
-      "output_sha256": "c567fe21280eccd9e962ebb9e7fc28eebf2de04a9c0c7cbb1a625a4307548317",
-      "source_blob_sha": "17a74953b9ea19a2caffdd0f140d407f48855bf9",
+      "output_sha256": "1e995cf8d28d300d549a8a3800d13732186b549b651a60104a36db2c923d59cf",
+      "source_blob_sha": "789ae29737771684429c02a15c9d5152d78efeaa",
       "source_mode": "100644",
       "source_path": "agent-kit/skills/tempera-aip-sdk-contract/references/producer-contract.md",
-      "source_sha256": "c567fe21280eccd9e962ebb9e7fc28eebf2de04a9c0c7cbb1a625a4307548317"
+      "source_sha256": "1e995cf8d28d300d549a8a3800d13732186b549b651a60104a36db2c923d59cf"
     },
     {
       "destination": ".codex/skills/tempera-aip-sdk-contract/SKILL.md",
@@ -66,11 +66,11 @@
     {
       "destination": ".codex/skills/tempera-aip-sdk-contract/references/producer-contract.md",
       "output_mode": "100644",
-      "output_sha256": "c567fe21280eccd9e962ebb9e7fc28eebf2de04a9c0c7cbb1a625a4307548317",
-      "source_blob_sha": "17a74953b9ea19a2caffdd0f140d407f48855bf9",
+      "output_sha256": "1e995cf8d28d300d549a8a3800d13732186b549b651a60104a36db2c923d59cf",
+      "source_blob_sha": "789ae29737771684429c02a15c9d5152d78efeaa",
       "source_mode": "100644",
       "source_path": "agent-kit/skills/tempera-aip-sdk-contract/references/producer-contract.md",
-      "source_sha256": "c567fe21280eccd9e962ebb9e7fc28eebf2de04a9c0c7cbb1a625a4307548317"
+      "source_sha256": "1e995cf8d28d300d549a8a3800d13732186b549b651a60104a36db2c923d59cf"
     },
     {
       "destination": ".codex/skills/tempera-keep-architecture-uniform/SKILL.md",
@@ -246,11 +246,11 @@
     {
       "destination": ".tempera/agent-kit/scripts/lint_producer_contract.py",
       "output_mode": "100755",
-      "output_sha256": "fb21503109c26a08a4f3fb5371de1b8c05c15ee578efec05953b448a14e35b74",
-      "source_blob_sha": "863b142ff47ac0885af28972f2b90a3118dc6d02",
+      "output_sha256": "bca51a19f599aa10eae5e45418a57ee506b51d0b2608bb9c9815e9263313a329",
+      "source_blob_sha": "d4b60d2e0bdb806a2c1cf312dc7f054bbd2fa9c1",
       "source_mode": "100755",
       "source_path": "agent-kit/skills/tempera-aip-sdk-contract/scripts/lint_producer_contract.py",
-      "source_sha256": "fb21503109c26a08a4f3fb5371de1b8c05c15ee578efec05953b448a14e35b74"
+      "source_sha256": "bca51a19f599aa10eae5e45418a57ee506b51d0b2608bb9c9815e9263313a329"
     },
     {
       "destination": "scripts/sync-agent-kit.py",
@@ -279,7 +279,7 @@
   "schema_version": 1,
   "source": {
     "branch": "main",
-    "commit": "c45cd3cd45a942ae362965a6a4276b47a0c177b9",
+    "commit": "5f4dfa441982af023cb8fe43af7b4011b320bb25",
     "manifest_blob_sha": "52df87c023e3da32dd0bd50ea10854e15a41faf5",
     "manifest_mode": "100644",
     "manifest_path": "agent-kit/agent-kit-manifest.json",

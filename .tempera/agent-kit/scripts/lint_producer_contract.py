@@ -92,6 +92,17 @@ def reference_issues(document: dict[str, Any]) -> list[str]:
     # not against this document, and flagging it would be wrong.
     text = json.dumps(document)
     issues: list[str] = []
+    # A published contract has to stand on its own. A $ref to a sibling file is
+    # resolvable only inside the producer's own checkout: the SDK vendors one
+    # document, so the reference dangles the moment the contract leaves the
+    # repository, and neither the AIP rules nor a schema reviewer notices.
+    for reference in sorted(
+        set(re.findall(r'"\$ref": "([^"#][^"]*|#[^/][^"]*)"', text))
+    ):
+        issues.append(
+            f"non-local reference: {reference}; a published contract must be "
+            "self-contained, so inline the schema under components.schemas"
+        )
     for reference in sorted(set(re.findall(r'"(#/components/[^"]+)"', text))):
         target: Any = document
         for token in reference[2:].split("/"):
