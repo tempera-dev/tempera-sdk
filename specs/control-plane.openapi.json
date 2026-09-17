@@ -12447,6 +12447,199 @@
               "$ref": "#/components/schemas/TemperaMobileAudience"
             },
             "description": "Present only when the platform is available."
+          },
+          "presentation": {
+            "$ref": "#/components/schemas/TemperaMobilePresentation"
+          }
+        }
+      },
+      "TemperaMobilePresentation": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema_version",
+          "vertical",
+          "verticals_offered",
+          "places",
+          "labels",
+          "features",
+          "today_cards",
+          "copy",
+          "brand",
+          "roles"
+        ],
+        "description": "Which places, labels, Today cards and copy the native apps show for this deployment. Public, non-secret and additive: it carries no endpoint, no tenant identifier and no grant, and an app that ignores it renders its built-in per-vertical default. Operators set it with TEMPERA_MOBILE_PRESENTATION_JSON, which is merged over the default for its vertical; an invalid block fails control plane startup. A build clamps lists, drops unknown enum values and ignores unknown keys.",
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "const": "tempera.mobile.presentation/v1"
+          },
+          "vertical": {
+            "type": "string",
+            "enum": [
+              "commerce",
+              "trades",
+              "agency",
+              "ai_startup"
+            ],
+            "description": "The default vertical for this deployment. A person's own onboarding choice wins, but only within verticals_offered."
+          },
+          "verticals_offered": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 4,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": [
+                "commerce",
+                "trades",
+                "agency",
+                "ai_startup"
+              ]
+            },
+            "description": "Ordered subset in the canonical order above; always includes vertical."
+          },
+          "places": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 5,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": [
+                "today",
+                "money",
+                "customers",
+                "plan",
+                "chat"
+              ]
+            },
+            "description": "Ordered subset in the canonical order above; today is always first."
+          },
+          "labels": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "money": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 24
+              },
+              "customers": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 24
+              },
+              "plan": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 24
+              },
+              "chat": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 24
+              }
+            }
+          },
+          "features": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "receipts": {
+                "type": "boolean"
+              },
+              "capture": {
+                "type": "boolean"
+              },
+              "voice": {
+                "type": "boolean"
+              },
+              "workflows": {
+                "type": "boolean"
+              },
+              "connections": {
+                "type": "boolean"
+              },
+              "payments": {
+                "type": "boolean"
+              }
+            },
+            "description": "Whether a surface is shown. Hiding one is presentation, never authorization: Auth Hub still decides every call."
+          },
+          "today_cards": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 6,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": [
+                "needs_you",
+                "revenue",
+                "orders",
+                "jobs",
+                "quotes",
+                "proposals",
+                "retainers",
+                "usage",
+                "workflows",
+                "receipts"
+              ]
+            },
+            "description": "Ordered subset in the canonical order above, at most six."
+          },
+          "copy": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "greeting_subline": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 80
+              },
+              "money_subline": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 80
+              },
+              "customers_subline": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 80
+              }
+            }
+          },
+          "brand": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "business_name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              }
+            }
+          },
+          "roles": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "hide_for_members": {
+                "type": "array",
+                "maxItems": 2,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "payments",
+                    "connections"
+                  ]
+                },
+                "description": "Hidden unless the platformRole or team role from /v1/me is owner or admin; visible when that role is unknown."
+              }
+            }
           }
         }
       },
