@@ -17,7 +17,7 @@ and you should read them rather than this file when it matters:
 
 `controlPlane` is not in `PRODUCTS`; `auth-hub` has its own vendoring script,
 `tempera-sdk/scripts/sync-control-plane-openapi.py`, pinned to
-`contracts/control-plane.openapi.json` on `main`.
+`contracts/openapi/control-plane.openapi.json` on `main`.
 
 ## Producers on the canonical path
 
@@ -68,7 +68,7 @@ the file **and** its registry entry in the same change, or vendoring breaks.
 
 | Product key | Repository | Contract path | Format |
 | --- | --- | --- | --- |
-| `controlPlane` | auth-hub | `contracts/control-plane.openapi.json` | OpenAPI 3.1.0 JSON |
+| `controlPlane` | auth-hub | `contracts/openapi/control-plane.openapi.json` | OpenAPI 3.1.0 JSON |
 | `dataEngine` | data-engine | `api/openapi.yaml` | OpenAPI **YAML** |
 | `humanData` | human-data | `api/openapi.json` | OpenAPI 3.1.0 JSON |
 | `palette` | palette | `sdks/openapi/palette-api.json` | OpenAPI 3.1.0 JSON |

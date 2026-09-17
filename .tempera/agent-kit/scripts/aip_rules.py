@@ -20,6 +20,55 @@ from urllib.parse import unquote
 
 HTTP_METHODS = {"get", "post", "put", "patch", "delete"}
 
+# The only route shapes a producer may declare as protocol routes. Anything
+# else is a resource API and answers to AIP, so a producer cannot exempt its
+# way out of the rules by writing a path into x-tempera-protocol-routes.
+EXEMPTIBLE_ROUTE = re.compile(
+    r"^/(healthz|readyz|livez|metrics|mcp|bidi|openapi\.json)$"
+    r"|^/\.well-known/"
+    r"|^/oauth/"
+    r"|^/v1/webhooks/"
+    r"|webhook$|/callback$|^/v1/otlp/|/events$"
+)
+
+
+def declared_protocol_routes(
+    product: str, spec: dict[str, Any]
+) -> tuple[set[tuple[str, str]], list[str]]:
+    """Read a contract's own x-tempera-protocol-routes declaration.
+
+    The producer states which of its routes are governed by a native protocol
+    rather than by Google AIP style. Honouring that declaration is what stops
+    the SDK from having to mirror every producer's health and transport routes
+    in a hand-maintained table. The declaration is re-validated here rather
+    than trusted: a route that is not served, or that is not an exemptible
+    shape, is an error, not an exemption.
+    """
+    declared = spec.get("x-tempera-protocol-routes")
+    if declared is None:
+        return set(), []
+    if not isinstance(declared, list) or not all(
+        isinstance(route, str) for route in declared
+    ):
+        return set(), [f"{product}: x-tempera-protocol-routes must be an array of strings"]
+    served = set(spec.get("paths") or {})
+    problems: list[str] = []
+    exempt: set[tuple[str, str]] = set()
+    for route in declared:
+        if route not in served:
+            problems.append(
+                f"{product}: x-tempera-protocol-routes declares {route}, "
+                "which the contract does not serve"
+            )
+        elif EXEMPTIBLE_ROUTE.search(route) is None:
+            problems.append(
+                f"{product}: {route} is a resource route and cannot be "
+                "declared a protocol route"
+            )
+        else:
+            exempt.add((product, route))
+    return exempt, problems
+
 RULES = {
     "aip-127-versioned-path": {
         "aip": "https://google.aip.dev/127",
