@@ -55,8 +55,6 @@ PROTOCOL_EXCEPTIONS = {
     ("controlPlane", "/oauth/revoke"),
     ("controlPlane", "/oauth/token"),
     ("controlPlane", "/billing/webhook"),
-    ("controlPlane", "/billing/rails/coinbase/webhook"),
-    ("controlPlane", "/billing/rails/paypal/webhook"),
     ("controlPlane", "/github/callback"),
     ("controlPlane", "/github/webhook"),
     ("controlPlane", "/readyz"),

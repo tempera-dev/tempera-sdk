@@ -41,7 +41,7 @@ availability, a live hosted service, or an undocumented endpoint.
 
 | Client | Product | Typed operations | Audience |
 | --- | --- | --- | --- |
-| `controlPlane` | [auth-hub](https://github.com/tempera-dev/auth-hub) | 123 | — |
+| `controlPlane` | [auth-hub](https://github.com/tempera-dev/auth-hub) | 150 | — |
 | `dataEngine` | [data-engine](https://github.com/tempera-dev/data-engine) | 66 | `data-engine` |
 | `palette` | [palette](https://github.com/tempera-dev/palette) | 61 | `palette` |
 | `temperaPayments` | [tempera-payments](https://github.com/tempera-dev/tempera-payments) | 47 | `tempera-payments` |

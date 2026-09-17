@@ -101,28 +101,6 @@
       "review_after": "2026-10-01"
     },
     {
-      "compatibility": "inbound_webhook",
-      "method": "POST",
-      "migration": "Model this only in a future server-side webhook verification package, not as an outbound product client method.",
-      "operation_id": "receiveCoinbaseCommerceWebhook",
-      "owner": "auth-hub",
-      "path": "/billing/rails/coinbase/webhook",
-      "product": "controlPlane",
-      "rationale": "Coinbase invokes this signed inbound callback; SDK callers must not send it as a normal control-plane request.",
-      "review_after": "2026-10-01"
-    },
-    {
-      "compatibility": "inbound_webhook",
-      "method": "POST",
-      "migration": "Model this only in a future server-side webhook verification package, not as an outbound product client method.",
-      "operation_id": "receivePaypalWebhook",
-      "owner": "auth-hub",
-      "path": "/billing/rails/paypal/webhook",
-      "product": "controlPlane",
-      "rationale": "PayPal invokes this signed inbound callback; SDK callers must not send it as a normal control-plane request.",
-      "review_after": "2026-10-01"
-    },
-    {
       "compatibility": "dedicated_mcp_transport",
       "method": "POST",
       "migration": "Continue generating JSON-RPC calls through the dedicated MCP client after Cradle capability routing is admitted.",

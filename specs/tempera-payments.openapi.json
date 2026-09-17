@@ -4828,7 +4828,7 @@
             "format": "uri",
             "minLength": 1,
             "maxLength": 2048,
-            "description": "Absolute HTTPS URL with no user information and no fragment. Plain HTTP is accepted for loopback hosts only."
+            "description": "Absolute HTTPS URL on port 443, with no user information and no fragment. It must resolve to a public internet address: loopback, private (RFC1918), link-local, carrier-NAT (100.64/10), multicast, and other reserved ranges are refused at registration and re-checked immediately before every delivery."
           },
           "eventTypes": {
             "type": "array",
@@ -5886,6 +5886,7 @@
           "platformFees",
           "refunded",
           "payable",
+          "disputed",
           "paidOut",
           "asOf"
         ],
@@ -5909,6 +5910,9 @@
           "payable": {
             "$ref": "#/components/schemas/AtomicAmount"
           },
+          "disputed": {
+            "$ref": "#/components/schemas/AtomicAmount"
+          },
           "paidOut": {
             "$ref": "#/components/schemas/AtomicAmount"
           },
@@ -5917,7 +5921,7 @@
             "format": "date-time"
           }
         },
-        "description": "One merchant's money position. settledGross is everything settlement recognised for it before platform fees; platformFees is what the platform took from those settlements, net of the shares refunds gave back; refunded is gross refunded including that fee share; payable is settledGross minus platformFees minus refunded. paidOut is separate: it is what the provider reported paying out of the connected account, an observation rather than a ledger position, so payable does not decrease when a payout is paid."
+        "description": "One merchant's money position. settledGross is everything settlement recognised for it before platform fees; platformFees is what the platform took from those settlements, net of the shares refunds gave back; refunded is gross refunded including that fee share; payable is settledGross minus platformFees minus refunded. disputed is what chargebacks are currently holding out of the merchant's position -- every provider funds_withdrawn less every funds_reinstated -- and is reported on its own rather than netted into refunded or payable, so the money a payout may draw on is payable minus disputed. paidOut is separate again: it is what the provider reported paying out of the connected account, an observation rather than a ledger position, so payable does not decrease when a payout is paid."
       },
       "MerchantPayoutStatus": {
         "type": "string",

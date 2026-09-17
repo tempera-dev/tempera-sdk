@@ -18,7 +18,7 @@ Tempera control plane: unified accounts, OAuth issuance, workspaces, teams, API 
 | Audience | — (no OAuth audience) |
 | Auth | account bearer token from createHostedSession (control-plane session); introspectToken requires the introspection secret |
 | Client | TypeScript `client.controlPlane` · Python `client.control_plane` · Rust `build_request("control_plane", ...)` |
-| Typed operations | 123 |
+| Typed operations | 150 |
 
 Anything this page does not cover is reachable through the raw passthrough:
 `client.controlPlane.request(path, options)` (TypeScript) /
@@ -3117,6 +3117,34 @@ let spec = client.build_request("control_plane", "create_credit_topup", &[
 
 </CodeGroup>
 
+### receiveTemperaPaymentsEvent
+
+`POST /billing/rails/tempera-payments/events`
+
+Receive a signed tempera-payments consumer event and, on a `payment.settled` event bound to a server-owned credit top-up, fund the org credit wallet from the Payments ledger journal. Replays are deduplicated by journal id.
+
+- **Producer operationId:** `receiveTemperaPaymentsEvent`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Call as:** TypeScript `client.controlPlane.receiveTemperaPaymentsEvent()` · Python `client.control_plane.receive_tempera_payments_event()` · Rust `build_request("control_plane", "receive_tempera_payments_event", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.receiveTemperaPaymentsEvent();
+```
+
+```python Python
+result = client.control_plane.receive_tempera_payments_event()
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "receive_tempera_payments_event", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
 ### getModelCatalog
 
 `GET /v1/model-catalog`
@@ -3169,6 +3197,9 @@ Record a usage event against a metered plan limit; requires a token carrying the
 | `quantity` | no | — |
 | `idempotencyKey` | no | — |
 | `cost` | no | — |
+| `operation` | no | — |
+| `route` | no | — |
+| `section` | no | — |
 
 <CodeGroup>
 
@@ -3203,6 +3234,59 @@ let spec = client.build_request("control_plane", "record_usage", &[
 
 </CodeGroup>
 
+### usageEventsList
+
+`GET /v1/usage/events`
+
+List the organization's individual usage events, newest first, with the same filters as the summary.
+
+- **Producer operationId:** `usageEvents.list`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:usageReader`
+- **Call as:** TypeScript `client.controlPlane.usageEventsList()` · Python `client.control_plane.usage_events_list()` · Rust `build_request("control_plane", "usage_events_list", params)`
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `from` | no | — |
+| `to` | no | — |
+| `projectId` | no | — |
+| `environmentId` | no | — |
+| `productId` | no | — |
+| `operation` | no | — |
+| `metric` | no | — |
+| `section` | no | — |
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.usageEventsList({
+  from: "<from>",
+  to: "<to>",
+});
+```
+
+```python Python
+result = client.control_plane.usage_events_list({
+    "from": "<from>",
+    "to": "<to>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "usage_events_list", &[
+    ("from", "<from>".into()),
+    ("to", "<to>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
 ### usageReservationsCreate
 
 `POST /v1/usage/reservations`
@@ -3229,6 +3313,9 @@ Atomically reserve the maximum model cost before starting a provider request.
 | `byok` | yes | — |
 | `maximumProviderCostMicros` | yes | — |
 | `ttlSeconds` | no | — |
+| `operation` | no | — |
+| `route` | no | — |
+| `section` | no | — |
 
 <CodeGroup>
 
@@ -3785,6 +3872,206 @@ let spec = client.build_request("control_plane", "admin_operational_provenance",
 
 </CodeGroup>
 
+### emailVerificationsSend
+
+`POST /v1/email-verifications:send`
+
+Send (or reuse) an email-verification token for the authenticated account.
+
+- **Producer operationId:** `emailVerifications.send`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:session`
+- **Call as:** TypeScript `client.controlPlane.emailVerificationsSend()` · Python `client.control_plane.email_verifications_send()` · Rust `build_request("control_plane", "email_verifications_send", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.emailVerificationsSend();
+```
+
+```python Python
+result = client.control_plane.email_verifications_send()
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "email_verifications_send", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### emailVerificationsConfirm
+
+`POST /v1/email-verifications:confirm`
+
+Confirm an email address with the one-time token from a verification email.
+
+- **Producer operationId:** `emailVerifications.confirm`
+- **Auth:** None (public endpoint).
+- **Call as:** TypeScript `client.controlPlane.emailVerificationsConfirm()` · Python `client.control_plane.email_verifications_confirm()` · Rust `build_request("control_plane", "email_verifications_confirm", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `token` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.emailVerificationsConfirm({
+  token: "<token>",
+});
+```
+
+```python Python
+result = client.control_plane.email_verifications_confirm({
+    "token": "<token>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "email_verifications_confirm", &[
+    ("token", "<token>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### adminOperatorsList
+
+`GET /v1/admin/operators`
+
+List Tempera platform super-users, including revoked records.
+
+- **Producer operationId:** `adminOperators.list`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:platformStaff`
+- **Call as:** TypeScript `client.controlPlane.adminOperatorsList()` · Python `client.control_plane.admin_operators_list()` · Rust `build_request("control_plane", "admin_operators_list", params)`
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.adminOperatorsList({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
+```
+
+```python Python
+result = client.control_plane.admin_operators_list({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "admin_operators_list", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### adminOperatorsCreate
+
+`POST /v1/admin/operators`
+
+Add a Tempera platform super-user and notify them by email.
+
+- **Producer operationId:** `adminOperators.create`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:platformStaff`
+- **Call as:** TypeScript `client.controlPlane.adminOperatorsCreate()` · Python `client.control_plane.admin_operators_create()` · Rust `build_request("control_plane", "admin_operators_create", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `email` | yes | — |
+| `note` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.adminOperatorsCreate({
+  email: "<email>",
+  note: "<note>",
+});
+```
+
+```python Python
+result = client.control_plane.admin_operators_create({
+    "email": "<email>",
+    "note": "<note>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "admin_operators_create", &[
+    ("email", "<email>".into()),
+    ("note", "<note>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### adminOperatorsRevoke
+
+`DELETE /v1/admin/operators/{operatorId}`
+
+Revoke a Tempera platform super-user.
+
+- **Producer operationId:** `adminOperators.revoke`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:platformStaff`
+- **Call as:** TypeScript `client.controlPlane.adminOperatorsRevoke()` · Python `client.control_plane.admin_operators_revoke()` · Rust `build_request("control_plane", "admin_operators_revoke", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `operatorId` | yes | Substituted into the URL path (percent-encoded). |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.adminOperatorsRevoke({
+  operatorId: "<operatorId>",
+});
+```
+
+```python Python
+result = client.control_plane.admin_operators_revoke({
+    "operatorId": "<operatorId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "admin_operators_revoke", &[
+    ("operatorId", "<operatorId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
 ### adminStepUp
 
 `POST /v1/admin/step-up`
@@ -3845,6 +4132,7 @@ Platform-staff credit grant/adjustment to an org wallet. Requires a fresh step-u
 | `creditMicros` | yes | — |
 | `reference` | no | — |
 | `reason` | no | — |
+| `allowNegative` | no | — |
 
 <CodeGroup>
 
@@ -5172,7 +5460,7 @@ let spec = client.build_request("control_plane", "authority_holds_list", &[
 Create a hold. A duplicate call digest joins the open hold rather than asking a person twice. Evidence is reference-only; inline content is rejected.
 
 - **Producer operationId:** `authorityHolds.create`
-- **Auth:** OAuth access token for audience `tempera-authority`. Central `tp_` API keys cannot carry the required `authority:holds:write` scope.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-authority`.
 - **Scope:** `authority:holds:write`
 - **Call as:** TypeScript `client.controlPlane.authorityHoldsCreate()` · Python `client.control_plane.authority_holds_create()` · Rust `build_request("control_plane", "authority_holds_create", params)`
 
@@ -5289,7 +5577,7 @@ let spec = client.build_request("control_plane", "authority_holds_get", &[
 Revoke a hold. Revoked, not deleted: a question that was asked stays answerable in the ledger.
 
 - **Producer operationId:** `authorityHolds.revoke`
-- **Auth:** OAuth access token for audience `tempera-authority`. Central `tp_` API keys cannot carry the required `authority:holds:write` scope.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-authority`.
 - **Scope:** `authority:holds:write`
 - **Call as:** TypeScript `client.controlPlane.authorityHoldsRevoke()` · Python `client.control_plane.authority_holds_revoke()` · Rust `build_request("control_plane", "authority_holds_revoke", params)`
 
@@ -5388,7 +5676,7 @@ let spec = client.build_request("control_plane", "authority_holds_decide", &[
 Spend the approval and take a single-use lease. Requires the decision token; a token presented for a different prepared effect digest fails closed.
 
 - **Producer operationId:** `authorityHolds.claim`
-- **Auth:** OAuth access token for audience `tempera-authority`. Central `tp_` API keys cannot carry the required `authority:holds:write` scope.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-authority`.
 - **Scope:** `authority:holds:write`
 - **Call as:** TypeScript `client.controlPlane.authorityHoldsClaim()` · Python `client.control_plane.authority_holds_claim()` · Rust `build_request("control_plane", "authority_holds_claim", params)`
 
@@ -5447,7 +5735,7 @@ let spec = client.build_request("control_plane", "authority_holds_claim", &[
 Close the hold against the outcome the lease produced. An exact retry replays; any other outcome fails closed.
 
 - **Producer operationId:** `authorityHolds.finalize`
-- **Auth:** OAuth access token for audience `tempera-authority`. Central `tp_` API keys cannot carry the required `authority:holds:write` scope.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-authority`.
 - **Scope:** `authority:holds:write`
 - **Call as:** TypeScript `client.controlPlane.authorityHoldsFinalize()` · Python `client.control_plane.authority_holds_finalize()` · Rust `build_request("control_plane", "authority_holds_finalize", params)`
 
@@ -5507,7 +5795,7 @@ let spec = client.build_request("control_plane", "authority_holds_finalize", &[
 Move a hold whose lease expired to recovery_required. Lease expiry is uncertainty, never a retry.
 
 - **Producer operationId:** `authorityHolds.markRecoveryRequired`
-- **Auth:** OAuth access token for audience `tempera-authority`. Central `tp_` API keys cannot carry the required `authority:holds:write` scope.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-authority`.
 - **Scope:** `authority:holds:write`
 - **Call as:** TypeScript `client.controlPlane.authorityHoldsMarkRecoveryRequired()` · Python `client.control_plane.authority_holds_mark_recovery_required()` · Rust `build_request("control_plane", "authority_holds_mark_recovery_required", params)`
 
@@ -5654,7 +5942,7 @@ let spec = client.build_request("control_plane", "authority_credential_bindings_
 Release a credential against a decision. Verifies the hold is leased by this caller with a lease token that validates, then mints or resolves and returns the material exactly once. The handler that evaluates the hold has no vault client in scope and the handler that resolves the vault evaluates no policy (ADR 0002 point 3). Service credentials only: never a human OAuth session.
 
 - **Producer operationId:** `authorityCredentialBindings.release`
-- **Auth:** OAuth access token for audience `tempera-authority`. Central `tp_` API keys cannot carry the required `authority:credentials:release` scope.
+- **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-authority`.
 - **Scope:** `authority:credentials:release`
 - **Call as:** TypeScript `client.controlPlane.authorityCredentialBindingsRelease()` · Python `client.control_plane.authority_credential_bindings_release()` · Rust `build_request("control_plane", "authority_credential_bindings_release", params)`
 
@@ -5781,6 +6069,1003 @@ result = client.control_plane.authority_metrics_get()
 
 ```rust Rust
 let spec = client.build_request("control_plane", "authority_metrics_get", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### usageSummaryGet
+
+`GET /v1/usage/summary`
+
+Aggregate the organization's usage and credit spend over a time window, bucketed and grouped by attribution dimension.
+
+- **Producer operationId:** `usageSummary.get`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:usageReader`
+- **Call as:** TypeScript `client.controlPlane.usageSummaryGet()` · Python `client.control_plane.usage_summary_get()` · Rust `build_request("control_plane", "usage_summary_get", params)`
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `granularity` | no | — |
+| `groupBy` | no | — |
+| `from` | no | — |
+| `to` | no | — |
+| `projectId` | no | — |
+| `environmentId` | no | — |
+| `productId` | no | — |
+| `operation` | no | — |
+| `metric` | no | — |
+| `section` | no | — |
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.usageSummaryGet({
+  granularity: "<granularity>",
+  groupBy: "<groupBy>",
+});
+```
+
+```python Python
+result = client.control_plane.usage_summary_get({
+    "granularity": "<granularity>",
+    "groupBy": "<groupBy>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "usage_summary_get", &[
+    ("granularity", "<granularity>".into()),
+    ("groupBy", "<groupBy>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### adminUsageSummary
+
+`GET /v1/admin/usage/summary`
+
+Platform-staff fleet spend report: the customer summary across every organization, plus provider cost and margin.
+
+- **Producer operationId:** `adminUsageSummary`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:platformStaff`
+- **Call as:** TypeScript `client.controlPlane.adminUsageSummary()` · Python `client.control_plane.admin_usage_summary()` · Rust `build_request("control_plane", "admin_usage_summary", params)`
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `granularity` | no | — |
+| `groupBy` | no | — |
+| `from` | no | — |
+| `to` | no | — |
+| `projectId` | no | — |
+| `environmentId` | no | — |
+| `productId` | no | — |
+| `operation` | no | — |
+| `metric` | no | — |
+| `section` | no | — |
+| `orgId` | no | — |
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.adminUsageSummary({
+  granularity: "<granularity>",
+  groupBy: "<groupBy>",
+});
+```
+
+```python Python
+result = client.control_plane.admin_usage_summary({
+    "granularity": "<granularity>",
+    "groupBy": "<groupBy>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "admin_usage_summary", &[
+    ("granularity", "<granularity>".into()),
+    ("groupBy", "<groupBy>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### adminUsageEvents
+
+`GET /v1/admin/usage/events`
+
+Platform-staff fleet-wide usage event list with the owning organization and upstream provider cost.
+
+- **Producer operationId:** `adminUsageEvents`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:platformStaff`
+- **Call as:** TypeScript `client.controlPlane.adminUsageEvents()` · Python `client.control_plane.admin_usage_events()` · Rust `build_request("control_plane", "admin_usage_events", params)`
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `from` | no | — |
+| `to` | no | — |
+| `projectId` | no | — |
+| `environmentId` | no | — |
+| `productId` | no | — |
+| `operation` | no | — |
+| `metric` | no | — |
+| `section` | no | — |
+| `orgId` | no | — |
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.adminUsageEvents({
+  from: "<from>",
+  to: "<to>",
+});
+```
+
+```python Python
+result = client.control_plane.admin_usage_events({
+    "from": "<from>",
+    "to": "<to>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "admin_usage_events", &[
+    ("from", "<from>".into()),
+    ("to", "<to>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### adminBillingCreditGrants
+
+`GET /v1/admin/billing/credits/grants`
+
+Platform-staff history of every credit grant and staff adjustment, read from the durable grant-receipt store.
+
+- **Producer operationId:** `adminBillingCreditGrants`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:platformStaff`
+- **Call as:** TypeScript `client.controlPlane.adminBillingCreditGrants()` · Python `client.control_plane.admin_billing_credit_grants()` · Rust `build_request("control_plane", "admin_billing_credit_grants", params)`
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `orgId` | no | — |
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.adminBillingCreditGrants({
+  orgId: "<orgId>",
+  pageSize: "<pageSize>",
+});
+```
+
+```python Python
+result = client.control_plane.admin_billing_credit_grants({
+    "orgId": "<orgId>",
+    "pageSize": "<pageSize>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "admin_billing_credit_grants", &[
+    ("orgId", "<orgId>".into()),
+    ("pageSize", "<pageSize>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### listBillingPaymentMethods
+
+`GET /v1/billing/payment-methods`
+
+List the cards this organization has saved in tempera-payments, for use with plans:activate.
+
+- **Producer operationId:** `listBillingPaymentMethods`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:billingAdmin`
+- **Call as:** TypeScript `client.controlPlane.listBillingPaymentMethods()` · Python `client.control_plane.list_billing_payment_methods()` · Rust `build_request("control_plane", "list_billing_payment_methods", params)`
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.listBillingPaymentMethods({
+  pageSize: "<pageSize>",
+  pageToken: "<pageToken>",
+});
+```
+
+```python Python
+result = client.control_plane.list_billing_payment_methods({
+    "pageSize": "<pageSize>",
+    "pageToken": "<pageToken>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "list_billing_payment_methods", &[
+    ("pageSize", "<pageSize>".into()),
+    ("pageToken", "<pageToken>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### billingPlansActivate
+
+`POST /v1/billing/plans:activate`
+
+Create the tempera-payments subscription for a plan whose checkout saved a card.
+
+- **Producer operationId:** `billingPlans.activate`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:billingAdmin`
+- **Call as:** TypeScript `client.controlPlane.billingPlansActivate()` · Python `client.control_plane.billing_plans_activate()` · Rust `build_request("control_plane", "billing_plans_activate", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `planId` | yes | — |
+| `paymentMethodId` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.billingPlansActivate({
+  planId: "<planId>",
+  paymentMethodId: "<paymentMethodId>",
+});
+```
+
+```python Python
+result = client.control_plane.billing_plans_activate({
+    "planId": "<planId>",
+    "paymentMethodId": "<paymentMethodId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "billing_plans_activate", &[
+    ("planId", "<planId>".into()),
+    ("paymentMethodId", "<paymentMethodId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### billingPlansCancel
+
+`POST /v1/billing/plans:cancel`
+
+Cancel this organization's tempera-payments plan subscription and mirror the resulting state.
+
+- **Producer operationId:** `billingPlans.cancel`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:billingAdmin`
+- **Call as:** TypeScript `client.controlPlane.billingPlansCancel()` · Python `client.control_plane.billing_plans_cancel()` · Rust `build_request("control_plane", "billing_plans_cancel", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.billingPlansCancel();
+```
+
+```python Python
+result = client.control_plane.billing_plans_cancel()
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "billing_plans_cancel", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### billingPlansPause
+
+`POST /v1/billing/plans:pause`
+
+Pause this organization's tempera-payments plan subscription and mirror the resulting state.
+
+- **Producer operationId:** `billingPlans.pause`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:billingAdmin`
+- **Call as:** TypeScript `client.controlPlane.billingPlansPause()` · Python `client.control_plane.billing_plans_pause()` · Rust `build_request("control_plane", "billing_plans_pause", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.billingPlansPause();
+```
+
+```python Python
+result = client.control_plane.billing_plans_pause()
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "billing_plans_pause", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### billingPlansResume
+
+`POST /v1/billing/plans:resume`
+
+Resume this organization's tempera-payments plan subscription and mirror the resulting state.
+
+- **Producer operationId:** `billingPlans.resume`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:billingAdmin`
+- **Call as:** TypeScript `client.controlPlane.billingPlansResume()` · Python `client.control_plane.billing_plans_resume()` · Rust `build_request("control_plane", "billing_plans_resume", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.billingPlansResume();
+```
+
+```python Python
+result = client.control_plane.billing_plans_resume()
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "billing_plans_resume", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### getBillingPricing
+
+`GET /v1/billing/pricing`
+
+Return the prices this workspace will be charged: the current plan catalog, the prepaid packs, and the per-unit pricing rules for the products it can report usage for. Multipliers and provider costs are staff-only and are never present.
+
+- **Producer operationId:** `getBillingPricing`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:session`
+- **Call as:** TypeScript `client.controlPlane.getBillingPricing()` · Python `client.control_plane.get_billing_pricing()` · Rust `build_request("control_plane", "get_billing_pricing", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.getBillingPricing();
+```
+
+```python Python
+result = client.control_plane.get_billing_pricing()
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "get_billing_pricing", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### adminPricing
+
+`GET /v1/admin/pricing`
+
+Platform-staff view of every editable price: multipliers, plans, credit packs, and pricing rules, including inactive and scheduled rows.
+
+- **Producer operationId:** `adminPricing`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:platformStaff`
+- **Call as:** TypeScript `client.controlPlane.adminPricing()` · Python `client.control_plane.admin_pricing()` · Rust `build_request("control_plane", "admin_pricing", params)`
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.adminPricing();
+```
+
+```python Python
+result = client.control_plane.admin_pricing()
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "admin_pricing", &[])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### adminPricingMultipliersUpdate
+
+`PATCH /v1/admin/pricing/multipliers`
+
+Edit the model-spend multipliers. Requires a fresh platform step-up and records a pricing change plus an audit entry.
+
+- **Producer operationId:** `adminPricingMultipliers.update`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:platformStaff`
+- **Call as:** TypeScript `client.controlPlane.adminPricingMultipliersUpdate()` · Python `client.control_plane.admin_pricing_multipliers_update()` · Rust `build_request("control_plane", "admin_pricing_multipliers_update", params)`
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `updateMask` | yes | — |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `metered` | no | — |
+| `byok` | no | — |
+| `reason` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.adminPricingMultipliersUpdate({
+  reason: "<reason>",
+  metered: "<metered>",
+  byok: "<byok>",
+});
+```
+
+```python Python
+result = client.control_plane.admin_pricing_multipliers_update({
+    "reason": "<reason>",
+    "metered": "<metered>",
+    "byok": "<byok>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "admin_pricing_multipliers_update", &[
+    ("reason", "<reason>".into()),
+    ("metered", "<metered>".into()),
+    ("byok", "<byok>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### adminPricingPlansCreate
+
+`POST /v1/admin/pricing/plans`
+
+Create a subscription plan. Requires a fresh platform step-up and records a pricing change plus an audit entry.
+
+- **Producer operationId:** `adminPricingPlans.create`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:platformStaff`
+- **Call as:** TypeScript `client.controlPlane.adminPricingPlansCreate()` · Python `client.control_plane.admin_pricing_plans_create()` · Rust `build_request("control_plane", "admin_pricing_plans_create", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `planId` | yes | — |
+| `name` | no | — |
+| `description` | no | — |
+| `prices` | yes | — |
+| `includedUsage` | no | — |
+| `grantMicros` | no | — |
+| `overageAllowed` | no | — |
+| `overageRateMicrosPerCredit` | no | — |
+| `entitlements` | no | — |
+| `apiKeyScopeEntitlements` | no | — |
+| `bundle` | no | — |
+| `active` | no | — |
+| `effectiveFrom` | no | — |
+| `effectiveTo` | no | — |
+| `reason` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.adminPricingPlansCreate({
+  planId: "<planId>",
+  prices: "<prices>",
+  reason: "<reason>",
+});
+```
+
+```python Python
+result = client.control_plane.admin_pricing_plans_create({
+    "planId": "<planId>",
+    "prices": "<prices>",
+    "reason": "<reason>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "admin_pricing_plans_create", &[
+    ("planId", "<planId>".into()),
+    ("prices", "<prices>".into()),
+    ("reason", "<reason>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### adminPricingPlansUpdate
+
+`PATCH /v1/admin/pricing/plans/{planId}`
+
+Edit a plan price, credit grant, entitlements, activation, or effective dates. Deactivating a plan a workspace is still subscribed to fails with plan_in_use.
+
+- **Producer operationId:** `adminPricingPlans.update`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:platformStaff`
+- **Call as:** TypeScript `client.controlPlane.adminPricingPlansUpdate()` · Python `client.control_plane.admin_pricing_plans_update()` · Rust `build_request("control_plane", "admin_pricing_plans_update", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `planId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `updateMask` | yes | — |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `name` | no | — |
+| `description` | no | — |
+| `prices` | no | — |
+| `includedUsage` | no | — |
+| `grantMicros` | no | — |
+| `overageAllowed` | no | — |
+| `overageRateMicrosPerCredit` | no | — |
+| `entitlements` | no | — |
+| `apiKeyScopeEntitlements` | no | — |
+| `bundle` | no | — |
+| `active` | no | — |
+| `effectiveFrom` | no | — |
+| `effectiveTo` | no | — |
+| `reason` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.adminPricingPlansUpdate({
+  planId: "<planId>",
+  reason: "<reason>",
+  name: "<name>",
+  description: "<description>",
+});
+```
+
+```python Python
+result = client.control_plane.admin_pricing_plans_update({
+    "planId": "<planId>",
+    "reason": "<reason>",
+    "name": "<name>",
+    "description": "<description>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "admin_pricing_plans_update", &[
+    ("planId", "<planId>".into()),
+    ("reason", "<reason>".into()),
+    ("name", "<name>".into()),
+    ("description", "<description>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### adminPricingCreditPacksCreate
+
+`POST /v1/admin/pricing/credit-packs`
+
+Create a prepaid credit pack. Requires a fresh platform step-up and records a pricing change plus an audit entry.
+
+- **Producer operationId:** `adminPricingCreditPacks.create`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:platformStaff`
+- **Call as:** TypeScript `client.controlPlane.adminPricingCreditPacksCreate()` · Python `client.control_plane.admin_pricing_credit_packs_create()` · Rust `build_request("control_plane", "admin_pricing_credit_packs_create", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `packId` | yes | — |
+| `name` | yes | — |
+| `description` | no | — |
+| `currency` | yes | — |
+| `priceMinor` | yes | — |
+| `creditMicros` | yes | — |
+| `active` | no | — |
+| `effectiveFrom` | no | — |
+| `effectiveTo` | no | — |
+| `reason` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.adminPricingCreditPacksCreate({
+  packId: "<packId>",
+  name: "<name>",
+  currency: "<currency>",
+  priceMinor: "<priceMinor>",
+  creditMicros: "<creditMicros>",
+  reason: "<reason>",
+});
+```
+
+```python Python
+result = client.control_plane.admin_pricing_credit_packs_create({
+    "packId": "<packId>",
+    "name": "<name>",
+    "currency": "<currency>",
+    "priceMinor": "<priceMinor>",
+    "creditMicros": "<creditMicros>",
+    "reason": "<reason>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "admin_pricing_credit_packs_create", &[
+    ("packId", "<packId>".into()),
+    ("name", "<name>".into()),
+    ("currency", "<currency>".into()),
+    ("priceMinor", "<priceMinor>".into()),
+    ("creditMicros", "<creditMicros>".into()),
+    ("reason", "<reason>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### adminPricingCreditPacksUpdate
+
+`PATCH /v1/admin/pricing/credit-packs/{packId}`
+
+Edit a prepaid credit pack price, credit amount, activation, or effective dates.
+
+- **Producer operationId:** `adminPricingCreditPacks.update`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:platformStaff`
+- **Call as:** TypeScript `client.controlPlane.adminPricingCreditPacksUpdate()` · Python `client.control_plane.admin_pricing_credit_packs_update()` · Rust `build_request("control_plane", "admin_pricing_credit_packs_update", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `packId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `updateMask` | yes | — |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `name` | no | — |
+| `description` | no | — |
+| `currency` | no | — |
+| `priceMinor` | no | — |
+| `creditMicros` | no | — |
+| `active` | no | — |
+| `effectiveFrom` | no | — |
+| `effectiveTo` | no | — |
+| `reason` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.adminPricingCreditPacksUpdate({
+  packId: "<packId>",
+  reason: "<reason>",
+  name: "<name>",
+  description: "<description>",
+});
+```
+
+```python Python
+result = client.control_plane.admin_pricing_credit_packs_update({
+    "packId": "<packId>",
+    "reason": "<reason>",
+    "name": "<name>",
+    "description": "<description>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "admin_pricing_credit_packs_update", &[
+    ("packId", "<packId>".into()),
+    ("reason", "<reason>".into()),
+    ("name", "<name>".into()),
+    ("description", "<description>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### adminPricingRulesCreate
+
+`POST /v1/admin/pricing/rules`
+
+Create a per-dimension pricing rule. A debit rule makes a usage event debit quantity x priceMicrosPerUnit; a record_only rule keeps measuring without charging.
+
+- **Producer operationId:** `adminPricingRules.create`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:platformStaff`
+- **Call as:** TypeScript `client.controlPlane.adminPricingRulesCreate()` · Python `client.control_plane.admin_pricing_rules_create()` · Rust `build_request("control_plane", "admin_pricing_rules_create", params)`
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `productId` | yes | — |
+| `operation` | no | — |
+| `metric` | no | — |
+| `unit` | yes | — |
+| `priceMicrosPerUnit` | no | — |
+| `multiplierMillis` | no | — |
+| `mode` | yes | — |
+| `note` | no | — |
+| `active` | no | — |
+| `effectiveFrom` | no | — |
+| `effectiveTo` | no | — |
+| `reason` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.adminPricingRulesCreate({
+  productId: "<productId>",
+  unit: "<unit>",
+  mode: "<mode>",
+  reason: "<reason>",
+});
+```
+
+```python Python
+result = client.control_plane.admin_pricing_rules_create({
+    "productId": "<productId>",
+    "unit": "<unit>",
+    "mode": "<mode>",
+    "reason": "<reason>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "admin_pricing_rules_create", &[
+    ("productId", "<productId>".into()),
+    ("unit", "<unit>".into()),
+    ("mode", "<mode>".into()),
+    ("reason", "<reason>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### adminPricingRulesUpdate
+
+`PATCH /v1/admin/pricing/rules/{ruleId}`
+
+Edit a pricing rule's unit price, mode, activation, or effective dates. An overlapping active range for the same dimension fails with pricing_conflict.
+
+- **Producer operationId:** `adminPricingRules.update`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:platformStaff`
+- **Call as:** TypeScript `client.controlPlane.adminPricingRulesUpdate()` · Python `client.control_plane.admin_pricing_rules_update()` · Rust `build_request("control_plane", "admin_pricing_rules_update", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `ruleId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `updateMask` | yes | — |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `unit` | no | — |
+| `priceMicrosPerUnit` | no | — |
+| `multiplierMillis` | no | — |
+| `mode` | no | — |
+| `note` | no | — |
+| `active` | no | — |
+| `effectiveFrom` | no | — |
+| `effectiveTo` | no | — |
+| `reason` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.adminPricingRulesUpdate({
+  ruleId: "<ruleId>",
+  reason: "<reason>",
+  unit: "<unit>",
+  priceMicrosPerUnit: "<priceMicrosPerUnit>",
+});
+```
+
+```python Python
+result = client.control_plane.admin_pricing_rules_update({
+    "ruleId": "<ruleId>",
+    "reason": "<reason>",
+    "unit": "<unit>",
+    "priceMicrosPerUnit": "<priceMicrosPerUnit>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "admin_pricing_rules_update", &[
+    ("ruleId", "<ruleId>".into()),
+    ("reason", "<reason>".into()),
+    ("unit", "<unit>".into()),
+    ("priceMicrosPerUnit", "<priceMicrosPerUnit>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### adminPricingRulesDeactivate
+
+`DELETE /v1/admin/pricing/rules/{ruleId}`
+
+Deactivate a pricing rule. The row is retained, not deleted, so a ledger entry it priced can still be explained.
+
+- **Producer operationId:** `adminPricingRules.deactivate`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:platformStaff`
+- **Call as:** TypeScript `client.controlPlane.adminPricingRulesDeactivate()` · Python `client.control_plane.admin_pricing_rules_deactivate()` · Rust `build_request("control_plane", "admin_pricing_rules_deactivate", params)`
+
+**Path parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `ruleId` | yes | Substituted into the URL path (percent-encoded). |
+
+**Body parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `reason` | yes | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.adminPricingRulesDeactivate({
+  ruleId: "<ruleId>",
+});
+```
+
+```python Python
+result = client.control_plane.admin_pricing_rules_deactivate({
+    "ruleId": "<ruleId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "admin_pricing_rules_deactivate", &[
+    ("ruleId", "<ruleId>".into()),
+])?;
+// Send spec.method / spec.full_url() / spec.headers / spec.body_json
+// with your own HTTP client.
+```
+
+</CodeGroup>
+
+### adminPricingChangesList
+
+`GET /v1/admin/pricing/changes`
+
+Audit trail of every price edit: the before and after documents, the acting staff principal, and the stated reason.
+
+- **Producer operationId:** `adminPricingChanges.list`
+- **Auth:** Account bearer — the control-plane session token returned by `createHostedSession`.
+- **Scope:** `account:platformStaff`
+- **Call as:** TypeScript `client.controlPlane.adminPricingChangesList()` · Python `client.control_plane.admin_pricing_changes_list()` · Rust `build_request("control_plane", "admin_pricing_changes_list", params)`
+
+**Query parameters**
+
+| Parameter | Required | Notes |
+|---|---|---|
+| `entityType` | no | — |
+| `entityId` | no | — |
+| `pageSize` | no | — |
+| `pageToken` | no | — |
+
+<CodeGroup>
+
+```typescript TypeScript
+const result = await client.controlPlane.adminPricingChangesList({
+  entityType: "<entityType>",
+  entityId: "<entityId>",
+});
+```
+
+```python Python
+result = client.control_plane.admin_pricing_changes_list({
+    "entityType": "<entityType>",
+    "entityId": "<entityId>",
+})
+```
+
+```rust Rust
+let spec = client.build_request("control_plane", "admin_pricing_changes_list", &[
+    ("entityType", "<entityType>".into()),
+    ("entityId", "<entityId>".into()),
+])?;
 // Send spec.method / spec.full_url() / spec.headers / spec.body_json
 // with your own HTTP client.
 ```

@@ -149,7 +149,7 @@ public object TemperaSurface {
     /** The audience used when a product declares none. */
     public const val defaultAudience: String = "palette"
     /** Every registered OAuth scope. */
-    public val scopes: List<String> = listOf("mcp:invoke", "memory:read", "memory:write", "memory:manage", "trace:read", "trace:write", "scenario:read", "scenario:write", "dataset:read", "dataset:write", "connector:read", "connector:run", "connector:manage", "eval:run", "training:publish", "review:gold:manage", "review:resolve", "workflow:read", "workflow:write", "workflow:run", "bio:source:read", "bio:proposal:write", "bio:measurement:verify", "bio:decision:write", "bio:experiment:approve", "bio:experiment:submit", "bio:signer:manage", "model:read", "model:invoke", "usage:reserve", "document:read", "document:write", "risk:read", "risk:write", "risk:review", "investigation:read", "investigation:write", "investigation:run", "investigation:review", "pii:unmask", "payments:intents:read", "payments:intents:write", "payments:receipts:read", "payments:webhooks:write", "payments:refunds:write", "payments:admin", "payments:merchants:read", "payments:merchants:write", "orders:read", "orders:commerce:write", "voice:read", "voice:write", "voice:stream", "clearing:actions:read", "clearing:actions:propose", "clearing:actions:commit", "clearing:actions:reconcile", "clearing:receipts:read", "clearing:actions:approve", "connection:invoke", "connection:write", "connection:read", "authority:holds:read", "authority:holds:decide", "authority:holds:write", "authority:policies:read", "authority:policies:write", "authority:credentials:release", "authority:ledger:read", "authority:ledger:export", "admin", "business:read", "business:write", "business:review", "orders:write", "orders:approve", "offline_access", "cradle:read", "cradle:write", "cradle:execute", "tempo:read", "tempo:write", "taxes:read", "taxes:review", "taxes:write")
+    public val scopes: List<String> = listOf("mcp:invoke", "memory:read", "memory:write", "memory:manage", "trace:read", "trace:write", "scenario:read", "scenario:write", "dataset:read", "dataset:write", "connector:read", "connector:run", "connector:manage", "eval:run", "training:publish", "review:gold:manage", "review:resolve", "workflow:read", "workflow:write", "workflow:run", "bio:source:read", "bio:proposal:write", "bio:measurement:verify", "bio:decision:write", "bio:experiment:approve", "bio:experiment:submit", "bio:signer:manage", "model:read", "model:invoke", "usage:reserve", "document:read", "document:write", "risk:read", "risk:write", "risk:review", "investigation:read", "investigation:write", "investigation:run", "investigation:review", "pii:unmask", "payments:intents:read", "payments:intents:write", "payments:receipts:read", "payments:webhooks:write", "payments:webhooks:read", "payments:refunds:write", "payments:refunds:read", "payments:admin", "payments:merchants:read", "payments:merchants:write", "payments:customers:read", "payments:customers:write", "payments:disputes:read", "payments:subscriptions:read", "payments:subscriptions:write", "orders:read", "orders:commerce:write", "voice:read", "voice:write", "voice:stream", "clearing:actions:read", "clearing:actions:propose", "clearing:actions:commit", "clearing:actions:reconcile", "clearing:receipts:read", "clearing:actions:approve", "connection:invoke", "connection:write", "connection:read", "authority:holds:read", "authority:holds:decide", "authority:holds:write", "authority:policies:read", "authority:policies:write", "authority:credentials:release", "authority:ledger:read", "authority:ledger:export", "admin", "business:read", "business:write", "business:review", "orders:write", "orders:approve", "offline_access", "cradle:read", "cradle:write", "cradle:execute", "tempo:read", "tempo:write", "taxes:read", "taxes:review", "taxes:write")
 
     /** The issuer's authorization endpoint path. */
     public const val authorizePath: String = "/oauth/authorize"
@@ -598,7 +598,7 @@ public val TemperaClient.temperaClearing: TemperaProductClient
 // capped at 64 KiB of bytecode and every class at 65535 constant-pool
 // entries, and one 489-element initializer would risk both.
 private fun buildOperations(): List<TemperaOperationSpec> {
-    val all = ArrayList<TemperaOperationSpec>(587)
+    val all = ArrayList<TemperaOperationSpec>(614)
     all.addAll(TemperaOperationChunk0.items)
     all.addAll(TemperaOperationChunk1.items)
     all.addAll(TemperaOperationChunk2.items)
@@ -623,6 +623,7 @@ private fun buildOperations(): List<TemperaOperationSpec> {
     all.addAll(TemperaOperationChunk21.items)
     all.addAll(TemperaOperationChunk22.items)
     all.addAll(TemperaOperationChunk23.items)
+    all.addAll(TemperaOperationChunk24.items)
     return all
 }
 
@@ -2356,6 +2357,32 @@ private object TemperaOperationChunk2 {
         ),
         TemperaOperationSpec(
             product = "controlPlane",
+            id = "receiveTemperaPaymentsEvent",
+            upstreamOperationId = "receiveTemperaPaymentsEvent",
+            method = "POST",
+            path = "/billing/rails/tempera-payments/events",
+            auth = "account",
+            authAudience = null,
+            pathParams = emptyList(),
+            pathParamTemplates = emptyList(),
+            query = emptyList(),
+            requiredQuery = emptyList(),
+            headers = listOf("tempera-event-signature"),
+            requiredHeaders = listOf("tempera-event-signature"),
+            body = emptyList(),
+            forbiddenBody = emptyList(),
+            requiredBody = emptyList(),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "json",
+            requestContentType = "application/json",
+            scope = null,
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "none",
+            description = "Receive a signed tempera-payments consumer event and, on a `payment.settled` event bound to a server-owned credit top-up, fund the org credit wallet from the Payments ledger journal. Replays are deduplicated by journal id.",
+        ),
+        TemperaOperationSpec(
+            product = "controlPlane",
             id = "getModelCatalog",
             upstreamOperationId = "getModelCatalog",
             method = "GET",
@@ -2394,7 +2421,7 @@ private object TemperaOperationChunk2 {
             requiredQuery = emptyList(),
             headers = emptyList(),
             requiredHeaders = emptyList(),
-            body = listOf("orgId", "projectId", "environmentId", "metric", "quantity", "idempotencyKey", "cost"),
+            body = listOf("orgId", "projectId", "environmentId", "metric", "quantity", "idempotencyKey", "cost", "operation", "route", "section"),
             forbiddenBody = emptyList(),
             requiredBody = listOf("orgId", "projectId", "environmentId", "metric"),
             bodyDefaults = emptyList(),
@@ -2405,6 +2432,32 @@ private object TemperaOperationChunk2 {
             prepareCommitRequired = false,
             safeRetry = "idempotent",
             description = "Record a usage event against a metered plan limit; requires a token carrying the meter's product scope and returns the updated meter.",
+        ),
+        TemperaOperationSpec(
+            product = "controlPlane",
+            id = "usageEventsList",
+            upstreamOperationId = "usageEvents.list",
+            method = "GET",
+            path = "/v1/usage/events",
+            auth = "account",
+            authAudience = null,
+            pathParams = emptyList(),
+            pathParamTemplates = emptyList(),
+            query = listOf("from", "to", "projectId", "environmentId", "productId", "operation", "metric", "section", "pageSize", "pageToken"),
+            requiredQuery = emptyList(),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = emptyList(),
+            forbiddenBody = emptyList(),
+            requiredBody = emptyList(),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "none",
+            requestContentType = null,
+            scope = "account:usageReader",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "read",
+            description = "List the organization's individual usage events, newest first, with the same filters as the summary.",
         ),
         TemperaOperationSpec(
             product = "controlPlane",
@@ -2420,7 +2473,7 @@ private object TemperaOperationChunk2 {
             requiredQuery = emptyList(),
             headers = emptyList(),
             requiredHeaders = emptyList(),
-            body = listOf("orgId", "projectId", "environmentId", "subject", "idempotencyKey", "provider", "model", "configId", "byok", "maximumProviderCostMicros", "ttlSeconds"),
+            body = listOf("orgId", "projectId", "environmentId", "subject", "idempotencyKey", "provider", "model", "configId", "byok", "maximumProviderCostMicros", "ttlSeconds", "operation", "route", "section"),
             forbiddenBody = emptyList(),
             requiredBody = listOf("orgId", "projectId", "environmentId", "idempotencyKey", "provider", "model", "configId", "byok", "maximumProviderCostMicros"),
             bodyDefaults = emptyList(),
@@ -2536,6 +2589,11 @@ private object TemperaOperationChunk2 {
             safeRetry = "read",
             description = "List the OAuth grants the user has approved in the active workspace.",
         ),
+    )
+}
+
+private object TemperaOperationChunk3 {
+    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "controlPlane",
             id = "revokeGrant",
@@ -2588,11 +2646,6 @@ private object TemperaOperationChunk2 {
             safeRetry = "none",
             description = "Introspect a token or tp_ API key server-side; requires the introspection secret and returns {active: false} for anything invalid.",
         ),
-    )
-}
-
-private object TemperaOperationChunk3 {
-    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "controlPlane",
             id = "discovery",
@@ -2751,6 +2804,136 @@ private object TemperaOperationChunk3 {
         ),
         TemperaOperationSpec(
             product = "controlPlane",
+            id = "emailVerificationsSend",
+            upstreamOperationId = "emailVerifications.send",
+            method = "POST",
+            path = "/v1/email-verifications:send",
+            auth = "account",
+            authAudience = null,
+            pathParams = emptyList(),
+            pathParamTemplates = emptyList(),
+            query = emptyList(),
+            requiredQuery = emptyList(),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = emptyList(),
+            forbiddenBody = emptyList(),
+            requiredBody = emptyList(),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "json",
+            requestContentType = "application/json",
+            scope = "account:session",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "none",
+            description = "Send (or reuse) an email-verification token for the authenticated account.",
+        ),
+        TemperaOperationSpec(
+            product = "controlPlane",
+            id = "emailVerificationsConfirm",
+            upstreamOperationId = "emailVerifications.confirm",
+            method = "POST",
+            path = "/v1/email-verifications:confirm",
+            auth = "none",
+            authAudience = null,
+            pathParams = emptyList(),
+            pathParamTemplates = emptyList(),
+            query = emptyList(),
+            requiredQuery = emptyList(),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = listOf("token"),
+            forbiddenBody = emptyList(),
+            requiredBody = listOf("token"),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "json",
+            requestContentType = "application/json",
+            scope = null,
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "none",
+            description = "Confirm an email address with the one-time token from a verification email.",
+        ),
+        TemperaOperationSpec(
+            product = "controlPlane",
+            id = "adminOperatorsList",
+            upstreamOperationId = "adminOperators.list",
+            method = "GET",
+            path = "/v1/admin/operators",
+            auth = "account",
+            authAudience = null,
+            pathParams = emptyList(),
+            pathParamTemplates = emptyList(),
+            query = listOf("pageSize", "pageToken"),
+            requiredQuery = emptyList(),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = emptyList(),
+            forbiddenBody = emptyList(),
+            requiredBody = emptyList(),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "none",
+            requestContentType = null,
+            scope = "account:platformStaff",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "read",
+            description = "List Tempera platform super-users, including revoked records.",
+        ),
+        TemperaOperationSpec(
+            product = "controlPlane",
+            id = "adminOperatorsCreate",
+            upstreamOperationId = "adminOperators.create",
+            method = "POST",
+            path = "/v1/admin/operators",
+            auth = "account",
+            authAudience = null,
+            pathParams = emptyList(),
+            pathParamTemplates = emptyList(),
+            query = emptyList(),
+            requiredQuery = emptyList(),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = listOf("email", "note"),
+            forbiddenBody = emptyList(),
+            requiredBody = listOf("email"),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "json",
+            requestContentType = "application/json",
+            scope = "account:platformStaff",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "none",
+            description = "Add a Tempera platform super-user and notify them by email.",
+        ),
+        TemperaOperationSpec(
+            product = "controlPlane",
+            id = "adminOperatorsRevoke",
+            upstreamOperationId = "adminOperators.revoke",
+            method = "DELETE",
+            path = "/v1/admin/operators/{operatorId}",
+            auth = "account",
+            authAudience = null,
+            pathParams = listOf("operatorId"),
+            pathParamTemplates = emptyList(),
+            query = emptyList(),
+            requiredQuery = emptyList(),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = emptyList(),
+            forbiddenBody = emptyList(),
+            requiredBody = emptyList(),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "none",
+            requestContentType = null,
+            scope = "account:platformStaff",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "none",
+            description = "Revoke a Tempera platform super-user.",
+        ),
+        TemperaOperationSpec(
+            product = "controlPlane",
             id = "adminStepUp",
             upstreamOperationId = "adminStepUp",
             method = "POST",
@@ -2789,7 +2972,7 @@ private object TemperaOperationChunk3 {
             requiredQuery = emptyList(),
             headers = emptyList(),
             requiredHeaders = emptyList(),
-            body = listOf("orgId", "creditMicros", "reference", "reason"),
+            body = listOf("orgId", "creditMicros", "reference", "reason", "allowNegative"),
             forbiddenBody = emptyList(),
             requiredBody = listOf("orgId", "creditMicros"),
             bodyDefaults = emptyList(),
@@ -3061,6 +3244,11 @@ private object TemperaOperationChunk3 {
             safeRetry = "read",
             description = "List passkeys enrolled for the authenticated account.",
         ),
+    )
+}
+
+private object TemperaOperationChunk4 {
+    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "controlPlane",
             id = "passkeysBeginRegistration",
@@ -3243,11 +3431,6 @@ private object TemperaOperationChunk3 {
             safeRetry = "none",
             description = "Consume a one-time recovery code, remove passkeys, and revoke all active account credentials.",
         ),
-    )
-}
-
-private object TemperaOperationChunk4 {
-    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "controlPlane",
             id = "passkeysDelete",
@@ -3716,6 +3899,11 @@ private object TemperaOperationChunk4 {
             safeRetry = "none",
             description = "Move a hold whose lease expired to recovery_required. Lease expiry is uncertainty, never a retry.",
         ),
+    )
+}
+
+private object TemperaOperationChunk5 {
+    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "controlPlane",
             id = "authorityCredentialBindingsList",
@@ -3847,6 +4035,531 @@ private object TemperaOperationChunk4 {
             description = "Read the approval-fatigue metrics for one workspace.",
         ),
         TemperaOperationSpec(
+            product = "controlPlane",
+            id = "usageSummaryGet",
+            upstreamOperationId = "usageSummary.get",
+            method = "GET",
+            path = "/v1/usage/summary",
+            auth = "account",
+            authAudience = null,
+            pathParams = emptyList(),
+            pathParamTemplates = emptyList(),
+            query = listOf("granularity", "groupBy", "from", "to", "projectId", "environmentId", "productId", "operation", "metric", "section", "pageSize", "pageToken"),
+            requiredQuery = emptyList(),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = emptyList(),
+            forbiddenBody = emptyList(),
+            requiredBody = emptyList(),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "none",
+            requestContentType = null,
+            scope = "account:usageReader",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "read",
+            description = "Aggregate the organization's usage and credit spend over a time window, bucketed and grouped by attribution dimension.",
+        ),
+        TemperaOperationSpec(
+            product = "controlPlane",
+            id = "adminUsageSummary",
+            upstreamOperationId = "adminUsageSummary",
+            method = "GET",
+            path = "/v1/admin/usage/summary",
+            auth = "account",
+            authAudience = null,
+            pathParams = emptyList(),
+            pathParamTemplates = emptyList(),
+            query = listOf("granularity", "groupBy", "from", "to", "projectId", "environmentId", "productId", "operation", "metric", "section", "orgId", "pageSize", "pageToken"),
+            requiredQuery = emptyList(),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = emptyList(),
+            forbiddenBody = emptyList(),
+            requiredBody = emptyList(),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "none",
+            requestContentType = null,
+            scope = "account:platformStaff",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "read",
+            description = "Platform-staff fleet spend report: the customer summary across every organization, plus provider cost and margin.",
+        ),
+        TemperaOperationSpec(
+            product = "controlPlane",
+            id = "adminUsageEvents",
+            upstreamOperationId = "adminUsageEvents",
+            method = "GET",
+            path = "/v1/admin/usage/events",
+            auth = "account",
+            authAudience = null,
+            pathParams = emptyList(),
+            pathParamTemplates = emptyList(),
+            query = listOf("from", "to", "projectId", "environmentId", "productId", "operation", "metric", "section", "orgId", "pageSize", "pageToken"),
+            requiredQuery = emptyList(),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = emptyList(),
+            forbiddenBody = emptyList(),
+            requiredBody = emptyList(),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "none",
+            requestContentType = null,
+            scope = "account:platformStaff",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "read",
+            description = "Platform-staff fleet-wide usage event list with the owning organization and upstream provider cost.",
+        ),
+        TemperaOperationSpec(
+            product = "controlPlane",
+            id = "adminBillingCreditGrants",
+            upstreamOperationId = "adminBillingCreditGrants",
+            method = "GET",
+            path = "/v1/admin/billing/credits/grants",
+            auth = "account",
+            authAudience = null,
+            pathParams = emptyList(),
+            pathParamTemplates = emptyList(),
+            query = listOf("orgId", "pageSize", "pageToken"),
+            requiredQuery = emptyList(),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = emptyList(),
+            forbiddenBody = emptyList(),
+            requiredBody = emptyList(),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "none",
+            requestContentType = null,
+            scope = "account:platformStaff",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "read",
+            description = "Platform-staff history of every credit grant and staff adjustment, read from the durable grant-receipt store.",
+        ),
+        TemperaOperationSpec(
+            product = "controlPlane",
+            id = "listBillingPaymentMethods",
+            upstreamOperationId = "listBillingPaymentMethods",
+            method = "GET",
+            path = "/v1/billing/payment-methods",
+            auth = "account",
+            authAudience = null,
+            pathParams = emptyList(),
+            pathParamTemplates = emptyList(),
+            query = listOf("pageSize", "pageToken"),
+            requiredQuery = emptyList(),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = emptyList(),
+            forbiddenBody = emptyList(),
+            requiredBody = emptyList(),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "none",
+            requestContentType = null,
+            scope = "account:billingAdmin",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "read",
+            description = "List the cards this organization has saved in tempera-payments, for use with plans:activate.",
+        ),
+        TemperaOperationSpec(
+            product = "controlPlane",
+            id = "billingPlansActivate",
+            upstreamOperationId = "billingPlans.activate",
+            method = "POST",
+            path = "/v1/billing/plans:activate",
+            auth = "account",
+            authAudience = null,
+            pathParams = emptyList(),
+            pathParamTemplates = emptyList(),
+            query = emptyList(),
+            requiredQuery = emptyList(),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = listOf("planId", "paymentMethodId"),
+            forbiddenBody = emptyList(),
+            requiredBody = listOf("planId", "paymentMethodId"),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "json",
+            requestContentType = "application/json",
+            scope = "account:billingAdmin",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "none",
+            description = "Create the tempera-payments subscription for a plan whose checkout saved a card.",
+        ),
+        TemperaOperationSpec(
+            product = "controlPlane",
+            id = "billingPlansCancel",
+            upstreamOperationId = "billingPlans.cancel",
+            method = "POST",
+            path = "/v1/billing/plans:cancel",
+            auth = "account",
+            authAudience = null,
+            pathParams = emptyList(),
+            pathParamTemplates = emptyList(),
+            query = emptyList(),
+            requiredQuery = emptyList(),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = emptyList(),
+            forbiddenBody = emptyList(),
+            requiredBody = emptyList(),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "json",
+            requestContentType = "application/json",
+            scope = "account:billingAdmin",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "none",
+            description = "Cancel this organization's tempera-payments plan subscription and mirror the resulting state.",
+        ),
+        TemperaOperationSpec(
+            product = "controlPlane",
+            id = "billingPlansPause",
+            upstreamOperationId = "billingPlans.pause",
+            method = "POST",
+            path = "/v1/billing/plans:pause",
+            auth = "account",
+            authAudience = null,
+            pathParams = emptyList(),
+            pathParamTemplates = emptyList(),
+            query = emptyList(),
+            requiredQuery = emptyList(),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = emptyList(),
+            forbiddenBody = emptyList(),
+            requiredBody = emptyList(),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "json",
+            requestContentType = "application/json",
+            scope = "account:billingAdmin",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "none",
+            description = "Pause this organization's tempera-payments plan subscription and mirror the resulting state.",
+        ),
+        TemperaOperationSpec(
+            product = "controlPlane",
+            id = "billingPlansResume",
+            upstreamOperationId = "billingPlans.resume",
+            method = "POST",
+            path = "/v1/billing/plans:resume",
+            auth = "account",
+            authAudience = null,
+            pathParams = emptyList(),
+            pathParamTemplates = emptyList(),
+            query = emptyList(),
+            requiredQuery = emptyList(),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = emptyList(),
+            forbiddenBody = emptyList(),
+            requiredBody = emptyList(),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "json",
+            requestContentType = "application/json",
+            scope = "account:billingAdmin",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "none",
+            description = "Resume this organization's tempera-payments plan subscription and mirror the resulting state.",
+        ),
+        TemperaOperationSpec(
+            product = "controlPlane",
+            id = "getBillingPricing",
+            upstreamOperationId = "getBillingPricing",
+            method = "GET",
+            path = "/v1/billing/pricing",
+            auth = "account",
+            authAudience = null,
+            pathParams = emptyList(),
+            pathParamTemplates = emptyList(),
+            query = emptyList(),
+            requiredQuery = emptyList(),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = emptyList(),
+            forbiddenBody = emptyList(),
+            requiredBody = emptyList(),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "none",
+            requestContentType = null,
+            scope = "account:session",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "read",
+            description = "Return the prices this workspace will be charged: the current plan catalog, the prepaid packs, and the per-unit pricing rules for the products it can report usage for. Multipliers and provider costs are staff-only and are never present.",
+        ),
+        TemperaOperationSpec(
+            product = "controlPlane",
+            id = "adminPricing",
+            upstreamOperationId = "adminPricing",
+            method = "GET",
+            path = "/v1/admin/pricing",
+            auth = "account",
+            authAudience = null,
+            pathParams = emptyList(),
+            pathParamTemplates = emptyList(),
+            query = emptyList(),
+            requiredQuery = emptyList(),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = emptyList(),
+            forbiddenBody = emptyList(),
+            requiredBody = emptyList(),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "none",
+            requestContentType = null,
+            scope = "account:platformStaff",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "read",
+            description = "Platform-staff view of every editable price: multipliers, plans, credit packs, and pricing rules, including inactive and scheduled rows.",
+        ),
+        TemperaOperationSpec(
+            product = "controlPlane",
+            id = "adminPricingMultipliersUpdate",
+            upstreamOperationId = "adminPricingMultipliers.update",
+            method = "PATCH",
+            path = "/v1/admin/pricing/multipliers",
+            auth = "account",
+            authAudience = null,
+            pathParams = emptyList(),
+            pathParamTemplates = emptyList(),
+            query = listOf("updateMask"),
+            requiredQuery = listOf("updateMask"),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = listOf("metered", "byok", "reason"),
+            forbiddenBody = emptyList(),
+            requiredBody = listOf("reason"),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "json",
+            requestContentType = "application/json",
+            scope = "account:platformStaff",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "none",
+            description = "Edit the model-spend multipliers. Requires a fresh platform step-up and records a pricing change plus an audit entry.",
+        ),
+        TemperaOperationSpec(
+            product = "controlPlane",
+            id = "adminPricingPlansCreate",
+            upstreamOperationId = "adminPricingPlans.create",
+            method = "POST",
+            path = "/v1/admin/pricing/plans",
+            auth = "account",
+            authAudience = null,
+            pathParams = emptyList(),
+            pathParamTemplates = emptyList(),
+            query = emptyList(),
+            requiredQuery = emptyList(),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = listOf("planId", "name", "description", "prices", "includedUsage", "grantMicros", "overageAllowed", "overageRateMicrosPerCredit", "entitlements", "apiKeyScopeEntitlements", "bundle", "active", "effectiveFrom", "effectiveTo", "reason"),
+            forbiddenBody = emptyList(),
+            requiredBody = listOf("planId", "prices", "reason"),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "json",
+            requestContentType = "application/json",
+            scope = "account:platformStaff",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "none",
+            description = "Create a subscription plan. Requires a fresh platform step-up and records a pricing change plus an audit entry.",
+        ),
+        TemperaOperationSpec(
+            product = "controlPlane",
+            id = "adminPricingPlansUpdate",
+            upstreamOperationId = "adminPricingPlans.update",
+            method = "PATCH",
+            path = "/v1/admin/pricing/plans/{planId}",
+            auth = "account",
+            authAudience = null,
+            pathParams = listOf("planId"),
+            pathParamTemplates = emptyList(),
+            query = listOf("updateMask"),
+            requiredQuery = listOf("updateMask"),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = listOf("name", "description", "prices", "includedUsage", "grantMicros", "overageAllowed", "overageRateMicrosPerCredit", "entitlements", "apiKeyScopeEntitlements", "bundle", "active", "effectiveFrom", "effectiveTo", "reason"),
+            forbiddenBody = emptyList(),
+            requiredBody = listOf("reason"),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "json",
+            requestContentType = "application/json",
+            scope = "account:platformStaff",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "none",
+            description = "Edit a plan price, credit grant, entitlements, activation, or effective dates. Deactivating a plan a workspace is still subscribed to fails with plan_in_use.",
+        ),
+        TemperaOperationSpec(
+            product = "controlPlane",
+            id = "adminPricingCreditPacksCreate",
+            upstreamOperationId = "adminPricingCreditPacks.create",
+            method = "POST",
+            path = "/v1/admin/pricing/credit-packs",
+            auth = "account",
+            authAudience = null,
+            pathParams = emptyList(),
+            pathParamTemplates = emptyList(),
+            query = emptyList(),
+            requiredQuery = emptyList(),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = listOf("packId", "name", "description", "currency", "priceMinor", "creditMicros", "active", "effectiveFrom", "effectiveTo", "reason"),
+            forbiddenBody = emptyList(),
+            requiredBody = listOf("packId", "name", "currency", "priceMinor", "creditMicros", "reason"),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "json",
+            requestContentType = "application/json",
+            scope = "account:platformStaff",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "none",
+            description = "Create a prepaid credit pack. Requires a fresh platform step-up and records a pricing change plus an audit entry.",
+        ),
+        TemperaOperationSpec(
+            product = "controlPlane",
+            id = "adminPricingCreditPacksUpdate",
+            upstreamOperationId = "adminPricingCreditPacks.update",
+            method = "PATCH",
+            path = "/v1/admin/pricing/credit-packs/{packId}",
+            auth = "account",
+            authAudience = null,
+            pathParams = listOf("packId"),
+            pathParamTemplates = emptyList(),
+            query = listOf("updateMask"),
+            requiredQuery = listOf("updateMask"),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = listOf("name", "description", "currency", "priceMinor", "creditMicros", "active", "effectiveFrom", "effectiveTo", "reason"),
+            forbiddenBody = emptyList(),
+            requiredBody = listOf("reason"),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "json",
+            requestContentType = "application/json",
+            scope = "account:platformStaff",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "none",
+            description = "Edit a prepaid credit pack price, credit amount, activation, or effective dates.",
+        ),
+        TemperaOperationSpec(
+            product = "controlPlane",
+            id = "adminPricingRulesCreate",
+            upstreamOperationId = "adminPricingRules.create",
+            method = "POST",
+            path = "/v1/admin/pricing/rules",
+            auth = "account",
+            authAudience = null,
+            pathParams = emptyList(),
+            pathParamTemplates = emptyList(),
+            query = emptyList(),
+            requiredQuery = emptyList(),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = listOf("productId", "operation", "metric", "unit", "priceMicrosPerUnit", "multiplierMillis", "mode", "note", "active", "effectiveFrom", "effectiveTo", "reason"),
+            forbiddenBody = emptyList(),
+            requiredBody = listOf("productId", "unit", "mode", "reason"),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "json",
+            requestContentType = "application/json",
+            scope = "account:platformStaff",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "none",
+            description = "Create a per-dimension pricing rule. A debit rule makes a usage event debit quantity x priceMicrosPerUnit; a record_only rule keeps measuring without charging.",
+        ),
+        TemperaOperationSpec(
+            product = "controlPlane",
+            id = "adminPricingRulesUpdate",
+            upstreamOperationId = "adminPricingRules.update",
+            method = "PATCH",
+            path = "/v1/admin/pricing/rules/{ruleId}",
+            auth = "account",
+            authAudience = null,
+            pathParams = listOf("ruleId"),
+            pathParamTemplates = emptyList(),
+            query = listOf("updateMask"),
+            requiredQuery = listOf("updateMask"),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = listOf("unit", "priceMicrosPerUnit", "multiplierMillis", "mode", "note", "active", "effectiveFrom", "effectiveTo", "reason"),
+            forbiddenBody = emptyList(),
+            requiredBody = listOf("reason"),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "json",
+            requestContentType = "application/json",
+            scope = "account:platformStaff",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "none",
+            description = "Edit a pricing rule's unit price, mode, activation, or effective dates. An overlapping active range for the same dimension fails with pricing_conflict.",
+        ),
+        TemperaOperationSpec(
+            product = "controlPlane",
+            id = "adminPricingRulesDeactivate",
+            upstreamOperationId = "adminPricingRules.deactivate",
+            method = "DELETE",
+            path = "/v1/admin/pricing/rules/{ruleId}",
+            auth = "account",
+            authAudience = null,
+            pathParams = listOf("ruleId"),
+            pathParamTemplates = emptyList(),
+            query = emptyList(),
+            requiredQuery = emptyList(),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = listOf("reason"),
+            forbiddenBody = emptyList(),
+            requiredBody = listOf("reason"),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "json",
+            requestContentType = "application/json",
+            scope = "account:platformStaff",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "none",
+            description = "Deactivate a pricing rule. The row is retained, not deleted, so a ledger entry it priced can still be explained.",
+        ),
+        TemperaOperationSpec(
+            product = "controlPlane",
+            id = "adminPricingChangesList",
+            upstreamOperationId = "adminPricingChanges.list",
+            method = "GET",
+            path = "/v1/admin/pricing/changes",
+            auth = "account",
+            authAudience = null,
+            pathParams = emptyList(),
+            pathParamTemplates = emptyList(),
+            query = listOf("entityType", "entityId", "pageSize", "pageToken"),
+            requiredQuery = emptyList(),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = emptyList(),
+            forbiddenBody = emptyList(),
+            requiredBody = emptyList(),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "none",
+            requestContentType = null,
+            scope = "account:platformStaff",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "read",
+            description = "Audit trail of every price edit: the before and after documents, the acting staff principal, and the stated reason.",
+        ),
+    )
+}
+
+private object TemperaOperationChunk6 {
+    val items: List<TemperaOperationSpec> = listOf(
+        TemperaOperationSpec(
             product = "palette",
             id = "health",
             upstreamOperationId = "health.check",
@@ -3898,11 +4611,6 @@ private object TemperaOperationChunk4 {
             safeRetry = "none",
             description = "Call POST /v1/alerts/{tenant_id}/{project_id}/traces/{trace_id}/webhook.",
         ),
-    )
-}
-
-private object TemperaOperationChunk5 {
-    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "palette",
             id = "createApiKey",
@@ -4501,6 +5209,11 @@ private object TemperaOperationChunk5 {
             safeRetry = "none",
             description = "Call POST /v1/experiments/{tenant_id}/{project_id}/{dataset_id}/versions/{version_id}/judge.",
         ),
+    )
+}
+
+private object TemperaOperationChunk7 {
+    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "palette",
             id = "gatesCreate",
@@ -4553,11 +5266,6 @@ private object TemperaOperationChunk5 {
             safeRetry = "none",
             description = "Call POST /v1/gates/{tenant_id}/{project_id}/{gate_id}/run.",
         ),
-    )
-}
-
-private object TemperaOperationChunk6 {
-    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "palette",
             id = "importSource",
@@ -5156,6 +5864,11 @@ private object TemperaOperationChunk6 {
             safeRetry = "none",
             description = "Call POST /v1/review-queues/{tenant_id}/{project_id}/{queue_id}/tasks/{task_id}/annotations/{annotation_id}/promote.",
         ),
+    )
+}
+
+private object TemperaOperationChunk8 {
+    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "palette",
             id = "scenariosList",
@@ -5208,11 +5921,6 @@ private object TemperaOperationChunk6 {
             safeRetry = "none",
             description = "Call POST /v1/scenarios/{tenant_id}/{project_id}.",
         ),
-    )
-}
-
-private object TemperaOperationChunk7 {
-    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "palette",
             id = "scenariosMine",
@@ -5811,6 +6519,11 @@ private object TemperaOperationChunk7 {
             safeRetry = "none",
             description = "Open a browser session at a URL; driverless sessions skip engine attachment.",
         ),
+    )
+}
+
+private object TemperaOperationChunk9 {
+    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "tempo",
             id = "closeSession",
@@ -5863,11 +6576,6 @@ private object TemperaOperationChunk7 {
             safeRetry = "none",
             description = "Grant a pending policy confirmation and receive a single-use grant token.",
         ),
-    )
-}
-
-private object TemperaOperationChunk8 {
-    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "tempo",
             id = "sessionEvents",
@@ -6466,6 +7174,11 @@ private object TemperaOperationChunk8 {
             safeRetry = "none",
             description = "Call POST /v1/projects/{project}/policies.",
         ),
+    )
+}
+
+private object TemperaOperationChunk10 {
+    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaRisk",
             id = "registerModel",
@@ -6518,11 +7231,6 @@ private object TemperaOperationChunk8 {
             safeRetry = "none",
             description = "Ingest a signed non-decisional score from an authenticated scorer workload.",
         ),
-    )
-}
-
-private object TemperaOperationChunk9 {
-    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaRisk",
             id = "createApproval",
@@ -7121,6 +7829,11 @@ private object TemperaOperationChunk9 {
             safeRetry = "none",
             description = "Call POST /v1/projects/{project}/researchJobs/{jobId}:cancel.",
         ),
+    )
+}
+
+private object TemperaOperationChunk11 {
+    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaRisk",
             id = "reviewResearchJob",
@@ -7173,11 +7886,6 @@ private object TemperaOperationChunk9 {
             safeRetry = "none",
             description = "Verify one signed Risk Clearing evidence envelope against live Risk state.",
         ),
-    )
-}
-
-private object TemperaOperationChunk10 {
-    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaRisk",
             id = "abortRiskClearingReservation",
@@ -7776,6 +8484,11 @@ private object TemperaOperationChunk10 {
             safeRetry = "none",
             description = "Delete a stored workflow definition.",
         ),
+    )
+}
+
+private object TemperaOperationChunk12 {
+    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaWorkflows",
             id = "getWorkflow",
@@ -7828,11 +8541,6 @@ private object TemperaOperationChunk10 {
             safeRetry = "none",
             description = "Replace a stored workflow definition with a new validated revision.",
         ),
-    )
-}
-
-private object TemperaOperationChunk11 {
-    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaWorkflows",
             id = "createRun",
@@ -8431,6 +9139,11 @@ private object TemperaOperationChunk11 {
             safeRetry = "none",
             description = "Propose one constrained Bio candidate batch without outcome access.",
         ),
+    )
+}
+
+private object TemperaOperationChunk13 {
+    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaGym",
             id = "listSealedEvaluators",
@@ -8483,11 +9196,6 @@ private object TemperaOperationChunk11 {
             safeRetry = "read",
             description = "List persisted sealed-evaluation precommits and results.",
         ),
-    )
-}
-
-private object TemperaOperationChunk12 {
-    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaGym",
             id = "precommitSealedEvaluation",
@@ -9086,6 +9794,11 @@ private object TemperaOperationChunk12 {
             safeRetry = "read",
             description = "Read and cryptographically re-verify the canonical settlement receipt.",
         ),
+    )
+}
+
+private object TemperaOperationChunk14 {
+    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaPayments",
             id = "createStripeCheckout",
@@ -9138,11 +9851,6 @@ private object TemperaOperationChunk12 {
             safeRetry = "none",
             description = "Create a hosted/tokenizing card session with the selected configured acquirer.",
         ),
-    )
-}
-
-private object TemperaOperationChunk13 {
-    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaPayments",
             id = "getMerchantWorkspace",
@@ -9741,6 +10449,11 @@ private object TemperaOperationChunk13 {
             safeRetry = "read",
             description = "Read one customer.",
         ),
+    )
+}
+
+private object TemperaOperationChunk15 {
+    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaPayments",
             id = "createSetupSession",
@@ -9793,11 +10506,6 @@ private object TemperaOperationChunk13 {
             safeRetry = "read",
             description = "List the payment methods saved for one customer.",
         ),
-    )
-}
-
-private object TemperaOperationChunk14 {
-    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaPayments",
             id = "deletePaymentMethod",
@@ -10396,6 +11104,11 @@ private object TemperaOperationChunk14 {
             safeRetry = "read",
             description = "List logical units without materializing the complete document graph.",
         ),
+    )
+}
+
+private object TemperaOperationChunk16 {
+    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaDocument",
             id = "documentsProcess",
@@ -10448,11 +11161,6 @@ private object TemperaOperationChunk14 {
             safeRetry = "read",
             description = "Get a long-running operation.",
         ),
-    )
-}
-
-private object TemperaOperationChunk15 {
-    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaDocument",
             id = "uploadsCreate",
@@ -11051,6 +11759,11 @@ private object TemperaOperationChunk15 {
             safeRetry = "read",
             description = "Check memory-server liveness.",
         ),
+    )
+}
+
+private object TemperaOperationChunk17 {
+    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "remi",
             id = "readyz",
@@ -11103,11 +11816,6 @@ private object TemperaOperationChunk15 {
             safeRetry = "read",
             description = "Fetch deep store health: schema version, integrity checks, and graph consistency.",
         ),
-    )
-}
-
-private object TemperaOperationChunk16 {
-    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "remi",
             id = "getStats",
@@ -11706,6 +12414,11 @@ private object TemperaOperationChunk16 {
             safeRetry = "idempotent",
             description = "Resolve, abstain, flag, or adjudicate one human residual with an idempotent normalized decision.",
         ),
+    )
+}
+
+private object TemperaOperationChunk18 {
+    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "dataEngine",
             id = "createExpertTaskAppeal",
@@ -11758,11 +12471,6 @@ private object TemperaOperationChunk16 {
             safeRetry = "idempotent",
             description = "Atomically claim one open expert task with an exclusive renewable lease.",
         ),
-    )
-}
-
-private object TemperaOperationChunk17 {
-    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "dataEngine",
             id = "renewExpertTaskAssignment",
@@ -12361,6 +13069,11 @@ private object TemperaOperationChunk17 {
             safeRetry = "none",
             description = "Emit an eval dataset bundle from verified artifacts; returns an async operation handle.",
         ),
+    )
+}
+
+private object TemperaOperationChunk19 {
+    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "dataEngine",
             id = "projectsSourceDefinitionsCreate",
@@ -12413,11 +13126,6 @@ private object TemperaOperationChunk17 {
             safeRetry = "read",
             description = "List project source definitions.",
         ),
-    )
-}
-
-private object TemperaOperationChunk18 {
-    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "dataEngine",
             id = "projectsSourceDefinitionsGet",
@@ -13016,6 +13724,11 @@ private object TemperaOperationChunk18 {
             safeRetry = "read",
             description = "List immutable executable research catalog entries with bounded pagination.",
         ),
+    )
+}
+
+private object TemperaOperationChunk20 {
+    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "dataEngine",
             id = "getResearchCatalogEntry",
@@ -13068,11 +13781,6 @@ private object TemperaOperationChunk18 {
             safeRetry = "read",
             description = "Liveness probe.",
         ),
-    )
-}
-
-private object TemperaOperationChunk19 {
-    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "humanData",
             id = "getHumanDataOpenapiDocument",
@@ -13671,6 +14379,11 @@ private object TemperaOperationChunk19 {
             safeRetry = "none",
             description = "Import Eval Result.",
         ),
+    )
+}
+
+private object TemperaOperationChunk21 {
+    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaVoice",
             id = "buildVoiceEvalBundle",
@@ -13723,11 +14436,6 @@ private object TemperaOperationChunk19 {
             safeRetry = "none",
             description = "Create Palette Handoff.",
         ),
-    )
-}
-
-private object TemperaOperationChunk20 {
-    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaVoice",
             id = "publishVoicePaletteHandoff",
@@ -14326,6 +15034,11 @@ private object TemperaOperationChunk20 {
             safeRetry = "none",
             description = "Execute.",
         ),
+    )
+}
+
+private object TemperaOperationChunk22 {
+    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaDropshipping",
             id = "recordManualOutcome",
@@ -14378,11 +15091,6 @@ private object TemperaOperationChunk20 {
             safeRetry = "none",
             description = "Reconcile.",
         ),
-    )
-}
-
-private object TemperaOperationChunk21 {
-    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaDropshipping",
             id = "listOrderAuditEvents",
@@ -14981,6 +15689,11 @@ private object TemperaOperationChunk21 {
             safeRetry = "read",
             description = "Read-only service liveness endpoint.",
         ),
+    )
+}
+
+private object TemperaOperationChunk23 {
+    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaConnectors",
             id = "connectionsList",
@@ -15033,11 +15746,6 @@ private object TemperaOperationChunk21 {
             safeRetry = "none",
             description = "Create a draft tenant-scoped connection from the catalog or a manual manifest.",
         ),
-    )
-}
-
-private object TemperaOperationChunk22 {
-    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaConnectors",
             id = "connectionsGet",
@@ -15636,6 +16344,11 @@ private object TemperaOperationChunk22 {
             safeRetry = "read",
             description = "List investigation reviews.",
         ),
+    )
+}
+
+private object TemperaOperationChunk24 {
+    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaInvestigations",
             id = "createInvestigationReview",
@@ -15688,11 +16401,6 @@ private object TemperaOperationChunk22 {
             safeRetry = "read",
             description = "Get deterministic evaluation.",
         ),
-    )
-}
-
-private object TemperaOperationChunk23 {
-    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaInvestigations",
             id = "getAgenticRun",

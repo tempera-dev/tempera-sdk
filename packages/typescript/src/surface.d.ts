@@ -3,7 +3,7 @@
 // product-client interfaces used by createTemperaClient().
 
 export type TemperaAudience = "palette" | "tempo" | "cradle" | "remi" | "human-data" | "data-engine" | "tempera-mcp" | "tempera-code" | "tempera-llm" | "tempera-connectors" | "tempera-workflows" | "tempera-gym" | "tempera-bio" | "tempera-document" | "tempera-risk" | "tempera-investigations" | "tempera-payments" | "tempera-dropshipping" | "tempera-voice" | "tempera-clearing" | "tempera-authority" | "tempera-business" | "tempera-taxes";
-export type TemperaScope = "mcp:invoke" | "memory:read" | "memory:write" | "memory:manage" | "trace:read" | "trace:write" | "scenario:read" | "scenario:write" | "dataset:read" | "dataset:write" | "connector:read" | "connector:run" | "connector:manage" | "eval:run" | "training:publish" | "review:gold:manage" | "review:resolve" | "workflow:read" | "workflow:write" | "workflow:run" | "bio:source:read" | "bio:proposal:write" | "bio:measurement:verify" | "bio:decision:write" | "bio:experiment:approve" | "bio:experiment:submit" | "bio:signer:manage" | "model:read" | "model:invoke" | "usage:reserve" | "document:read" | "document:write" | "risk:read" | "risk:write" | "risk:review" | "investigation:read" | "investigation:write" | "investigation:run" | "investigation:review" | "pii:unmask" | "payments:intents:read" | "payments:intents:write" | "payments:receipts:read" | "payments:webhooks:write" | "payments:refunds:write" | "payments:admin" | "payments:merchants:read" | "payments:merchants:write" | "orders:read" | "orders:commerce:write" | "voice:read" | "voice:write" | "voice:stream" | "clearing:actions:read" | "clearing:actions:propose" | "clearing:actions:commit" | "clearing:actions:reconcile" | "clearing:receipts:read" | "clearing:actions:approve" | "connection:invoke" | "connection:write" | "connection:read" | "authority:holds:read" | "authority:holds:decide" | "authority:holds:write" | "authority:policies:read" | "authority:policies:write" | "authority:credentials:release" | "authority:ledger:read" | "authority:ledger:export" | "admin" | "business:read" | "business:write" | "business:review" | "orders:write" | "orders:approve" | "offline_access" | "cradle:read" | "cradle:write" | "cradle:execute" | "tempo:read" | "tempo:write" | "taxes:read" | "taxes:review" | "taxes:write";
+export type TemperaScope = "mcp:invoke" | "memory:read" | "memory:write" | "memory:manage" | "trace:read" | "trace:write" | "scenario:read" | "scenario:write" | "dataset:read" | "dataset:write" | "connector:read" | "connector:run" | "connector:manage" | "eval:run" | "training:publish" | "review:gold:manage" | "review:resolve" | "workflow:read" | "workflow:write" | "workflow:run" | "bio:source:read" | "bio:proposal:write" | "bio:measurement:verify" | "bio:decision:write" | "bio:experiment:approve" | "bio:experiment:submit" | "bio:signer:manage" | "model:read" | "model:invoke" | "usage:reserve" | "document:read" | "document:write" | "risk:read" | "risk:write" | "risk:review" | "investigation:read" | "investigation:write" | "investigation:run" | "investigation:review" | "pii:unmask" | "payments:intents:read" | "payments:intents:write" | "payments:receipts:read" | "payments:webhooks:write" | "payments:webhooks:read" | "payments:refunds:write" | "payments:refunds:read" | "payments:admin" | "payments:merchants:read" | "payments:merchants:write" | "payments:customers:read" | "payments:customers:write" | "payments:disputes:read" | "payments:subscriptions:read" | "payments:subscriptions:write" | "orders:read" | "orders:commerce:write" | "voice:read" | "voice:write" | "voice:stream" | "clearing:actions:read" | "clearing:actions:propose" | "clearing:actions:commit" | "clearing:actions:reconcile" | "clearing:receipts:read" | "clearing:actions:approve" | "connection:invoke" | "connection:write" | "connection:read" | "authority:holds:read" | "authority:holds:decide" | "authority:holds:write" | "authority:policies:read" | "authority:policies:write" | "authority:credentials:release" | "authority:ledger:read" | "authority:ledger:export" | "admin" | "business:read" | "business:write" | "business:review" | "orders:write" | "orders:approve" | "offline_access" | "cradle:read" | "cradle:write" | "cradle:execute" | "tempo:read" | "tempo:write" | "taxes:read" | "taxes:review" | "taxes:write";
 export type TemperaEnvironment = "local" | "preview" | "staging" | "production";
 export type TemperaProductKey = "controlPlane" | "palette" | "tempo" | "temperaLlm" | "temperaVoice" | "temperaRisk" | "temperaWorkflows" | "temperaGym" | "temperaBio" | "temperaDocument" | "temperaPayments" | "cradle" | "remi" | "dataEngine" | "humanData" | "tempJs" | "tempOS" | "arrha" | "temperaDropshipping" | "temperaBusiness" | "temperaConnectors" | "temperaInvestigations" | "temperaClearing";
 
@@ -231,10 +231,14 @@ export interface ControlPlaneClient extends TemperaProductClientBase {
   listCreditTopupPacks(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Create a one-time Stripe Checkout session for a source-owned fixed prepaid credit pack. Arbitrary money and credit amounts are rejected. */
   createCreditTopup(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Receive a signed tempera-payments consumer event and, on a `payment.settled` event bound to a server-owned credit top-up, fund the org credit wallet from the Payments ledger journal. Replays are deduplicated by journal id. */
+  receiveTemperaPaymentsEvent(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List the entitled Tempera Code model catalog; requires a tempera-code bearer with model:read and the model-gateway entitlement. */
   getModelCatalog(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Record a usage event against a metered plan limit; requires a token carrying the meter's product scope and returns the updated meter. */
   recordUsage(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List the organization's individual usage events, newest first, with the same filters as the summary. */
+  usageEventsList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Atomically reserve the maximum model cost before starting a provider request. */
   usageReservationsCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Commit exact provider usage against an admitted reservation and release unused capacity. */
@@ -261,6 +265,16 @@ export interface ControlPlaneClient extends TemperaProductClientBase {
   jwks(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Return fail-closed source, machine, and image provenance for the serving runtime to a platform-staff account session. */
   adminOperationalProvenance(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Send (or reuse) an email-verification token for the authenticated account. */
+  emailVerificationsSend(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Confirm an email address with the one-time token from a verification email. */
+  emailVerificationsConfirm(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List Tempera platform super-users, including revoked records. */
+  adminOperatorsList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Add a Tempera platform super-user and notify them by email. */
+  adminOperatorsCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Revoke a Tempera platform super-user. */
+  adminOperatorsRevoke(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Re-authenticate a platform-staff account session to mint a short-lived step-up elevation required for sensitive admin mutations. */
   adminStepUp(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Platform-staff credit grant/adjustment to an org wallet. Requires a fresh step-up elevation; idempotent on the reference. */
@@ -345,6 +359,46 @@ export interface ControlPlaneClient extends TemperaProductClientBase {
   authorityLedgerExport(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Read the approval-fatigue metrics for one workspace. */
   authorityMetricsGet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Aggregate the organization's usage and credit spend over a time window, bucketed and grouped by attribution dimension. */
+  usageSummaryGet(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Platform-staff fleet spend report: the customer summary across every organization, plus provider cost and margin. */
+  adminUsageSummary(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Platform-staff fleet-wide usage event list with the owning organization and upstream provider cost. */
+  adminUsageEvents(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Platform-staff history of every credit grant and staff adjustment, read from the durable grant-receipt store. */
+  adminBillingCreditGrants(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** List the cards this organization has saved in tempera-payments, for use with plans:activate. */
+  listBillingPaymentMethods(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create the tempera-payments subscription for a plan whose checkout saved a card. */
+  billingPlansActivate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Cancel this organization's tempera-payments plan subscription and mirror the resulting state. */
+  billingPlansCancel(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Pause this organization's tempera-payments plan subscription and mirror the resulting state. */
+  billingPlansPause(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Resume this organization's tempera-payments plan subscription and mirror the resulting state. */
+  billingPlansResume(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Return the prices this workspace will be charged: the current plan catalog, the prepaid packs, and the per-unit pricing rules for the products it can report usage for. Multipliers and provider costs are staff-only and are never present. */
+  getBillingPricing(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Platform-staff view of every editable price: multipliers, plans, credit packs, and pricing rules, including inactive and scheduled rows. */
+  adminPricing(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Edit the model-spend multipliers. Requires a fresh platform step-up and records a pricing change plus an audit entry. */
+  adminPricingMultipliersUpdate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create a subscription plan. Requires a fresh platform step-up and records a pricing change plus an audit entry. */
+  adminPricingPlansCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Edit a plan price, credit grant, entitlements, activation, or effective dates. Deactivating a plan a workspace is still subscribed to fails with plan_in_use. */
+  adminPricingPlansUpdate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create a prepaid credit pack. Requires a fresh platform step-up and records a pricing change plus an audit entry. */
+  adminPricingCreditPacksCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Edit a prepaid credit pack price, credit amount, activation, or effective dates. */
+  adminPricingCreditPacksUpdate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create a per-dimension pricing rule. A debit rule makes a usage event debit quantity x priceMicrosPerUnit; a record_only rule keeps measuring without charging. */
+  adminPricingRulesCreate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Edit a pricing rule's unit price, mode, activation, or effective dates. An overlapping active range for the same dimension fails with pricing_conflict. */
+  adminPricingRulesUpdate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Deactivate a pricing rule. The row is retained, not deleted, so a ledger entry it priced can still be explained. */
+  adminPricingRulesDeactivate(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Audit trail of every price edit: the before and after documents, the acting staff principal, and the stated reason. */
+  adminPricingChangesList(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
 }
 
 export interface PaletteClient extends TemperaProductClientBase {

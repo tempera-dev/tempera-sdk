@@ -1,5 +1,23 @@
 # SDK compatibility ledger
 
+## 2026-09-17 — Payments billing engine on main; staged pin retired
+
+- Owner: jadenfix (SDK). Producers: tempera-payments main
+  `e4d01bc75413547ba0803bd56f8eadd2abdc1e2c` (tempera-payments#47 merged),
+  auth-hub main `b2777d01fe23433e808fa90acbb5c8cf8df90211` (auth-hub#140 merged).
+- Compatibility class: additive. The 47 Payments operations staged on
+  2026-09-09 are unchanged in id, method, path, auth kind, and scope; the
+  vendored contract now comes from main through the default gate, and
+  `contracts/sdk-staged-sources.json` is empty again.
+- Scopes: the control plane re-vendor carries the seven `payments:*` scopes,
+  so their `scopeGaps` entries are deleted. `account:usageReader` is registered
+  as a new account permission for the usage explorer reads the control plane
+  now fences with it.
+- Claims boundary unchanged: the clients transport these calls; nothing here
+  claims the Payments deployment exists or that any scope is mintable on a
+  given environment.
+- Rollback: revert this SDK commit as a unit.
+
 ## 2026-09-09 — staged Payments billing-engine consolidation
 
 - Owner: jadenfix (SDK), tempera-payments#47 (producer), auth-hub#140 (scopes).

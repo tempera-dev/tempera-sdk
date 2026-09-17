@@ -37,8 +37,6 @@
     }
   },
   "protocol_exceptions": [
-    "controlPlane|/billing/rails/coinbase/webhook",
-    "controlPlane|/billing/rails/paypal/webhook",
     "controlPlane|/billing/webhook",
     "controlPlane|/github/callback",
     "controlPlane|/github/webhook",

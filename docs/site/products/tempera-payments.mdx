@@ -814,7 +814,6 @@ List the refunds of one payment intent.
 - **Producer operationId:** `listRefunds`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
 - **Scope:** `payments:refunds:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaPayments.listRefunds()` · Python `client.tempera_payments.list_refunds()` · Rust `build_request("tempera_payments", "list_refunds", params)`
 
 **Path parameters**
@@ -870,7 +869,6 @@ Read one refund.
 - **Producer operationId:** `getRefund`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
 - **Scope:** `payments:refunds:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaPayments.getRefund()` · Python `client.tempera_payments.get_refund()` · Rust `build_request("tempera_payments", "get_refund", params)`
 
 **Path parameters**
@@ -1157,7 +1155,6 @@ List the webhook endpoints of one workspace.
 - **Producer operationId:** `listWebhookEndpoints`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
 - **Scope:** `payments:webhooks:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaPayments.listWebhookEndpoints()` · Python `client.tempera_payments.list_webhook_endpoints()` · Rust `build_request("tempera_payments", "list_webhook_endpoints", params)`
 
 **Query parameters**
@@ -1204,7 +1201,6 @@ Read one webhook endpoint.
 - **Producer operationId:** `getWebhookEndpoint`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
 - **Scope:** `payments:webhooks:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaPayments.getWebhookEndpoint()` · Python `client.tempera_payments.get_webhook_endpoint()` · Rust `build_request("tempera_payments", "get_webhook_endpoint", params)`
 
 **Path parameters**
@@ -1305,7 +1301,6 @@ List delivery attempts for one webhook endpoint.
 - **Producer operationId:** `listWebhookDeliveries`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
 - **Scope:** `payments:webhooks:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaPayments.listWebhookDeliveries()` · Python `client.tempera_payments.list_webhook_deliveries()` · Rust `build_request("tempera_payments", "list_webhook_deliveries", params)`
 
 **Path parameters**
@@ -1421,7 +1416,6 @@ Create a customer for one workspace.
 - **Producer operationId:** `createCustomer`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
 - **Scope:** `payments:customers:write`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaPayments.createCustomer()` · Python `client.tempera_payments.create_customer()` · Rust `build_request("tempera_payments", "create_customer", params)`
 
 **Body parameters**
@@ -1473,7 +1467,6 @@ List customers of one workspace by an exact externalId or email.
 - **Producer operationId:** `listCustomers`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
 - **Scope:** `payments:customers:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaPayments.listCustomers()` · Python `client.tempera_payments.list_customers()` · Rust `build_request("tempera_payments", "list_customers", params)`
 
 **Query parameters**
@@ -1522,7 +1515,6 @@ Read one customer.
 - **Producer operationId:** `getCustomer`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
 - **Scope:** `payments:customers:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaPayments.getCustomer()` · Python `client.tempera_payments.get_customer()` · Rust `build_request("tempera_payments", "get_customer", params)`
 
 **Path parameters**
@@ -1574,7 +1566,6 @@ Create a provider-hosted session that saves a card for this customer.
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
 - **Physical action:** Yes. This operation may cause an external real-world action.
 - **Scope:** `payments:customers:write`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaPayments.createSetupSession()` · Python `client.tempera_payments.create_setup_session()` · Rust `build_request("tempera_payments", "create_setup_session", params)`
 
 **Path parameters**
@@ -1637,7 +1628,6 @@ List the payment methods saved for one customer.
 - **Producer operationId:** `listPaymentMethods`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
 - **Scope:** `payments:customers:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaPayments.listPaymentMethods()` · Python `client.tempera_payments.list_payment_methods()` · Rust `build_request("tempera_payments", "list_payment_methods", params)`
 
 **Path parameters**
@@ -1694,7 +1684,6 @@ Detach a saved payment method.
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
 - **Physical action:** Yes. This operation may cause an external real-world action.
 - **Scope:** `payments:customers:write`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaPayments.deletePaymentMethod()` · Python `client.tempera_payments.delete_payment_method()` · Rust `build_request("tempera_payments", "delete_payment_method", params)`
 
 **Path parameters**
@@ -1749,7 +1738,6 @@ List the disputes of one payment intent.
 - **Producer operationId:** `listPaymentIntentDisputes`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
 - **Scope:** `payments:disputes:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaPayments.listPaymentIntentDisputes()` · Python `client.tempera_payments.list_payment_intent_disputes()` · Rust `build_request("tempera_payments", "list_payment_intent_disputes", params)`
 
 **Path parameters**
@@ -1805,7 +1793,6 @@ List the disputes of one workspace.
 - **Producer operationId:** `listDisputes`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
 - **Scope:** `payments:disputes:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaPayments.listDisputes()` · Python `client.tempera_payments.list_disputes()` · Rust `build_request("tempera_payments", "list_disputes", params)`
 
 **Query parameters**
@@ -1853,7 +1840,6 @@ Read one dispute.
 - **Producer operationId:** `getDispute`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
 - **Scope:** `payments:disputes:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaPayments.getDispute()` · Python `client.tempera_payments.get_dispute()` · Rust `build_request("tempera_payments", "get_dispute", params)`
 
 **Path parameters**
@@ -1904,7 +1890,6 @@ Create a recurring charge schedule against a saved payment method.
 - **Producer operationId:** `createSubscription`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
 - **Scope:** `payments:subscriptions:write`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaPayments.createSubscription()` · Python `client.tempera_payments.create_subscription()` · Rust `build_request("tempera_payments", "create_subscription", params)`
 
 **Body parameters**
@@ -1989,7 +1974,6 @@ List the subscriptions of one workspace.
 - **Producer operationId:** `listSubscriptions`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
 - **Scope:** `payments:subscriptions:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaPayments.listSubscriptions()` · Python `client.tempera_payments.list_subscriptions()` · Rust `build_request("tempera_payments", "list_subscriptions", params)`
 
 **Query parameters**
@@ -2038,7 +2022,6 @@ Read one subscription.
 - **Producer operationId:** `getSubscription`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
 - **Scope:** `payments:subscriptions:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaPayments.getSubscription()` · Python `client.tempera_payments.get_subscription()` · Rust `build_request("tempera_payments", "get_subscription", params)`
 
 **Path parameters**
@@ -2089,7 +2072,6 @@ Cancel a subscription.
 - **Producer operationId:** `cancelSubscription`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
 - **Scope:** `payments:subscriptions:write`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaPayments.cancelSubscription()` · Python `client.tempera_payments.cancel_subscription()` · Rust `build_request("tempera_payments", "cancel_subscription", params)`
 
 **Path parameters**
@@ -2140,7 +2122,6 @@ Pause a subscription.
 - **Producer operationId:** `pauseSubscription`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
 - **Scope:** `payments:subscriptions:write`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaPayments.pauseSubscription()` · Python `client.tempera_payments.pause_subscription()` · Rust `build_request("tempera_payments", "pause_subscription", params)`
 
 **Path parameters**
@@ -2191,7 +2172,6 @@ Resume a paused subscription.
 - **Producer operationId:** `resumeSubscription`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
 - **Scope:** `payments:subscriptions:write`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaPayments.resumeSubscription()` · Python `client.tempera_payments.resume_subscription()` · Rust `build_request("tempera_payments", "resume_subscription", params)`
 
 **Path parameters**
@@ -2242,7 +2222,6 @@ List the billing periods of one subscription.
 - **Producer operationId:** `listSubscriptionPeriods`
 - **Auth:** Resource bearer — an OAuth access token or central `tp_` API key for audience `tempera-payments`.
 - **Scope:** `payments:subscriptions:read`
-- **Auth availability:** Blocked on central scope registration; see [Authentication](/authentication#known-scope-gaps).
 - **Call as:** TypeScript `client.temperaPayments.listSubscriptionPeriods()` · Python `client.tempera_payments.list_subscription_periods()` · Rust `build_request("tempera_payments", "list_subscription_periods", params)`
 
 **Path parameters**

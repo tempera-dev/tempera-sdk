@@ -81,10 +81,17 @@
     "payments:intents:write",
     "payments:receipts:read",
     "payments:webhooks:write",
+    "payments:webhooks:read",
     "payments:refunds:write",
+    "payments:refunds:read",
     "payments:admin",
     "payments:merchants:read",
     "payments:merchants:write",
+    "payments:customers:read",
+    "payments:customers:write",
+    "payments:disputes:read",
+    "payments:subscriptions:read",
+    "payments:subscriptions:write",
     "orders:read",
     "orders:commerce:write",
     "voice:read",
@@ -128,7 +135,8 @@
     "account:orgAdmin",
     "account:billingAdmin",
     "account:credentialAdmin",
-    "account:platformStaff"
+    "account:platformStaff",
+    "account:usageReader"
   ],
   "audienceGaps": {
     "tempera-business": {
@@ -150,48 +158,6 @@
       "reportedDate": "2026-09-09",
       "status": "staged",
       "migration": "POST /v1/internal/data-source-connections:resolve is fenced by a static per-service token rather than an introspected OAuth grant, so this string is a label for what that secret authorizes rather than a grantable scope. Decide whether the route should move onto a real credential; if it should not, the SDK needs a way to say 'service secret, not a scope'."
-    },
-    "payments:refunds:read": {
-      "owner": "jadenfix",
-      "reportedDate": "2026-09-09",
-      "status": "staged",
-      "migration": "tempera-payments PR #47 fences reading refunds for a payment intent with payments:refunds:read, but the Auth Hub scope registry vendored here predates it: the scope is registered in auth-hub#140 (branch codex/billing-via-payments) and is not yet on auth-hub main. Registered in auth-hub#140; remove after control-plane re-vendor."
-    },
-    "payments:webhooks:read": {
-      "owner": "jadenfix",
-      "reportedDate": "2026-09-09",
-      "status": "staged",
-      "migration": "tempera-payments PR #47 fences reading webhook endpoints and their delivery attempts with payments:webhooks:read, but the Auth Hub scope registry vendored here predates it: the scope is registered in auth-hub#140 (branch codex/billing-via-payments) and is not yet on auth-hub main. Registered in auth-hub#140; remove after control-plane re-vendor."
-    },
-    "payments:customers:read": {
-      "owner": "jadenfix",
-      "reportedDate": "2026-09-09",
-      "status": "staged",
-      "migration": "tempera-payments PR #47 fences reading stored customers and their saved payment methods with payments:customers:read, but the Auth Hub scope registry vendored here predates it: the scope is registered in auth-hub#140 (branch codex/billing-via-payments) and is not yet on auth-hub main. Registered in auth-hub#140; remove after control-plane re-vendor."
-    },
-    "payments:customers:write": {
-      "owner": "jadenfix",
-      "reportedDate": "2026-09-09",
-      "status": "staged",
-      "migration": "tempera-payments PR #47 fences creating customers, starting setup sessions, and deleting saved payment methods with payments:customers:write, but the Auth Hub scope registry vendored here predates it: the scope is registered in auth-hub#140 (branch codex/billing-via-payments) and is not yet on auth-hub main. Registered in auth-hub#140; remove after control-plane re-vendor."
-    },
-    "payments:disputes:read": {
-      "owner": "jadenfix",
-      "reportedDate": "2026-09-09",
-      "status": "staged",
-      "migration": "tempera-payments PR #47 fences reading disputes, both the per-intent list and the workspace-wide list and get, with payments:disputes:read, but the Auth Hub scope registry vendored here predates it: the scope is registered in auth-hub#140 (branch codex/billing-via-payments) and is not yet on auth-hub main. Registered in auth-hub#140; remove after control-plane re-vendor."
-    },
-    "payments:subscriptions:read": {
-      "owner": "jadenfix",
-      "reportedDate": "2026-09-09",
-      "status": "staged",
-      "migration": "tempera-payments PR #47 fences reading subscriptions and their billing periods with payments:subscriptions:read, but the Auth Hub scope registry vendored here predates it: the scope is registered in auth-hub#140 (branch codex/billing-via-payments) and is not yet on auth-hub main. Registered in auth-hub#140; remove after control-plane re-vendor."
-    },
-    "payments:subscriptions:write": {
-      "owner": "jadenfix",
-      "reportedDate": "2026-09-09",
-      "status": "staged",
-      "migration": "tempera-payments PR #47 fences creating subscriptions and cancelling, pausing, and resuming them with payments:subscriptions:write, but the Auth Hub scope registry vendored here predates it: the scope is registered in auth-hub#140 (branch codex/billing-via-payments) and is not yet on auth-hub main. Registered in auth-hub#140; remove after control-plane re-vendor."
     }
   },
   "environments": {
@@ -1707,6 +1673,23 @@
         "scope": "account:billingAdmin"
       },
       {
+        "id": "receiveTemperaPaymentsEvent",
+        "method": "POST",
+        "path": "/billing/rails/tempera-payments/events",
+        "auth": "account",
+        "description": "Receive a signed tempera-payments consumer event and, on a `payment.settled` event bound to a server-owned credit top-up, fund the org credit wallet from the Payments ledger journal. Replays are deduplicated by journal id.",
+        "upstreamOperationId": "receiveTemperaPaymentsEvent",
+        "headers": [
+          "tempera-event-signature"
+        ],
+        "requiredHeaders": [
+          "tempera-event-signature"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "safeRetry": "none"
+      },
+      {
         "id": "getModelCatalog",
         "method": "GET",
         "path": "/v1/model-catalog",
@@ -1730,7 +1713,10 @@
           "metric",
           "quantity",
           "idempotencyKey",
-          "cost"
+          "cost",
+          "operation",
+          "route",
+          "section"
         ],
         "description": "Record a usage event against a metered plan limit; requires a token carrying the meter's product scope and returns the updated meter.",
         "requiredBody": [
@@ -1744,6 +1730,29 @@
         "requestContentType": "application/json",
         "safeRetry": "idempotent",
         "scope": "usage:report"
+      },
+      {
+        "id": "usageEventsList",
+        "method": "GET",
+        "path": "/v1/usage/events",
+        "auth": "account",
+        "description": "List the organization's individual usage events, newest first, with the same filters as the summary.",
+        "upstreamOperationId": "usageEvents.list",
+        "query": [
+          "from",
+          "to",
+          "projectId",
+          "environmentId",
+          "productId",
+          "operation",
+          "metric",
+          "section",
+          "pageSize",
+          "pageToken"
+        ],
+        "requestBodyKind": "none",
+        "scope": "account:usageReader",
+        "safeRetry": "read"
       },
       {
         "id": "usageReservationsCreate",
@@ -1762,7 +1771,10 @@
           "configId",
           "byok",
           "maximumProviderCostMicros",
-          "ttlSeconds"
+          "ttlSeconds",
+          "operation",
+          "route",
+          "section"
         ],
         "requiredBody": [
           "orgId",
@@ -1980,6 +1992,83 @@
         "scope": "account:platformStaff"
       },
       {
+        "id": "emailVerificationsSend",
+        "method": "POST",
+        "path": "/v1/email-verifications:send",
+        "auth": "account",
+        "description": "Send (or reuse) an email-verification token for the authenticated account.",
+        "upstreamOperationId": "emailVerifications.send",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "scope": "account:session",
+        "safeRetry": "none"
+      },
+      {
+        "id": "emailVerificationsConfirm",
+        "method": "POST",
+        "path": "/v1/email-verifications:confirm",
+        "auth": "none",
+        "description": "Confirm an email address with the one-time token from a verification email.",
+        "upstreamOperationId": "emailVerifications.confirm",
+        "body": [
+          "token"
+        ],
+        "requiredBody": [
+          "token"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "safeRetry": "none"
+      },
+      {
+        "id": "adminOperatorsList",
+        "method": "GET",
+        "path": "/v1/admin/operators",
+        "auth": "account",
+        "description": "List Tempera platform super-users, including revoked records.",
+        "upstreamOperationId": "adminOperators.list",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ],
+        "requestBodyKind": "none",
+        "scope": "account:platformStaff",
+        "safeRetry": "read"
+      },
+      {
+        "id": "adminOperatorsCreate",
+        "method": "POST",
+        "path": "/v1/admin/operators",
+        "auth": "account",
+        "description": "Add a Tempera platform super-user and notify them by email.",
+        "upstreamOperationId": "adminOperators.create",
+        "body": [
+          "email",
+          "note"
+        ],
+        "requiredBody": [
+          "email"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "scope": "account:platformStaff",
+        "safeRetry": "none"
+      },
+      {
+        "id": "adminOperatorsRevoke",
+        "method": "DELETE",
+        "path": "/v1/admin/operators/{operatorId}",
+        "auth": "account",
+        "description": "Revoke a Tempera platform super-user.",
+        "upstreamOperationId": "adminOperators.revoke",
+        "pathParams": [
+          "operatorId"
+        ],
+        "requestBodyKind": "none",
+        "scope": "account:platformStaff",
+        "safeRetry": "none"
+      },
+      {
         "id": "adminStepUp",
         "method": "POST",
         "path": "/v1/admin/step-up",
@@ -2007,7 +2096,8 @@
           "orgId",
           "creditMicros",
           "reference",
-          "reason"
+          "reason",
+          "allowNegative"
         ],
         "requiredBody": [
           "orgId",
@@ -2805,6 +2895,462 @@
         "requestBodyKind": "none",
         "authAudience": "tempera-authority",
         "scope": "authority:ledger:read",
+        "safeRetry": "read"
+      },
+      {
+        "id": "usageSummaryGet",
+        "method": "GET",
+        "path": "/v1/usage/summary",
+        "auth": "account",
+        "description": "Aggregate the organization's usage and credit spend over a time window, bucketed and grouped by attribution dimension.",
+        "upstreamOperationId": "usageSummary.get",
+        "query": [
+          "granularity",
+          "groupBy",
+          "from",
+          "to",
+          "projectId",
+          "environmentId",
+          "productId",
+          "operation",
+          "metric",
+          "section",
+          "pageSize",
+          "pageToken"
+        ],
+        "requestBodyKind": "none",
+        "scope": "account:usageReader",
+        "safeRetry": "read"
+      },
+      {
+        "id": "adminUsageSummary",
+        "method": "GET",
+        "path": "/v1/admin/usage/summary",
+        "auth": "account",
+        "description": "Platform-staff fleet spend report: the customer summary across every organization, plus provider cost and margin.",
+        "upstreamOperationId": "adminUsageSummary",
+        "query": [
+          "granularity",
+          "groupBy",
+          "from",
+          "to",
+          "projectId",
+          "environmentId",
+          "productId",
+          "operation",
+          "metric",
+          "section",
+          "orgId",
+          "pageSize",
+          "pageToken"
+        ],
+        "requestBodyKind": "none",
+        "scope": "account:platformStaff",
+        "safeRetry": "read"
+      },
+      {
+        "id": "adminUsageEvents",
+        "method": "GET",
+        "path": "/v1/admin/usage/events",
+        "auth": "account",
+        "description": "Platform-staff fleet-wide usage event list with the owning organization and upstream provider cost.",
+        "upstreamOperationId": "adminUsageEvents",
+        "query": [
+          "from",
+          "to",
+          "projectId",
+          "environmentId",
+          "productId",
+          "operation",
+          "metric",
+          "section",
+          "orgId",
+          "pageSize",
+          "pageToken"
+        ],
+        "requestBodyKind": "none",
+        "scope": "account:platformStaff",
+        "safeRetry": "read"
+      },
+      {
+        "id": "adminBillingCreditGrants",
+        "method": "GET",
+        "path": "/v1/admin/billing/credits/grants",
+        "auth": "account",
+        "description": "Platform-staff history of every credit grant and staff adjustment, read from the durable grant-receipt store.",
+        "upstreamOperationId": "adminBillingCreditGrants",
+        "query": [
+          "orgId",
+          "pageSize",
+          "pageToken"
+        ],
+        "requestBodyKind": "none",
+        "scope": "account:platformStaff",
+        "safeRetry": "read"
+      },
+      {
+        "id": "listBillingPaymentMethods",
+        "method": "GET",
+        "path": "/v1/billing/payment-methods",
+        "auth": "account",
+        "description": "List the cards this organization has saved in tempera-payments, for use with plans:activate.",
+        "upstreamOperationId": "listBillingPaymentMethods",
+        "query": [
+          "pageSize",
+          "pageToken"
+        ],
+        "requestBodyKind": "none",
+        "scope": "account:billingAdmin",
+        "safeRetry": "read"
+      },
+      {
+        "id": "billingPlansActivate",
+        "method": "POST",
+        "path": "/v1/billing/plans:activate",
+        "auth": "account",
+        "description": "Create the tempera-payments subscription for a plan whose checkout saved a card.",
+        "upstreamOperationId": "billingPlans.activate",
+        "body": [
+          "planId",
+          "paymentMethodId"
+        ],
+        "requiredBody": [
+          "planId",
+          "paymentMethodId"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "scope": "account:billingAdmin",
+        "safeRetry": "none"
+      },
+      {
+        "id": "billingPlansCancel",
+        "method": "POST",
+        "path": "/v1/billing/plans:cancel",
+        "auth": "account",
+        "description": "Cancel this organization's tempera-payments plan subscription and mirror the resulting state.",
+        "upstreamOperationId": "billingPlans.cancel",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "scope": "account:billingAdmin",
+        "safeRetry": "none"
+      },
+      {
+        "id": "billingPlansPause",
+        "method": "POST",
+        "path": "/v1/billing/plans:pause",
+        "auth": "account",
+        "description": "Pause this organization's tempera-payments plan subscription and mirror the resulting state.",
+        "upstreamOperationId": "billingPlans.pause",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "scope": "account:billingAdmin",
+        "safeRetry": "none"
+      },
+      {
+        "id": "billingPlansResume",
+        "method": "POST",
+        "path": "/v1/billing/plans:resume",
+        "auth": "account",
+        "description": "Resume this organization's tempera-payments plan subscription and mirror the resulting state.",
+        "upstreamOperationId": "billingPlans.resume",
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "scope": "account:billingAdmin",
+        "safeRetry": "none"
+      },
+      {
+        "id": "getBillingPricing",
+        "method": "GET",
+        "path": "/v1/billing/pricing",
+        "auth": "account",
+        "description": "Return the prices this workspace will be charged: the current plan catalog, the prepaid packs, and the per-unit pricing rules for the products it can report usage for. Multipliers and provider costs are staff-only and are never present.",
+        "upstreamOperationId": "getBillingPricing",
+        "requestBodyKind": "none",
+        "scope": "account:session",
+        "safeRetry": "read"
+      },
+      {
+        "id": "adminPricing",
+        "method": "GET",
+        "path": "/v1/admin/pricing",
+        "auth": "account",
+        "description": "Platform-staff view of every editable price: multipliers, plans, credit packs, and pricing rules, including inactive and scheduled rows.",
+        "upstreamOperationId": "adminPricing",
+        "requestBodyKind": "none",
+        "scope": "account:platformStaff",
+        "safeRetry": "read"
+      },
+      {
+        "id": "adminPricingMultipliersUpdate",
+        "method": "PATCH",
+        "path": "/v1/admin/pricing/multipliers",
+        "auth": "account",
+        "description": "Edit the model-spend multipliers. Requires a fresh platform step-up and records a pricing change plus an audit entry.",
+        "upstreamOperationId": "adminPricingMultipliers.update",
+        "query": [
+          "updateMask"
+        ],
+        "requiredQuery": [
+          "updateMask"
+        ],
+        "body": [
+          "metered",
+          "byok",
+          "reason"
+        ],
+        "requiredBody": [
+          "reason"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "scope": "account:platformStaff",
+        "safeRetry": "none"
+      },
+      {
+        "id": "adminPricingPlansCreate",
+        "method": "POST",
+        "path": "/v1/admin/pricing/plans",
+        "auth": "account",
+        "description": "Create a subscription plan. Requires a fresh platform step-up and records a pricing change plus an audit entry.",
+        "upstreamOperationId": "adminPricingPlans.create",
+        "body": [
+          "planId",
+          "name",
+          "description",
+          "prices",
+          "includedUsage",
+          "grantMicros",
+          "overageAllowed",
+          "overageRateMicrosPerCredit",
+          "entitlements",
+          "apiKeyScopeEntitlements",
+          "bundle",
+          "active",
+          "effectiveFrom",
+          "effectiveTo",
+          "reason"
+        ],
+        "requiredBody": [
+          "planId",
+          "prices",
+          "reason"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "scope": "account:platformStaff",
+        "safeRetry": "none"
+      },
+      {
+        "id": "adminPricingPlansUpdate",
+        "method": "PATCH",
+        "path": "/v1/admin/pricing/plans/{planId}",
+        "auth": "account",
+        "description": "Edit a plan price, credit grant, entitlements, activation, or effective dates. Deactivating a plan a workspace is still subscribed to fails with plan_in_use.",
+        "upstreamOperationId": "adminPricingPlans.update",
+        "pathParams": [
+          "planId"
+        ],
+        "query": [
+          "updateMask"
+        ],
+        "requiredQuery": [
+          "updateMask"
+        ],
+        "body": [
+          "name",
+          "description",
+          "prices",
+          "includedUsage",
+          "grantMicros",
+          "overageAllowed",
+          "overageRateMicrosPerCredit",
+          "entitlements",
+          "apiKeyScopeEntitlements",
+          "bundle",
+          "active",
+          "effectiveFrom",
+          "effectiveTo",
+          "reason"
+        ],
+        "requiredBody": [
+          "reason"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "scope": "account:platformStaff",
+        "safeRetry": "none"
+      },
+      {
+        "id": "adminPricingCreditPacksCreate",
+        "method": "POST",
+        "path": "/v1/admin/pricing/credit-packs",
+        "auth": "account",
+        "description": "Create a prepaid credit pack. Requires a fresh platform step-up and records a pricing change plus an audit entry.",
+        "upstreamOperationId": "adminPricingCreditPacks.create",
+        "body": [
+          "packId",
+          "name",
+          "description",
+          "currency",
+          "priceMinor",
+          "creditMicros",
+          "active",
+          "effectiveFrom",
+          "effectiveTo",
+          "reason"
+        ],
+        "requiredBody": [
+          "packId",
+          "name",
+          "currency",
+          "priceMinor",
+          "creditMicros",
+          "reason"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "scope": "account:platformStaff",
+        "safeRetry": "none"
+      },
+      {
+        "id": "adminPricingCreditPacksUpdate",
+        "method": "PATCH",
+        "path": "/v1/admin/pricing/credit-packs/{packId}",
+        "auth": "account",
+        "description": "Edit a prepaid credit pack price, credit amount, activation, or effective dates.",
+        "upstreamOperationId": "adminPricingCreditPacks.update",
+        "pathParams": [
+          "packId"
+        ],
+        "query": [
+          "updateMask"
+        ],
+        "requiredQuery": [
+          "updateMask"
+        ],
+        "body": [
+          "name",
+          "description",
+          "currency",
+          "priceMinor",
+          "creditMicros",
+          "active",
+          "effectiveFrom",
+          "effectiveTo",
+          "reason"
+        ],
+        "requiredBody": [
+          "reason"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "scope": "account:platformStaff",
+        "safeRetry": "none"
+      },
+      {
+        "id": "adminPricingRulesCreate",
+        "method": "POST",
+        "path": "/v1/admin/pricing/rules",
+        "auth": "account",
+        "description": "Create a per-dimension pricing rule. A debit rule makes a usage event debit quantity x priceMicrosPerUnit; a record_only rule keeps measuring without charging.",
+        "upstreamOperationId": "adminPricingRules.create",
+        "body": [
+          "productId",
+          "operation",
+          "metric",
+          "unit",
+          "priceMicrosPerUnit",
+          "multiplierMillis",
+          "mode",
+          "note",
+          "active",
+          "effectiveFrom",
+          "effectiveTo",
+          "reason"
+        ],
+        "requiredBody": [
+          "productId",
+          "unit",
+          "mode",
+          "reason"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "scope": "account:platformStaff",
+        "safeRetry": "none"
+      },
+      {
+        "id": "adminPricingRulesUpdate",
+        "method": "PATCH",
+        "path": "/v1/admin/pricing/rules/{ruleId}",
+        "auth": "account",
+        "description": "Edit a pricing rule's unit price, mode, activation, or effective dates. An overlapping active range for the same dimension fails with pricing_conflict.",
+        "upstreamOperationId": "adminPricingRules.update",
+        "pathParams": [
+          "ruleId"
+        ],
+        "query": [
+          "updateMask"
+        ],
+        "requiredQuery": [
+          "updateMask"
+        ],
+        "body": [
+          "unit",
+          "priceMicrosPerUnit",
+          "multiplierMillis",
+          "mode",
+          "note",
+          "active",
+          "effectiveFrom",
+          "effectiveTo",
+          "reason"
+        ],
+        "requiredBody": [
+          "reason"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "scope": "account:platformStaff",
+        "safeRetry": "none"
+      },
+      {
+        "id": "adminPricingRulesDeactivate",
+        "method": "DELETE",
+        "path": "/v1/admin/pricing/rules/{ruleId}",
+        "auth": "account",
+        "description": "Deactivate a pricing rule. The row is retained, not deleted, so a ledger entry it priced can still be explained.",
+        "upstreamOperationId": "adminPricingRules.deactivate",
+        "pathParams": [
+          "ruleId"
+        ],
+        "body": [
+          "reason"
+        ],
+        "requiredBody": [
+          "reason"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "scope": "account:platformStaff",
+        "safeRetry": "none"
+      },
+      {
+        "id": "adminPricingChangesList",
+        "method": "GET",
+        "path": "/v1/admin/pricing/changes",
+        "auth": "account",
+        "description": "Audit trail of every price edit: the before and after documents, the acting staff principal, and the stated reason.",
+        "upstreamOperationId": "adminPricingChanges.list",
+        "query": [
+          "entityType",
+          "entityId",
+          "pageSize",
+          "pageToken"
+        ],
+        "requestBodyKind": "none",
+        "scope": "account:platformStaff",
         "safeRetry": "read"
       }
     ],
