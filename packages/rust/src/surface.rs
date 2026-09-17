@@ -29,6 +29,7 @@ pub const AUDIENCES: &[&str] = &[
     "tempera-authority",
     "tempera-business",
     "tempera-taxes",
+    "tempera-account",
 ];
 pub const DEFAULT_AUDIENCE: &str = "palette";
 pub const SCOPES: &[&str] = &[
@@ -124,6 +125,7 @@ pub const SCOPES: &[&str] = &[
     "taxes:read",
     "taxes:review",
     "taxes:write",
+    "account:read",
 ];
 
 pub const AUTHORIZE_PATH: &str = "/oauth/authorize";

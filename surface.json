@@ -33,7 +33,8 @@
     "tempera-clearing",
     "tempera-authority",
     "tempera-business",
-    "tempera-taxes"
+    "tempera-taxes",
+    "tempera-account"
   ],
   "defaultAudience": "palette",
   "scopes": [
@@ -128,7 +129,8 @@
     "tempo:write",
     "taxes:read",
     "taxes:review",
-    "taxes:write"
+    "taxes:write",
+    "account:read"
   ],
   "accountPermissions": [
     "account:session",

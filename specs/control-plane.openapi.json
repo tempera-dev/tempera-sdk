@@ -7114,12 +7114,13 @@
           "tempo:write",
           "taxes:read",
           "taxes:review",
-          "taxes:write"
+          "taxes:write",
+          "account:read"
         ]
       },
       "ApiKeyScope": {
         "type": "string",
-        "description": "A service-principal scope. Human-only review:resolve, review:gold:manage, training:publish, bio:experiment:approve, bio:signer:manage, clearing:actions:approve, payments:merchants:write and orders:commerce:write are intentionally excluded, as are the remaining orders:* scopes, which are reachable only through an expiring OAuth token. GET /v1/api-keys/audiences reports, per audience, which of these are issuable now and why the rest are refused. authority:holds:decide and authority:policies:write are likewise excluded: deciding a held action and writing the policy that governs it are attributed human acts, and HUMAN_SCOPE_POLICY refuses them on every API key path. authority:holds:write and authority:credentials:release are the opposite case and are included: creating, claiming and finalizing a hold is the fabric service capability, and releasing a credential is the one MACHINE act in the authority vocabulary, which requireAuthorityReleasePrincipal accepts only from a service credential (an API key or an RFC 8693 exchanged token) and never from a human session. Withholding them here said a tp_ key could never carry them while the create path minted them happily; the scope-registry parity gate now pins this enum against the runtime refusal tables in both directions so the two cannot disagree again. taxes:review is excluded for the same reason: it records that the owner reviewed a tax return, which is an attributed human attestation, and a static tp_ key must not be able to forge one. cradle:execute is included: running a job in the sandbox is an unattended machine act like connector:run, eval:run and workflow:run, and is the purpose the audience exists to serve.",
+        "description": "A service-principal scope. Human-only review:resolve, review:gold:manage, training:publish, bio:experiment:approve, bio:signer:manage, clearing:actions:approve, payments:merchants:write and orders:commerce:write are intentionally excluded, as are the remaining orders:* scopes, which are reachable only through an expiring OAuth token. GET /v1/api-keys/audiences reports, per audience, which of these are issuable now and why the rest are refused. authority:holds:decide and authority:policies:write are likewise excluded: deciding a held action and writing the policy that governs it are attributed human acts, and HUMAN_SCOPE_POLICY refuses them on every API key path. authority:holds:write and authority:credentials:release are the opposite case and are included: creating, claiming and finalizing a hold is the fabric service capability, and releasing a credential is the one MACHINE act in the authority vocabulary, which requireAuthorityReleasePrincipal accepts only from a service credential (an API key or an RFC 8693 exchanged token) and never from a human session. Withholding them here said a tp_ key could never carry them while the create path minted them happily; the scope-registry parity gate now pins this enum against the runtime refusal tables in both directions so the two cannot disagree again. taxes:review is excluded for the same reason: it records that the owner reviewed a tax return, which is an attributed human attestation, and a static tp_ key must not be able to forge one. cradle:execute is included: running a job in the sandbox is an unattended machine act like connector:run, eval:run and workflow:run, and is the purpose the audience exists to serve. account:read is excluded: it is a signed-in person reading their own account from a device, the account plane refuses a tp_ secret outright, and a key carrying it would authorize nothing.",
         "enum": [
           "mcp:invoke",
           "memory:read",
@@ -7226,7 +7227,8 @@
           "tempera-clearing",
           "tempera-authority",
           "tempera-business",
-          "tempera-taxes"
+          "tempera-taxes",
+          "tempera-account"
         ]
       },
       "TokenClaims": {
@@ -12660,7 +12662,8 @@
               "tempera-business",
               "tempera-dropshipping",
               "tempera-connectors",
-              "tempera-payments"
+              "tempera-payments",
+              "tempera-account"
             ]
           },
           "service_endpoint_url": {
@@ -12680,7 +12683,8 @@
                 "orders:read",
                 "connection:read",
                 "payments:merchants:read",
-                "payments:merchants:write"
+                "payments:merchants:write",
+                "account:read"
               ]
             }
           },
