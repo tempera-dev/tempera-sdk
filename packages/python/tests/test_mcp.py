@@ -49,7 +49,7 @@ class McpClientTest(unittest.TestCase):
             self.assertIsInstance(call["request"]["id"], int)
         self.assertEqual(transport.calls[0]["request"]["method"], "server/discover")
         self.assertEqual(transport.calls[0]["request"]["params"]["_meta"]["io.modelcontextprotocol/protocolVersion"], "2026-07-28")
-        self.assertEqual(transport.calls[0]["request"]["params"]["_meta"]["io.modelcontextprotocol/clientInfo"], {"name": "tempera-sdk", "version": "0.12.0"})
+        self.assertEqual(transport.calls[0]["request"]["params"]["_meta"]["io.modelcontextprotocol/clientInfo"], {"name": "tempera-sdk", "version": "0.13.0"})
         self.assertEqual(MCP_PROTOCOL_VERSION, "2026-07-28")
         for call in transport.calls:
             self.assertEqual(call["headers"]["mcp-protocol-version"], "2026-07-28")

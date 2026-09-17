@@ -34,7 +34,7 @@
 namespace tempera {
 
 /// Package version; identical across every Tempera SDK language package.
-inline constexpr std::string_view SDK_VERSION = "0.12.0";
+inline constexpr std::string_view SDK_VERSION = "0.13.0";
 
 }  // namespace tempera
 

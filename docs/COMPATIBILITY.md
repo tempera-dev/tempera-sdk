@@ -1,5 +1,90 @@
 # SDK compatibility ledger
 
+## 2026-09-17 — Payments billing engine on main; staged pin retired
+
+- Owner: jadenfix (SDK). Producers: tempera-payments main
+  `e4d01bc75413547ba0803bd56f8eadd2abdc1e2c` (tempera-payments#47 merged),
+  auth-hub main `b2777d01fe23433e808fa90acbb5c8cf8df90211` (auth-hub#140 merged).
+- Compatibility class: additive. The 47 Payments operations staged on
+  2026-09-09 are unchanged in id, method, path, auth kind, and scope; the
+  vendored contract now comes from main through the default gate, and
+  `contracts/sdk-staged-sources.json` is empty again.
+- Scopes: the control plane re-vendor carries the seven `payments:*` scopes,
+  so their `scopeGaps` entries are deleted. `account:usageReader` is registered
+  as a new account permission for the usage explorer reads the control plane
+  now fences with it.
+- Claims boundary unchanged: the clients transport these calls; nothing here
+  claims the Payments deployment exists or that any scope is mintable on a
+  given environment.
+- Rollback: revert this SDK commit as a unit.
+
+## 2026-09-09 — staged Payments billing-engine consolidation
+
+- Owner: jadenfix (SDK), tempera-payments#47 (producer), auth-hub#140 (scopes).
+- Compatibility class: additive endpoints; package `0.13.0`, surface version
+  `6`. No existing Payments operation changed id, method, path, auth kind, or
+  scope.
+- Producer: `tempera-dev/tempera-payments@1b9b869b12d56326deaa7619e71f5c4358bc2bce`
+  on branch `codex/billing-engine-consolidation`. **This is a staged, non-main
+  lock**: the commit is pushed and under review as tempera-payments#47, it is
+  not merged, released, or deployed. The pin is admitted by
+  `contracts/sdk-staged-sources.json`, expires 2026-10-09, and is qualified by
+  `python3 scripts/check-sdk-surface.py --staged-local`. The default release
+  gate still refuses it, which is the intended behaviour until #47 merges.
+- Added: 34 operations, taking Payments from 13 to 47 in every generated
+  client. Payment intents, PayPal, refunds, webhook endpoints, customers and
+  saved payment methods — `listPaymentIntents`, `createPaymentMethodCharge`,
+  `createPayPalCheckout`, `receivePayPalWebhook`, `createRefund`,
+  `listRefunds`, `getRefund`, `createWebhookEndpoint`, `listWebhookEndpoints`,
+  `getWebhookEndpoint`, `deleteWebhookEndpoint`, `listWebhookDeliveries`,
+  `createCustomer`, `listCustomers`, `getCustomer`, `createSetupSession`,
+  `listPaymentMethods`, `deletePaymentMethod`. Then Coinbase, disputes,
+  subscriptions, merchant balance and payouts, and Stripe Connect —
+  `createCoinbaseCheckout`, `receiveCoinbaseWebhook`,
+  `listPaymentIntentDisputes`, `listDisputes`, `getDispute`,
+  `createSubscription`, `listSubscriptions`, `getSubscription`,
+  `cancelSubscription`, `pauseSubscription`, `resumeSubscription`,
+  `listSubscriptionPeriods`, `getMerchantBalance`, `listMerchantPayouts`,
+  `receiveStripeConnectWebhook`. And the readiness probe —
+  `getPaymentsReadiness` (`GET /readyz`), which reports durable-storage
+  reachability and, as booleans only, which settlement rails and which signer
+  the process was started with.
+- Shape of the surface: 47 operations over 14 scopes. Six operations declare
+  no scope — `getPaymentsHealth`, `getPaymentsReadiness`, and the four
+  provider callback routes (`receiveStripeWebhook`, `receivePayPalWebhook`,
+  `receiveCoinbaseWebhook`, `receiveStripeConnectWebhook`), which are
+  authenticated by provider webhook signature rather than by an OAuth grant.
+  All six are declared in the producer's `x-tempera-protocol-routes`, which
+  exempts them from the AIP path and error rules but does not exclude them
+  from generation: they are real routes a caller invokes, so the SDK types
+  them, exactly as `getPaymentsHealth` and the callbacks were typed at the
+  previously staged commit.
+- Scope gaps: `payments:refunds:read`, `payments:webhooks:read`,
+  `payments:customers:read`, `payments:customers:write`,
+  `payments:disputes:read`, `payments:subscriptions:read`, and
+  `payments:subscriptions:write` are declared in `surface.json` `scopeGaps`.
+  They are registered in auth-hub#140 and not yet on auth-hub `main`, so the
+  vendored control-plane `Scope` enum does not carry them.
+  `payments:refunds:write` and `payments:webhooks:write` were already
+  registered.
+- `payments:admin`: the producer contract no longer declares this scope on any
+  operation, and it never did at the previously staged commit either. Nothing
+  the SDK derives from the Payments contract depends on it. The scope remains
+  in `surface.json` `scopes` because that list is derived from the vendored
+  auth-hub control-plane registry, where `payments:admin` is still registered;
+  the generated scope table in `docs/site/authentication.mdx` continues to
+  report it as claimed by no typed SDK operation and enforced server-side.
+  Retiring the scope, if that is wanted, is an auth-hub change, not an SDK one.
+- Claims boundary: the generated clients transport these calls. They do not
+  claim the Payments billing engine is deployed, that the seven staged scopes
+  are mintable today, or that #47 is merged.
+- Rollout: when tempera-payments#47 merges, re-vendor at the main SHA, delete
+  the staged-source entry, and — once auth-hub#140 has merged and the control
+  plane is re-vendored — delete the seven `scopeGaps` entries and regenerate.
+- Rollback: revert this SDK commit as a unit. Do not keep the generated
+  operations while dropping the staged-source entry, and do not keep the
+  scope gaps after the control-plane enum carries the scopes.
+
 ## 2026-07-24 — physical experiment provider boundary
 
 - Owner: Discovery release train across Tempera Workflows, SDK, MCP, Auth Hub,

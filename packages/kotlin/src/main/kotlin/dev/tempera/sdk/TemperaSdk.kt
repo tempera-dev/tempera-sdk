@@ -20,7 +20,7 @@ public object TemperaSdk {
      * Package version, kept in step with the TypeScript, Python, Rust, and
      * Swift packages.
      */
-    public const val VERSION: String = "0.12.0"
+    public const val VERSION: String = "0.13.0"
 
     /** The `surface.json` schema version the generated tables came from. */
     public const val SURFACE_VERSION: Int = TemperaSurface.version

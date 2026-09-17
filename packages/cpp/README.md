@@ -1,6 +1,6 @@
 # Tempera SDK for C++
 
-Version `0.12.0`. C++20, header-only, no dependencies, no HTTP client.
+Version `0.13.0`. C++20, header-only, no dependencies, no HTTP client.
 
 C++ has no standard HTTP client before C++26, so — like the Rust and C
 packages — this is a **request builder**. It turns

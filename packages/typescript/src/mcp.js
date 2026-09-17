@@ -80,7 +80,7 @@ export class TemperaMcpClient {
   }
 
   /** Discover the stateless MCP server's capabilities and instructions. */
-  initialize({ name = "tempera-sdk", version = "0.12.0" } = {}) {
+  initialize({ name = "tempera-sdk", version = "0.13.0" } = {}) {
     return this.rpc("server/discover", {
       _meta: { "io.modelcontextprotocol/clientInfo": { name, version } },
     });

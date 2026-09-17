@@ -47,7 +47,7 @@ final class McpTests: XCTestCase {
         XCTAssertEqual(
             body,
             #"{"jsonrpc":"2.0","id":1,"method":"server/discover","params":{"_meta":{"#
-                + #""io.modelcontextprotocol/clientInfo":{"name":"tempera-sdk","version":"0.12.0"},"#
+                + #""io.modelcontextprotocol/clientInfo":{"name":"tempera-sdk","version":"0.13.0"},"#
                 + #""io.modelcontextprotocol/protocolVersion":"\#(TemperaSurface.mcpProtocolVersion)","#
                 + #""io.modelcontextprotocol/clientCapabilities":{}}}}"#
         )

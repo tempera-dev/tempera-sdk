@@ -184,11 +184,11 @@ mod tests {
     fn initialize_and_ping_bodies_are_exact_and_ids_increment() {
         let mut builder = McpRequestBuilder::new();
 
-        let (id, body) = builder.initialize_body("tempera-sdk", "0.12.0");
+        let (id, body) = builder.initialize_body("tempera-sdk", "0.13.0");
         assert_eq!(id, 1);
         assert_eq!(
             body,
-            "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"server/discover\",\"params\":{\"_meta\":{\"io.modelcontextprotocol/protocolVersion\":\"2026-07-28\",\"io.modelcontextprotocol/clientInfo\":{\"name\":\"tempera-sdk\",\"version\":\"0.12.0\"},\"io.modelcontextprotocol/clientCapabilities\":{}}}}"
+            "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"server/discover\",\"params\":{\"_meta\":{\"io.modelcontextprotocol/protocolVersion\":\"2026-07-28\",\"io.modelcontextprotocol/clientInfo\":{\"name\":\"tempera-sdk\",\"version\":\"0.13.0\"},\"io.modelcontextprotocol/clientCapabilities\":{}}}}"
         );
 
         let (id, body) = builder.ping_body();

@@ -40,8 +40,7 @@
     "/github/callback",
     "/github/webhook",
     "/billing/webhook",
-    "/billing/rails/coinbase/webhook",
-    "/billing/rails/paypal/webhook"
+    "/billing/rails/tempera-payments/events"
   ],
   "paths": {
     "/healthz": {
@@ -698,7 +697,8 @@
                   "type": "object",
                   "required": [
                     "members",
-                    "nextPageToken"
+                    "nextPageToken",
+                    "assignableRoles"
                   ],
                   "properties": {
                     "members": {
@@ -709,6 +709,13 @@
                     },
                     "nextPageToken": {
                       "type": "string"
+                    },
+                    "assignableRoles": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/TeamRole"
+                      },
+                      "description": "Organization roles this caller may assign. Empty for everyone below admin."
                     }
                   }
                 }
@@ -2630,7 +2637,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Fixed prepaid credit-pack catalog. Purchase availability is false until this deployment has all required Stripe configuration.",
+            "description": "Fixed prepaid credit-pack catalog. Purchase availability is false until this deployment has all required tempera-payments configuration.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2653,7 +2660,7 @@
     "/v1/billing/credit-topups": {
       "post": {
         "operationId": "createCreditTopup",
-        "summary": "Create a one-time Stripe Checkout session for a source-owned fixed prepaid credit pack. Arbitrary money and credit amounts are rejected.",
+        "summary": "Create a tempera-payments PaymentIntent and hosted checkout session for a source-owned fixed prepaid credit pack. Arbitrary money and credit amounts are rejected.",
         "requestBody": {
           "required": true,
           "content": {
@@ -2706,7 +2713,7 @@
         },
         "x-tempera-auth-kind": "account",
         "x-tempera-required-scope": "account:billingAdmin",
-        "description": "Error statuses: `502` Stripe did not return a usable Checkout session. The server retains a pending fixed-pack record and the caller may retry with the same idempotency key. `503` Credit reloads are not configured. The server does not create a placeholder checkout or grant credits."
+        "description": "Error statuses: `502` tempera-payments did not return a usable payment intent or checkout session. The server retains a pending fixed-pack record and the caller may retry with the same idempotency key. `503` Credit reloads are not configured. The server does not create a placeholder checkout or grant credits."
       }
     },
     "/billing/webhook": {
@@ -2757,6 +2764,87 @@
           }
         },
         "description": "Error statuses: `401` Webhook signature failed."
+      }
+    },
+    "/billing/rails/tempera-payments/events": {
+      "post": {
+        "operationId": "receiveTemperaPaymentsEvent",
+        "summary": "Receive a signed tempera-payments consumer event and, on a `payment.settled` event bound to a server-owned credit top-up, fund the org credit wallet from the Payments ledger journal. Replays are deduplicated by journal id.",
+        "parameters": [
+          {
+            "name": "tempera-event-signature",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "`keyId=<id>,alg=Ed25519,sig=<base64url>`: an Ed25519 signature over `tempera-payments:consumer-event:v1\\n` followed by the exact request body, verified against `TEMPERA_PAYMENTS_EVENT_VERIFY_KEYS`."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Event accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentsEventReceipt"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Event payload is not a valid tempera-payments consumer event",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Event signature verification failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Event exceeds the body size limit",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "tempera-payments event verification keys are not configured",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "description": "Error statuses: `400` Event payload is not a valid tempera-payments consumer event. `401` Event signature verification failed. `413` Event exceeds the body size limit. `503` tempera-payments event verification keys are not configured."
       }
     },
     "/v1/model-catalog": {
@@ -2822,6 +2910,66 @@
         "x-tempera-auth-kind": "product",
         "x-tempera-required-scope": "usage:report",
         "description": "Error statuses: `402` Plan limit exceeded. `409` Idempotency key was already accepted with a different payload."
+      },
+      "get": {
+        "operationId": "usageEvents.list",
+        "summary": "List the organization's individual usage events, newest first, with the same filters as the summary.",
+        "description": "Same tenancy fence and reading roles as the summary. Error statuses: `400` Unusable window, page size, or an unknown query parameter. `403` The caller has no reading role in the organization, or a project-pinned credential named a different project.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UsageReportFrom"
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportTo"
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportProjectId"
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportEnvironmentId"
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportProductId"
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportOperation"
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportMetric"
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportSection"
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportPageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usage events",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsageEventList"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:usageReader"
       }
     },
     "/v1/usage/reservations": {
@@ -3533,6 +3681,200 @@
         "description": "Error statuses: `503` Serving runtime provenance is incomplete."
       }
     },
+    "/v1/email-verifications:send": {
+      "post": {
+        "operationId": "emailVerifications.send",
+        "summary": "Send (or reuse) an email-verification token for the authenticated account.",
+        "description": "Rate limited and idempotent inside a 60-second window: a resend in that window confirms the live token instead of invalidating the link already in the recipient's inbox. Error statuses: `403` the account is already fenced for another reason. `503` `mail_unconfigured` when the deployment has no real mail transport.",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailVerificationSendRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Verification state for the account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmailVerificationSendResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:session"
+      }
+    },
+    "/v1/email-verifications:confirm": {
+      "post": {
+        "operationId": "emailVerifications.confirm",
+        "summary": "Confirm an email address with the one-time token from a verification email.",
+        "description": "Unauthenticated by construction: the emailed token is the credential, and the person confirming may not have a live session in that browser. The token is single use and expires 24 hours after it was issued. Error statuses: `401` the token is unknown, already consumed, expired, or no longer matches the account's address.",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailVerificationConfirmRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The address is now verified",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmailVerificationConfirmResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "none"
+      }
+    },
+    "/v1/admin/operators": {
+      "get": {
+        "operationId": "adminOperators.list",
+        "summary": "List Tempera platform super-users, including revoked records.",
+        "responses": {
+          "200": {
+            "description": "Platform operators",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlatformOperators"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:platformStaff",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ]
+      },
+      "post": {
+        "operationId": "adminOperators.create",
+        "summary": "Add a Tempera platform super-user and notify them by email.",
+        "description": "Requires a fresh platform step-up. Re-adding a revoked address reactivates the same record. Error statuses: `403` `email_unverified` or `operator_domain_not_allowed` (the address is not @tempera.dev), `step_up_required`. `409` `operator_exists` when the address is already an active operator. `503` `mail_unconfigured`.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePlatformOperatorRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Operator added",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlatformOperator"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:platformStaff"
+      }
+    },
+    "/v1/admin/operators/{operatorId}": {
+      "delete": {
+        "operationId": "adminOperators.revoke",
+        "summary": "Revoke a Tempera platform super-user.",
+        "description": "Requires a fresh platform step-up. Revocation is a timestamp, not a delete. Error statuses: `403` `email_unverified`, `missing_scope`, `step_up_required`. `404` unknown operator. `409` `cannot_revoke_self` when the caller owns the record, or `last_operator` when it is the only active one.",
+        "parameters": [
+          {
+            "name": "operatorId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Operator revoked"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:platformStaff"
+      }
+    },
     "/v1/admin/step-up": {
       "post": {
         "operationId": "adminStepUp",
@@ -3636,179 +3978,6 @@
         },
         "x-tempera-auth-kind": "account",
         "x-tempera-required-scope": "account:platformStaff"
-      }
-    },
-    "/billing/rails/coinbase/webhook": {
-      "post": {
-        "operationId": "receiveCoinbaseCommerceWebhook",
-        "summary": "Receive a Coinbase Commerce webhook and, on a signed confirmed/resolved charge, fund the org credit wallet. Replays are deduplicated by charge id.",
-        "parameters": [
-          {
-            "name": "x-cc-webhook-signature",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "HMAC-SHA256 signature of the raw body using the shared webhook secret."
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "additionalProperties": true
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Webhook accepted",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RailWebhookReceipt"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Webhook payload is not valid JSON",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Webhook signature verification failed",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "503": {
-            "description": "Coinbase Commerce is not configured",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        },
-        "description": "Error statuses: `400` Webhook payload is not valid JSON. `401` Webhook signature verification failed. `503` Coinbase Commerce is not configured."
-      }
-    },
-    "/billing/rails/paypal/webhook": {
-      "post": {
-        "operationId": "receivePaypalWebhook",
-        "summary": "Receive a PayPal webhook and, on a signature-verified PAYMENT.CAPTURE.COMPLETED, fund the org credit wallet.",
-        "parameters": [
-          {
-            "name": "paypal-auth-algo",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "paypal-cert-url",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "paypal-transmission-id",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "paypal-transmission-sig",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "paypal-transmission-time",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "additionalProperties": true
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Webhook accepted",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RailWebhookReceipt"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Webhook payload is not valid JSON",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Webhook signature verification failed",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "503": {
-            "description": "PayPal is not configured",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        },
-        "description": "Error statuses: `400` Webhook payload is not valid JSON. `401` Webhook signature verification failed. `503` PayPal is not configured."
       }
     },
     "/v1/github/setup-sessions": {
@@ -5333,6 +5502,1099 @@
         "x-tempera-auth-audience": "tempera-authority",
         "x-tempera-required-scope": "authority:ledger:read"
       }
+    },
+    "/v1/usage/summary": {
+      "get": {
+        "operationId": "usageSummary.get",
+        "summary": "Aggregate the organization's usage and credit spend over a time window, bucketed and grouped by attribution dimension.",
+        "description": "Any active member with the owner, admin, billing, developer, or viewer role may read their own organization's spend. A credential pinned to a project reports only that project and may not name another one. Internal economics are never returned on this tier. Error statuses: `400` Unusable window, granularity, grouping, page size, or an unknown query parameter. `403` The caller has no reading role in the organization, or a project-pinned credential named a different project.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UsageReportGranularity"
+          },
+          {
+            "name": "groupBy",
+            "in": "query",
+            "required": false,
+            "description": "Comma-separated subset of the UsageGroupKey vocabulary. Empty by default.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportFrom"
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportTo"
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportProjectId"
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportEnvironmentId"
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportProductId"
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportOperation"
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportMetric"
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportSection"
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportPageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bucketed spend",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsageSummary"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:usageReader"
+      }
+    },
+    "/v1/admin/usage/summary": {
+      "get": {
+        "operationId": "adminUsageSummary",
+        "summary": "Platform-staff fleet spend report: the customer summary across every organization, plus provider cost and margin.",
+        "description": "Requires a first-party account session held by verified platform staff; no step-up is required for a read. Error statuses: `400` Unusable window, granularity, grouping, page size, or an unknown query parameter. `403` Platform staff access is required. `404` Unknown organization in orgId.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UsageReportGranularity"
+          },
+          {
+            "name": "groupBy",
+            "in": "query",
+            "required": false,
+            "description": "Comma-separated subset of the AdminUsageGroupKey vocabulary.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportFrom"
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportTo"
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportProjectId"
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportEnvironmentId"
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportProductId"
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportOperation"
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportMetric"
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportSection"
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportOrgId"
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportPageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fleet-wide bucketed spend with internal economics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminUsageSummary"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:platformStaff"
+      }
+    },
+    "/v1/admin/usage/events": {
+      "get": {
+        "operationId": "adminUsageEvents",
+        "summary": "Platform-staff fleet-wide usage event list with the owning organization and upstream provider cost.",
+        "description": "Requires a first-party account session held by verified platform staff. Error statuses: `400` Unusable window, page size, or an unknown query parameter. `403` Platform staff access is required. `404` Unknown organization in orgId.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UsageReportFrom"
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportTo"
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportProjectId"
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportEnvironmentId"
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportProductId"
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportOperation"
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportMetric"
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportSection"
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportOrgId"
+          },
+          {
+            "$ref": "#/components/parameters/UsageReportPageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fleet-wide usage events",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminUsageEventList"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:platformStaff"
+      }
+    },
+    "/v1/admin/billing/credits/grants": {
+      "get": {
+        "operationId": "adminBillingCreditGrants",
+        "summary": "Platform-staff history of every credit grant and staff adjustment, read from the durable grant-receipt store.",
+        "description": "Read from `credit_grant_receipts`, not the display-capped ledger, so the history survives ledger projection limits. Error statuses: `400` Unknown query parameter or page size. `403` Platform staff access is required. `404` Unknown organization.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UsageReportOrgId"
+          },
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Credit grant history",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCreditGrants"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:platformStaff"
+      }
+    },
+    "/v1/billing/payment-methods": {
+      "get": {
+        "operationId": "listBillingPaymentMethods",
+        "summary": "List the cards this organization has saved in tempera-payments, for use with plans:activate.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Saved payment methods. Only the non-sensitive display fields the provider publishes are returned; Tempera never receives a PAN or CVV.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BillingPaymentMethodList"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "502": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:billingAdmin",
+        "description": "Error statuses: `409` This deployment bills plans through Stripe Billing (`TEMPERA_BILLING_ENGINE=stripe`); the tempera-payments plan routes report `billing_engine_mismatch` and change nothing. `503` Plan billing through tempera-payments is not configured for this deployment. `502` tempera-payments did not return a usable response."
+      }
+    },
+    "/v1/billing/plans:activate": {
+      "post": {
+        "operationId": "billingPlans.activate",
+        "summary": "Create the tempera-payments subscription for a plan whose checkout saved a card.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActivateBillingPlanRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Subscription created. It is `pending_first_period`: no money has moved, no entitlement has changed, and no credits have been granted until the first period settles.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BillingStatus"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "502": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:billingAdmin",
+        "description": "The plan price is the server-owned amount in the control plane's price catalog; the caller supplies no money, currency, or interval. Error statuses: `400` The plan is not purchasable through tempera-payments. `404` No pending plan checkout, or no tempera-payments customer for this organization. `409` This deployment bills plans through Stripe Billing (`TEMPERA_BILLING_ENGINE=stripe`); the tempera-payments plan routes report `billing_engine_mismatch` and change nothing. `503` Plan billing through tempera-payments is not configured for this deployment. `502` tempera-payments returned a subscription that does not match the requested plan."
+      }
+    },
+    "/v1/billing/plans:cancel": {
+      "post": {
+        "operationId": "billingPlans.cancel",
+        "summary": "Cancel this organization's tempera-payments plan subscription and mirror the resulting state.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BillingPlanTransitionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Billing status after the transition. Terminal: nothing is ever due again.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BillingStatus"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "502": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:billingAdmin",
+        "description": "tempera-payments owns the transition; the control plane mirrors the result and never invents one. Step-up re-authentication is not required: this changes a schedule, it does not move money or hand out credit. Error statuses: `404` This organization has no tempera-payments subscription. `409` This deployment bills plans through Stripe Billing (`TEMPERA_BILLING_ENGINE=stripe`); the tempera-payments plan routes report `billing_engine_mismatch` and change nothing. `503` Plan billing through tempera-payments is not configured for this deployment. `502` tempera-payments returned a different subscription or an unknown status. A transition tempera-payments refuses (its own state machine) is reported as `502`."
+      }
+    },
+    "/v1/billing/plans:pause": {
+      "post": {
+        "operationId": "billingPlans.pause",
+        "summary": "Pause this organization's tempera-payments plan subscription and mirror the resulting state.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BillingPlanTransitionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Billing status after the transition. The schedule keeps its place and is invisible to the Payments scheduler.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BillingStatus"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "502": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:billingAdmin",
+        "description": "tempera-payments owns the transition; the control plane mirrors the result and never invents one. Step-up re-authentication is not required: this changes a schedule, it does not move money or hand out credit. Error statuses: `404` This organization has no tempera-payments subscription. `409` This deployment bills plans through Stripe Billing (`TEMPERA_BILLING_ENGINE=stripe`); the tempera-payments plan routes report `billing_engine_mismatch` and change nothing. `503` Plan billing through tempera-payments is not configured for this deployment. `502` tempera-payments returned a different subscription or an unknown status. A transition tempera-payments refuses (its own state machine) is reported as `502`."
+      }
+    },
+    "/v1/billing/plans:resume": {
+      "post": {
+        "operationId": "billingPlans.resume",
+        "summary": "Resume this organization's tempera-payments plan subscription and mirror the resulting state.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BillingPlanTransitionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Billing status after the transition. A paused subscription becomes active again.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BillingStatus"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "502": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:billingAdmin",
+        "description": "tempera-payments owns the transition; the control plane mirrors the result and never invents one. Step-up re-authentication is not required: this changes a schedule, it does not move money or hand out credit. Error statuses: `404` This organization has no tempera-payments subscription. `409` This deployment bills plans through Stripe Billing (`TEMPERA_BILLING_ENGINE=stripe`); the tempera-payments plan routes report `billing_engine_mismatch` and change nothing. `503` Plan billing through tempera-payments is not configured for this deployment. `502` tempera-payments returned a different subscription or an unknown status. A transition tempera-payments refuses (its own state machine) is reported as `502`."
+      }
+    },
+    "/v1/billing/pricing": {
+      "get": {
+        "operationId": "getBillingPricing",
+        "summary": "Return the prices this workspace will be charged: the current plan catalog, the prepaid packs, and the per-unit pricing rules for the products it can report usage for. Multipliers and provider costs are staff-only and are never present.",
+        "responses": {
+          "200": {
+            "description": "Customer pricing catalog",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BillingPricingCatalog"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:session"
+      }
+    },
+    "/v1/admin/pricing": {
+      "get": {
+        "operationId": "adminPricing",
+        "summary": "Platform-staff view of every editable price: multipliers, plans, credit packs, and pricing rules, including inactive and scheduled rows.",
+        "responses": {
+          "200": {
+            "description": "Editable price configuration",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminPricing"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:platformStaff"
+      }
+    },
+    "/v1/admin/pricing/multipliers": {
+      "patch": {
+        "operationId": "adminPricingMultipliers.update",
+        "summary": "Edit the model-spend multipliers. Requires a fresh platform step-up and records a pricing change plus an audit entry.",
+        "parameters": [
+          {
+            "name": "updateMask",
+            "in": "query",
+            "required": true,
+            "description": "Comma-separated multipliers to change: metered, byok, or both.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9]*(,[a-zA-Z][a-zA-Z0-9]*)*$"
+            },
+            "x-tempera-mutable-fields": [
+              "metered",
+              "byok"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePricingMultipliersRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated multipliers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PricingMultipliersResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:platformStaff"
+      }
+    },
+    "/v1/admin/pricing/plans": {
+      "post": {
+        "operationId": "adminPricingPlans.create",
+        "summary": "Create a subscription plan. Requires a fresh platform step-up and records a pricing change plus an audit entry.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePricingPlanRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created plan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PricingPlanResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:platformStaff"
+      }
+    },
+    "/v1/admin/pricing/plans/{planId}": {
+      "patch": {
+        "operationId": "adminPricingPlans.update",
+        "summary": "Edit a plan price, credit grant, entitlements, activation, or effective dates. Deactivating a plan a workspace is still subscribed to fails with plan_in_use.",
+        "parameters": [
+          {
+            "name": "planId",
+            "in": "path",
+            "required": true,
+            "description": "Plan identifier.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "updateMask",
+            "in": "query",
+            "required": true,
+            "description": "Comma-separated mutable plan fields. Every masked field must be present and no unmasked mutable field may be supplied.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9]*(,[a-zA-Z][a-zA-Z0-9]*)*$"
+            },
+            "x-tempera-mutable-fields": [
+              "name",
+              "description",
+              "prices",
+              "includedUsage",
+              "grantMicros",
+              "overageAllowed",
+              "overageRateMicrosPerCredit",
+              "entitlements",
+              "apiKeyScopeEntitlements",
+              "bundle",
+              "active",
+              "effectiveFrom",
+              "effectiveTo"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePricingPlanRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated plan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PricingPlanResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:platformStaff"
+      }
+    },
+    "/v1/admin/pricing/credit-packs": {
+      "post": {
+        "operationId": "adminPricingCreditPacks.create",
+        "summary": "Create a prepaid credit pack. Requires a fresh platform step-up and records a pricing change plus an audit entry.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePricingCreditPackRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created credit pack",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PricingCreditPackResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:platformStaff"
+      }
+    },
+    "/v1/admin/pricing/credit-packs/{packId}": {
+      "patch": {
+        "operationId": "adminPricingCreditPacks.update",
+        "summary": "Edit a prepaid credit pack price, credit amount, activation, or effective dates.",
+        "parameters": [
+          {
+            "name": "packId",
+            "in": "path",
+            "required": true,
+            "description": "Credit pack identifier.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "updateMask",
+            "in": "query",
+            "required": true,
+            "description": "Comma-separated mutable pack fields. Every masked field must be present and no unmasked mutable field may be supplied.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9]*(,[a-zA-Z][a-zA-Z0-9]*)*$"
+            },
+            "x-tempera-mutable-fields": [
+              "name",
+              "description",
+              "currency",
+              "priceMinor",
+              "creditMicros",
+              "active",
+              "effectiveFrom",
+              "effectiveTo"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePricingCreditPackRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated credit pack",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PricingCreditPackResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:platformStaff"
+      }
+    },
+    "/v1/admin/pricing/rules": {
+      "post": {
+        "operationId": "adminPricingRules.create",
+        "summary": "Create a per-dimension pricing rule. A debit rule makes a usage event debit quantity x priceMicrosPerUnit; a record_only rule keeps measuring without charging.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePricingRuleRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created pricing rule",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PricingRuleResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:platformStaff"
+      }
+    },
+    "/v1/admin/pricing/rules/{ruleId}": {
+      "patch": {
+        "operationId": "adminPricingRules.update",
+        "summary": "Edit a pricing rule's unit price, mode, activation, or effective dates. An overlapping active range for the same dimension fails with pricing_conflict.",
+        "parameters": [
+          {
+            "name": "ruleId",
+            "in": "path",
+            "required": true,
+            "description": "Pricing rule identifier.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "updateMask",
+            "in": "query",
+            "required": true,
+            "description": "Comma-separated mutable rule fields. Every masked field must be present and no unmasked mutable field may be supplied.",
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9]*(,[a-zA-Z][a-zA-Z0-9]*)*$"
+            },
+            "x-tempera-mutable-fields": [
+              "unit",
+              "priceMicrosPerUnit",
+              "multiplierMillis",
+              "mode",
+              "note",
+              "active",
+              "effectiveFrom",
+              "effectiveTo"
+            ]
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePricingRuleRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated pricing rule",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PricingRuleResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:platformStaff"
+      },
+      "delete": {
+        "operationId": "adminPricingRules.deactivate",
+        "summary": "Deactivate a pricing rule. The row is retained, not deleted, so a ledger entry it priced can still be explained.",
+        "parameters": [
+          {
+            "name": "ruleId",
+            "in": "path",
+            "required": true,
+            "description": "Pricing rule identifier.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeactivatePricingRuleRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Deactivated pricing rule",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PricingRuleResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:platformStaff"
+      }
+    },
+    "/v1/admin/pricing/changes": {
+      "get": {
+        "operationId": "adminPricingChanges.list",
+        "summary": "Audit trail of every price edit: the before and after documents, the acting staff principal, and the stated reason.",
+        "parameters": [
+          {
+            "name": "entityType",
+            "in": "query",
+            "required": false,
+            "description": "Filter to one entity kind.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "plan",
+                "credit_pack",
+                "multiplier",
+                "rule"
+              ]
+            }
+          },
+          {
+            "name": "entityId",
+            "in": "query",
+            "required": false,
+            "description": "Filter to one entity id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/PageSize"
+          },
+          {
+            "$ref": "#/components/parameters/PageToken"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pricing change audit page",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PricingChangePage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "account",
+        "x-tempera-required-scope": "account:platformStaff"
+      }
     }
   },
   "components": {
@@ -5411,6 +6673,124 @@
         "schema": {
           "type": "string",
           "maxLength": 4096
+        }
+      },
+      "UsageReportPageSize": {
+        "name": "pageSize",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5000,
+          "default": 500
+        }
+      },
+      "UsageReportFrom": {
+        "name": "from",
+        "in": "query",
+        "required": false,
+        "description": "Inclusive RFC3339 start of the reporting window. Defaults to 30 days before `to`.",
+        "schema": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "UsageReportTo": {
+        "name": "to",
+        "in": "query",
+        "required": false,
+        "description": "Exclusive RFC3339 end of the reporting window. Defaults to now. The window is half-open, so an event on the boundary belongs to the later report and adjacent reports never double-count it. `to` minus `from` may not exceed 400 days.",
+        "schema": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "UsageReportGranularity": {
+        "name": "granularity",
+        "in": "query",
+        "required": false,
+        "description": "UTC bucket width. `week` truncates to Monday; `total` returns one bucket whose bucketStart is `from`.",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "hour",
+            "day",
+            "week",
+            "month",
+            "total"
+          ],
+          "default": "day"
+        }
+      },
+      "UsageReportProjectId": {
+        "name": "projectId",
+        "in": "query",
+        "required": false,
+        "description": "Restrict the report to one project. A project-pinned credential may only name its own project.",
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "UsageReportEnvironmentId": {
+        "name": "environmentId",
+        "in": "query",
+        "required": false,
+        "description": "Restrict the report to one environment.",
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "UsageReportProductId": {
+        "name": "productId",
+        "in": "query",
+        "required": false,
+        "description": "Restrict the report to one product, for example `tempera-llm`.",
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "UsageReportOperation": {
+        "name": "operation",
+        "in": "query",
+        "required": false,
+        "description": "Restrict the report to one producer operationId, for example `invokeModel`.",
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "UsageReportMetric": {
+        "name": "metric",
+        "in": "query",
+        "required": false,
+        "description": "Restrict the report to one usage metric, for example `model_cost`.",
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "UsageReportSection": {
+        "name": "section",
+        "in": "query",
+        "required": false,
+        "description": "Restrict the report to one product-area section tag.",
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "UsageReportOrgId": {
+        "name": "orgId",
+        "in": "query",
+        "required": false,
+        "description": "Platform-staff only: restrict the fleet report to one organization.",
+        "schema": {
+          "type": "string",
+          "minLength": 1
         }
       }
     },
@@ -5535,7 +6915,10 @@
           "orgId",
           "projectId",
           "environmentId",
-          "roles"
+          "roles",
+          "emailVerified",
+          "platformRole",
+          "assignableRoles"
         ],
         "properties": {
           "sub": {
@@ -5559,6 +6942,28 @@
             "items": {
               "$ref": "#/components/schemas/TeamRole"
             }
+          },
+          "emailVerified": {
+            "type": "boolean",
+            "description": "Whether the account's email address has been proven with a confirmed verification token, a provisioned seed, or a SAML assertion. Server-controlled; never derived from signup input."
+          },
+          "platformRole": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "super_user",
+              null
+            ],
+            "description": "Tempera platform role. `super_user` when the verified address is an active platform operator (or on the break-glass allowlist); otherwise null. This is not an organization role."
+          },
+          "assignableRoles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TeamRole"
+            },
+            "description": "Organization roles this caller may hand out through invites and member updates. Empty for everyone below admin."
           }
         }
       },
@@ -5662,10 +7067,17 @@
           "payments:intents:write",
           "payments:receipts:read",
           "payments:webhooks:write",
+          "payments:webhooks:read",
           "payments:refunds:write",
+          "payments:refunds:read",
           "payments:admin",
           "payments:merchants:read",
           "payments:merchants:write",
+          "payments:customers:read",
+          "payments:customers:write",
+          "payments:disputes:read",
+          "payments:subscriptions:read",
+          "payments:subscriptions:write",
           "orders:read",
           "orders:commerce:write",
           "voice:read",
@@ -5707,7 +7119,7 @@
       },
       "ApiKeyScope": {
         "type": "string",
-        "description": "A service-principal scope. Human-only review:resolve, review:gold:manage, training:publish, bio:experiment:approve, bio:signer:manage, clearing:actions:approve, payments:merchants:write and orders:commerce:write are intentionally excluded, as are the remaining orders:* scopes, which are reachable only through an expiring OAuth token. GET /v1/api-keys/audiences reports, per audience, which of these are issuable now and why the rest are refused. authority:holds:decide, authority:holds:write and authority:policies:write are likewise excluded: deciding and writing authority require an attributed OAuth principal, never an API key. taxes:review is excluded for the same reason: it records that the owner reviewed a tax return, which is an attributed human attestation, and a static tp_ key must not be able to forge one. cradle:execute is included: running a job in the sandbox is an unattended machine act like connector:run, eval:run and workflow:run, and is the purpose the audience exists to serve.",
+        "description": "A service-principal scope. Human-only review:resolve, review:gold:manage, training:publish, bio:experiment:approve, bio:signer:manage, clearing:actions:approve, payments:merchants:write and orders:commerce:write are intentionally excluded, as are the remaining orders:* scopes, which are reachable only through an expiring OAuth token. GET /v1/api-keys/audiences reports, per audience, which of these are issuable now and why the rest are refused. authority:holds:decide and authority:policies:write are likewise excluded: deciding a held action and writing the policy that governs it are attributed human acts, and HUMAN_SCOPE_POLICY refuses them on every API key path. authority:holds:write and authority:credentials:release are the opposite case and are included: creating, claiming and finalizing a hold is the fabric service capability, and releasing a credential is the one MACHINE act in the authority vocabulary, which requireAuthorityReleasePrincipal accepts only from a service credential (an API key or an RFC 8693 exchanged token) and never from a human session. Withholding them here said a tp_ key could never carry them while the create path minted them happily; the scope-registry parity gate now pins this enum against the runtime refusal tables in both directions so the two cannot disagree again. taxes:review is excluded for the same reason: it records that the owner reviewed a tax return, which is an attributed human attestation, and a static tp_ key must not be able to forge one. cradle:execute is included: running a job in the sandbox is an unattended machine act like connector:run, eval:run and workflow:run, and is the purpose the audience exists to serve.",
         "enum": [
           "mcp:invoke",
           "memory:read",
@@ -5760,14 +7172,23 @@
           "payments:intents:write",
           "payments:receipts:read",
           "payments:webhooks:write",
+          "payments:webhooks:read",
           "payments:refunds:write",
+          "payments:refunds:read",
           "payments:admin",
+          "payments:customers:read",
+          "payments:customers:write",
+          "payments:disputes:read",
+          "payments:subscriptions:read",
+          "payments:subscriptions:write",
           "business:read",
           "business:write",
           "business:review",
           "admin",
           "authority:holds:read",
+          "authority:holds:write",
           "authority:policies:read",
+          "authority:credentials:release",
           "authority:ledger:read",
           "authority:ledger:export",
           "cradle:read",
@@ -6181,7 +7602,7 @@
           "acceptUrl": {
             "type": "string",
             "format": "uri",
-            "description": "Invite acceptance link containing the one-time invite token. Only returned when the invite is created."
+            "description": "Invite acceptance link containing the one-time invite token. The link is emailed to the invitee; it is echoed here only when TEMPERA_MAIL_TRANSPORT is the local `log` sink."
           }
         }
       },
@@ -8187,14 +9608,8 @@
         "properties": {
           "planId": {
             "type": "string",
-            "enum": [
-              "starter_trial",
-              "developer",
-              "starter_kit",
-              "platform",
-              "business",
-              "enterprise"
-            ]
+            "pattern": "^[a-z][a-z0-9_]{0,62}$",
+            "description": "Plan identifier. Editable data since migration 0033; the seeded plans are starter_trial, developer, starter_kit, platform, business, and enterprise."
           },
           "name": {
             "type": "string"
@@ -8314,11 +9729,8 @@
         "properties": {
           "packId": {
             "type": "string",
-            "enum": [
-              "prepaid_25_usd",
-              "prepaid_100_usd",
-              "prepaid_500_usd"
-            ]
+            "pattern": "^[a-z][a-z0-9_]{0,62}$",
+            "description": "Pack identifier. Editable data since migration 0033; the seeded packs are prepaid_25_usd, prepaid_100_usd, and prepaid_500_usd."
           },
           "name": {
             "type": "string"
@@ -8328,7 +9740,8 @@
           },
           "currency": {
             "type": "string",
-            "const": "usd"
+            "pattern": "^[a-z]{3}$",
+            "description": "Lowercase ISO-4217 alphabetic code, matching tempera-payments."
           },
           "amountCents": {
             "type": "integer",
@@ -8340,7 +9753,7 @@
           },
           "purchaseAvailable": {
             "type": "boolean",
-            "description": "False unless this deployment has Stripe secret, webhook secret, API base URL, and the exact source-owned Price ID configured for this pack."
+            "description": "False unless this deployment is configured to create top-up PaymentIntents in tempera-payments and to verify its signed settlement events."
           }
         }
       },
@@ -8405,6 +9818,7 @@
           "currency",
           "amountCents",
           "creditMicros",
+          "paymentIntentId",
           "createdAt",
           "updatedAt",
           "paidAt",
@@ -8438,6 +9852,13 @@
           "creditMicros": {
             "type": "integer",
             "minimum": 1
+          },
+          "paymentIntentId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "tempera-payments PaymentIntent created for this top-up. Null only while the first Payments call has not yet succeeded."
           },
           "checkoutUrl": {
             "type": "string",
@@ -8585,7 +10006,10 @@
           "usage",
           "entitlements",
           "invoices",
-          "pricing"
+          "pricing",
+          "paymentsCustomer",
+          "purchaseAvailable",
+          "billingEngine"
         ],
         "properties": {
           "orgId": {
@@ -8629,7 +10053,9 @@
                   "past_due",
                   "canceled",
                   "cancelled",
-                  "incomplete"
+                  "incomplete",
+                  "paused",
+                  "pending_first_period"
                 ]
               },
               "billingInterval": {
@@ -8652,11 +10078,24 @@
             "required": [
               "status",
               "stripeSubscriptionId",
-              "currentPeriodEnd"
+              "currentPeriodEnd",
+              "provider",
+              "paymentsSubscriptionId",
+              "currentPeriodStart"
             ],
             "properties": {
               "status": {
-                "type": "string"
+                "type": "string",
+                "enum": [
+                  "trialing",
+                  "active",
+                  "past_due",
+                  "cancelled",
+                  "incomplete",
+                  "paused",
+                  "pending_first_period"
+                ],
+                "description": "`pending_first_period` is a tempera-payments subscription whose first period has not settled: entitlements stay limited and no credits are granted until it does."
               },
               "stripeSubscriptionId": {
                 "type": [
@@ -8665,7 +10104,39 @@
                 ]
               },
               "currentPeriodEnd": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date-time"
+              },
+              "provider": {
                 "type": "string",
+                "enum": [
+                  "stripe",
+                  "tempera_payments"
+                ],
+                "description": "Which engine owns this subscription."
+              },
+              "paymentsSubscriptionId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The tempera-payments Subscription id. Every settled period's reference is `<paymentsSubscriptionId>/<periodStart>`."
+              },
+              "paymentsPeriodJournalId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The Payments ledger journal that settled the current period, and the reference the period's credit grant is idempotent on."
+              },
+              "currentPeriodStart": {
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "format": "date-time"
               }
             }
@@ -8798,6 +10269,35 @@
           },
           "pricing": {
             "$ref": "#/components/schemas/BillingPricing"
+          },
+          "billingEngine": {
+            "type": "string",
+            "enum": [
+              "stripe",
+              "payments"
+            ],
+            "description": "Which engine bills this deployment's plans. `stripe` is Stripe Billing; `payments` runs each plan as one tempera-payments subscription settled by signed subscriptionPeriod events."
+          },
+          "purchaseAvailable": {
+            "type": "boolean",
+            "description": "Whether a plan can actually be bought on this deployment, evaluated for the active engine: a configured Stripe secret and price id, or the complete TEMPERA_PAYMENTS_* configuration including event verification keys."
+          },
+          "paymentsCustomer": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "paymentsCustomerId": {
+                "type": "string"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            "description": "This organization's tempera-payments customer. Null until its first plan checkout creates one."
           }
         }
       },
@@ -9627,6 +11127,85 @@
                 "default": 180
               }
             }
+          },
+          {
+            "type": "object",
+            "required": [
+              "idempotencyKey",
+              "provider",
+              "model",
+              "configId",
+              "byok",
+              "maximumProviderCostMicros"
+            ],
+            "properties": {
+              "subject": {
+                "$ref": "#/components/schemas/UsageSubjectIdentity",
+                "description": "Signed original-caller identity. Omission records the authenticated reporting credential itself and cannot assert a different actor."
+              },
+              "idempotencyKey": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 255
+              },
+              "provider": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "model": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "configId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "description": "Immutable provider adapter/config identity; never a secret value."
+              },
+              "byok": {
+                "type": "boolean"
+              },
+              "maximumProviderCostMicros": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Maximum provider cost calculated by tempera-llm for the admitted request."
+              },
+              "ttlSeconds": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 300,
+                "default": 180
+              },
+              "operation": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 64,
+                "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,63}$",
+                "description": "Producer operationId this usage is attributed to, for example `invokeModel`."
+              },
+              "route": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 255,
+                "pattern": "^(?:GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS|TRACE) /[A-Za-z0-9._~:@!$&'()*+,;=/{}-]{0,254}$",
+                "description": "Reporter HTTP route in `METHOD /v1/path/{template}` form."
+              },
+              "section": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 64,
+                "pattern": "^[a-z0-9._-]{1,64}$",
+                "description": "Free-form product-area tag, for example `checkout` or `search`."
+              }
+            }
           }
         ]
       },
@@ -9875,6 +11454,33 @@
           },
           "wallet": {
             "$ref": "#/components/schemas/CreditWallet"
+          },
+          "operation": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 64,
+            "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,63}$",
+            "description": "Producer operationId this usage is attributed to, for example `invokeModel`."
+          },
+          "route": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 255,
+            "pattern": "^(?:GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS|TRACE) /[A-Za-z0-9._~:@!$&'()*+,;=/{}-]{0,254}$",
+            "description": "Reporter HTTP route in `METHOD /v1/path/{template}` form."
+          },
+          "section": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 64,
+            "pattern": "^[a-z0-9._-]{1,64}$",
+            "description": "Free-form product-area tag, for example `checkout` or `search`."
           }
         }
       },
@@ -9925,6 +11531,33 @@
           "cost": {
             "description": "Present on cost-bearing legacy events during the reservation migration window.",
             "$ref": "#/components/schemas/ModelCost"
+          },
+          "operation": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 64,
+            "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,63}$",
+            "description": "Producer operationId this usage is attributed to, for example `invokeModel`."
+          },
+          "route": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 255,
+            "pattern": "^(?:GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS|TRACE) /[A-Za-z0-9._~:@!$&'()*+,;=/{}-]{0,254}$",
+            "description": "Reporter HTTP route in `METHOD /v1/path/{template}` form."
+          },
+          "section": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 64,
+            "pattern": "^[a-z0-9._-]{1,64}$",
+            "description": "Free-form product-area tag, for example `checkout` or `search`."
           }
         }
       },
@@ -10049,13 +11682,16 @@
             }
           },
           "credit": {
-            "description": "Present when the event debited credits.",
+            "description": "Present when the event debited credits: the multiplier form for a reported provider cost, the rule form when a pricing rule priced the event.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/Credit"
               },
               {
                 "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/UsageRuleCredit"
               }
             ]
           },
@@ -10198,8 +11834,62 @@
           "recordedAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "projectId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "environmentId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "productId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "operation": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Optional attribution dimension. Null when the reporting producer does not send it; never zero."
+          },
+          "section": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Optional attribution dimension. Null when the reporting producer does not send it; never zero."
+          },
+          "route": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Staff-only field of the unredacted row."
+          },
+          "usageEventId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Staff-only field of the unredacted row: the usage event this debit settled."
+          },
+          "reservationId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Staff-only field of the unredacted row."
           }
-        }
+        },
+        "description": "One credit movement. The attribution dimensions (projectId, environmentId, productId, operation, section) are the customer's own workspace and operation names and are returned to any billing reader; providerCostMicros, multiplierMillis, byok, route, usageEventId and reservationId are staff-only and redacted server-side."
       },
       "CreditBalance": {
         "type": "object",
@@ -10534,6 +12224,14 @@
             "type": "string",
             "const": "urn:ietf:params:oauth:token-type:access_token",
             "description": "RFC 8693 issued token type. Present only on a token-exchange response."
+          },
+          "emailVerified": {
+            "type": "boolean",
+            "description": "Present on first-party email/password sessions. False on signup until the emailed verification token is confirmed."
+          },
+          "token": {
+            "type": "string",
+            "description": "Local-development convenience only: the emailed verification token, echoed when TEMPERA_MAIL_TRANSPORT is the `log` sink. Never present with a real transport."
           }
         }
       },
@@ -11224,7 +12922,19 @@
           "not_found",
           "method_not_allowed",
           "deployment_forbidden",
-          "not_configured"
+          "not_configured",
+          "email_unverified",
+          "mail_unconfigured",
+          "operator_domain_not_allowed",
+          "operator_exists",
+          "cannot_revoke_self",
+          "last_operator",
+          "role_not_assignable",
+          "last_owner",
+          "step_up_required",
+          "billing_engine_mismatch",
+          "pricing_conflict",
+          "plan_in_use"
         ]
       },
       "ErrorResponse": {
@@ -11295,7 +13005,7 @@
           },
           "creditMicros": {
             "type": "integer",
-            "description": "Positive integer number of credit micros to grant."
+            "description": "Non-zero integer number of credit micros. Positive grants; negative is a debit adjustment (clawback) which requires `reason`."
           },
           "reference": {
             "type": "string",
@@ -11306,7 +13016,12 @@
               "string",
               "null"
             ],
-            "description": "Optional human-readable justification recorded on the ledger entry."
+            "description": "Human-readable justification recorded on the ledger entry and the durable grant receipt. Required for a negative adjustment."
+          },
+          "allowNegative": {
+            "type": "boolean",
+            "default": false,
+            "description": "Authorize a debit adjustment that would take the wallet below zero. Without it the adjustment is refused with 409 `insufficient_credits` and nothing is mutated."
           }
         }
       },
@@ -11406,17 +13121,6 @@
           "multiplierMillis": {
             "type": "integer",
             "description": "Ecosystem-wide model-spend multiplier in milli-units (1200 = 1.2x)."
-          }
-        }
-      },
-      "RailWebhookReceipt": {
-        "type": "object",
-        "required": [
-          "received"
-        ],
-        "properties": {
-          "received": {
-            "type": "boolean"
           }
         }
       },
@@ -14447,6 +16151,2115 @@
           },
           "material": {
             "$ref": "#/components/schemas/CredentialMaterial"
+          }
+        }
+      },
+      "PaymentsEventReceipt": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "received",
+          "type",
+          "handled",
+          "outcome"
+        ],
+        "properties": {
+          "received": {
+            "type": "boolean",
+            "const": true
+          },
+          "type": {
+            "type": "string",
+            "description": "The tempera-payments consumer event type, for example `payment.settled`."
+          },
+          "handled": {
+            "type": "boolean",
+            "description": "True when the event was bound to a server-owned credit top-up and settled its state (credited or recorded as a mismatch)."
+          },
+          "outcome": {
+            "type": "string",
+            "enum": [
+              "credited",
+              "settled",
+              "refund_recorded",
+              "disputed",
+              "stale_period",
+              "payment_mismatch",
+              "unknown_topup",
+              "unknown_subscription",
+              "ignored"
+            ]
+          }
+        }
+      },
+      "EmailVerificationSendRequest": {
+        "type": "object",
+        "description": "No fields. The address verified is always the authenticated account's own.",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "EmailVerificationSendResponse": {
+        "type": "object",
+        "required": [
+          "email",
+          "emailVerified",
+          "verificationSent",
+          "deduplicated"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "emailVerified": {
+            "type": "boolean"
+          },
+          "verificationSent": {
+            "type": "boolean",
+            "description": "False when the account is already verified, or when a live token issued within the last 60 seconds was reused instead of mailing a second message."
+          },
+          "expiresAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "When the live verification token expires. Null when the account is already verified."
+          },
+          "deduplicated": {
+            "type": "boolean",
+            "description": "True when this call reused a token issued within the 60-second idempotency window."
+          },
+          "token": {
+            "type": "string",
+            "description": "Local-development convenience only: echoed when TEMPERA_MAIL_TRANSPORT is the `log` sink."
+          }
+        }
+      },
+      "EmailVerificationConfirmRequest": {
+        "type": "object",
+        "required": [
+          "token"
+        ],
+        "properties": {
+          "token": {
+            "type": "string",
+            "minLength": 1,
+            "writeOnly": true,
+            "description": "The one-time token from the verification email. It is the credential for this call, which is why the call is unauthenticated."
+          }
+        }
+      },
+      "EmailVerificationConfirmResponse": {
+        "type": "object",
+        "required": [
+          "email",
+          "emailVerified"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "emailVerified": {
+            "type": "boolean",
+            "const": true
+          }
+        }
+      },
+      "PlatformOperator": {
+        "type": "object",
+        "description": "A database-managed Tempera platform super-user. Revocation is a timestamp, never a delete, so the record keeps who granted and who removed staff access.",
+        "required": [
+          "operatorId",
+          "email",
+          "role",
+          "status",
+          "addedAt"
+        ],
+        "properties": {
+          "operatorId": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Lower-cased. Must be an @tempera.dev address."
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "super_user"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "revoked"
+            ]
+          },
+          "addedByUserId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Null only for the bootstrap operator seeded by migration 0030."
+          },
+          "addedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "revokedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "revokedByUserId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "PlatformOperators": {
+        "type": "object",
+        "required": [
+          "operators",
+          "nextPageToken"
+        ],
+        "properties": {
+          "operators": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlatformOperator"
+            },
+            "description": "Every operator record, including revoked ones."
+          },
+          "nextPageToken": {
+            "type": "string"
+          }
+        }
+      },
+      "CreatePlatformOperatorRequest": {
+        "type": "object",
+        "required": [
+          "email"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Must be an @tempera.dev address; anything else is refused with operator_domain_not_allowed."
+          },
+          "note": {
+            "type": "string",
+            "description": "Free-text reason recorded on the operator record and included in the notification email."
+          }
+        }
+      },
+      "UsageGroupKey": {
+        "type": "string",
+        "enum": [
+          "product",
+          "operation",
+          "project",
+          "environment",
+          "metric",
+          "section",
+          "route"
+        ],
+        "description": "A spend dimension the summary may group by. Repeats are rejected; the response echoes the grouping in a canonical order independent of the order requested."
+      },
+      "AdminUsageGroupKey": {
+        "type": "string",
+        "enum": [
+          "org",
+          "product",
+          "operation",
+          "project",
+          "environment",
+          "metric",
+          "section",
+          "route"
+        ],
+        "description": "Platform-staff grouping vocabulary: the customer keys plus `org`."
+      },
+      "UsageSpendTotals": {
+        "type": "object",
+        "required": [
+          "requestCount",
+          "quantity",
+          "creditMicros"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "requestCount": {
+            "type": "integer",
+            "description": "Usage events in the window."
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "Summed metric quantity."
+          },
+          "creditMicros": {
+            "type": "integer",
+            "description": "Credits debited, as a positive integer number of micro-USD."
+          }
+        },
+        "description": "Customer-facing spend measures. Internal economics (provider cost, multiplier, margin) are redacted server-side and are physically absent from this schema."
+      },
+      "AdminUsageSpendTotals": {
+        "type": "object",
+        "required": [
+          "requestCount",
+          "quantity",
+          "creditMicros",
+          "providerCostMicros",
+          "customerChargedMicros",
+          "marginMicros"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "requestCount": {
+            "type": "integer"
+          },
+          "quantity": {
+            "type": "integer"
+          },
+          "creditMicros": {
+            "type": "integer"
+          },
+          "providerCostMicros": {
+            "type": "integer",
+            "description": "Staff-only: upstream provider cost."
+          },
+          "customerChargedMicros": {
+            "type": "integer",
+            "description": "Staff-only: credits debited from the customer; equal to creditMicros."
+          },
+          "marginMicros": {
+            "type": "integer",
+            "description": "Staff-only: customerChargedMicros - providerCostMicros."
+          }
+        }
+      },
+      "UsageSummaryRow": {
+        "type": "object",
+        "required": [
+          "bucketStart",
+          "requestCount",
+          "quantity",
+          "creditMicros"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "bucketStart": {
+            "type": "string",
+            "format": "date-time",
+            "description": "UTC start of the bucket. For `granularity=total` this is the window's `from`."
+          },
+          "productId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Present only when `product` is in groupBy."
+          },
+          "operation": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Present only when `operation` is in groupBy."
+          },
+          "projectId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Present only when `project` is in groupBy."
+          },
+          "environmentId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Present only when `environment` is in groupBy."
+          },
+          "metric": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Present only when `metric` is in groupBy."
+          },
+          "section": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Present only when `section` is in groupBy."
+          },
+          "route": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Present only when `route` is in groupBy."
+          },
+          "requestCount": {
+            "type": "integer"
+          },
+          "quantity": {
+            "type": "integer"
+          },
+          "creditMicros": {
+            "type": "integer"
+          }
+        },
+        "description": "One bucket of the grouping. A grouped dimension is present on every row (null when the producer did not report it); an ungrouped dimension is absent entirely."
+      },
+      "AdminUsageSummaryRow": {
+        "type": "object",
+        "required": [
+          "bucketStart",
+          "requestCount",
+          "quantity",
+          "creditMicros",
+          "providerCostMicros",
+          "customerChargedMicros",
+          "marginMicros"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "bucketStart": {
+            "type": "string",
+            "format": "date-time",
+            "description": "UTC start of the bucket. For `granularity=total` this is the window's `from`."
+          },
+          "orgId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Present only when `org` is in groupBy."
+          },
+          "productId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Present only when `product` is in groupBy."
+          },
+          "operation": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Present only when `operation` is in groupBy."
+          },
+          "projectId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Present only when `project` is in groupBy."
+          },
+          "environmentId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Present only when `environment` is in groupBy."
+          },
+          "metric": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Present only when `metric` is in groupBy."
+          },
+          "section": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Present only when `section` is in groupBy."
+          },
+          "route": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Present only when `route` is in groupBy."
+          },
+          "requestCount": {
+            "type": "integer"
+          },
+          "quantity": {
+            "type": "integer"
+          },
+          "creditMicros": {
+            "type": "integer"
+          },
+          "providerCostMicros": {
+            "type": "integer",
+            "description": "Staff-only: upstream provider cost."
+          },
+          "customerChargedMicros": {
+            "type": "integer",
+            "description": "Staff-only: credits debited from the customer."
+          },
+          "marginMicros": {
+            "type": "integer",
+            "description": "Staff-only: customerChargedMicros - providerCostMicros."
+          }
+        },
+        "description": "One bucket of the grouping. A grouped dimension is present on every row (null when the producer did not report it); an ungrouped dimension is absent entirely."
+      },
+      "UsageSummary": {
+        "type": "object",
+        "required": [
+          "orgId",
+          "from",
+          "to",
+          "granularity",
+          "groupBy",
+          "totals",
+          "rows",
+          "nextPageToken"
+        ],
+        "properties": {
+          "orgId": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "to": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "granularity": {
+            "type": "string",
+            "enum": [
+              "hour",
+              "day",
+              "week",
+              "month",
+              "total"
+            ]
+          },
+          "groupBy": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UsageGroupKey"
+            }
+          },
+          "totals": {
+            "$ref": "#/components/schemas/UsageSpendTotals"
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UsageSummaryRow"
+            }
+          },
+          "nextPageToken": {
+            "type": "string",
+            "description": "Empty when the last page has been returned. `totals` always span the whole window, never the page."
+          }
+        }
+      },
+      "AdminUsageSummary": {
+        "type": "object",
+        "required": [
+          "from",
+          "to",
+          "granularity",
+          "groupBy",
+          "totals",
+          "rows",
+          "nextPageToken"
+        ],
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "to": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "granularity": {
+            "type": "string",
+            "enum": [
+              "hour",
+              "day",
+              "week",
+              "month",
+              "total"
+            ]
+          },
+          "groupBy": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminUsageGroupKey"
+            }
+          },
+          "totals": {
+            "$ref": "#/components/schemas/AdminUsageSpendTotals"
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminUsageSummaryRow"
+            }
+          },
+          "nextPageToken": {
+            "type": "string"
+          }
+        },
+        "description": "The same aggregation as UsageSummary across the fleet, plus the staff-only provider cost and margin. `adminBillingOrgs` reads the identical accumulator, so the fleet table and this report can never disagree about a debit."
+      },
+      "UsageEventRow": {
+        "type": "object",
+        "required": [
+          "eventId",
+          "recordedAt",
+          "productId",
+          "metric",
+          "quantity",
+          "source"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "eventId": {
+            "type": "string"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "productId": {
+            "type": "string"
+          },
+          "operation": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Optional attribution dimension. Null when the reporting producer does not send it; never zero."
+          },
+          "route": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Optional attribution dimension. Null when the reporting producer does not send it; never zero."
+          },
+          "projectId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "environmentId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "metric": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "integer"
+          },
+          "section": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Optional attribution dimension. Null when the reporting producer does not send it; never zero."
+          },
+          "creditMicros": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Credits debited for this event, as a positive integer; null for a non-cost event."
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "api_key",
+              "oauth"
+            ]
+          }
+        }
+      },
+      "AdminUsageEventRow": {
+        "type": "object",
+        "required": [
+          "eventId",
+          "recordedAt",
+          "productId",
+          "metric",
+          "quantity",
+          "source",
+          "orgId"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "eventId": {
+            "type": "string"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "orgId": {
+            "type": "string"
+          },
+          "productId": {
+            "type": "string"
+          },
+          "operation": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Optional attribution dimension. Null when the reporting producer does not send it; never zero."
+          },
+          "route": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Optional attribution dimension. Null when the reporting producer does not send it; never zero."
+          },
+          "projectId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "environmentId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "metric": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "integer"
+          },
+          "section": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Optional attribution dimension. Null when the reporting producer does not send it; never zero."
+          },
+          "creditMicros": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Credits debited for this event, as a positive integer; null for a non-cost event."
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "api_key",
+              "oauth"
+            ]
+          },
+          "providerCostMicros": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Staff-only: upstream provider cost for this event."
+          }
+        }
+      },
+      "UsageEventList": {
+        "type": "object",
+        "required": [
+          "orgId",
+          "from",
+          "to",
+          "events",
+          "nextPageToken"
+        ],
+        "properties": {
+          "orgId": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "to": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UsageEventRow"
+            }
+          },
+          "nextPageToken": {
+            "type": "string"
+          }
+        }
+      },
+      "AdminUsageEventList": {
+        "type": "object",
+        "required": [
+          "from",
+          "to",
+          "events",
+          "nextPageToken"
+        ],
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "to": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminUsageEventRow"
+            }
+          },
+          "nextPageToken": {
+            "type": "string"
+          }
+        }
+      },
+      "AdminCreditGrant": {
+        "type": "object",
+        "required": [
+          "receiptId",
+          "orgId",
+          "micros",
+          "kind",
+          "recordedAt"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "receiptId": {
+            "type": "string",
+            "description": "The durable `source:reference` replay key the grant was recorded under."
+          },
+          "orgId": {
+            "type": "string"
+          },
+          "micros": {
+            "type": "integer",
+            "description": "Signed micro-USD: positive for credits in, negative for a staff debit adjustment."
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "grant",
+              "adjustment"
+            ]
+          },
+          "source": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The rail or actor class that produced the movement, for example `staff_adjustment` or `tempera-payments`."
+          },
+          "reference": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The source's own identifier; `(source, reference)` is the permanent idempotency key."
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "actorEmail": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The verified platform-staff account that authorized a manual adjustment."
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AdminCreditGrants": {
+        "type": "object",
+        "required": [
+          "grants",
+          "nextPageToken"
+        ],
+        "properties": {
+          "grants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminCreditGrant"
+            }
+          },
+          "nextPageToken": {
+            "type": "string"
+          }
+        }
+      },
+      "BillingPaymentMethod": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "paymentMethodId",
+          "type",
+          "status"
+        ],
+        "description": "A card saved in tempera-payments, reduced to the non-sensitive display fields the provider itself publishes.",
+        "properties": {
+          "paymentMethodId": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "card"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "detached"
+            ]
+          },
+          "brand": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "last4": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "expMonth": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1,
+            "maximum": 12
+          },
+          "expYear": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "funding": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "createdAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
+      "BillingPaymentMethodList": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "orgId",
+          "paymentsCustomerId",
+          "paymentMethods",
+          "nextPageToken"
+        ],
+        "properties": {
+          "orgId": {
+            "type": "string"
+          },
+          "paymentsCustomerId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Null until this organization's first plan checkout creates its tempera-payments customer; the list is then empty."
+          },
+          "paymentMethods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BillingPaymentMethod"
+            }
+          },
+          "nextPageToken": {
+            "type": "string",
+            "maxLength": 4096,
+            "description": "Opaque, authenticated continuation token bound to this path, page size, caller, and active workspace. Empty on the final page."
+          }
+        }
+      },
+      "ActivateBillingPlanRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "planId",
+          "paymentMethodId"
+        ],
+        "description": "The plan to activate and the saved card to charge. There is deliberately no amount, currency, or interval field: the price comes from the server-owned catalog and the interval from the pending checkout.",
+        "properties": {
+          "planId": {
+            "type": "string",
+            "enum": [
+              "starter_trial",
+              "developer",
+              "starter_kit",
+              "platform",
+              "business",
+              "enterprise"
+            ]
+          },
+          "paymentMethodId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "description": "An active saved payment method of this organization's tempera-payments customer, from GET /v1/billing/payment-methods."
+          }
+        }
+      },
+      "BillingPlanTransitionRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "The cancel, pause, and resume methods take no input: the transition is decided by the durable Payments state machine and the caller's active workspace.",
+        "properties": {}
+      },
+      "PricingMultipliers": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Staff-only internal economics. Metered debits provider cost x metered/1000; BYOK debits only the platform surcharge, provider cost x byok/1000.",
+        "required": [
+          "metered",
+          "byok"
+        ],
+        "properties": {
+          "metered": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "byok": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "PricingPlan": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "planId",
+          "name",
+          "description",
+          "interval",
+          "priceMinor",
+          "currency",
+          "prices",
+          "includedUsage",
+          "grantMicros",
+          "overageAllowed",
+          "overageRateMicrosPerCredit",
+          "entitlements",
+          "apiKeyScopeEntitlements",
+          "bundle",
+          "active",
+          "effectiveFrom",
+          "effectiveTo",
+          "updatedByUserId",
+          "updatedAt"
+        ],
+        "properties": {
+          "planId": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{0,62}$"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "interval": {
+            "type": "string",
+            "enum": [
+              "trial",
+              "monthly",
+              "annual",
+              "custom"
+            ],
+            "description": "Interval of the first published price."
+          },
+          "priceMinor": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "description": "First published price in minor currency units; null for quoted procurement."
+          },
+          "currency": {
+            "type": "string",
+            "pattern": "^[a-z]{3}$",
+            "description": "Lowercase ISO-4217 alphabetic code, matching tempera-payments."
+          },
+          "prices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BillingPlanPrice"
+            }
+          },
+          "includedUsage": {
+            "type": "object",
+            "additionalProperties": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            }
+          },
+          "grantMicros": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "description": "Credit micro-USD granted each period; null means unlimited."
+          },
+          "overageAllowed": {
+            "type": "boolean"
+          },
+          "overageRateMicrosPerCredit": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "entitlements": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "apiKeyScopeEntitlements": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Scope to plan-entitlement gate applied when this plan mints an API key."
+          },
+          "bundle": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": true
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "effectiveFrom": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "effectiveTo": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "updatedByUserId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PricingCreditPack": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "packId",
+          "name",
+          "description",
+          "currency",
+          "priceMinor",
+          "creditMicros",
+          "active",
+          "effectiveFrom",
+          "effectiveTo",
+          "updatedByUserId",
+          "updatedAt"
+        ],
+        "properties": {
+          "packId": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{0,62}$"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "currency": {
+            "type": "string",
+            "pattern": "^[a-z]{3}$",
+            "description": "Lowercase ISO-4217 alphabetic code, matching tempera-payments."
+          },
+          "priceMinor": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "creditMicros": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "effectiveFrom": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "effectiveTo": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "updatedByUserId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PricingRule": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Staff view of a per-dimension price. The most specific active rule wins: operation, then metric, then product.",
+        "required": [
+          "ruleId",
+          "productId",
+          "operation",
+          "metric",
+          "unit",
+          "priceMicrosPerUnit",
+          "multiplierMillis",
+          "mode",
+          "effectiveFrom",
+          "effectiveTo",
+          "active",
+          "note",
+          "createdByUserId",
+          "createdAt"
+        ],
+        "properties": {
+          "ruleId": {
+            "type": "string"
+          },
+          "productId": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,63}$"
+          },
+          "operation": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,63}$"
+          },
+          "metric": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,63}$"
+          },
+          "unit": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,63}$"
+          },
+          "priceMicrosPerUnit": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "multiplierMillis": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "description": "Internal margin. Staff-only; never present on the customer pricing read."
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "debit",
+              "record_only"
+            ]
+          },
+          "effectiveFrom": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "effectiveTo": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "createdByUserId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CustomerPricingRule": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Customer view of a per-dimension price. Carries the unit price only: the multiplier and the provider cost are internal economics.",
+        "required": [
+          "ruleId",
+          "productId",
+          "operation",
+          "metric",
+          "unit",
+          "priceMicrosPerUnit",
+          "mode",
+          "effectiveFrom",
+          "effectiveTo"
+        ],
+        "properties": {
+          "ruleId": {
+            "type": "string"
+          },
+          "productId": {
+            "type": "string"
+          },
+          "operation": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "metric": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "unit": {
+            "type": "string"
+          },
+          "priceMicrosPerUnit": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "debit",
+              "record_only"
+            ]
+          },
+          "effectiveFrom": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "effectiveTo": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
+      "PricingChange": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "changeId",
+          "entityType",
+          "entityId",
+          "before",
+          "after",
+          "actorUserId",
+          "actorEmail",
+          "reason",
+          "recordedAt"
+        ],
+        "properties": {
+          "changeId": {
+            "type": "string"
+          },
+          "entityType": {
+            "type": "string",
+            "enum": [
+              "plan",
+              "credit_pack",
+              "multiplier",
+              "rule"
+            ]
+          },
+          "entityId": {
+            "type": "string"
+          },
+          "before": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": true
+          },
+          "after": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": true
+          },
+          "actorUserId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "actorEmail": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AdminPricing": {
+        "type": "object",
+        "required": [
+          "multipliers",
+          "plans",
+          "creditPacks",
+          "rules",
+          "asOf"
+        ],
+        "properties": {
+          "multipliers": {
+            "$ref": "#/components/schemas/PricingMultipliers"
+          },
+          "plans": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PricingPlan"
+            }
+          },
+          "creditPacks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PricingCreditPack"
+            }
+          },
+          "rules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PricingRule"
+            }
+          },
+          "asOf": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PricingChangePage": {
+        "type": "object",
+        "required": [
+          "changes",
+          "nextPageToken"
+        ],
+        "properties": {
+          "changes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PricingChange"
+            }
+          },
+          "nextPageToken": {
+            "type": "string"
+          }
+        }
+      },
+      "PricingMultipliersResponse": {
+        "type": "object",
+        "required": [
+          "multipliers"
+        ],
+        "properties": {
+          "multipliers": {
+            "$ref": "#/components/schemas/PricingMultipliers"
+          }
+        }
+      },
+      "PricingPlanResponse": {
+        "type": "object",
+        "required": [
+          "plan"
+        ],
+        "properties": {
+          "plan": {
+            "$ref": "#/components/schemas/PricingPlan"
+          }
+        }
+      },
+      "PricingCreditPackResponse": {
+        "type": "object",
+        "required": [
+          "creditPack"
+        ],
+        "properties": {
+          "creditPack": {
+            "$ref": "#/components/schemas/PricingCreditPack"
+          }
+        }
+      },
+      "PricingRuleResponse": {
+        "type": "object",
+        "required": [
+          "rule"
+        ],
+        "properties": {
+          "rule": {
+            "$ref": "#/components/schemas/PricingRule"
+          }
+        }
+      },
+      "UpdatePricingMultipliersRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "reason"
+        ],
+        "properties": {
+          "metered": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "byok": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512,
+            "description": "Why this price is changing. Recorded on the pricing change and the audit log."
+          }
+        }
+      },
+      "CreatePricingPlanRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "planId",
+          "prices",
+          "reason"
+        ],
+        "properties": {
+          "planId": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{0,62}$"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "prices": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 8,
+            "items": {
+              "$ref": "#/components/schemas/BillingPlanPrice"
+            }
+          },
+          "includedUsage": {
+            "type": "object",
+            "additionalProperties": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            }
+          },
+          "grantMicros": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "overageAllowed": {
+            "type": "boolean"
+          },
+          "overageRateMicrosPerCredit": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "entitlements": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "apiKeyScopeEntitlements": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "bundle": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": true
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "effectiveFrom": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "effectiveTo": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512,
+            "description": "Why this price is changing. Recorded on the pricing change and the audit log."
+          }
+        }
+      },
+      "UpdatePricingPlanRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Every field named by updateMask must be present and no unmasked mutable field may be supplied.",
+        "required": [
+          "reason"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "prices": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 8,
+            "items": {
+              "$ref": "#/components/schemas/BillingPlanPrice"
+            }
+          },
+          "includedUsage": {
+            "type": "object",
+            "additionalProperties": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            }
+          },
+          "grantMicros": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "overageAllowed": {
+            "type": "boolean"
+          },
+          "overageRateMicrosPerCredit": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "entitlements": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "apiKeyScopeEntitlements": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "bundle": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": true
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "effectiveFrom": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "effectiveTo": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512,
+            "description": "Why this price is changing. Recorded on the pricing change and the audit log."
+          }
+        }
+      },
+      "CreatePricingCreditPackRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "packId",
+          "name",
+          "currency",
+          "priceMinor",
+          "creditMicros",
+          "reason"
+        ],
+        "properties": {
+          "packId": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{0,62}$"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "currency": {
+            "type": "string",
+            "pattern": "^[a-z]{3}$",
+            "description": "Lowercase ISO-4217 alphabetic code, matching tempera-payments."
+          },
+          "priceMinor": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "creditMicros": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "effectiveFrom": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "effectiveTo": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512,
+            "description": "Why this price is changing. Recorded on the pricing change and the audit log."
+          }
+        }
+      },
+      "UpdatePricingCreditPackRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "reason"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "currency": {
+            "type": "string",
+            "pattern": "^[a-z]{3}$",
+            "description": "Lowercase ISO-4217 alphabetic code, matching tempera-payments."
+          },
+          "priceMinor": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "creditMicros": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "effectiveFrom": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "effectiveTo": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512,
+            "description": "Why this price is changing. Recorded on the pricing change and the audit log."
+          }
+        }
+      },
+      "CreatePricingRuleRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "productId",
+          "unit",
+          "mode",
+          "reason"
+        ],
+        "properties": {
+          "productId": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,63}$"
+          },
+          "operation": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,63}$"
+          },
+          "metric": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,63}$"
+          },
+          "unit": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,63}$"
+          },
+          "priceMicrosPerUnit": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "multiplierMillis": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "debit",
+              "record_only"
+            ]
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "effectiveFrom": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "effectiveTo": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512,
+            "description": "Why this price is changing. Recorded on the pricing change and the audit log."
+          }
+        }
+      },
+      "UpdatePricingRuleRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "reason"
+        ],
+        "properties": {
+          "unit": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,63}$"
+          },
+          "priceMicrosPerUnit": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "multiplierMillis": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "debit",
+              "record_only"
+            ]
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "effectiveFrom": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "effectiveTo": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512,
+            "description": "Why this price is changing. Recorded on the pricing change and the audit log."
+          }
+        }
+      },
+      "DeactivatePricingRuleRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "reason"
+        ],
+        "properties": {
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512,
+            "description": "Why this price is changing. Recorded on the pricing change and the audit log."
+          }
+        }
+      },
+      "BillingPricingCatalog": {
+        "type": "object",
+        "description": "What this workspace will be charged. Never carries a multiplier or a provider cost.",
+        "required": [
+          "orgId",
+          "plans",
+          "creditPacks",
+          "rules",
+          "asOf"
+        ],
+        "properties": {
+          "orgId": {
+            "type": "string"
+          },
+          "plans": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BillingPlan"
+            }
+          },
+          "creditPacks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreditTopupPack"
+            }
+          },
+          "rules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CustomerPricingRule"
+            }
+          },
+          "asOf": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "UsageRuleCredit": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Debit produced by a pricing rule: quantity x priceMicrosPerUnit. There is no provider cost and no multiplier on this branch.",
+        "required": [
+          "billableMicros",
+          "priceMicrosPerUnit",
+          "unit",
+          "ruleId"
+        ],
+        "properties": {
+          "billableMicros": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "priceMicrosPerUnit": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "unit": {
+            "type": "string"
+          },
+          "ruleId": {
+            "type": "string"
           }
         }
       }
