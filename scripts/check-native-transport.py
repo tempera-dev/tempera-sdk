@@ -13,10 +13,13 @@ scope, and a request and response digest derived from the vendored producer
 contract. This script both writes that file and checks a native client against
 it.
 
-Four producers are admitted. tempera-dropshipping and tempera-business publish
+Five producers are admitted. tempera-dropshipping and tempera-business publish
 every operation surface.json carries for them. tempera-payments publishes only
 the merchant onboarding seam named in PAYMENTS_NATIVE_OPERATIONS, each entry
-validated against the producer's wire metadata. tempera-voice publishes only
+validated against the producer's wire metadata. The control plane publishes only
+the seven account reads named in CONTROL_PLANE_NATIVE_OPERATIONS, under the
+tempera-account audience and the account:read scope the device plane declares.
+tempera-voice publishes only
 the phone-relevant session, pending-action, and agent operations named in
 NATIVE_OPERATIONS (no eval, artifact, agent-authoring, or export routes) plus
 one synthetic WebSocket operation, `temperaVoice.streamVoiceSession`, taken
@@ -42,8 +45,10 @@ route. A `WSS` annotation is checked exactly like an HTTP one. It also requires
 that every literal reaching into a producer's canonical namespace
 (NATIVE_NAMESPACES: `/v1/organizations` for dropshipping; `/v1/operating-state`,
 `/v1/business-profile`, and `/v1/cases` for business; `/v1/merchants` for
-payments; `/v1/sessions`, `/v1/agents`, and `/v1/actions` for voice) is
-annotated, so a new hand-written call cannot slip in undeclared.
+payments; `/v1/sessions`, `/v1/agents`, and `/v1/actions` for voice; `/v1/me`,
+`/v1/billing`, `/v1/usage`, and `/v1/team` for the control plane, whose
+`/v1/sessions` account read stays under the voice root the two products share)
+is annotated, so a new hand-written call cannot slip in undeclared.
 """
 
 from __future__ import annotations
@@ -61,13 +66,25 @@ SURFACE = ROOT / "surface.json"
 CONTRACT = ROOT / "contracts" / "native-transport-v1.json"
 
 # Products whose operations the native clients are allowed to call directly.
-NATIVE_PRODUCTS = ("temperaDropshipping", "temperaBusiness", "temperaPayments", "temperaVoice")
+NATIVE_PRODUCTS = (
+    "temperaDropshipping",
+    "temperaBusiness",
+    "temperaPayments",
+    "temperaVoice",
+    "controlPlane",
+)
 PRODUCT_SPECS = {
     "temperaDropshipping": "tempera-dropshipping.openapi.json",
     "temperaBusiness": "tempera-business.openapi.json",
     "temperaPayments": "tempera-payments.openapi.json",
     "temperaVoice": "tempera-voice.openapi.json",
+    "controlPlane": "control-plane.openapi.json",
 }
+# surface.json carries no single audience for the control plane: most of its
+# routes answer an account session rather than a resource token. The native
+# device plane is the one audience it publishes, so name it here and pin it
+# against the vendored contract's own audience and scope enums.
+PRODUCT_AUDIENCES = {"controlPlane": "tempera-account"}
 # Operations each product publishes to the phones, by surface.json id. None
 # means every operation surface.json carries for the product. An allowlisted
 # id that surface.json no longer carries fails the build rather than silently
@@ -77,6 +94,7 @@ NATIVE_OPERATIONS: dict[str, frozenset[str] | None] = {
     "temperaDropshipping": None,
     "temperaBusiness": None,
     "temperaPayments": None,
+    "controlPlane": None,
     "temperaVoice": frozenset(
         {
             "createVoiceSession",
@@ -104,6 +122,7 @@ NATIVE_NAMESPACES: dict[str, tuple[str, ...]] = {
     "temperaBusiness": ("/v1/operatingState", "/v1/businessProfile", "/v1/cases"),
     "temperaPayments": ("/v1/merchants",),
     "temperaVoice": ("/v1/sessions", "/v1/agents", "/v1/actions"),
+    "controlPlane": ("/v1/me", "/v1/billing", "/v1/usage", "/v1/team"),
 }
 
 # Payments remains a broad producer contract, but native phones receive only
@@ -189,10 +208,114 @@ PAYMENTS_NATIVE_OPERATIONS = (
     },
 )
 
+# The account plane the phones read. auth-hub accepts the device scope
+# account:read on exactly these seven GETs alongside the account-session
+# permission each route already required, so the reads are declared here rather
+# than taken from surface.json, which carries neither the audience nor the
+# device scope for them. Every entry is still pinned to the producer's method,
+# path, query and header metadata, and the audience and scope are pinned to the
+# vendored contract's ResourceAudience, Scope and TemperaMobileAudience enums.
+CONTROL_PLANE_AUDIENCE = "tempera-account"
+CONTROL_PLANE_SCOPE = "account:read"
+CONTROL_PLANE_NATIVE_OPERATIONS = (
+    {
+        "id": "getMe",
+        "upstreamOperationId": "getMe",
+        "method": "GET",
+        "path": "/v1/me",
+        "safeRetry": "read",
+        "authAudience": CONTROL_PLANE_AUDIENCE,
+        "scope": CONTROL_PLANE_SCOPE,
+        "headers": ["X-Tempera-Reference-Request-Id"],
+        "requiredHeaders": [],
+    },
+    {
+        "id": "getBillingStatus",
+        "upstreamOperationId": "getBillingStatus",
+        "method": "GET",
+        "path": "/v1/billing/status",
+        "safeRetry": "read",
+        "authAudience": CONTROL_PLANE_AUDIENCE,
+        "scope": CONTROL_PLANE_SCOPE,
+    },
+    {
+        "id": "getBillingPricing",
+        "upstreamOperationId": "getBillingPricing",
+        "method": "GET",
+        "path": "/v1/billing/pricing",
+        "safeRetry": "read",
+        "authAudience": CONTROL_PLANE_AUDIENCE,
+        "scope": CONTROL_PLANE_SCOPE,
+    },
+    {
+        "id": "getBillingCredits",
+        "upstreamOperationId": "getBillingCredits",
+        "method": "GET",
+        "path": "/v1/billing/credits",
+        "safeRetry": "read",
+        "authAudience": CONTROL_PLANE_AUDIENCE,
+        "scope": CONTROL_PLANE_SCOPE,
+    },
+    {
+        "id": "usageSummary.get",
+        "upstreamOperationId": "usageSummary.get",
+        "method": "GET",
+        "path": "/v1/usage/summary",
+        "query": [
+            "granularity",
+            "groupBy",
+            "from",
+            "to",
+            "projectId",
+            "environmentId",
+            "productId",
+            "operation",
+            "metric",
+            "section",
+            "pageSize",
+            "pageToken",
+        ],
+        "requiredQuery": [],
+        "safeRetry": "read",
+        "authAudience": CONTROL_PLANE_AUDIENCE,
+        "scope": CONTROL_PLANE_SCOPE,
+    },
+    {
+        "id": "listTeamMembers",
+        "upstreamOperationId": "listTeamMembers",
+        "method": "GET",
+        "path": "/v1/team/members",
+        "query": ["pageSize", "pageToken"],
+        "requiredQuery": [],
+        "safeRetry": "read",
+        "authAudience": CONTROL_PLANE_AUDIENCE,
+        "scope": CONTROL_PLANE_SCOPE,
+    },
+    {
+        "id": "listAccountSessions",
+        "upstreamOperationId": "listAccountSessions",
+        "method": "GET",
+        "path": "/v1/sessions",
+        "query": ["pageSize", "pageToken"],
+        "requiredQuery": [],
+        "safeRetry": "read",
+        "authAudience": CONTROL_PLANE_AUDIENCE,
+        "scope": CONTROL_PLANE_SCOPE,
+    },
+)
+
+# Producers bounded by an explicit mapping here instead of by surface.json.
+EXPLICIT_NATIVE_SURFACES = {
+    "temperaPayments": PAYMENTS_NATIVE_OPERATIONS,
+    "controlPlane": CONTROL_PLANE_NATIVE_OPERATIONS,
+}
+
 PARAM_RE = re.compile(r"\{[^}]+\}")
 ANNOTATION_RE = re.compile(
     r"tempera-transport:\s*(?P<product>[A-Za-z][A-Za-z0-9]*)\."
-    r"(?P<operation>[A-Za-z][A-Za-z0-9]*)\s+(?P<method>[A-Z]+)\s+(?P<path>/\S+)\s*$"
+    # Dots are allowed in the operation: the control plane publishes ids such as
+    # usageSummary.get, and a call site must be able to name them.
+    r"(?P<operation>[A-Za-z][A-Za-z0-9.]*)\s+(?P<method>[A-Z]+)\s+(?P<path>/\S+)\s*$"
 )
 STRING_LITERAL_RE = re.compile(r'"((?:[^"\\]|\\.)*)"')
 # Kotlin "$name" / "${expr}" and Swift "\(expr)" interpolations.
@@ -255,6 +378,7 @@ def upstream_operations(spec: dict[str, Any]) -> dict[str, dict[str, Any]]:
                     "_path": path,
                     "_method": method.upper(),
                     "_headers": [resolve(spec, p) for p in [*(item.get("parameters") or []), *(operation.get("parameters") or [])] if resolve(spec, p).get("in") == "header"],
+                    "_query": [resolve(spec, p) for p in [*(item.get("parameters") or []), *(operation.get("parameters") or [])] if resolve(spec, p).get("in") == "query"],
                 }
     return indexed
 
@@ -270,6 +394,61 @@ def validate_payment_mapping(op: dict[str, Any], upstream_operation: dict[str, A
     headers = upstream_operation.get("_headers", [])
     if set(op.get("headers", [])) != {p["name"] for p in headers} or set(op.get("requiredHeaders", [])) != {p["name"] for p in headers if p.get("required") is True}:
         raise ValueError(f"Payments native headers drift for {op['id']}")
+
+
+def enum_values(spec: dict[str, Any], schema: str, *path: str) -> list[Any]:
+    node: Any = (spec.get("components") or {}).get("schemas", {}).get(schema)
+    for key in path:
+        node = resolve(spec, (node or {}).get("properties", {}).get(key, {}))
+    node = resolve(spec, node or {})
+    if node.get("type") == "array":
+        node = resolve(spec, node.get("items") or {})
+    values = node.get("enum")
+    return values if isinstance(values, list) else []
+
+
+def validate_control_plane_mapping(
+    op: dict[str, Any], upstream_operation: dict[str, Any], spec: dict[str, Any]
+) -> None:
+    """Keep the bounded account reads tied to the producer's wire metadata.
+
+    The routes carry an account permission, not the device scope, so the
+    audience and scope cannot be read off the operation. They are pinned
+    instead to the enums the vendored contract publishes: the registered
+    resource audiences, the scope vocabulary, and the device plane's own
+    per-audience scope list.
+    """
+    if upstream_operation["_method"] != op["method"] or upstream_operation["_path"] != op["path"]:
+        raise ValueError(f"Control-plane native mapping drifts from OpenAPI for {op['id']}")
+    if op["method"] != "GET" or op["safeRetry"] != "read":
+        raise ValueError(f"Control-plane native operation {op['id']} is not a read")
+    query = upstream_operation.get("_query", [])
+    if list(op.get("query", [])) != [p["name"] for p in query]:
+        raise ValueError(f"Control-plane native query drifts for {op['id']}")
+    if set(op.get("requiredQuery", [])) != {p["name"] for p in query if p.get("required") is True}:
+        raise ValueError(f"Control-plane native required query drifts for {op['id']}")
+    headers = upstream_operation.get("_headers", [])
+    if list(op.get("headers", [])) != [p["name"] for p in headers]:
+        raise ValueError(f"Control-plane native headers drift for {op['id']}")
+    if set(op.get("requiredHeaders", [])) != {p["name"] for p in headers if p.get("required") is True}:
+        raise ValueError(f"Control-plane native required headers drift for {op['id']}")
+    if op["authAudience"] not in enum_values(spec, "ResourceAudience"):
+        raise ValueError(
+            f"Control-plane native audience {op['authAudience']!r} is not a "
+            "registered resource audience"
+        )
+    if op["scope"] not in enum_values(spec, "Scope"):
+        raise ValueError(
+            f"Control-plane native scope {op['scope']!r} is not in the producer's "
+            "scope vocabulary"
+        )
+    device_audiences = enum_values(spec, "TemperaMobileAudience", "oauth_resource_audience")
+    device_scopes = enum_values(spec, "TemperaMobileAudience", "scopes")
+    if op["authAudience"] not in device_audiences or op["scope"] not in device_scopes:
+        raise ValueError(
+            f"Control-plane native {op['id']} names an audience or scope the "
+            "device plane does not publish"
+        )
 
 
 def websocket_operation(
@@ -322,7 +501,9 @@ def build_contract() -> dict[str, Any]:
         lock = json.loads(
             (ROOT / "specs" / f"{spec_name}.source").read_text(encoding="utf-8")
         )
-        audience = surface["products"][product]["audience"]
+        audience = PRODUCT_AUDIENCES.get(
+            product, surface["products"][product]["audience"]
+        )
         producers.append(
             {
                 "product": product,
@@ -336,10 +517,8 @@ def build_contract() -> dict[str, Any]:
             }
         )
         upstream = upstream_operations(spec)
-        native_surface = (
-            PAYMENTS_NATIVE_OPERATIONS
-            if product == "temperaPayments"
-            else surface["operations"][product]
+        native_surface = EXPLICIT_NATIVE_SURFACES.get(
+            product, surface["operations"][product]
         )
         allowed = NATIVE_OPERATIONS[product]
         published: set[str] = set()
@@ -350,6 +529,8 @@ def build_contract() -> dict[str, Any]:
             upstream_operation = upstream[op["upstreamOperationId"]]
             if product == "temperaPayments":
                 validate_payment_mapping(op, upstream_operation)
+            elif product == "controlPlane":
+                validate_control_plane_mapping(op, upstream_operation, spec)
             request_descriptor = {
                 "method": op["method"],
                 "path": op["path"],
