@@ -1,5 +1,17 @@
 {
   "components": {
+    "responses": {
+      "Error": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Status"
+            }
+          }
+        },
+        "description": "A google.rpc.Status error envelope."
+      }
+    },
     "schemas": {
       "BioCampaignCompileRequest": {
         "additionalProperties": false,
@@ -9,8 +21,10 @@
             "description": "Per-resume execution budget for computation around each durable wait.",
             "format": "int64",
             "minimum": 0,
-            "nullable": true,
-            "type": "integer"
+            "type": [
+              "integer",
+              "null"
+            ]
           },
           "maxRounds": {
             "description": "Maximum durable measurement rounds represented in the graph (1..=8).",
@@ -20,8 +34,10 @@
           },
           "name": {
             "description": "Display name for the returned draft.",
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "signalExpiresAfterSeconds": {
             "description": "Time each external measurement callback remains acceptable (1..=30 days).",
@@ -138,8 +154,10 @@
             "type": "array"
           },
           "nextPageToken": {
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           }
         },
         "required": [
@@ -174,8 +192,10 @@
           },
           "output": {
             "description": "For multi-output nodes (`branch.condition`): the route name\n(`true`/`false`). For single-output nodes: an optional selector into the\noutput — a JSON pointer when it starts with `/`, else an object key.",
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           }
         },
         "required": [
@@ -189,8 +209,10 @@
         "properties": {
           "input": {
             "description": "Key under which the value lands in the target's input object. When\nomitted, object values are shallow-merged and scalars land under the\nsource node id.",
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "node": {
             "description": "Target node id.",
@@ -199,41 +221,6 @@
         },
         "required": [
           "node"
-        ],
-        "type": "object"
-      },
-      "ErrorBody": {
-        "description": "The error payload inside [`ErrorResponse`].",
-        "properties": {
-          "code": {
-            "description": "Numeric HTTP status code.",
-            "example": 400,
-            "format": "int32",
-            "minimum": 0,
-            "type": "integer"
-          },
-          "details": {
-            "description": "Typed machine-readable error details.",
-            "items": {
-              "$ref": "#/components/schemas/ErrorInfo"
-            },
-            "type": "array"
-          },
-          "message": {
-            "description": "Human-readable description safe to show to operators.",
-            "type": "string"
-          },
-          "status": {
-            "description": "Canonical `google.rpc.Code` enum name, e.g. `INVALID_ARGUMENT`.",
-            "example": "INVALID_ARGUMENT",
-            "type": "string"
-          }
-        },
-        "required": [
-          "code",
-          "status",
-          "message",
-          "details"
         ],
         "type": "object"
       },
@@ -267,24 +254,14 @@
         ],
         "type": "object"
       },
-      "ErrorResponse": {
-        "description": "Wire envelope for every non-2xx response.",
-        "properties": {
-          "error": {
-            "$ref": "#/components/schemas/ErrorBody"
-          }
-        },
-        "required": [
-          "error"
-        ],
-        "type": "object"
-      },
       "ExperimentSubmission": {
         "description": "Safe public view of a durable submission. Secret references and secret\nvalues are intentionally absent.",
         "properties": {
           "approvalConsumptionDigest": {
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "approvalId": {
             "type": "string"
@@ -296,8 +273,10 @@
             "type": "string"
           },
           "error": {
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "experimentProposalDigest": {
             "type": "string"
@@ -312,25 +291,33 @@
             "type": "string"
           },
           "providerConnection": {
-            "allOf": [
+            "anyOf": [
               {
                 "$ref": "#/components/schemas/ReceiptProviderConnection"
+              },
+              {
+                "type": "null"
               }
-            ],
-            "nullable": true
+            ]
           },
           "providerOrderRef": {
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "rawSubmissionReceiptBase64": {
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "reconcileAfter": {
             "description": "Earliest safe lookup time after a process disappears during dispatch.",
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "requestDigest": {
             "type": "string"
@@ -345,9 +332,7 @@
             "description": "Exact Bio evidence object. Its nested `key_id` field intentionally\nretains the pinned Bio schema rather than adopting the REST casing.",
             "type": "object"
           },
-          "submissionReceipt": {
-            "nullable": true
-          },
+          "submissionReceipt": {},
           "updatedAt": {
             "type": "string"
           }
@@ -498,13 +483,17 @@
         "properties": {
           "context": {
             "description": "Human-readable field context such as \"Templates\" or \"JSON schema\".",
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "current": {
             "description": "Raw editor text. Required in repair mode so malformed JSON can be fixed.",
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "expectedRoot": {
             "$ref": "#/components/schemas/JsonRootKind"
@@ -571,28 +560,33 @@
           },
           "name": {
             "description": "Optional display name for the studio canvas.",
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "onError": {
-            "allOf": [
+            "anyOf": [
               {
                 "$ref": "#/components/schemas/OnErrorPolicy"
+              },
+              {
+                "type": "null"
               }
-            ],
-            "nullable": true
+            ]
           },
           "pinnedOutput": {
-            "description": "Pinned test output. When a run is created with `usePinned: true`, this\nvalue is returned verbatim without executing the node (studio testing).",
-            "nullable": true
+            "description": "Pinned test output. When a run is created with `usePinned: true`, this\nvalue is returned verbatim without executing the node (studio testing)."
           },
           "position": {
-            "allOf": [
+            "anyOf": [
               {
                 "$ref": "#/components/schemas/Position"
+              },
+              {
+                "type": "null"
               }
-            ],
-            "nullable": true
+            ]
           },
           "type": {
             "description": "Node type from the registry (`GET /v1/node-types`), e.g. `python.execute`.",
@@ -621,12 +615,16 @@
         "description": "Recorded state of one node within a run.",
         "properties": {
           "error": {
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "finishedAt": {
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "logs": {
             "items": {
@@ -635,21 +633,23 @@
             "type": "array"
           },
           "metrics": {
-            "description": "`durationMs` plus executor-specific metrics.",
-            "nullable": true
+            "description": "`durationMs` plus executor-specific metrics."
           },
           "output": {
-            "description": "Node output, possibly truncated to the run's `maxOutputBytes` — a\ntruncated value is replaced by `{\"truncated\":true,\"bytes\":N,\"preview\":\"...\"}`.",
-            "nullable": true
+            "description": "Node output, possibly truncated to the run's `maxOutputBytes` — a\ntruncated value is replaced by `{\"truncated\":true,\"bytes\":N,\"preview\":\"...\"}`."
           },
           "route": {
             "description": "Taken route for multi-output nodes.",
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "startedAt": {
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "state": {
             "$ref": "#/components/schemas/NodeStateKind"
@@ -682,8 +682,10 @@
             "type": "string"
           },
           "product": {
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "requiredInputs": {
             "items": {
@@ -711,8 +713,10 @@
         "properties": {
           "apiPath": {
             "description": "Upstream resource or custom-method path for an SDK action.",
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "category": {
             "description": "trigger | compute | control | llm | output | sdk.",
@@ -726,18 +730,24 @@
           },
           "displayName": {
             "description": "Friendly studio alias (e.g. \"S3 Ingest\").",
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "httpMethod": {
             "description": "Upstream HTTP method for an SDK action.",
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "operationId": {
             "description": "SDK operation id without the `sdk.<product>.` prefix.",
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "outputs": {
             "items": {
@@ -747,8 +757,10 @@
           },
           "product": {
             "description": "SDK product key for `sdk.*` nodes.",
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "requiredInputs": {
             "description": "Inputs that must be supplied by configuration or incoming node data.",
@@ -767,8 +779,10 @@
           },
           "verified": {
             "description": "Honesty flag, present where the operation was cross-checked against the\nupstream product's real contract (today: dataEngine). `false` marks a\nphantom SDK operation — the studio should badge it as unverified.",
-            "nullable": true,
-            "type": "boolean"
+            "type": [
+              "boolean",
+              "null"
+            ]
           }
         },
         "required": [
@@ -795,8 +809,10 @@
             "type": "object"
           },
           "nextPageToken": {
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "nodeTypes": {
             "description": "All node types, name-sorted.",
@@ -829,12 +845,14 @@
             "$ref": "#/components/schemas/OnErrorMode"
           },
           "retry": {
-            "allOf": [
+            "anyOf": [
               {
                 "$ref": "#/components/schemas/RetryPolicy"
+              },
+              {
+                "type": "null"
               }
-            ],
-            "nullable": true
+            ]
           }
         },
         "type": "object"
@@ -921,19 +939,25 @@
             "type": "string"
           },
           "error": {
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "finishedAt": {
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "id": {
             "type": "string"
           },
           "idempotencyKey": {
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "input": {},
           "nodeStates": {
@@ -943,23 +967,26 @@
             "type": "object"
           },
           "output": {
-            "description": "Outputs of the workflow's sink nodes, keyed by node id (size-capped).",
-            "nullable": true
+            "description": "Outputs of the workflow's sink nodes, keyed by node id (size-capped)."
           },
           "startedAt": {
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "status": {
             "$ref": "#/components/schemas/RunStatus"
           },
           "wait": {
-            "allOf": [
+            "anyOf": [
               {
                 "$ref": "#/components/schemas/RunWait"
+              },
+              {
+                "type": "null"
               }
-            ],
-            "nullable": true
+            ]
           },
           "workflowId": {
             "type": "string"
@@ -981,36 +1008,45 @@
         "properties": {
           "idempotencyKey": {
             "description": "Replay-safe key: an identical `(workflow, idempotencyKey)` returns the\nexisting run instead of starting a new one.",
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "input": {
-            "description": "Payload delivered to the trigger node (default `{}`).",
-            "nullable": true
+            "description": "Payload delivered to the trigger node (default `{}`)."
           },
           "only": {
             "description": "Execute exactly this set of node ids; all others are skipped. Combine\nwith `seedOutputs` for a \"test single node\" run.",
             "items": {
               "type": "string"
             },
-            "nullable": true,
-            "type": "array"
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "seedOutputs": {
             "additionalProperties": {},
             "description": "Inject outputs for nodes treated as already-produced, so `startAt`/`only`\nhave upstream data. Keyed by node id.",
-            "nullable": true,
-            "type": "object"
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "startAt": {
             "description": "Execute only this node and its transitive descendants; ancestors are\nskipped unless supplied via `seedOutputs`.",
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "usePinned": {
             "description": "When true, any node with `pinnedOutput` set returns it verbatim without\nexecuting (studio testing of downstream logic). Default false.",
-            "nullable": true,
-            "type": "boolean"
+            "type": [
+              "boolean",
+              "null"
+            ]
           }
         },
         "type": "object"
@@ -1020,8 +1056,10 @@
         "properties": {
           "data": {},
           "nodeId": {
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "runId": {
             "type": "string"
@@ -1052,8 +1090,10 @@
         "description": "`GET /v1/runs` response.",
         "properties": {
           "nextPageToken": {
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "runs": {
             "items": {
@@ -1173,15 +1213,19 @@
             "type": "string"
           },
           "finishedAt": {
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "id": {
             "type": "string"
           },
           "startedAt": {
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "status": {
             "$ref": "#/components/schemas/RunStatus"
@@ -1239,6 +1283,69 @@
         ],
         "type": "string"
       },
+      "Status": {
+        "additionalProperties": false,
+        "description": "The google.rpc.Status error envelope required of every Tempera API (AIP-193).",
+        "properties": {
+          "error": {
+            "additionalProperties": false,
+            "properties": {
+              "code": {
+                "description": "The HTTP status code, repeated in the body so the envelope is self-describing.",
+                "type": "integer"
+              },
+              "details": {
+                "description": "Structured error details. Present but empty when there are none.",
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "message": {
+                "description": "A developer-facing description that is safe to log and safe to show.",
+                "type": "string"
+              },
+              "requestId": {
+                "description": "The server-assigned request identifier, mirrored from the x-request-id response header.",
+                "type": "string"
+              },
+              "status": {
+                "description": "The canonical google.rpc.Code name, for example INVALID_ARGUMENT.",
+                "enum": [
+                  "CANCELLED",
+                  "UNKNOWN",
+                  "INVALID_ARGUMENT",
+                  "DEADLINE_EXCEEDED",
+                  "NOT_FOUND",
+                  "ALREADY_EXISTS",
+                  "PERMISSION_DENIED",
+                  "UNAUTHENTICATED",
+                  "RESOURCE_EXHAUSTED",
+                  "FAILED_PRECONDITION",
+                  "ABORTED",
+                  "OUT_OF_RANGE",
+                  "UNIMPLEMENTED",
+                  "INTERNAL",
+                  "UNAVAILABLE",
+                  "DATA_LOSS"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "code",
+              "status",
+              "message"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "type": "object"
+      },
       "ValidateResponse": {
         "description": "`POST /v1/workflows:validate` response (200 even when invalid).",
         "properties": {
@@ -1270,8 +1377,10 @@
           },
           "nodeId": {
             "description": "Offending node id when the issue is node-scoped.",
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "severity": {
             "$ref": "#/components/schemas/Severity"
@@ -1288,8 +1397,10 @@
         "description": "A small, ephemeral attachment used while composing. Attachments are never\npersisted in the workflow definition or returned to the browser.",
         "properties": {
           "content": {
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "kind": {
             "$ref": "#/components/schemas/WorkflowAttachmentKind"
@@ -1323,43 +1434,54 @@
         "properties": {
           "idempotencyKey": {
             "description": "Replay-safe key: an identical `(workflow, idempotencyKey)` returns the\nexisting run instead of starting a new one.",
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "input": {
-            "description": "Payload delivered to the trigger node (default `{}`).",
-            "nullable": true
+            "description": "Payload delivered to the trigger node (default `{}`)."
           },
           "only": {
             "description": "Execute exactly this set of node ids; all others are skipped.",
             "items": {
               "type": "string"
             },
-            "nullable": true,
-            "type": "array"
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "seedOutputs": {
             "additionalProperties": {},
             "description": "Inject outputs for nodes treated as already-produced.",
-            "nullable": true,
-            "type": "object"
+            "type": [
+              "object",
+              "null"
+            ]
           },
           "startAt": {
             "description": "Execute only this node and its transitive descendants.",
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "usePinned": {
             "description": "When true, any node with `pinnedOutput` set returns it verbatim.",
-            "nullable": true,
-            "type": "boolean"
+            "type": [
+              "boolean",
+              "null"
+            ]
           },
           "waitMs": {
             "description": "Max milliseconds to wait for the run to finish before returning it still\nrunning. Bounded by the workflow's `settings.deadlineMs`; when omitted,\na proxy-safe default (30s) is used so the call returns promptly. The run\nkeeps executing in the background either way — poll `runs.get` to finish.",
             "format": "int64",
             "minimum": 0,
-            "nullable": true,
-            "type": "integer"
+            "type": [
+              "integer",
+              "null"
+            ]
           }
         },
         "type": "object"
@@ -1369,12 +1491,13 @@
         "properties": {
           "hint": {
             "description": "Present for a non-terminal response: how to poll or signal the run.",
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "output": {
-            "description": "Final run output (sink node outputs) when the run finished; else null.",
-            "nullable": true
+            "description": "Final run output (sink node outputs) when the run finished; else null."
           },
           "run": {
             "$ref": "#/components/schemas/Run"
@@ -1463,12 +1586,14 @@
             "type": "array"
           },
           "draft": {
-            "allOf": [
+            "anyOf": [
               {
                 "$ref": "#/components/schemas/WorkflowDefinition"
+              },
+              {
+                "type": "null"
               }
-            ],
-            "nullable": true
+            ]
           },
           "history": {
             "description": "Recent bounded turns for follow-up requests such as “send that weekly”.",
@@ -1479,8 +1604,10 @@
           },
           "model": {
             "description": "Optional entitled model id. The server-side provider default is used when omitted.",
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "prompt": {
             "description": "Natural-language outcome or edit request.",
@@ -1502,12 +1629,14 @@
             "type": "array"
           },
           "definition": {
-            "allOf": [
+            "anyOf": [
               {
                 "$ref": "#/components/schemas/WorkflowDefinition"
+              },
+              {
+                "type": "null"
               }
-            ],
-            "nullable": true
+            ]
           },
           "issues": {
             "items": {
@@ -1522,8 +1651,10 @@
             "$ref": "#/components/schemas/ComposeMode"
           },
           "model": {
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "questions": {
             "description": "Setup choices that must be answered before a safe proposal can be made.",
@@ -1540,8 +1671,10 @@
           },
           "valid": {
             "description": "Whether the proposal passed validation. Absent for catalog-only results.",
-            "nullable": true,
-            "type": "boolean"
+            "type": [
+              "boolean",
+              "null"
+            ]
           }
         },
         "required": [
@@ -1567,8 +1700,10 @@
             "type": "string"
           },
           "description": {
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "edges": {
             "description": "Directed edges carrying data between nodes.",
@@ -1594,12 +1729,14 @@
             "type": "array"
           },
           "settings": {
-            "allOf": [
+            "anyOf": [
               {
                 "$ref": "#/components/schemas/WorkflowSettings"
+              },
+              {
+                "type": "null"
               }
-            ],
-            "nullable": true
+            ]
           }
         },
         "required": [
@@ -1615,8 +1752,10 @@
         "description": "`GET /v1/workflows` response.",
         "properties": {
           "nextPageToken": {
-            "nullable": true,
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "workflows": {
             "items": {
@@ -1663,15 +1802,19 @@
             "description": "Wall-clock budget for a whole run (default 300000, max 3600000).",
             "format": "int64",
             "minimum": 0,
-            "nullable": true,
-            "type": "integer"
+            "type": [
+              "integer",
+              "null"
+            ]
           },
           "maxOutputBytes": {
             "description": "Per-node stored-output cap; larger outputs are truncated in the record\n(execution still sees full values). Default 262144, max 2097152.",
             "format": "int64",
             "minimum": 0,
-            "nullable": true,
-            "type": "integer"
+            "type": [
+              "integer",
+              "null"
+            ]
           }
         },
         "type": "object"
@@ -1686,7 +1829,7 @@
     "title": "Tempera Workflows API",
     "version": "0.1.0"
   },
-  "openapi": "3.0.3",
+  "openapi": "3.1.0",
   "paths": {
     "/healthz": {
       "get": {
@@ -1707,11 +1850,9 @@
         "tags": [
           "health"
         ],
-        "x-tempera-auth-audience": null,
         "x-tempera-auth-kind": "none",
         "x-tempera-physical-action": false,
-        "x-tempera-prepare-commit-required": false,
-        "x-tempera-required-scope": null
+        "x-tempera-prepare-commit-required": false
       }
     },
     "/v1/connectors": {
@@ -1726,8 +1867,10 @@
             "required": false,
             "schema": {
               "minimum": 0,
-              "nullable": true,
-              "type": "integer"
+              "type": [
+                "integer",
+                "null"
+              ]
             }
           },
           {
@@ -1736,8 +1879,10 @@
             "name": "pageToken",
             "required": false,
             "schema": {
-              "nullable": true,
-              "type": "string"
+              "type": [
+                "string",
+                "null"
+              ]
             }
           }
         ],
@@ -1753,34 +1898,13 @@
             "description": "Configured Tempera Connector ids (no URLs or secrets)"
           },
           "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Invalid list query or page token"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Missing scope"
+            "$ref": "#/components/responses/Error"
           }
         },
         "summary": "The server-managed connector ids available to workflow definitions.",
@@ -1840,64 +1964,22 @@
             "description": "Dispatch outcome is ambiguous; reconcile by the same provider idempotency key"
           },
           "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Malformed or unsealed Bio artifact"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Missing service scope or workspace identity"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Idempotency or approval binding conflict"
+            "$ref": "#/components/responses/Error"
           },
           "412": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Protocol, provider, or approval precondition failed"
+            "$ref": "#/components/responses/Error"
           },
           "503": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Provider adapter, signer, secret backend, or Auth Hub unavailable"
+            "$ref": "#/components/responses/Error"
           }
         },
         "summary": "Authorize and durably submit one preregistered prospective Bio experiment.",
@@ -1937,34 +2019,13 @@
             "description": "Durable submission state"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Missing scope or workspace identity"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Not found in this workspace"
+            "$ref": "#/components/responses/Error"
           }
         },
         "summary": "Get a credential-free durable view of one experiment submission.",
@@ -2005,54 +2066,19 @@
             "description": "Provider order found and signed receipt persisted, or reconciliation remains pending"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Missing service scope or workspace identity"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Not found in this workspace"
+            "$ref": "#/components/responses/Error"
           },
           "412": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Submission is not reconcilable or provider reports no order"
+            "$ref": "#/components/responses/Error"
           },
           "503": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Provider adapter or secret backend unavailable"
+            "$ref": "#/components/responses/Error"
           }
         },
         "summary": "Resolve an ambiguous physical dispatch with a provider-side lookup. This",
@@ -2077,8 +2103,10 @@
             "required": false,
             "schema": {
               "minimum": 0,
-              "nullable": true,
-              "type": "integer"
+              "type": [
+                "integer",
+                "null"
+              ]
             }
           },
           {
@@ -2087,8 +2115,10 @@
             "name": "pageToken",
             "required": false,
             "schema": {
-              "nullable": true,
-              "type": "string"
+              "type": [
+                "string",
+                "null"
+              ]
             }
           }
         ],
@@ -2104,24 +2134,10 @@
             "description": "Node type catalog (native + sdk.* nodes)"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Missing scope"
+            "$ref": "#/components/responses/Error"
           }
         },
         "summary": "The studio palette: every node type with config JSON Schema and outputs.",
@@ -2145,8 +2161,10 @@
             "name": "workflowId",
             "required": false,
             "schema": {
-              "nullable": true,
-              "type": "string"
+              "type": [
+                "string",
+                "null"
+              ]
             }
           },
           {
@@ -2156,8 +2174,10 @@
             "required": false,
             "schema": {
               "minimum": 0,
-              "nullable": true,
-              "type": "integer"
+              "type": [
+                "integer",
+                "null"
+              ]
             }
           },
           {
@@ -2166,8 +2186,10 @@
             "name": "pageToken",
             "required": false,
             "schema": {
-              "nullable": true,
-              "type": "string"
+              "type": [
+                "string",
+                "null"
+              ]
             }
           }
         ],
@@ -2183,24 +2205,10 @@
             "description": "Run summaries"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Missing scope"
+            "$ref": "#/components/responses/Error"
           }
         },
         "summary": "List runs, newest first.",
@@ -2240,34 +2248,13 @@
             "description": "The run"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Missing scope"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Not found"
+            "$ref": "#/components/responses/Error"
           }
         },
         "summary": "Full run view: status, per-node states with outputs/logs/metrics, timestamps.",
@@ -2302,8 +2289,10 @@
             "required": false,
             "schema": {
               "format": "int64",
-              "nullable": true,
-              "type": "integer"
+              "type": [
+                "integer",
+                "null"
+              ]
             }
           }
         ],
@@ -2319,34 +2308,13 @@
             "description": "text/event-stream of RunEvent payloads"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Missing scope"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Not found"
+            "$ref": "#/components/responses/Error"
           }
         },
         "summary": "Server-sent events for a run: replays history from `?since=seq`, then",
@@ -2397,44 +2365,16 @@
             "description": "Cancellation requested; poll runs.get"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Missing scope"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Not found"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Run already finished"
+            "$ref": "#/components/responses/Error"
           }
         },
         "summary": "Cancel a queued, running, or waiting run. Already-cancelled runs return 200",
@@ -2495,54 +2435,19 @@
             "description": "Signal consumed and run queued for resumption"
           },
           "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Invalid or schema-incompatible signal"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Missing scope"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Run not found"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Wrong, late, amended, or conflicting signal"
+            "$ref": "#/components/responses/Error"
           }
         },
         "summary": "Consume a durable external callback and resume a waiting run.",
@@ -2567,8 +2472,10 @@
             "required": false,
             "schema": {
               "minimum": 0,
-              "nullable": true,
-              "type": "integer"
+              "type": [
+                "integer",
+                "null"
+              ]
             }
           },
           {
@@ -2577,8 +2484,10 @@
             "name": "pageToken",
             "required": false,
             "schema": {
-              "nullable": true,
-              "type": "string"
+              "type": [
+                "string",
+                "null"
+              ]
             }
           }
         ],
@@ -2594,24 +2503,10 @@
             "description": "Workflows, id-sorted"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Missing scope"
+            "$ref": "#/components/responses/Error"
           }
         },
         "summary": "List workflows.",
@@ -2648,54 +2543,19 @@
             "description": "Created"
           },
           "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Invalid definition"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Missing scope"
+            "$ref": "#/components/responses/Error"
           },
           "409": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Workflow id already exists"
+            "$ref": "#/components/responses/Error"
           },
           "413": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Definition too large"
+            "$ref": "#/components/responses/Error"
           }
         },
         "summary": "Create a workflow from a `tempera.workflow/v1` definition.",
@@ -2728,34 +2588,13 @@
             "description": "Deleted"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Missing scope"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Not found"
+            "$ref": "#/components/responses/Error"
           }
         },
         "summary": "Delete a workflow. Existing runs keep their definition snapshots.",
@@ -2793,34 +2632,13 @@
             "description": "The workflow"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Missing scope"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Not found"
+            "$ref": "#/components/responses/Error"
           }
         },
         "summary": "Get one workflow.",
@@ -2877,54 +2695,19 @@
             "description": "Updated"
           },
           "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Invalid definition or id mismatch"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Missing scope"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Not found"
+            "$ref": "#/components/responses/Error"
           },
           "413": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Definition too large"
+            "$ref": "#/components/responses/Error"
           }
         },
         "summary": "Replace a workflow definition through an AIP-style masked update.",
@@ -2985,44 +2768,16 @@
             "description": "Run accepted and queued"
           },
           "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Invalid request"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Missing scope"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Workflow not found"
+            "$ref": "#/components/responses/Error"
           }
         },
         "summary": "Start a run (job pattern): returns immediately with the queued run; poll",
@@ -3073,44 +2828,16 @@
             "description": "The run finished, reached a durable wait, or the synchronous wait bound elapsed"
           },
           "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Invalid request"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Missing scope"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Workflow not found"
+            "$ref": "#/components/responses/Error"
           }
         },
         "summary": "Create a run AND wait for it to finish, returning the run + output in one",
@@ -3161,54 +2888,19 @@
             "description": "Validated, unsaved Bio campaign workflow draft and exact callback contracts"
           },
           "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Invalid compiler bounds or workflow id"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Missing workflow:write scope"
+            "$ref": "#/components/responses/Error"
           },
           "413": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Request too large"
+            "$ref": "#/components/responses/Error"
           },
           "500": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Generated definition failed internal validation"
+            "$ref": "#/components/responses/Error"
           }
         },
         "summary": "Compile a validated, unsaved, bounded Bio campaign workflow draft.",
@@ -3259,54 +2951,19 @@
             "description": "Validated draft proposal or full-catalog node matches"
           },
           "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Invalid prompt or draft"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Missing scope"
+            "$ref": "#/components/responses/Error"
           },
           "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Workflow not found and no draft supplied"
+            "$ref": "#/components/responses/Error"
           },
           "413": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Request too large"
+            "$ref": "#/components/responses/Error"
           }
         },
         "summary": "Ask Tempera Code to propose a validated workflow draft, or search the full",
@@ -3346,54 +3003,19 @@
             "description": "Validated JSON editor value"
           },
           "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Invalid prompt, mode, or editor value"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Missing scope"
+            "$ref": "#/components/responses/Error"
           },
           "413": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Editor value is too large"
+            "$ref": "#/components/responses/Error"
           },
           "503": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Workflow model unavailable or returned the wrong shape"
+            "$ref": "#/components/responses/Error"
           }
         },
         "summary": "Generate or repair one JSON configuration value with the configured",
@@ -3433,34 +3055,13 @@
             "description": "Validation verdict with issues"
           },
           "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Body is not a workflow definition"
+            "$ref": "#/components/responses/Error"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthenticated"
+            "$ref": "#/components/responses/Error"
           },
           "403": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Missing scope"
+            "$ref": "#/components/responses/Error"
           }
         },
         "summary": "Validate a definition without saving it. Returns 200 with the issue list",
@@ -3500,5 +3101,9 @@
       "description": "Human-approved, durable, fail-closed physical experiment submission and reconciliation",
       "name": "experimentSubmissions"
     }
+  ],
+  "x-tempera-protocol-routes": [
+    "/healthz",
+    "/v1/runs/{runId}/events"
   ]
 }

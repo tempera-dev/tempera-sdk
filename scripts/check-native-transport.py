@@ -13,7 +13,7 @@ scope, and a request and response digest derived from the vendored producer
 contract. This script both writes that file and checks a native client against
 it.
 
-Five producers are admitted. tempera-dropshipping and tempera-business publish
+Six producers are admitted. tempera-dropshipping and tempera-business publish
 every operation surface.json carries for them. tempera-payments publishes only
 the merchant onboarding seam named in PAYMENTS_NATIVE_OPERATIONS, each entry
 validated against the producer's wire metadata. The control plane publishes only
@@ -26,6 +26,11 @@ one synthetic WebSocket operation, `temperaVoice.streamVoiceSession`, taken
 from the contract's top-level `x-tempera-websocket-contract`: method `WSS`,
 the contract's path, audience, and required scope, and both digests computed
 over that websocket contract object itself.
+tempera-workflows publishes only the four reads named in NATIVE_OPERATIONS
+(workflows.list, workflows.get, runs.list, runs.get). Starting a run is
+deliberately absent: runs.create and workflows.call carry the workflow:run
+scope, so a device never holds them, and the assistant harness starts a run
+behind an approval card instead.
 
 Usage:
   python3 scripts/check-native-transport.py --write        # regenerate
@@ -45,7 +50,8 @@ route. A `WSS` annotation is checked exactly like an HTTP one. It also requires
 that every literal reaching into a producer's canonical namespace
 (NATIVE_NAMESPACES: `/v1/organizations` for dropshipping; `/v1/operating-state`,
 `/v1/business-profile`, and `/v1/cases` for business; `/v1/merchants` for
-payments; `/v1/sessions`, `/v1/agents`, and `/v1/actions` for voice; `/v1/me`,
+payments; `/v1/sessions`, `/v1/agents`, and `/v1/actions` for voice;
+`/v1/workflows` and `/v1/runs` for workflows; `/v1/me`,
 `/v1/billing`, `/v1/usage`, and `/v1/team` for the control plane, whose
 `/v1/sessions` account read stays under the voice root the two products share)
 is annotated, so a new hand-written call cannot slip in undeclared.
@@ -71,6 +77,7 @@ NATIVE_PRODUCTS = (
     "temperaBusiness",
     "temperaPayments",
     "temperaVoice",
+    "temperaWorkflows",
     "controlPlane",
 )
 PRODUCT_SPECS = {
@@ -78,6 +85,7 @@ PRODUCT_SPECS = {
     "temperaBusiness": "tempera-business.openapi.json",
     "temperaPayments": "tempera-payments.openapi.json",
     "temperaVoice": "tempera-voice.openapi.json",
+    "temperaWorkflows": "tempera-workflows.openapi.json",
     "controlPlane": "control-plane.openapi.json",
 }
 # surface.json carries no single audience for the control plane: most of its
@@ -108,6 +116,16 @@ NATIVE_OPERATIONS: dict[str, frozenset[str] | None] = {
             "getDefaultVoiceAgent",
         }
     ),
+    # Reads only. workflow:run never reaches a device: runs.create and
+    # workflows.call stay with the assistant harness behind an approval.
+    "temperaWorkflows": frozenset(
+        {
+            "listWorkflows",
+            "getWorkflow",
+            "listRuns",
+            "getRun",
+        }
+    ),
 }
 # Producers whose vendored OpenAPI carries a top-level
 # x-tempera-websocket-contract the phones consume directly. Each is published
@@ -122,6 +140,7 @@ NATIVE_NAMESPACES: dict[str, tuple[str, ...]] = {
     "temperaBusiness": ("/v1/operatingState", "/v1/businessProfile", "/v1/cases"),
     "temperaPayments": ("/v1/merchants",),
     "temperaVoice": ("/v1/sessions", "/v1/agents", "/v1/actions"),
+    "temperaWorkflows": ("/v1/workflows", "/v1/runs"),
     "controlPlane": ("/v1/me", "/v1/billing", "/v1/usage", "/v1/team"),
 }
 

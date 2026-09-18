@@ -201,7 +201,7 @@ PRODUCTS: tuple[Product, ...] = (
     Product(
         key="temperaWorkflows",
         source_repo="tempera-dev/tempera-workflows",
-        source_path="sdks/openapi/tempera-workflows-api.json",
+        source_path="contracts/openapi/workflows.openapi.json",
         spec="tempera-workflows.openapi.json",
         audience="tempera-workflows",
         default_auth="product",

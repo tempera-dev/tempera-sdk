@@ -93,6 +93,53 @@ class NativeTransportTests(unittest.TestCase):
             }
             self.assertEqual(actual, expected)
 
+    def test_workflows_publishes_reads_and_never_a_run_start(self) -> None:
+        contract = json.loads(
+            (ROOT / "contracts/native-transport-v1.json").read_text(encoding="utf-8")
+        )
+        published = [
+            operation
+            for operation in contract["operations"]
+            if operation["product"] == "temperaWorkflows"
+        ]
+        self.assertEqual(
+            sorted(operation["id"] for operation in published),
+            ["getRun", "getWorkflow", "listRuns", "listWorkflows"],
+        )
+        self.assertEqual({operation["method"] for operation in published}, {"GET"})
+        self.assertEqual({operation["safeRetry"] for operation in published}, {"read"})
+        self.assertEqual({operation["scope"] for operation in published}, {"workflow:read"})
+        self.assertEqual(
+            {operation["authAudience"] for operation in published}, {"tempera-workflows"}
+        )
+        upstream = {operation["upstreamOperationId"] for operation in published}
+        self.assertEqual(upstream, {"workflows.list", "workflows.get", "runs.list", "runs.get"})
+        self.assertFalse(upstream & {"runs.create", "workflows.call", "runs.cancel"})
+
+    def test_workflow_run_start_is_not_admitted_to_a_device(self) -> None:
+        surface = json.loads((ROOT / "surface.json").read_text(encoding="utf-8"))
+        run_scoped = {
+            operation["id"]
+            for operation in surface["operations"]["temperaWorkflows"]
+            if operation.get("scope") in {"workflow:run", "workflow:write"}
+        }
+        self.assertIn("createRun", run_scoped)
+        self.assertFalse(run_scoped & checker.NATIVE_OPERATIONS["temperaWorkflows"])
+        contract = json.loads(
+            (ROOT / "contracts/native-transport-v1.json").read_text(encoding="utf-8")
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            source = Path(directory) / "Runs.swift"
+            source.write_text(
+                "// tempera-transport: temperaWorkflows.createRun POST /v1/workflows/{workflowId}/runs\n"
+                'let route = "/v1/workflows/\\(id)/runs"\n'
+            )
+            failures = checker.check_client(source, contract)
+        self.assertTrue(
+            any("is not an admitted native operation" in failure for failure in failures),
+            failures,
+        )
+
     def test_merchant_routes_must_be_annotated_with_exact_method_and_path(self) -> None:
         contract = synthetic_contract()
         with tempfile.TemporaryDirectory() as directory:

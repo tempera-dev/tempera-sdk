@@ -45,6 +45,16 @@
       "sourceSha256": "175e71a27f9b1553cbbb12a4f63e104bf4c840d661e6bfb9dcc9421c12feff98"
     },
     {
+      "product": "temperaWorkflows",
+      "audience": "tempera-workflows",
+      "envVar": "TEMPERA_WORKFLOWS_URL",
+      "spec": "specs/tempera-workflows.openapi.json",
+      "sourceRepo": "tempera-dev/tempera-workflows",
+      "sourceBranch": "main",
+      "sourceCommit": "b8c745e5b7f7b59776de2f03cfb29900c5a16caf",
+      "sourceSha256": "e4fd7dcfa86d61c9905c538c9111babd87f83ec71e1e936819ba255bc6562c59"
+    },
+    {
       "product": "controlPlane",
       "audience": "tempera-account",
       "envVar": "TEMPERA_CONTROL_PLANE_URL",
@@ -1209,6 +1219,70 @@
       "requiredHeaders": [],
       "requestDigest": "454c255923747dc5a7e8a5384567b50442c848448cd7ded0164947f8313d72a6",
       "responseDigest": "454c255923747dc5a7e8a5384567b50442c848448cd7ded0164947f8313d72a6"
+    },
+    {
+      "operation": "temperaWorkflows.getRun",
+      "product": "temperaWorkflows",
+      "id": "getRun",
+      "upstreamOperationId": "runs.get",
+      "method": "GET",
+      "pathTemplate": "/v1/runs/{runId}",
+      "pathShape": "/v1/runs/{}",
+      "authAudience": "tempera-workflows",
+      "scope": "workflow:read",
+      "safeRetry": "read",
+      "headers": [],
+      "requiredHeaders": [],
+      "requestDigest": "881c3a4553e8e4de04a373026bcd581ef729f260165c191ab267e87804fe88e3",
+      "responseDigest": "b149b3055d122191ea4eb34fb2a0e70d216551c02d23a3366a186006ba5440bb"
+    },
+    {
+      "operation": "temperaWorkflows.getWorkflow",
+      "product": "temperaWorkflows",
+      "id": "getWorkflow",
+      "upstreamOperationId": "workflows.get",
+      "method": "GET",
+      "pathTemplate": "/v1/workflows/{workflowId}",
+      "pathShape": "/v1/workflows/{}",
+      "authAudience": "tempera-workflows",
+      "scope": "workflow:read",
+      "safeRetry": "read",
+      "headers": [],
+      "requiredHeaders": [],
+      "requestDigest": "0a79df92ea647ae8c1276ea8a16ba8be34a200a0d20db5101592b896a0c4fc26",
+      "responseDigest": "5a60134aa217e89b04d80970a91b16ef6475c6b5633b0f01036377015628aa42"
+    },
+    {
+      "operation": "temperaWorkflows.listRuns",
+      "product": "temperaWorkflows",
+      "id": "listRuns",
+      "upstreamOperationId": "runs.list",
+      "method": "GET",
+      "pathTemplate": "/v1/runs",
+      "pathShape": "/v1/runs",
+      "authAudience": "tempera-workflows",
+      "scope": "workflow:read",
+      "safeRetry": "read",
+      "headers": [],
+      "requiredHeaders": [],
+      "requestDigest": "2571d939a52f9eddbdc33c3d52a1371274ffdf25aac616cca80d959933fa34b3",
+      "responseDigest": "d7d94788f7ef201e75406db15f0f47c67b8e411be028a15f8b242f85fb17f248"
+    },
+    {
+      "operation": "temperaWorkflows.listWorkflows",
+      "product": "temperaWorkflows",
+      "id": "listWorkflows",
+      "upstreamOperationId": "workflows.list",
+      "method": "GET",
+      "pathTemplate": "/v1/workflows",
+      "pathShape": "/v1/workflows",
+      "authAudience": "tempera-workflows",
+      "scope": "workflow:read",
+      "safeRetry": "read",
+      "headers": [],
+      "requiredHeaders": [],
+      "requestDigest": "d1f964ef0148507df1cb50318b8591280a6b849483a6dce2962b71b8edc0023c",
+      "responseDigest": "fd3b815a0de2cf69d43c06c6b5b444d4c225ea2f0d5a5c129c2359e07273a63d"
     }
   ]
 }
