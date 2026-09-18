@@ -159,9 +159,15 @@ public actor TemperaMcpClient {
     }
 
     /// Check gateway liveness over JSON-RPC.
+    ///
+    /// MCP revision 2026-07-28 removed `ping`; a gateway on that revision
+    /// answers it with a method-not-found. This helper now sends
+    /// `server/discover` so existing callers keep working, and will be
+    /// removed in a future release.
+    @available(*, deprecated, message: "MCP 2026-07-28 removed `ping`; use initialize() (server/discover)")
     @discardableResult
     public func ping() async throws -> TemperaJSON {
-        try await rpc("ping")
+        try await initialize()
     }
 
     /// List every tool the gateway offers: builtins plus product capabilities.

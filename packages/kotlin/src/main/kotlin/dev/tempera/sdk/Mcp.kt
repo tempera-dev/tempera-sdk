@@ -172,8 +172,18 @@ public class TemperaMcpClient(
             ),
         )
 
-    /** Check gateway liveness over JSON-RPC. */
-    public fun ping(): TemperaJson = rpc("ping")
+    /**
+     * Check gateway liveness over JSON-RPC.
+     *
+     * MCP revision 2026-07-28 removed `ping`; a gateway on that revision answers it with a
+     * method-not-found. This helper now sends `server/discover` so existing callers keep
+     * working, and will be removed in a future release.
+     */
+    @Deprecated(
+        message = "MCP 2026-07-28 removed `ping`; use initialize() (server/discover)",
+        replaceWith = ReplaceWith("initialize()"),
+    )
+    public fun ping(): TemperaJson = initialize()
 
     /** List every tool the gateway offers: builtins plus product capabilities. */
     public fun listTools(): List<TemperaJson> =

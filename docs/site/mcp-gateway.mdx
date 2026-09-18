@@ -26,7 +26,6 @@ execution is metered as
 | Method | JSON-RPC | Tool | Description |
 |---|---|---|---|
 | `initialize` | `initialize` | — | Open an MCP session and fetch server capabilities and instructions. |
-| `ping` | `ping` | — | Check gateway liveness over JSON-RPC. |
 | `listTools` | `tools/list` | — | List the fixed ten-verb Tempera capability-fabric surface; product cards never appear as flat product tool names. |
 | `callTool` | `tools/call` | — | Call a fixed fabric verb. Discover product cards with tempera_search, inspect a card with tempera_describe, then invoke its opaque capability reference through tempera_invoke or tempera_prepare/tempera_commit. |
 | `whoami` | `tools/call` | `tempera_whoami` | Fetch the caller's identity, workspace, and scopes as seen by the gateway. |

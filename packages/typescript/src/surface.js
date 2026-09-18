@@ -20763,11 +20763,6 @@ export const TEMPERA_MCP_GATEWAY = Object.freeze(
       "description": "Open an MCP session and fetch server capabilities and instructions."
     },
     {
-      "id": "ping",
-      "rpc": "ping",
-      "description": "Check gateway liveness over JSON-RPC."
-    },
-    {
       "id": "listTools",
       "rpc": "tools/list",
       "description": "List the fixed ten-verb Tempera capability-fabric surface; product cards never appear as flat product tool names."

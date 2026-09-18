@@ -32,7 +32,7 @@ def gateway_client(handler):
 
 
 class McpClientTest(unittest.TestCase):
-    def test_initialize_ping_and_tools_list_send_well_formed_json_rpc(self):
+    def test_initialize_and_tools_list_send_well_formed_json_rpc(self):
         def handler(request):
             if request["method"] == "tools/list":
                 return {"jsonrpc": "2.0", "id": request["id"], "result": {"tools": [{"name": "tempera_whoami"}]}}
@@ -40,7 +40,6 @@ class McpClientTest(unittest.TestCase):
 
         client, transport = gateway_client(handler)
         client.initialize()
-        client.ping()
         tools = client.list_tools()
         self.assertEqual(tools, [{"name": "tempera_whoami"}])
         for call in transport.calls:
@@ -60,18 +59,30 @@ class McpClientTest(unittest.TestCase):
             self.assertEqual(
                 call["headers"]["accept"], "application/json, text/event-stream"
             )
-        self.assertEqual(transport.calls[1]["request"]["method"], "ping")
-        self.assertEqual(transport.calls[2]["request"]["method"], "tools/list")
+        self.assertEqual(transport.calls[1]["request"]["method"], "tools/list")
 
     def test_json_rpc_request_bodies_use_the_compact_wire_shape(self):
         client, transport = gateway_client(
             lambda request: {"jsonrpc": "2.0", "id": request["id"], "result": {}}
         )
-        client.ping()
+        client.list_tools()
         self.assertEqual(
             transport.calls[0]["data"],
-            b'{"jsonrpc":"2.0","id":1,"method":"ping","params":{"_meta":{"io.modelcontextprotocol/protocolVersion":"2026-07-28","io.modelcontextprotocol/clientCapabilities":{}}}}',
+            b'{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{"_meta":{"io.modelcontextprotocol/protocolVersion":"2026-07-28","io.modelcontextprotocol/clientCapabilities":{}}}}',
         )
+
+    def test_ping_is_deprecated_and_probes_server_discover(self):
+        # MCP revision 2026-07-28 removed `ping`. The helper stays for callers
+        # that still name it, but the request on the wire is the probe the
+        # gateway actually answers.
+        client, transport = gateway_client(
+            lambda request: {"jsonrpc": "2.0", "id": request["id"], "result": {}}
+        )
+        with self.assertWarns(DeprecationWarning):
+            client.ping()
+        self.assertEqual(len(transport.calls), 1)
+        self.assertEqual(transport.calls[0]["request"]["method"], "server/discover")
+        self.assertEqual(transport.calls[0]["headers"]["mcp-method"], "server/discover")
 
     def test_call_tool_whoami_and_status_wrap_tools_call(self):
         client, transport = gateway_client(
@@ -124,11 +135,11 @@ class McpClientTest(unittest.TestCase):
 
         client, _ = gateway_client(handler)
         with self.assertRaises(TemperaApiError) as ctx:
-            client.ping()
+            client.initialize()
         self.assertEqual(ctx.exception.status, 401)
         self.assertEqual(ctx.exception.code, "unauthenticated")
         self.assertEqual(ctx.exception.product, "mcpGateway")
-        self.assertEqual(ctx.exception.operation, "ping")
+        self.assertEqual(ctx.exception.operation, "server/discover")
 
     def test_the_gateway_url_derives_from_tempera_auth(self):
         auth = TemperaAuth(issuer_url="https://api.tempera.dev/", api_key="tp_key_1")
@@ -144,6 +155,6 @@ class NonConformantErrorTest(unittest.TestCase):
     def test_string_error_raises_tempera_mcp_error_with_code_0(self):
         client, _calls = gateway_client(lambda request: {"jsonrpc": "2.0", "id": 1, "error": "nope"})
         with self.assertRaises(TemperaMcpError) as caught:
-            client.ping()
+            client.initialize()
         self.assertEqual(caught.exception.code, 0)
         self.assertEqual(str(caught.exception), "nope")

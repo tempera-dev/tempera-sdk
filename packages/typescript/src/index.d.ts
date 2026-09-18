@@ -211,6 +211,7 @@ export declare class TemperaMcpClient {
   bearer: string | null;
   rpc(method: string, params?: unknown): Promise<unknown>;
   initialize(clientInfo?: { name?: string; version?: string }): Promise<unknown>;
+  /** @deprecated MCP 2026-07-28 removed `ping`; this now sends `server/discover`. Use `initialize()`. */
   ping(): Promise<unknown>;
   listTools(): Promise<unknown[]>;
   callTool(name: string, args?: Record<string, unknown>): Promise<unknown>;

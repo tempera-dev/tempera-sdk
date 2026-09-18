@@ -9,6 +9,7 @@ package; the Rust crate exposes JSON-RPC body builders instead.
 
 from __future__ import annotations
 
+import warnings
 from typing import Any, Mapping
 
 from .auth import TemperaAuth, Transport, _default_transport, _encode_json
@@ -151,8 +152,20 @@ class TemperaMcpClient:
         )
 
     def ping(self) -> Any:
-        """Check gateway liveness over JSON-RPC."""
-        return self.rpc("ping")
+        """Deprecated: probe liveness with :meth:`initialize` (``server/discover``).
+
+        MCP revision 2026-07-28 removed ``ping``; a gateway on that revision
+        answers it with a method-not-found. This helper is kept so existing
+        callers keep working and now sends ``server/discover``, which is the
+        liveness and version probe. It will be removed in a future release.
+        """
+        warnings.warn(
+            "TemperaMcpClient.ping() is deprecated: MCP 2026-07-28 removed `ping`; "
+            "use initialize() (server/discover) instead",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.initialize()
 
     def list_tools(self) -> list[Any]:
         """List every tool the gateway offers: builtins plus namespaced product tools."""

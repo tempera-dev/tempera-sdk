@@ -63,16 +63,18 @@ impl McpRequestBuilder {
         (id, body)
     }
 
-    /// Body for `ping`: check gateway liveness over JSON-RPC (no params).
+    /// Body for a liveness probe.
+    ///
+    /// MCP revision 2026-07-28 removed `ping`; a gateway on that revision
+    /// answers it with a method-not-found. This builder now renders a
+    /// `server/discover` body, identified as this crate, so existing callers
+    /// keep working. It will be removed in a future release.
+    #[deprecated(
+        since = "0.13.0",
+        note = "MCP 2026-07-28 removed `ping`; use initialize_body (server/discover)"
+    )]
     pub fn ping_body(&mut self) -> (i64, String) {
-        let id = self.take_id();
-        (
-            id,
-            format!(
-                "{{\"jsonrpc\":\"2.0\",\"id\":{id},\"method\":\"ping\",\"params\":{}}}",
-                Self::meta_json()
-            ),
-        )
+        self.initialize_body("tempera-sdk", env!("CARGO_PKG_VERSION"))
     }
 
     /// Body for `tools/list`: list every tool the gateway offers, builtins
@@ -181,6 +183,7 @@ mod tests {
     use crate::surface::MCP_ERROR_PLAN_LIMIT;
 
     #[test]
+    #[allow(deprecated)]
     fn initialize_and_ping_bodies_are_exact_and_ids_increment() {
         let mut builder = McpRequestBuilder::new();
 
@@ -191,9 +194,17 @@ mod tests {
             "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"server/discover\",\"params\":{\"_meta\":{\"io.modelcontextprotocol/protocolVersion\":\"2026-07-28\",\"io.modelcontextprotocol/clientInfo\":{\"name\":\"tempera-sdk\",\"version\":\"0.13.0\"},\"io.modelcontextprotocol/clientCapabilities\":{}}}}"
         );
 
+        // The deprecated liveness helper renders `server/discover`, identified
+        // as this crate: MCP 2026-07-28 has no `ping` to render.
         let (id, body) = builder.ping_body();
         assert_eq!(id, 2);
-        assert_eq!(body, "{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"ping\",\"params\":{\"_meta\":{\"io.modelcontextprotocol/protocolVersion\":\"2026-07-28\",\"io.modelcontextprotocol/clientCapabilities\":{}}}}");
+        assert_eq!(
+            body,
+            format!(
+                "{{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"server/discover\",\"params\":{{\"_meta\":{{\"io.modelcontextprotocol/protocolVersion\":\"2026-07-28\",\"io.modelcontextprotocol/clientInfo\":{{\"name\":\"tempera-sdk\",\"version\":\"{}\"}},\"io.modelcontextprotocol/clientCapabilities\":{{}}}}}}}}",
+                env!("CARGO_PKG_VERSION")
+            )
+        );
 
         let (id, body) = builder.list_tools_body();
         assert_eq!(id, 3);

@@ -22987,12 +22987,6 @@ const tempera_mcp_method_spec TEMPERA_MCP_METHODS[] = {
         .description = "Open an MCP session and fetch server capabilities and instructions.",
     },
     {
-        .id = "ping",
-        .rpc = "ping",
-        .tool = NULL,
-        .description = "Check gateway liveness over JSON-RPC.",
-    },
-    {
         .id = "list_tools",
         .rpc = "tools/list",
         .tool = NULL,

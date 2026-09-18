@@ -29,7 +29,7 @@ function gatewayClient(handler) {
   return { client, calls };
 }
 
-test("initialize, ping, and tools/list send well-formed JSON-RPC with the bearer", async () => {
+test("initialize and tools/list send well-formed JSON-RPC with the bearer", async () => {
   const { client, calls } = gatewayClient((request) => {
     if (request.method === "tools/list") {
       return rpcResponse({ jsonrpc: "2.0", id: request.id, result: { tools: [{ name: "tempera_whoami" }] } });
@@ -37,7 +37,6 @@ test("initialize, ping, and tools/list send well-formed JSON-RPC with the bearer
     return rpcResponse({ jsonrpc: "2.0", id: request.id, result: {} });
   });
   await client.initialize();
-  await client.ping();
   const tools = await client.listTools();
   assert.deepEqual(tools, [{ name: "tempera_whoami" }]);
   for (const call of calls) {
@@ -54,8 +53,19 @@ test("initialize, ping, and tools/list send well-formed JSON-RPC with the bearer
     // Both shapes, or a conformant streamable-HTTP gateway answers 406.
     assert.equal(call.options.headers.accept, "application/json, text/event-stream");
   }
-  assert.equal(calls[1].request.method, "ping");
-  assert.equal(calls[2].request.method, "tools/list");
+  assert.equal(calls[1].request.method, "tools/list");
+});
+
+// MCP revision 2026-07-28 removed `ping`. The helper stays for callers that
+// still name it, but the request on the wire is the probe the gateway answers.
+test("the deprecated ping helper probes server/discover", async () => {
+  const { client, calls } = gatewayClient((request) =>
+    rpcResponse({ jsonrpc: "2.0", id: request.id, result: {} }),
+  );
+  await client.ping();
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].request.method, "server/discover");
+  assert.equal(calls[0].options.headers["mcp-method"], "server/discover");
 });
 
 test("callTool, whoami, and status wrap tools/call", async () => {
@@ -98,7 +108,7 @@ test("HTTP auth failures raise TemperaApiError with the gateway error code", asy
     rpcResponse({ error: "unauthenticated", message: "Bearer token required." }, { status: 401 }),
   );
   await assert.rejects(
-    () => client.ping(),
+    () => client.initialize(),
     (error) => {
       assert.ok(error instanceof TemperaApiError);
       assert.equal(error.status, 401);
@@ -117,7 +127,7 @@ test("the gateway URL derives from TemperaAuth when not passed explicitly", () =
 test("non-conformant string errors raise TemperaMcpError with code 0", async () => {
   const { client } = gatewayClient(() => rpcResponse({ jsonrpc: "2.0", id: 1, error: "nope" }));
   await assert.rejects(
-    () => client.ping(),
+    () => client.initialize(),
     (error) => {
       assert.ok(error instanceof TemperaMcpError);
       assert.equal(error.code, 0);

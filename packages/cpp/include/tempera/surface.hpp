@@ -16912,18 +16912,12 @@ struct McpMethodSpec {
     std::string_view description;
 };
 
-inline constexpr std::array<McpMethodSpec, 6> MCP_METHODS{{
+inline constexpr std::array<McpMethodSpec, 5> MCP_METHODS{{
     McpMethodSpec{
         .id = "initialize",
         .rpc = "initialize",
         .tool = std::nullopt,
         .description = "Open an MCP session and fetch server capabilities and instructions.",
-    },
-    McpMethodSpec{
-        .id = "ping",
-        .rpc = "ping",
-        .tool = std::nullopt,
-        .description = "Check gateway liveness over JSON-RPC.",
     },
     McpMethodSpec{
         .id = "list_tools",

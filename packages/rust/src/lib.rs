@@ -133,6 +133,7 @@ mod tests {
         );
         assert_eq!(error.code.as_deref(), Some("quota"));
 
+        #[allow(deprecated)]
         let (id, body) = McpRequestBuilder::new().ping_body();
         assert_eq!(id, 1);
         assert!(parse_mcp_error(&body).is_none());

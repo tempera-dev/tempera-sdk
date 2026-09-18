@@ -434,12 +434,6 @@ public object TemperaSurface {
             description = "Open an MCP session and fetch server capabilities and instructions.",
         ),
         TemperaMcpMethodSpec(
-            id = "ping",
-            rpc = "ping",
-            tool = null,
-            description = "Check gateway liveness over JSON-RPC.",
-        ),
-        TemperaMcpMethodSpec(
             id = "listTools",
             rpc = "tools/list",
             tool = null,
