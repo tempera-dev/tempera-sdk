@@ -1218,6 +1218,10 @@ export interface TemperaDropshippingClient extends TemperaProductClientBase {
   listSaleOrders(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** Get Sale Order. */
   getSaleOrder(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Create Sale Order Checkout. */
+  createSaleOrderCheckout(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
+  /** Get Sale Order Payment. */
+  getSaleOrderPayment(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List Events. */
   listEvents(params?: TemperaOperationParams, options?: TemperaOperationOptions): Promise<unknown>;
   /** List Event Projections. */

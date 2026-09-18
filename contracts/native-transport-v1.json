@@ -11,8 +11,8 @@
       "spec": "specs/tempera-dropshipping.openapi.json",
       "sourceRepo": "tempera-dev/tempera-dropshipping",
       "sourceBranch": "main",
-      "sourceCommit": "2770155d27bae739527a765f070bcd5701c424ae",
-      "sourceSha256": "c7b8ae66d63c3ab2c7f393e8eded19c7cb47540376bcb25e6ff09dd6399d6760"
+      "sourceCommit": "d6ab02f869832cd26e42109d4fadd60f5cc55f1c",
+      "sourceSha256": "bdccfb3a597e6f83f93cd78480333f0b5d55c53af4a269b5b49be50aa9ae7808"
     },
     {
       "product": "temperaBusiness",
@@ -483,6 +483,22 @@
       "responseDigest": "ff837fac3595ad908888764f50deef9bd2159f29c9ca446dd0ff63b62d2c731a"
     },
     {
+      "operation": "temperaDropshipping.createSaleOrderCheckout",
+      "product": "temperaDropshipping",
+      "id": "createSaleOrderCheckout",
+      "upstreamOperationId": "createSaleOrderCheckout",
+      "method": "POST",
+      "pathTemplate": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders/{orderId}:checkout",
+      "pathShape": "/v1/organizations/{}/projects/{}/environments/{}/sites/{}/sale-orders/{}:checkout",
+      "authAudience": null,
+      "scope": "orders:commerce:write",
+      "safeRetry": "none",
+      "headers": [],
+      "requiredHeaders": [],
+      "requestDigest": "ef22b5593d204d57fb7957181590c911bdd5bc8d60b907c56bbfaa0675726798",
+      "responseDigest": "edb1e329a7f795a2714776756aa54dfe5e981cf4670dd4fe434c4f46769b90aa"
+    },
+    {
       "operation": "temperaDropshipping.createStore",
       "product": "temperaDropshipping",
       "id": "createStore",
@@ -625,6 +641,22 @@
       "requiredHeaders": [],
       "requestDigest": "0c240c1e6d0403c9b71d589bb733bbe6e501e803e433f862b2bf62e333ca10f3",
       "responseDigest": "ff837fac3595ad908888764f50deef9bd2159f29c9ca446dd0ff63b62d2c731a"
+    },
+    {
+      "operation": "temperaDropshipping.getSaleOrderPayment",
+      "product": "temperaDropshipping",
+      "id": "getSaleOrderPayment",
+      "upstreamOperationId": "getSaleOrderPayment",
+      "method": "GET",
+      "pathTemplate": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders/{orderId}/payment",
+      "pathShape": "/v1/organizations/{}/projects/{}/environments/{}/sites/{}/sale-orders/{}/payment",
+      "authAudience": null,
+      "scope": "orders:read",
+      "safeRetry": "read",
+      "headers": [],
+      "requiredHeaders": [],
+      "requestDigest": "6caeadf6ff21e39656edd16eefc933e71d86da98d7c386c6cb33a0ed511bc7be",
+      "responseDigest": "758100c36542f5548e12e5b9ee2d7d265b3525b9fbc8295fc10438953a4a84c0"
     },
     {
       "operation": "temperaDropshipping.getStore",

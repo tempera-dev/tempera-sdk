@@ -6,7 +6,8 @@
     "version": "0.1.0"
   },
   "x-tempera-protocol-routes": [
-    "/v1/webhooks/shopify/{installation}"
+    "/v1/webhooks/shopify/{installation}",
+    "/v1/payments/events"
   ],
   "paths": {
     "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/stores": {
@@ -2319,6 +2320,528 @@
                   ],
                   "title": "SaleOrder",
                   "description": "Immutable order snapshot used as a bounded commerce input to Payments."
+                }
+              }
+            }
+          },
+          "422": {
+            "$ref": "#/components/responses/Error"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "product",
+        "x-tempera-required-scope": "orders:read",
+        "x-tempera-effect": "read",
+        "x-tempera-external-authority": "NONE",
+        "x-tempera-release": "local-candidate"
+      }
+    },
+    "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders/{orderId}:checkout": {
+      "post": {
+        "summary": "Create Sale Order Checkout",
+        "operationId": "createSaleOrderCheckout",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Orderid"
+            }
+          },
+          {
+            "name": "organization",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Organization"
+            }
+          },
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Project"
+            }
+          },
+          {
+            "name": "environment",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Environment"
+            }
+          },
+          {
+            "name": "site",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Site"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "expectedRevision": {
+                    "type": "integer",
+                    "const": 1,
+                    "title": "Expectedrevision",
+                    "default": 1
+                  },
+                  "provider": {
+                    "type": "string",
+                    "enum": [
+                      "stripe",
+                      "paypal"
+                    ],
+                    "title": "Provider"
+                  }
+                },
+                "additionalProperties": false,
+                "type": "object",
+                "required": [
+                  "provider"
+                ],
+                "title": "CreateSaleOrderCheckoutRequest",
+                "description": "Ask tempera-payments to collect this exact sale-order revision.\n\nThe buyer chooses a rail; every other input — amount, currency, merchant,\nrecipient and the buyer-facing return URL — is server-owned. A caller can\nnever influence what is charged or where a buyer is sent afterwards."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Idempotent replay of the bound hosted checkout",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "saleOrderId": {
+                      "type": "string",
+                      "maxLength": 128,
+                      "minLength": 1,
+                      "title": "Saleorderid"
+                    },
+                    "paymentIntentId": {
+                      "type": "string",
+                      "title": "Paymentintentid"
+                    },
+                    "provider": {
+                      "type": "string",
+                      "enum": [
+                        "stripe",
+                        "paypal"
+                      ],
+                      "title": "Provider"
+                    },
+                    "url": {
+                      "type": "string",
+                      "maxLength": 2048,
+                      "minLength": 9,
+                      "title": "Url"
+                    },
+                    "currency": {
+                      "type": "string",
+                      "const": "USD",
+                      "title": "Currency"
+                    },
+                    "amountMinor": {
+                      "type": "integer",
+                      "maximum": 99999999.0,
+                      "minimum": 1.0,
+                      "title": "Amountminor"
+                    },
+                    "deduplicated": {
+                      "type": "boolean",
+                      "title": "Deduplicated"
+                    },
+                    "settlementBasis": {
+                      "type": "string",
+                      "const": "SIGNED_TEMPERA_PAYMENTS_EVENT",
+                      "title": "Settlementbasis",
+                      "default": "SIGNED_TEMPERA_PAYMENTS_EVENT"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "saleOrderId",
+                    "paymentIntentId",
+                    "provider",
+                    "url",
+                    "currency",
+                    "amountMinor",
+                    "deduplicated"
+                  ],
+                  "title": "SaleOrderCheckout",
+                  "description": "The hosted collection surface Payments minted for one sale-order revision."
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Hosted checkout created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "saleOrderId": {
+                      "type": "string",
+                      "maxLength": 128,
+                      "minLength": 1,
+                      "title": "Saleorderid"
+                    },
+                    "paymentIntentId": {
+                      "type": "string",
+                      "title": "Paymentintentid"
+                    },
+                    "provider": {
+                      "type": "string",
+                      "enum": [
+                        "stripe",
+                        "paypal"
+                      ],
+                      "title": "Provider"
+                    },
+                    "url": {
+                      "type": "string",
+                      "maxLength": 2048,
+                      "minLength": 9,
+                      "title": "Url"
+                    },
+                    "currency": {
+                      "type": "string",
+                      "const": "USD",
+                      "title": "Currency"
+                    },
+                    "amountMinor": {
+                      "type": "integer",
+                      "maximum": 99999999.0,
+                      "minimum": 1.0,
+                      "title": "Amountminor"
+                    },
+                    "deduplicated": {
+                      "type": "boolean",
+                      "title": "Deduplicated"
+                    },
+                    "settlementBasis": {
+                      "type": "string",
+                      "const": "SIGNED_TEMPERA_PAYMENTS_EVENT",
+                      "title": "Settlementbasis",
+                      "default": "SIGNED_TEMPERA_PAYMENTS_EVENT"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "saleOrderId",
+                    "paymentIntentId",
+                    "provider",
+                    "url",
+                    "currency",
+                    "amountMinor",
+                    "deduplicated"
+                  ],
+                  "title": "SaleOrderCheckout",
+                  "description": "The hosted collection surface Payments minted for one sale-order revision."
+                }
+              }
+            }
+          },
+          "422": {
+            "$ref": "#/components/responses/Error"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "product",
+        "x-tempera-required-scope": "orders:commerce:write",
+        "x-tempera-effect": "payments_checkout",
+        "x-tempera-external-authority": "NONE",
+        "x-tempera-release": "local-candidate"
+      }
+    },
+    "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders/{orderId}/payment": {
+      "get": {
+        "summary": "Get Sale Order Payment",
+        "operationId": "getSaleOrderPayment",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Orderid"
+            }
+          },
+          {
+            "name": "organization",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Organization"
+            }
+          },
+          {
+            "name": "project",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Project"
+            }
+          },
+          {
+            "name": "environment",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Environment"
+            }
+          },
+          {
+            "name": "site",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Site"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "saleOrderId": {
+                      "type": "string",
+                      "maxLength": 128,
+                      "minLength": 1,
+                      "title": "Saleorderid"
+                    },
+                    "saleOrderRevision": {
+                      "type": "integer",
+                      "const": 1,
+                      "title": "Saleorderrevision",
+                      "default": 1
+                    },
+                    "scope": {
+                      "properties": {
+                        "organizationId": {
+                          "type": "string",
+                          "maxLength": 160,
+                          "minLength": 1,
+                          "title": "Organizationid"
+                        },
+                        "projectId": {
+                          "type": "string",
+                          "maxLength": 160,
+                          "minLength": 1,
+                          "title": "Projectid"
+                        },
+                        "environment": {
+                          "type": "string",
+                          "enum": [
+                            "development",
+                            "test",
+                            "staging",
+                            "production"
+                          ],
+                          "title": "Environment"
+                        },
+                        "siteId": {
+                          "type": "string",
+                          "maxLength": 160,
+                          "minLength": 1,
+                          "title": "Siteid"
+                        }
+                      },
+                      "additionalProperties": false,
+                      "type": "object",
+                      "required": [
+                        "organizationId",
+                        "projectId",
+                        "environment",
+                        "siteId"
+                      ],
+                      "title": "Scope"
+                    },
+                    "state": {
+                      "type": "string",
+                      "enum": [
+                        "checkout_pending",
+                        "checkout_created",
+                        "paid",
+                        "refunded",
+                        "payment_mismatch"
+                      ],
+                      "title": "State"
+                    },
+                    "provider": {
+                      "type": "string",
+                      "enum": [
+                        "stripe",
+                        "paypal"
+                      ],
+                      "title": "Provider"
+                    },
+                    "currency": {
+                      "type": "string",
+                      "const": "USD",
+                      "title": "Currency"
+                    },
+                    "amountMinor": {
+                      "type": "integer",
+                      "maximum": 99999999.0,
+                      "minimum": 1.0,
+                      "title": "Amountminor"
+                    },
+                    "paymentIntentId": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "title": "Paymentintentid"
+                    },
+                    "providerSessionId": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "maxLength": 255,
+                      "minLength": 1,
+                      "title": "Providersessionid"
+                    },
+                    "checkoutUrl": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "maxLength": 2048,
+                      "minLength": 9,
+                      "title": "Checkouturl"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "title": "Createdat"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "title": "Updatedat"
+                    },
+                    "paidAt": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "title": "Paidat"
+                    },
+                    "paymentsJournalId": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "maxLength": 255,
+                      "minLength": 1,
+                      "title": "Paymentsjournalid"
+                    },
+                    "paymentsReceiptId": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "maxLength": 255,
+                      "minLength": 1,
+                      "title": "Paymentsreceiptid"
+                    },
+                    "paymentsEventId": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "maxLength": 255,
+                      "minLength": 1,
+                      "title": "Paymentseventid"
+                    },
+                    "refundedAmountMinor": {
+                      "type": "integer",
+                      "maximum": 1000000000000.0,
+                      "minimum": 0.0,
+                      "title": "Refundedamountminor",
+                      "default": 0
+                    },
+                    "refundOperationId": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "maxLength": 255,
+                      "minLength": 1,
+                      "title": "Refundoperationid"
+                    },
+                    "refundedAt": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "title": "Refundedat"
+                    },
+                    "settlementBasis": {
+                      "type": "string",
+                      "const": "SIGNED_TEMPERA_PAYMENTS_EVENT",
+                      "title": "Settlementbasis",
+                      "default": "SIGNED_TEMPERA_PAYMENTS_EVENT"
+                    },
+                    "externalAuthority": {
+                      "type": "string",
+                      "const": "TEMPERA_PAYMENTS",
+                      "title": "Externalauthority",
+                      "default": "TEMPERA_PAYMENTS"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "saleOrderId",
+                    "scope",
+                    "state",
+                    "provider",
+                    "currency",
+                    "amountMinor",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "title": "SaleOrderPayment",
+                  "description": "What `tempera-payments` was asked to collect for one sale-order revision.\n\nEverything below the checkout fields is copied verbatim out of a *signed*\n`payment.settled` or `payment.refunded` event after Payments committed its\nledger journal. This record is the only place in this service where a paid\nfact exists; `Order.promise.paid_amount_minor` remains declared input and\nnever becomes payment truth. A hosted checkout URL is an invitation to pay,\nnever evidence that anyone did."
                 }
               }
             }
@@ -11371,6 +11894,106 @@
             }
           }
         }
+      }
+    },
+    "/v1/payments/events": {
+      "post": {
+        "summary": "Payments Event",
+        "operationId": "receivePaymentsEvent",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "received": {
+                      "type": "boolean",
+                      "const": true,
+                      "title": "Received",
+                      "default": true
+                    },
+                    "type": {
+                      "type": "string",
+                      "maxLength": 128,
+                      "minLength": 1,
+                      "title": "Type"
+                    },
+                    "handled": {
+                      "type": "boolean",
+                      "title": "Handled"
+                    },
+                    "outcome": {
+                      "type": "string",
+                      "enum": [
+                        "settled",
+                        "refunded",
+                        "duplicate",
+                        "ignored",
+                        "unknown_intent",
+                        "payment_mismatch"
+                      ],
+                      "title": "Outcome"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "handled",
+                    "outcome"
+                  ],
+                  "title": "PaymentsEventReceipt",
+                  "description": "A delivery receipt for one signed Payments event.\n\nEvery outcome answers 2xx so at-least-once delivery never dead-letters a\nmoney fact on a consumer-side classification problem. `handled` says whether\nthis service changed anything; `outcome` says exactly what it decided."
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-tempera-auth-kind": "none",
+        "x-tempera-required-scope": "none:payments-event-signature",
+        "x-tempera-effect": "payments_ingress",
+        "x-tempera-external-authority": "NONE",
+        "x-tempera-release": "local-candidate",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "tempera-event-id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tempera-event-type",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tempera-event-signature",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
       }
     }
   },

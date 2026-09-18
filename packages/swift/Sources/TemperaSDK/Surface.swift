@@ -14743,6 +14743,58 @@ private let temperaOperationChunk13: [TemperaOperationSpec] = [
     ),
     TemperaOperationSpec(
         product: "temperaDropshipping",
+        id: "createSaleOrderCheckout",
+        upstreamOperationId: "createSaleOrderCheckout",
+        method: "POST",
+        path: "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders/{orderId}:checkout",
+        auth: "product",
+        authAudience: nil,
+        pathParams: ["orderId", "organization", "project", "environment", "site"],
+        pathParamTemplates: [],
+        query: [],
+        requiredQuery: [],
+        headers: [],
+        requiredHeaders: [],
+        body: ["expectedRevision", "provider"],
+        forbiddenBody: [],
+        requiredBody: ["provider"],
+        bodyDefaults: [],
+        requestBodyKind: "json",
+        requestContentType: "application/json",
+        scope: "orders:commerce:write",
+        physicalAction: false,
+        prepareCommitRequired: false,
+        safeRetry: "none",
+        description: "Create Sale Order Checkout."
+    ),
+    TemperaOperationSpec(
+        product: "temperaDropshipping",
+        id: "getSaleOrderPayment",
+        upstreamOperationId: "getSaleOrderPayment",
+        method: "GET",
+        path: "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders/{orderId}/payment",
+        auth: "product",
+        authAudience: nil,
+        pathParams: ["orderId", "organization", "project", "environment", "site"],
+        pathParamTemplates: [],
+        query: [],
+        requiredQuery: [],
+        headers: [],
+        requiredHeaders: [],
+        body: [],
+        forbiddenBody: [],
+        requiredBody: [],
+        bodyDefaults: [],
+        requestBodyKind: "none",
+        requestContentType: nil,
+        scope: "orders:read",
+        physicalAction: false,
+        prepareCommitRequired: false,
+        safeRetry: "read",
+        description: "Get Sale Order Payment."
+    ),
+    TemperaOperationSpec(
+        product: "temperaDropshipping",
         id: "listEvents",
         upstreamOperationId: "listEvents",
         method: "GET",
@@ -15287,6 +15339,9 @@ private let temperaOperationChunk13: [TemperaOperationSpec] = [
         safeRetry: "read",
         description: "Get Workspace."
     ),
+]
+
+private let temperaOperationChunk14: [TemperaOperationSpec] = [
     TemperaOperationSpec(
         product: "temperaDropshipping",
         id: "prepareBusinessBrowserTask",
@@ -15339,9 +15394,6 @@ private let temperaOperationChunk13: [TemperaOperationSpec] = [
         safeRetry: "read",
         description: "Capabilities."
     ),
-]
-
-private let temperaOperationChunk14: [TemperaOperationSpec] = [
     TemperaOperationSpec(
         product: "temperaBusiness",
         id: "businessCasesCreate",
@@ -16330,6 +16382,9 @@ private let temperaOperationChunk14: [TemperaOperationSpec] = [
         safeRetry: "read",
         description: "List findings."
     ),
+]
+
+private let temperaOperationChunk15: [TemperaOperationSpec] = [
     TemperaOperationSpec(
         product: "temperaInvestigations",
         id: "listInvestigationEvents",
@@ -16382,9 +16437,6 @@ private let temperaOperationChunk14: [TemperaOperationSpec] = [
         safeRetry: "read",
         description: "List investigation reviews."
     ),
-]
-
-private let temperaOperationChunk15: [TemperaOperationSpec] = [
     TemperaOperationSpec(
         product: "temperaInvestigations",
         id: "createInvestigationReview",

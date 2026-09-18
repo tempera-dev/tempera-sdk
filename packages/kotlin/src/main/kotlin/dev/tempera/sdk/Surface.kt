@@ -598,7 +598,7 @@ public val TemperaClient.temperaClearing: TemperaProductClient
 // capped at 64 KiB of bytecode and every class at 65535 constant-pool
 // entries, and one 489-element initializer would risk both.
 private fun buildOperations(): List<TemperaOperationSpec> {
-    val all = ArrayList<TemperaOperationSpec>(614)
+    val all = ArrayList<TemperaOperationSpec>(616)
     all.addAll(TemperaOperationChunk0.items)
     all.addAll(TemperaOperationChunk1.items)
     all.addAll(TemperaOperationChunk2.items)
@@ -14698,6 +14698,58 @@ private object TemperaOperationChunk21 {
         ),
         TemperaOperationSpec(
             product = "temperaDropshipping",
+            id = "createSaleOrderCheckout",
+            upstreamOperationId = "createSaleOrderCheckout",
+            method = "POST",
+            path = "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders/{orderId}:checkout",
+            auth = "product",
+            authAudience = null,
+            pathParams = listOf("orderId", "organization", "project", "environment", "site"),
+            pathParamTemplates = emptyList(),
+            query = emptyList(),
+            requiredQuery = emptyList(),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = listOf("expectedRevision", "provider"),
+            forbiddenBody = emptyList(),
+            requiredBody = listOf("provider"),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "json",
+            requestContentType = "application/json",
+            scope = "orders:commerce:write",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "none",
+            description = "Create Sale Order Checkout.",
+        ),
+        TemperaOperationSpec(
+            product = "temperaDropshipping",
+            id = "getSaleOrderPayment",
+            upstreamOperationId = "getSaleOrderPayment",
+            method = "GET",
+            path = "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders/{orderId}/payment",
+            auth = "product",
+            authAudience = null,
+            pathParams = listOf("orderId", "organization", "project", "environment", "site"),
+            pathParamTemplates = emptyList(),
+            query = emptyList(),
+            requiredQuery = emptyList(),
+            headers = emptyList(),
+            requiredHeaders = emptyList(),
+            body = emptyList(),
+            forbiddenBody = emptyList(),
+            requiredBody = emptyList(),
+            bodyDefaults = emptyList(),
+            requestBodyKind = "none",
+            requestContentType = null,
+            scope = "orders:read",
+            physicalAction = false,
+            prepareCommitRequired = false,
+            safeRetry = "read",
+            description = "Get Sale Order Payment.",
+        ),
+        TemperaOperationSpec(
+            product = "temperaDropshipping",
             id = "listEvents",
             upstreamOperationId = "listEvents",
             method = "GET",
@@ -14982,6 +15034,11 @@ private object TemperaOperationChunk21 {
             safeRetry = "read",
             description = "Get Proposal.",
         ),
+    )
+}
+
+private object TemperaOperationChunk22 {
+    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaDropshipping",
             id = "approveProposal",
@@ -15034,11 +15091,6 @@ private object TemperaOperationChunk21 {
             safeRetry = "none",
             description = "Execute.",
         ),
-    )
-}
-
-private object TemperaOperationChunk22 {
-    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaDropshipping",
             id = "recordManualOutcome",
@@ -15637,6 +15689,11 @@ private object TemperaOperationChunk22 {
             safeRetry = "idempotent",
             description = "Clear.",
         ),
+    )
+}
+
+private object TemperaOperationChunk23 {
+    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaBusiness",
             id = "businessOperatingState",
@@ -15689,11 +15746,6 @@ private object TemperaOperationChunk22 {
             safeRetry = "read",
             description = "Read-only service liveness endpoint.",
         ),
-    )
-}
-
-private object TemperaOperationChunk23 {
-    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaConnectors",
             id = "connectionsList",
@@ -16292,6 +16344,11 @@ private object TemperaOperationChunk23 {
             safeRetry = "read",
             description = "List findings.",
         ),
+    )
+}
+
+private object TemperaOperationChunk24 {
+    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaInvestigations",
             id = "listInvestigationEvents",
@@ -16344,11 +16401,6 @@ private object TemperaOperationChunk23 {
             safeRetry = "read",
             description = "List investigation reviews.",
         ),
-    )
-}
-
-private object TemperaOperationChunk24 {
-    val items: List<TemperaOperationSpec> = listOf(
         TemperaOperationSpec(
             product = "temperaInvestigations",
             id = "createInvestigationReview",

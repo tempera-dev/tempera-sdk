@@ -18191,6 +18191,73 @@ OPERATIONS = {
             "description": "Get Sale Order."
         },
         {
+            "id": "create_sale_order_checkout",
+            "upstream_operation_id": "createSaleOrderCheckout",
+            "method": "POST",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders/{orderId}:checkout",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "orderId",
+                "organization",
+                "project",
+                "environment",
+                "site"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [
+                "expectedRevision",
+                "provider"
+            ],
+            "forbidden_body": [],
+            "required_body": [
+                "provider"
+            ],
+            "body_defaults": {},
+            "request_body_kind": "json",
+            "request_content_type": "application/json",
+            "scope": "orders:commerce:write",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "none",
+            "description": "Create Sale Order Checkout."
+        },
+        {
+            "id": "get_sale_order_payment",
+            "upstream_operation_id": "getSaleOrderPayment",
+            "method": "GET",
+            "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders/{orderId}/payment",
+            "auth": "product",
+            "auth_audience": None,
+            "path_params": [
+                "orderId",
+                "organization",
+                "project",
+                "environment",
+                "site"
+            ],
+            "path_param_templates": {},
+            "query": [],
+            "required_query": [],
+            "headers": [],
+            "required_headers": [],
+            "body": [],
+            "forbidden_body": [],
+            "required_body": [],
+            "body_defaults": {},
+            "request_body_kind": "none",
+            "request_content_type": None,
+            "scope": "orders:read",
+            "physical_action": False,
+            "prepare_commit_required": False,
+            "safe_retry": "read",
+            "description": "Get Sale Order Payment."
+        },
+        {
             "id": "list_events",
             "upstream_operation_id": "listEvents",
             "method": "GET",
