@@ -1,0 +1,437 @@
+"""The unified Tempera client: one credential set, every product.
+
+Built entirely from the generated surface tables (tempera_sdk.surface), so the
+TypeScript, Python, and Rust packages expose the same products, the same
+operation names, the same descriptions, and the same error shape.
+
+- Typed operations: ``client.palette.get_trace({"tenant_id": ..., "trace_id": ...})``
+  — every operation in surface.json becomes a method on its product client.
+  Parameters accept canonical wire names and snake_case aliases; requests
+  always emit the producer's canonical wire names.
+- Passthrough: ``client.tempo.request("/custom", method="POST", body=...)``
+  for endpoints the surface tables don't cover yet.
+- Auth: audience products resolve their bearer through TemperaAuth (per-
+  audience OAuth token with unified tp_ API-key fallback); control-plane
+  operations use the account-session token returned by create_hosted_session().
+"""
+
+from __future__ import annotations
+
+import os
+import re
+from typing import Any, Mapping
+
+from .auth import TemperaAuth, Transport, _default_transport, _encode_json
+from .errors import TemperaApiError, TemperaSdkError, _with_context
+from .retry import assert_canonical_idempotency_keys, send_with_retry
+from .surface import DEFAULT_AUDIENCE, ENVIRONMENTS, OPERATIONS, PRODUCTS
+from urllib import parse as urllib_parse
+
+
+def _snake_case(key: str) -> str:
+    return re.sub(r"([a-z0-9])([A-Z]+)", r"\1_\2", key).lower()
+
+
+def _normalize_declared_params(
+    product_key: str,
+    op: Mapping[str, Any],
+    params: Mapping[str, Any],
+) -> tuple[dict[str, Any], set[str]]:
+    normalized = dict(params)
+    consumed_aliases: set[str] = set()
+    declared = {
+        *op.get("path_params", []),
+        *op.get("query", []),
+        *op.get("body", []),
+        *op.get("forbidden_body", []),
+    }
+    for wire_name in declared:
+        alias = _snake_case(wire_name)
+        if alias == wire_name:
+            continue
+        has_wire_name = wire_name in params
+        has_alias = alias in params
+        if has_wire_name and has_alias:
+            raise TemperaSdkError(
+                f"{PRODUCT_ATTRS[product_key]}.{op['id']}: pass either "
+                f"{wire_name!r} or its snake_case alias {alias!r}, not both"
+            )
+        if has_alias:
+            normalized[wire_name] = params[alias]
+            consumed_aliases.add(alias)
+    return normalized, consumed_aliases
+
+
+# camelCase registry key (surface.json) <-> snake_case client attribute.
+PRODUCT_ATTRS = {key: _snake_case(key) for key in PRODUCTS}
+_ATTR_TO_KEY = {attr: key for key, attr in PRODUCT_ATTRS.items()}
+
+# Environment presets only carry base URLs for these products.
+_ENVIRONMENT_TARGET_KEYS = {
+    "controlPlane": "controlPlaneUrl",
+    "palette": "paletteApiUrl",
+    "tempo": "tempoApiUrl",
+    "temperaLlm": "temperaLlmApiUrl",
+    "temperaRisk": "temperaRiskApiUrl",
+    "temperaWorkflows": "temperaWorkflowsApiUrl",
+    "temperaGym": "temperaGymUrl",
+    "dataEngine": "dataEngineApiUrl",
+    "cradle": "cradleApiUrl",
+}
+
+_PATH_PARAM_RE = re.compile(r"\{([A-Za-z_][A-Za-z0-9_]*)\}")
+
+
+def _query_value(value: Any) -> str:
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    return str(value)
+
+
+class _ProductClient:
+    """One product's client: registry metadata, typed operations, passthrough request()."""
+
+    def __init__(self, client: "TemperaClient", product_key: str):
+        product = PRODUCTS[product_key]
+        self._client = client
+        self.key = product_key
+        self.name = product["name"]
+        self.repository = product["repository"]
+        self.env_var = product["env_var"]
+        self.audience = product["audience"]
+        self.description = product["description"]
+        for op in OPERATIONS.get(product_key, []):
+            setattr(self, op["id"], self._make_operation(op))
+
+    def _make_operation(self, op: dict[str, Any]):
+        client = self._client
+        product_key = self.key
+
+        def operation(params: Mapping[str, Any] | None = None, *, bearer: str | None = None,
+                      headers: Mapping[str, str] | None = None, **extra: Any) -> Any:
+            merged = dict(params or {})
+            merged.update(extra)
+            result = client._dispatch(product_key, op, merged, bearer=bearer, headers=headers)
+            # createHostedSession returns the account-session token pair and stores the
+            # access token so later control-plane calls are authenticated.
+            if product_key == "controlPlane" and op["id"] == "create_hosted_session":
+                if isinstance(result, Mapping) and result.get("access_token"):
+                    client.account_token = result["access_token"]
+            return result
+
+        operation.__name__ = op["id"]
+        operation.__qualname__ = f"TemperaClient.{PRODUCT_ATTRS[product_key]}.{op['id']}"
+        operation.__doc__ = op["description"]
+        return operation
+
+    def request(
+        self,
+        path: str,
+        *,
+        method: str = "GET",
+        body: Any = None,
+        binary: bool = False,
+        content_type: str | None = None,
+        query: Mapping[str, Any] | None = None,
+        headers: Mapping[str, str] | None = None,
+        bearer: str | None = None,
+    ) -> Any:
+        """Raw request against this product for endpoints without a typed operation."""
+        if not path.startswith("/"):
+            path = f"/{path}"
+        if bearer is None and (self.audience or self.key == "controlPlane"):
+            bearer = self._client._try_bearer(self.key)
+        return self._client._raw_request(
+            self.key, path, method=method, body=body, query=query, headers=headers, bearer=bearer
+        )
+
+
+class TemperaClient:
+    """One credential set, every Tempera product (see module docstring)."""
+
+    def __init__(
+        self,
+        *,
+        auth: TemperaAuth | None = None,
+        account_token: str | None = None,
+        introspection_secret: str | None = None,
+        base_urls: Mapping[str, str] | None = None,
+        environment: str | None = None,
+        transport: Transport | None = None,
+        sleep: Any = None,
+    ):
+        self.auth = auth
+        self.account_token = account_token
+        self._introspection_secret = introspection_secret
+        # base_urls accepts snake_case attribute names and camelCase registry keys.
+        self._base_urls = {_ATTR_TO_KEY.get(key, key): value for key, value in (base_urls or {}).items()}
+        if environment is not None and environment not in ENVIRONMENTS:
+            raise TemperaSdkError(f"unknown Tempera environment: {environment}")
+        self._environment_targets = ENVIRONMENTS[environment] if environment else None
+        self._transport = transport or (auth.transport if auth else None) or _default_transport
+        # Injectable only so tests can observe retry backoff without waiting.
+        self._sleep = sleep
+        self.control_plane: _ProductClient
+        self.palette: _ProductClient
+        self.tempo: _ProductClient
+        self.tempera_llm: _ProductClient
+        self.tempera_risk: _ProductClient
+        self.tempera_voice: _ProductClient
+        self.tempera_workflows: _ProductClient
+        self.tempera_gym: _ProductClient
+        self.tempera_bio: _ProductClient
+        self.cradle: _ProductClient
+        self.remi: _ProductClient
+        self.data_engine: _ProductClient
+        self.human_data: _ProductClient
+        self.temp_js: _ProductClient
+        self.temp_os: _ProductClient
+        self.arrha: _ProductClient
+        for product_key, attr in PRODUCT_ATTRS.items():
+            setattr(self, attr, _ProductClient(self, product_key))
+
+    def _base_url_for(self, product_key: str) -> str:
+        product = PRODUCTS.get(product_key)
+        if product is None:
+            raise TemperaSdkError(f"unknown Tempera product: {product_key}")
+        from_environment = None
+        if self._environment_targets is not None:
+            target_key = _ENVIRONMENT_TARGET_KEYS.get(product_key)
+            if target_key:
+                from_environment = self._environment_targets.get(target_key)
+        base_url = self._base_urls.get(product_key) or os.environ.get(product["env_var"]) or from_environment
+        if not base_url:
+            attr = PRODUCT_ATTRS[product_key]
+            raise TemperaSdkError(
+                f"missing base URL for {attr}; set {product['env_var']} or pass base_urls[{attr!r}]"
+            )
+        return base_url.rstrip("/")
+
+    def _bearer_for(
+        self,
+        product_key: str,
+        auth_kind: str,
+        auth_audience: str | None = None,
+    ) -> str | None:
+        attr = PRODUCT_ATTRS[product_key]
+        if auth_kind == "none":
+            return None
+        if auth_kind == "introspectionSecret":
+            if not self._introspection_secret:
+                raise TemperaSdkError(f"{attr}: introspect_token requires the introspection_secret option")
+            return self._introspection_secret
+        if auth_kind == "account":
+            if not self.account_token:
+                raise TemperaSdkError(
+                    f"{attr}: an account token is required; call control_plane.create_hosted_session() first or pass account_token"
+                )
+            return self.account_token
+        if auth_kind == "oauthResource":
+            if self.auth is None:
+                raise TemperaSdkError(
+                    f"{attr}: pass a TemperaAuth with credentials permitted for "
+                    f"audience {auth_audience} by this operation"
+                )
+            return self.auth.bearer_for(str(auth_audience))
+        audience = PRODUCTS[product_key]["audience"] or DEFAULT_AUDIENCE
+        if self.auth is None:
+            raise TemperaSdkError(
+                f"{attr}: pass a TemperaAuth with credentials permitted for audience {audience} by this operation"
+            )
+        return self.auth.bearer_for(audience)
+
+    def _try_bearer(self, product_key: str) -> str | None:
+        try:
+            return self._bearer_for(product_key, "account" if product_key == "controlPlane" else "product")
+        except TemperaSdkError:
+            return None
+
+    def _raw_request(
+        self,
+        product_key: str,
+        path: str,
+        *,
+        method: str = "GET",
+        body: Any = None,
+        binary: bool = False,
+        content_type: str | None = None,
+        query: Mapping[str, Any] | None = None,
+        headers: Mapping[str, str] | None = None,
+        bearer: str | None = None,
+        operation: str | None = None,
+        safe_retry: str = "none",
+    ) -> Any:
+        url = self._base_url_for(product_key) + path
+        query_pairs = [(key, _query_value(value)) for key, value in (query or {}).items() if value is not None]
+        if query_pairs:
+            url += ("&" if "?" in url else "?") + urllib_parse.urlencode(query_pairs)
+        request_headers = {"accept": "application/json"}
+        if body is not None:
+            request_headers["content-type"] = content_type if binary else "application/json"
+        if bearer:
+            request_headers["authorization"] = f"Bearer {bearer}"
+        if headers:
+            request_headers.update(headers)
+        # The request is serialized exactly once. Every retry resends these same
+        # bytes, so the idempotency key inside the body can never be re-minted.
+        data = body if binary else (_encode_json(body) if body is not None else None)
+
+        def attempt(_attempt: int) -> Any:
+            try:
+                return self._transport(method, url, request_headers, data)
+            except TemperaApiError as error:
+                raise _with_context(error, product_key, operation) from None
+
+        if self._sleep is None:
+            return send_with_retry(safe_retry, attempt)
+        return send_with_retry(safe_retry, attempt, sleep=self._sleep)
+
+    def _substitute_path(
+        self,
+        template: str,
+        params: Mapping[str, Any],
+        product_key: str,
+        operation_id: str,
+        path_param_templates: Mapping[str, str] | None = None,
+    ) -> str:
+        path_param_templates = path_param_templates or {}
+
+        def replace(match: "re.Match[str]") -> str:
+            key = match.group(1)
+            value = params.get(key)
+            if value is None or value == "":
+                raise TemperaSdkError(
+                    f'{PRODUCT_ATTRS[product_key]}.{operation_id}: missing required path parameter "{key}"'
+                )
+            resource_pattern = path_param_templates.get(key)
+            if resource_pattern:
+                expected = resource_pattern.split("/")
+                observed = str(value).split("/")
+                matches = (
+                    len(observed) == len(expected)
+                    and all(
+                        expected_segment == "*" or expected_segment == observed[index]
+                        for index, expected_segment in enumerate(expected)
+                    )
+                    and all(
+                        expected[index] != "*"
+                        or (segment not in {"", ".", ".."})
+                        for index, segment in enumerate(observed)
+                    )
+                )
+                if not matches:
+                    raise TemperaSdkError(
+                        f'{PRODUCT_ATTRS[product_key]}.{operation_id}: path parameter '
+                        f'"{key}" must match AIP resource pattern "{resource_pattern}"'
+                    )
+                return "/".join(
+                    urllib_parse.quote(segment, safe="")
+                    if expected[index] == "*"
+                    else segment
+                    for index, segment in enumerate(observed)
+                )
+            return urllib_parse.quote(str(value), safe="")
+
+        return _PATH_PARAM_RE.sub(replace, template)
+
+    def _dispatch(
+        self,
+        product_key: str,
+        op: dict[str, Any],
+        params: Mapping[str, Any],
+        *,
+        bearer: str | None = None,
+        headers: Mapping[str, str] | None = None,
+    ) -> Any:
+        wire_params, consumed_aliases = _normalize_declared_params(
+            product_key, op, params
+        )
+        for key in op.get("forbidden_body", []):
+            if key in wire_params:
+                raise TemperaSdkError(
+                    f"{product_key}.{op['id']}: {key} is derived from the authenticated principal"
+                )
+        path = self._substitute_path(
+            op["path"],
+            wire_params,
+            product_key,
+            op["id"],
+            op.get("path_param_templates"),
+        )
+        consumed = set(op["path_params"]) | consumed_aliases
+        query: dict[str, Any] = {}
+        for key in op["query"]:
+            value = wire_params.get(key)
+            if value is None:
+                if key in op.get("required_query", []):
+                    raise TemperaSdkError(
+                        f'{PRODUCT_ATTRS[product_key]}.{op["id"]}: '
+                        f'missing required query parameter "{key}"'
+                    )
+                continue
+            if value == "" and key in op.get("required_query", []):
+                raise TemperaSdkError(
+                    f'{PRODUCT_ATTRS[product_key]}.{op["id"]}: '
+                    f'missing required query parameter "{key}"'
+                )
+            query[key] = value
+            consumed.add(key)
+        binary = op.get("request_body_kind") == "binary"
+        body: Any = None
+        if binary:
+            body = wire_params.get("content")
+            consumed.add("content")
+            if body is None:
+                raise TemperaSdkError(f"{product_key}.{op['id']}: missing binary content")
+        if not binary and (op["body"] or op["body_defaults"]):
+            body = dict(op["body_defaults"])
+            for key in op["body"]:
+                if key in wire_params:
+                    body[key] = wire_params[key]
+                    consumed.add(key)
+        # Forward-compatibility: undeclared parameters flow to the query string
+        # on GET/DELETE and into the JSON body otherwise, so a new server field
+        # is usable before the surface tables catch up.
+        for key, value in params.items():
+            if key in consumed:
+                continue
+            if op["method"] in ("GET", "DELETE"):
+                query[key] = value
+            elif not binary:
+                if body is None:
+                    body = {}
+                body[key] = value
+            else:
+                raise TemperaSdkError(
+                    f"{product_key}.{op['id']}: binary operations only accept content "
+                    "plus declared path/query parameters"
+                )
+        resolved_bearer = (
+            bearer
+            if bearer is not None
+            else self._bearer_for(
+                product_key,
+                op["auth"],
+                op.get("auth_audience"),
+            )
+        )
+        if not binary:
+            assert_canonical_idempotency_keys(
+                f"{PRODUCT_ATTRS[product_key]}.{op['id']}", body
+            )
+        return self._raw_request(
+            product_key,
+            path,
+            method=op["method"],
+            body=body,
+            binary=binary,
+            content_type=op.get("request_content_type"),
+            query=query,
+            headers=headers,
+            bearer=resolved_bearer,
+            operation=op["id"],
+            safe_retry=op["safe_retry"],
+        )
+
+
+__all__ = ["TemperaClient"]

@@ -13,6 +13,44 @@ import { TemperaMcpError, TemperaSdkError, apiErrorFromResponse } from "./errors
 
 export const MCP_PROTOCOL_VERSION = "2026-07-28";
 
+// SEP-2243 routable headers. A middle box has to be able to route a request
+// without parsing its body, so the method carries its subject in `Mcp-Name`:
+// the tool for tools/call and prompts/get, the uri for the resources/* methods,
+// the task id for the tasks/* ones. A gateway that validates them (tempera-mcp
+// does) refuses a request that omits one.
+const MCP_NAME_FROM = {
+  "tools/call": "name",
+  "prompts/get": "name",
+  "resources/read": "uri",
+  "resources/subscribe": "uri",
+  "resources/unsubscribe": "uri",
+  "tasks/get": "taskId",
+  "tasks/update": "taskId",
+  "tasks/cancel": "taskId",
+};
+const BASE64_HEADER_PREFIX = "=?base64?";
+const BASE64_HEADER_SUFFIX = "?=";
+
+/** A header value, Base64-wrapped when it could not survive as one. */
+function headerSafe(value) {
+  const unsafe =
+    value.length > 0 &&
+    (/^[ \t]|[ \t]$/.test(value) ||
+      // eslint-disable-next-line no-control-regex
+      /[^\x20-\x7e]/.test(value) ||
+      (value.startsWith(BASE64_HEADER_PREFIX) && value.endsWith(BASE64_HEADER_SUFFIX)));
+  if (!unsafe) return value;
+  const encoded = Buffer.from(value, "utf8").toString("base64");
+  return `${BASE64_HEADER_PREFIX}${encoded}${BASE64_HEADER_SUFFIX}`;
+}
+
+function mcpName(method, params) {
+  const key = MCP_NAME_FROM[method];
+  if (!key) return null;
+  const value = params?.[key];
+  return typeof value === "string" ? headerSafe(value) : null;
+}
+
 export class TemperaMcpClient {
   constructor({ url, auth, bearer, fetch: fetchImpl } = {}) {
     this.url = url ?? auth?.mcpUrl;
@@ -52,6 +90,9 @@ export class TemperaMcpClient {
         authorization: `Bearer ${this.#resolveBearer()}`,
         "mcp-protocol-version": MCP_PROTOCOL_VERSION,
         "mcp-method": method,
+        ...(mcpName(method, requestParams) === null
+          ? {}
+          : { "mcp-name": mcpName(method, requestParams) }),
       },
       body: JSON.stringify({ jsonrpc: "2.0", id: this.nextId++, method, params: requestParams }),
     });
