@@ -18541,12 +18541,6 @@ pub const MCP_METHODS: &[McpMethodSpec] = &[
         description: "Open an MCP session and fetch server capabilities and instructions.",
     },
     McpMethodSpec {
-        id: "ping",
-        rpc: "ping",
-        tool: None,
-        description: "Check gateway liveness over JSON-RPC.",
-    },
-    McpMethodSpec {
         id: "list_tools",
         rpc: "tools/list",
         tool: None,

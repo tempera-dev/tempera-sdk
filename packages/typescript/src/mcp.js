@@ -130,9 +130,16 @@ export class TemperaMcpClient {
     });
   }
 
-  /** Check gateway liveness over JSON-RPC. */
+  /**
+   * Check gateway liveness over JSON-RPC.
+   *
+   * @deprecated MCP revision 2026-07-28 removed `ping`; a gateway on that
+   * revision answers it with a method-not-found. This helper now sends
+   * `server/discover` so existing callers keep working, and will be removed
+   * in a future release. Call `initialize()` instead.
+   */
   ping() {
-    return this.rpc("ping");
+    return this.initialize();
   }
 
   /** List every tool the gateway offers: builtins plus namespaced product tools. */

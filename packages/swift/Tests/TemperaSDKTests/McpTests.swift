@@ -59,15 +59,15 @@ final class McpTests: XCTestCase {
     func testRequestIdsIncrementAndEveryCallCarriesTheMeta() async throws {
         let transport = gateway()
         let mcp = try client(transport)
-        try await mcp.ping()
-        try await mcp.ping()
+        try await mcp.initialize()
+        try await mcp.initialize()
         let requests = await transport.requests
         XCTAssertEqual(requests.count, 2)
         let first = TemperaJSON.parse(try XCTUnwrap(requests[0].body))
         let second = TemperaJSON.parse(try XCTUnwrap(requests[1].body))
         XCTAssertEqual(first?["id"], .int(1))
         XCTAssertEqual(second?["id"], .int(2))
-        XCTAssertEqual(first?["method"], .string("ping"))
+        XCTAssertEqual(first?["method"], .string("server/discover"))
         XCTAssertEqual(
             first?["params"]?["_meta"]?["io.modelcontextprotocol/protocolVersion"],
             .string(TemperaSurface.mcpProtocolVersion)
@@ -76,6 +76,20 @@ final class McpTests: XCTestCase {
             first?["params"]?["_meta"]?["io.modelcontextprotocol/clientCapabilities"],
             .object([])
         )
+    }
+
+    // MCP revision 2026-07-28 removed `ping`. The helper stays for callers that
+    // still name it, but the request on the wire is the probe the gateway answers.
+    @available(*, deprecated)
+    func testTheDeprecatedPingHelperProbesServerDiscover() async throws {
+        let transport = gateway()
+        let mcp = try client(transport)
+        try await mcp.ping()
+        let requests = await transport.requests
+        XCTAssertEqual(requests.count, 1)
+        let request = TemperaJSON.parse(try XCTUnwrap(requests[0].body))
+        XCTAssertEqual(request?["method"], .string("server/discover"))
+        XCTAssertEqual(requests[0].header("mcp-method"), "server/discover")
     }
 
     func testCallToolNamesTheToolAndSplicesArguments() async throws {
@@ -134,7 +148,7 @@ final class McpTests: XCTestCase {
         )
         let mcp = try client(transport)
         do {
-            try await mcp.ping()
+            try await mcp.initialize()
             XCTFail("expected a TemperaMcpError")
         } catch let error as TemperaMcpError {
             XCTAssertEqual(error.code, planLimit)
@@ -147,7 +161,7 @@ final class McpTests: XCTestCase {
     func testNonConformantErrorsAreHandledUniformly() async throws {
         // A string error becomes code 0 with its own text.
         do {
-            try await client(gateway(#"{"error":"nope"}"#)).ping()
+            try await client(gateway(#"{"error":"nope"}"#)).initialize()
             XCTFail("expected a TemperaMcpError")
         } catch let error as TemperaMcpError {
             XCTAssertEqual(error.code, 0)
@@ -155,7 +169,7 @@ final class McpTests: XCTestCase {
         }
         // An object without an integer code keeps its message, code 0.
         do {
-            try await client(gateway(#"{"error":{"code":"x","message":"m"}}"#)).ping()
+            try await client(gateway(#"{"error":{"code":"x","message":"m"}}"#)).initialize()
             XCTFail("expected a TemperaMcpError")
         } catch let error as TemperaMcpError {
             XCTAssertEqual(error.code, 0)
@@ -163,13 +177,13 @@ final class McpTests: XCTestCase {
         }
         // An object with neither gets the shared label.
         do {
-            try await client(gateway(#"{"error":{}}"#)).ping()
+            try await client(gateway(#"{"error":{}}"#)).initialize()
             XCTFail("expected a TemperaMcpError")
         } catch let error as TemperaMcpError {
             XCTAssertEqual(error.message, "MCP error")
         }
         // A null error is not an error.
-        let result = try await client(gateway(#"{"error":null,"result":{"ok":true}}"#)).ping()
+        let result = try await client(gateway(#"{"error":null,"result":{"ok":true}}"#)).initialize()
         XCTAssertEqual(result["ok"], .bool(true))
     }
 
@@ -201,13 +215,13 @@ final class McpTests: XCTestCase {
             transport: transport
         )
         let fromAuth = try TemperaMcpClient(auth: auth, transport: transport)
-        try await fromAuth.ping()
+        try await fromAuth.initialize()
         let authorized = try await lastRequest(transport)
         XCTAssertEqual(authorized.header("authorization"), "Bearer at_mcp")
 
         let bare = try TemperaMcpClient(url: "https://api.tempera.dev/mcp", transport: transport)
         await assertSdkError("no MCP credential") {
-            _ = try await bare.ping()
+            _ = try await bare.initialize()
         }
     }
 

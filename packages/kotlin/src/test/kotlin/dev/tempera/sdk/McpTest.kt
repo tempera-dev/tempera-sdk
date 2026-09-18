@@ -63,14 +63,14 @@ class McpTest {
     fun requestIdsIncrementAndEveryCallCarriesTheMeta() {
         val transport = gateway()
         val mcp = client(transport)
-        mcp.ping()
-        mcp.ping()
+        mcp.initialize()
+        mcp.initialize()
         assertEquals(2, transport.requests.size)
         val first = TemperaJson.parse(transport.requests[0].body!!)
         val second = TemperaJson.parse(transport.requests[1].body!!)
         assertEquals(TemperaJson.Int64(1), first?.get("id"))
         assertEquals(TemperaJson.Int64(2), second?.get("id"))
-        assertEquals(TemperaJson.Text("ping"), first?.get("method"))
+        assertEquals(TemperaJson.Text("server/discover"), first?.get("method"))
         assertEquals(
             TemperaJson.Text(version),
             first?.get("params")?.get("_meta")?.get("io.modelcontextprotocol/protocolVersion"),
@@ -79,6 +79,19 @@ class McpTest {
             TemperaJson.Obj(emptyList()),
             first?.get("params")?.get("_meta")?.get("io.modelcontextprotocol/clientCapabilities"),
         )
+    }
+
+    // MCP revision 2026-07-28 removed `ping`. The helper stays for callers that
+    // still name it, but the request on the wire is the probe the gateway answers.
+    @Suppress("DEPRECATION")
+    @Test
+    fun theDeprecatedPingHelperProbesServerDiscover() {
+        val transport = gateway()
+        client(transport).ping()
+        assertEquals(1, transport.requests.size)
+        val request = TemperaJson.parse(transport.requests[0].body!!)
+        assertEquals(TemperaJson.Text("server/discover"), request?.get("method"))
+        assertEquals("server/discover", transport.requests[0].header("mcp-method"))
     }
 
     @Test
@@ -131,7 +144,7 @@ class McpTest {
             gateway(
                 """{"jsonrpc":"2.0","id":1,"error":{"code":$planLimit,"message":"plan limit reached","data":{"metric":"mcp_invocations"}}}"""
             )
-        val error = assertThrows<TemperaMcpException> { client(transport).ping() }
+        val error = assertThrows<TemperaMcpException> { client(transport).initialize() }
         assertEquals(planLimit, error.code)
         assertEquals("plan limit reached", error.detail)
         assertEquals(TemperaJson.Text("mcp_invocations"), error.data?.get("metric"))
@@ -141,24 +154,24 @@ class McpTest {
     @Test
     fun nonConformantErrorsAreHandledUniformly() {
         // A string error becomes code 0 with its own text.
-        var error = assertThrows<TemperaMcpException> { client(gateway("""{"error":"nope"}""")).ping() }
+        var error = assertThrows<TemperaMcpException> { client(gateway("""{"error":"nope"}""")).initialize() }
         assertEquals(0, error.code)
         assertEquals("nope", error.detail)
 
         // An object without an integer code keeps its message, code 0.
         error =
             assertThrows<TemperaMcpException> {
-                client(gateway("""{"error":{"code":"x","message":"m"}}""")).ping()
+                client(gateway("""{"error":{"code":"x","message":"m"}}""")).initialize()
             }
         assertEquals(0, error.code)
         assertEquals("m", error.detail)
 
         // An object with neither gets the shared label.
-        error = assertThrows<TemperaMcpException> { client(gateway("""{"error":{}}""")).ping() }
+        error = assertThrows<TemperaMcpException> { client(gateway("""{"error":{}}""")).initialize() }
         assertEquals("MCP error", error.detail)
 
         // A null error is not an error.
-        val result = client(gateway("""{"error":null,"result":{"ok":true}}""")).ping()
+        val result = client(gateway("""{"error":null,"result":{"ok":true}}""")).initialize()
         assertEquals(TemperaJson.Bool(true), result["ok"])
     }
 
@@ -186,11 +199,11 @@ class McpTest {
                 tokens = mapOf("tempera-mcp" to TemperaTokenSet("at_mcp")),
                 transport = transport,
             )
-        TemperaMcpClient(auth = auth, transport = transport).ping()
+        TemperaMcpClient(auth = auth, transport = transport).initialize()
         assertEquals("Bearer at_mcp", transport.lastRequest().header("authorization"))
 
         val bare = TemperaMcpClient(url = "https://api.tempera.dev/mcp", transport = transport)
-        assertSdkError("no MCP credential") { bare.ping() }
+        assertSdkError("no MCP credential") { bare.initialize() }
     }
 
     @Test
