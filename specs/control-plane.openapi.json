@@ -12663,6 +12663,7 @@
               "tempera-dropshipping",
               "tempera-connectors",
               "tempera-payments",
+              "tempera-workflows",
               "tempera-account"
             ]
           },
@@ -12684,6 +12685,7 @@
                 "connection:read",
                 "payments:merchants:read",
                 "payments:merchants:write",
+                "workflow:read",
                 "account:read"
               ]
             }

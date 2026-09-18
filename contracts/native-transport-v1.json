@@ -61,8 +61,8 @@
       "spec": "specs/control-plane.openapi.json",
       "sourceRepo": "tempera-dev/auth-hub",
       "sourceBranch": "main",
-      "sourceCommit": "7271d7aeac85dee7061b835417d9085c3bc141a5",
-      "sourceSha256": "8a320d0303e75a37eef9ac4d16d77cb076b17c3a712b222393c0def73b81240d"
+      "sourceCommit": "cb34a5bb7671722605d8f7cc1f225b645924efd2",
+      "sourceSha256": "93ae912f1f7b18d29b75d2a1c7758f019eb0d20fcdd982f377b81519802e7852"
     }
   ],
   "operations": [
