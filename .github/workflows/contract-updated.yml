@@ -6,20 +6,34 @@ name: Contract updated
 # surface, runs the gates, and opens a pull request. Nobody copies a spec
 # between repositories by hand, and no producer can be silently behind.
 #
-# The schedule is what makes this work today. Firing a repository_dispatch at
-# tempera-sdk needs a credential with write access to this repository, and the
-# only app installed org-wide -- tempera-contract-reader -- is read-only. Until
-# an org administrator adds a write-capable app and publishes its client id and
-# private key as organization secrets, producers cannot notify us, so the sweep
-# below re-vendors every producer from its main every three hours. The
-# repository_dispatch trigger is wired and validated regardless, so the moment
-# that credential exists propagation becomes immediate with no change here.
+# What triggers this today: repository_dispatch when it becomes available, plus
+# this repository's own activity -- every pull request, and every merge to main.
+# There is no cron. Firing a repository_dispatch at tempera-sdk needs a
+# credential with write access to this repository, and the only app installed
+# org-wide -- tempera-contract-reader -- is read-only. Until an org
+# administrator adds a write-capable app and publishes its client id and private
+# key as organization secrets, producers cannot notify us. The
+# repository_dispatch trigger stays wired and validated regardless, so the
+# moment that credential exists propagation becomes immediate with no change
+# here.
+#
+# Until then, producer drift is caught when this repository sees activity rather
+# than on a clock. That is a real trade: a quiet week here means the vendored
+# surface can sit stale longer than it used to. It replaces a three-hourly sweep
+# that was failing in the overwhelming majority of its runs, so the clock was
+# not actually delivering the freshness it promised.
+#
+# On a pull_request event this workflow is read-only. It re-vendors, regenerates
+# and runs the gates so the pull request sees the answer, but the step that
+# pushes a branch and opens a pull request is guarded off. The proposing half
+# runs on push to main, on repository_dispatch, and on workflow_dispatch.
 
 on:
   repository_dispatch:
     types: [tempera-contract-updated]
-  schedule:
-    - cron: "17 */3 * * *"
+  push:
+    branches: [main]
+  pull_request:
   workflow_dispatch:
     inputs:
       product:
@@ -29,6 +43,10 @@ on:
 
 permissions:
   contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   revendor:
@@ -87,6 +105,7 @@ jobs:
         run: npm test
 
       - name: Open a pull request when the surface moved
+        if: github.event_name != 'pull_request'
         env:
           GH_TOKEN: ${{ github.token }}
           PRODUCTS: ${{ steps.request.outputs.products }}
