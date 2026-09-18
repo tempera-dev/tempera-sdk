@@ -48,13 +48,19 @@ method and path template match the contract exactly, and that the very next
 code line carries a string literal whose interpolated path shape is that same
 route. A `WSS` annotation is checked exactly like an HTTP one. It also requires
 that every literal reaching into a producer's canonical namespace
-(NATIVE_NAMESPACES: `/v1/organizations` for dropshipping; `/v1/operating-state`,
-`/v1/business-profile`, and `/v1/cases` for business; `/v1/merchants` for
+(NATIVE_NAMESPACES: `/v1/organizations` for dropshipping; `/v1/operatingState`,
+`/v1/businessProfile`, and `/v1/cases` for business; `/v1/merchants` for
 payments; `/v1/sessions`, `/v1/agents`, and `/v1/actions` for voice;
-`/v1/workflows` and `/v1/runs` for workflows; `/v1/me`,
-`/v1/billing`, `/v1/usage`, and `/v1/team` for the control plane, whose
-`/v1/sessions` account read stays under the voice root the two products share)
+`/v1/workflows` and `/v1/runs` for workflows; `/v1/me`, `/v1/billing`,
+`/v1/usage`, `/v1/team`, and `/v1/sessions` for the control plane)
 is annotated, so a new hand-written call cannot slip in undeclared.
+
+A route root may be owned by more than one producer: `/v1/sessions` is both
+the voice session root and the control plane's account-session read. An
+annotated literal is resolved by the producer the annotation names, not by
+path prefix alone, so the same path can belong to two producers as long as
+each declares that root in NATIVE_NAMESPACES. An unannotated literal is still
+refused, and the failure names every candidate owner.
 """
 
 from __future__ import annotations
@@ -141,7 +147,16 @@ NATIVE_NAMESPACES: dict[str, tuple[str, ...]] = {
     "temperaPayments": ("/v1/merchants",),
     "temperaVoice": ("/v1/sessions", "/v1/agents", "/v1/actions"),
     "temperaWorkflows": ("/v1/workflows", "/v1/runs"),
-    "controlPlane": ("/v1/me", "/v1/billing", "/v1/usage", "/v1/team"),
+    # The account service answers GET /v1/sessions on the same literal the
+    # voice product roots its sessions at. Both producers declare the root;
+    # an annotated call site is resolved by the producer it names.
+    "controlPlane": (
+        "/v1/me",
+        "/v1/billing",
+        "/v1/usage",
+        "/v1/team",
+        "/v1/sessions",
+    ),
 }
 
 # Payments remains a broad producer contract, but native phones receive only
@@ -636,12 +651,18 @@ def in_namespace(shape: str, root: str) -> bool:
     return shape == root or shape.startswith(root + "/") or shape.startswith(root + ":")
 
 
-def namespace_owner(shape: str) -> str | None:
-    """The product whose canonical namespace a route shape reaches into, if any."""
-    for product, roots in NATIVE_NAMESPACES.items():
-        if any(in_namespace(shape, root) for root in roots):
-            return product
-    return None
+def namespace_owners(shape: str) -> tuple[str, ...]:
+    """Every product whose canonical namespace a route shape reaches into.
+
+    A root can be shared: `/v1/sessions` belongs to both temperaVoice and the
+    control plane. Callers resolve a shared shape by the producer an
+    annotation names; with no annotation every candidate owner is reported.
+    """
+    return tuple(
+        product
+        for product, roots in NATIVE_NAMESPACES.items()
+        if any(in_namespace(shape, root) for root in roots)
+    )
 
 
 def check_client(path: Path, contract: dict[str, Any]) -> list[str]:
@@ -672,6 +693,15 @@ def check_client(path: Path, contract: dict[str, Any]) -> list[str]:
                 f"{label}: {name} declares path {match.group('path')}, "
                 f"contract says {entry['pathTemplate']}"
             )
+        # The annotation resolves the route to one producer, but only within a
+        # namespace that producer declares. A route root shared by two
+        # producers is legal; claiming a root you do not own is not.
+        owners = namespace_owners(entry["pathShape"])
+        if owners and match.group("product") not in owners:
+            failures.append(
+                f"{label}: {name} claims {entry['pathTemplate']}, "
+                f"which is the {' and '.join(owners)} namespace"
+            )
         # The annotation must sit directly above real code carrying the route.
         follower = next(
             (
@@ -695,11 +725,12 @@ def check_client(path: Path, contract: dict[str, Any]) -> list[str]:
         if number in annotated_lines or ANNOTATION_RE.search(line):
             continue
         for shape in literal_path_shapes(line):
-            owner = namespace_owner(shape)
-            if owner is not None:
+            owners = namespace_owners(shape)
+            if owners:
                 failures.append(
-                    f"{path.name}:{number}: undeclared {owner} route {shape}; "
-                    "add a tempera-transport annotation above the call site"
+                    f"{path.name}:{number}: undeclared {' or '.join(owners)} "
+                    f"route {shape}; add a tempera-transport annotation above "
+                    "the call site"
                 )
     return failures
 
