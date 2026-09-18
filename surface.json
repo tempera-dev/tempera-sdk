@@ -12708,6 +12708,50 @@
         "safeRetry": "read"
       },
       {
+        "id": "createSaleOrderCheckout",
+        "method": "POST",
+        "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders/{orderId}:checkout",
+        "auth": "product",
+        "description": "Create Sale Order Checkout.",
+        "upstreamOperationId": "createSaleOrderCheckout",
+        "pathParams": [
+          "orderId",
+          "organization",
+          "project",
+          "environment",
+          "site"
+        ],
+        "body": [
+          "expectedRevision",
+          "provider"
+        ],
+        "requiredBody": [
+          "provider"
+        ],
+        "requestBodyKind": "json",
+        "requestContentType": "application/json",
+        "scope": "orders:commerce:write",
+        "safeRetry": "none"
+      },
+      {
+        "id": "getSaleOrderPayment",
+        "method": "GET",
+        "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders/{orderId}/payment",
+        "auth": "product",
+        "description": "Get Sale Order Payment.",
+        "upstreamOperationId": "getSaleOrderPayment",
+        "pathParams": [
+          "orderId",
+          "organization",
+          "project",
+          "environment",
+          "site"
+        ],
+        "requestBodyKind": "none",
+        "scope": "orders:read",
+        "safeRetry": "read"
+      },
+      {
         "id": "listEvents",
         "method": "GET",
         "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/events",

@@ -46,7 +46,7 @@ availability, a live hosted service, or an undocumented endpoint.
 | `palette` | [palette](https://github.com/tempera-dev/palette) | 61 | `palette` |
 | `temperaPayments` | [tempera-payments](https://github.com/tempera-dev/tempera-payments) | 47 | `tempera-payments` |
 | `temperaRisk` | [tempera-risk](https://github.com/tempera-dev/tempera-risk) | 44 | `tempera-risk` |
-| `temperaDropshipping` | [tempera-dropshipping](https://github.com/tempera-dev/tempera-dropshipping) | 31 | `tempera-dropshipping` |
+| `temperaDropshipping` | [tempera-dropshipping](https://github.com/tempera-dev/tempera-dropshipping) | 33 | `tempera-dropshipping` |
 | `tempo` | [tempo](https://github.com/tempera-dev/tempo) | 27 | `tempo` |
 | `temperaInvestigations` | [tempera-investigations](https://github.com/tempera-dev/tempera-investigations) | 24 | `tempera-investigations` |
 | `temperaVoice` | [tempera-voice](https://github.com/tempera-dev/tempera-voice) | 24 | `tempera-voice` |

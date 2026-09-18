@@ -2,6 +2,149 @@
   "schema_version": 1,
   "exclusions": [
     {
+      "compatibility": "inbound_webhook",
+      "method": "POST",
+      "migration": "Model this only in a future server-side webhook verification package, not as an outbound product client method.",
+      "operation_id": "receiveStripeBillingWebhook",
+      "owner": "auth-hub",
+      "path": "/billing/webhook",
+      "product": "controlPlane",
+      "rationale": "Stripe invokes this signed inbound callback; SDK callers must not send it as a normal control-plane request.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "dedicated_mcp_transport",
+      "method": "POST",
+      "migration": "Continue generating JSON-RPC calls through the dedicated MCP client with notification and protocol error semantics.",
+      "operation_id": "invokeMcpGateway",
+      "owner": "auth-hub",
+      "path": "/mcp",
+      "product": "controlPlane",
+      "rationale": "The route is the MCP JSON-RPC gateway and is already represented by the SDK MCP transport.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "interactive_redirect_transport",
+      "method": "GET",
+      "migration": "Keep browser authorization in the dedicated OAuth helper and add redirect-aware navigation support before exposing it as a product operation.",
+      "operation_id": "startOAuthAuthorization",
+      "owner": "auth-hub",
+      "path": "/oauth/authorize",
+      "product": "controlPlane",
+      "rationale": "This browser-facing endpoint returns a redirect, not the buffered JSON response contract used by aggregate product methods.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "form_encoded_redirect_transport",
+      "method": "POST",
+      "migration": "Keep authorization approval in the dedicated OAuth helper and add form plus redirect semantics before exposing it as a product operation.",
+      "operation_id": "authorizeOAuthClient",
+      "owner": "auth-hub",
+      "path": "/oauth/authorize",
+      "product": "controlPlane",
+      "rationale": "The endpoint requires form encoding and returns a redirect, neither of which the aggregate JSON product dispatcher represents.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "form_encoded_oauth_helper",
+      "method": "POST",
+      "migration": "Continue generating revocation through the dedicated OAuth client rather than duplicating it in the product dispatcher.",
+      "operation_id": "revokeOAuthToken",
+      "owner": "auth-hub",
+      "path": "/oauth/revoke",
+      "product": "controlPlane",
+      "rationale": "The endpoint requires application/x-www-form-urlencoded and is already represented by the SDK OAuth helper.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "form_encoded_oauth_helper",
+      "method": "POST",
+      "migration": "Continue generating token exchange through the dedicated OAuth client rather than duplicating it in the product dispatcher.",
+      "operation_id": "exchangeOAuthToken",
+      "owner": "auth-hub",
+      "path": "/oauth/token",
+      "product": "controlPlane",
+      "rationale": "The endpoint requires application/x-www-form-urlencoded and is already represented by the SDK OAuth helper.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "browser_saml_protocol",
+      "method": "POST",
+      "migration": "Keep assertion-consumer processing in the dedicated browser/BFF SAML flow rather than the aggregate SDK.",
+      "operation_id": "samlSsoLogin.complete",
+      "owner": "auth-hub",
+      "path": "/sso/saml/{configId}/callback",
+      "product": "controlPlane",
+      "rationale": "The endpoint receives an identity-provider SAML assertion and is not an outbound generic SDK operation.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "staff_step_up_required",
+      "method": "POST",
+      "migration": "Expose this only through a separately reviewed staff client that models platform-principal verification and fresh passkey step-up.",
+      "operation_id": "samlSsoConfigurations.configure",
+      "owner": "auth-hub",
+      "path": "/v1/sso/config:configure",
+      "product": "controlPlane",
+      "rationale": "A general account bearer cannot truthfully represent the platform-staff and fresh passkey boundary required by this operation.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "staff_step_up_required",
+      "method": "POST",
+      "migration": "Expose this only through a separately reviewed staff client that models platform-principal verification and fresh passkey step-up.",
+      "operation_id": "samlSsoConfigurations.disable",
+      "owner": "auth-hub",
+      "path": "/v1/sso/config:disable",
+      "product": "controlPlane",
+      "rationale": "A general account bearer cannot truthfully represent the platform-staff and fresh passkey boundary required by this operation.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "server_only_bff_secret",
+      "method": "POST",
+      "migration": "Keep handoff exchange in the server-side BFF, which supplies the required handoff secret; do not model it as an unauthenticated aggregate SDK call.",
+      "operation_id": "samlSsoHandoffs.exchange",
+      "owner": "auth-hub",
+      "path": "/v1/sso/handoffs:exchange",
+      "product": "controlPlane",
+      "rationale": "The OpenAPI empty security declaration cannot express the runtime-required server-only BFF handoff secret.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "browser_saml_protocol",
+      "method": "GET",
+      "migration": "Keep browser navigation and redirect handling in the dedicated SAML BFF flow rather than exposing it through the buffered aggregate SDK.",
+      "operation_id": "samlSsoLogin.begin",
+      "owner": "auth-hub",
+      "path": "/v1/sso/saml/login",
+      "product": "controlPlane",
+      "rationale": "The endpoint begins an interactive browser SAML exchange; its declared empty OpenAPI security does not make it a general SDK operation.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "browser_saml_protocol",
+      "method": "GET",
+      "migration": "Keep SAML metadata exchange in the dedicated identity-provider/BFF configuration flow rather than the aggregate SDK.",
+      "operation_id": "samlSsoMetadata.get",
+      "owner": "auth-hub",
+      "path": "/v1/sso/saml/metadata/{configId}",
+      "product": "controlPlane",
+      "rationale": "This is an identity-provider protocol endpoint, not a normal account-authenticated JSON product operation.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "dedicated_mcp_transport",
+      "method": "POST",
+      "migration": "Continue generating JSON-RPC calls through the dedicated MCP client after Cradle capability routing is admitted.",
+      "operation_id": "postMcp",
+      "owner": "cradle",
+      "path": "/mcp",
+      "product": "cradle",
+      "rationale": "The route is an MCP protocol endpoint rather than an ordinary buffered JSON domain operation.",
+      "review_after": "2026-10-01"
+    },
+    {
       "compatibility": "dedicated_mcp_transport",
       "method": "POST",
       "migration": "Continue generating Data Engine JSON-RPC calls through the dedicated MCP client rather than duplicating the protocol in the product dispatcher.",
@@ -35,80 +178,25 @@
       "review_after": "2026-10-01"
     },
     {
-      "compatibility": "interactive_redirect_transport",
-      "method": "GET",
-      "migration": "Keep browser authorization in the dedicated OAuth helper and add redirect-aware navigation support before exposing it as a product operation.",
-      "operation_id": "startOAuthAuthorization",
-      "owner": "auth-hub",
-      "path": "/oauth/authorize",
-      "product": "controlPlane",
-      "rationale": "This browser-facing endpoint returns a redirect, not the buffered JSON response contract used by aggregate product methods.",
-      "review_after": "2026-10-01"
-    },
-    {
-      "compatibility": "form_encoded_redirect_transport",
-      "method": "POST",
-      "migration": "Keep authorization approval in the dedicated OAuth helper and add form plus redirect semantics before exposing it as a product operation.",
-      "operation_id": "authorizeOAuthClient",
-      "owner": "auth-hub",
-      "path": "/oauth/authorize",
-      "product": "controlPlane",
-      "rationale": "The endpoint requires form encoding and returns a redirect, neither of which the aggregate JSON product dispatcher represents.",
-      "review_after": "2026-10-01"
-    },
-    {
-      "compatibility": "form_encoded_oauth_helper",
-      "method": "POST",
-      "migration": "Continue generating token exchange through the dedicated OAuth client rather than duplicating it in the product dispatcher.",
-      "operation_id": "exchangeOAuthToken",
-      "owner": "auth-hub",
-      "path": "/oauth/token",
-      "product": "controlPlane",
-      "rationale": "The endpoint requires application/x-www-form-urlencoded and is already represented by the SDK OAuth helper.",
-      "review_after": "2026-10-01"
-    },
-    {
-      "compatibility": "form_encoded_oauth_helper",
-      "method": "POST",
-      "migration": "Continue generating revocation through the dedicated OAuth client rather than duplicating it in the product dispatcher.",
-      "operation_id": "revokeOAuthToken",
-      "owner": "auth-hub",
-      "path": "/oauth/revoke",
-      "product": "controlPlane",
-      "rationale": "The endpoint requires application/x-www-form-urlencoded and is already represented by the SDK OAuth helper.",
-      "review_after": "2026-10-01"
-    },
-    {
-      "compatibility": "dedicated_mcp_transport",
-      "method": "POST",
-      "migration": "Continue generating JSON-RPC calls through the dedicated MCP client with notification and protocol error semantics.",
-      "operation_id": "invokeMcpGateway",
-      "owner": "auth-hub",
-      "path": "/mcp",
-      "product": "controlPlane",
-      "rationale": "The route is the MCP JSON-RPC gateway and is already represented by the SDK MCP transport.",
-      "review_after": "2026-10-01"
-    },
-    {
       "compatibility": "inbound_webhook",
       "method": "POST",
-      "migration": "Model this only in a future server-side webhook verification package, not as an outbound product client method.",
-      "operation_id": "receiveStripeBillingWebhook",
-      "owner": "auth-hub",
-      "path": "/billing/webhook",
-      "product": "controlPlane",
-      "rationale": "Stripe invokes this signed inbound callback; SDK callers must not send it as a normal control-plane request.",
-      "review_after": "2026-10-01"
+      "migration": "Orders consumes signed tempera-payments settlement events on this route; it is dialled by Payments' deliver-consumer-events worker, never by an SDK client. Register a Payments webhook endpoint (payments:webhooks:write) to receive these events elsewhere.",
+      "operation_id": "receivePaymentsEvent",
+      "owner": "tempera-dropshipping",
+      "path": "/v1/payments/events",
+      "product": "temperaDropshipping",
+      "rationale": "Inbound callback authenticated by the Ed25519 signature on the Payments consumer event (declared as none:payments-event-signature), not by a grantable OAuth scope.",
+      "review_after": "2026-12-01"
     },
     {
-      "compatibility": "dedicated_mcp_transport",
+      "compatibility": "provider_ingress_hmac_transport",
       "method": "POST",
-      "migration": "Continue generating JSON-RPC calls through the dedicated MCP client after Cradle capability routing is admitted.",
-      "operation_id": "postMcp",
-      "owner": "cradle",
-      "path": "/mcp",
-      "product": "cradle",
-      "rationale": "The route is an MCP protocol endpoint rather than an ordinary buffered JSON domain operation.",
+      "migration": "Add a reviewed provider-ingress primitive that verifies the Shopify HMAC header and preserves the raw request body before exposing this route as a product operation.",
+      "operation_id": "receiveShopifyWebhook",
+      "owner": "tempera-dropshipping",
+      "path": "/v1/webhooks/shopify/{installation}",
+      "product": "temperaDropshipping",
+      "rationale": "Shopify invokes this route, authenticated by an HMAC over the raw request body rather than a Tempera bearer, so it has no audience and no scope to declare. It now lives under /v1/ and is declared a protocol route by the producer.",
       "review_after": "2026-10-01"
     },
     {
@@ -145,28 +233,6 @@
       "review_after": "2026-10-01"
     },
     {
-      "compatibility": "dedicated_bidi_transport",
-      "method": "GET",
-      "migration": "Keep session-bound WebSocket upgrade, framing, and command correlation in the dedicated Tempo BiDi client.",
-      "operation_id": "bidiWebSocketSession",
-      "owner": "tempo",
-      "path": "/v1/sessions/{sessionId}/bidi",
-      "product": "tempo",
-      "rationale": "The route upgrades a session-bound connection to a WebSocket and cannot use the aggregate buffered request contract.",
-      "review_after": "2026-10-01"
-    },
-    {
-      "compatibility": "dedicated_bidi_transport",
-      "method": "POST",
-      "migration": "Keep session-bound BiDi command envelopes in the dedicated Tempo transport until a cross-language protocol primitive exists.",
-      "operation_id": "bidiPostSession",
-      "owner": "tempo",
-      "path": "/v1/sessions/{sessionId}/bidi",
-      "product": "tempo",
-      "rationale": "The route carries session-bound BiDi protocol commands rather than an ordinary documented JSON domain request.",
-      "review_after": "2026-10-01"
-    },
-    {
       "compatibility": "dedicated_mcp_transport",
       "method": "GET",
       "migration": "Keep MCP transport negotiation and metadata handling in Tempo's dedicated MCP integration.",
@@ -189,14 +255,25 @@
       "review_after": "2026-10-01"
     },
     {
-      "compatibility": "dedicated_mcp_transport",
-      "method": "POST",
-      "migration": "Continue routing session-bound JSON-RPC calls through Tempo's dedicated MCP client and payment-aware transport.",
-      "operation_id": "mcpPostSession",
+      "compatibility": "dedicated_bidi_transport",
+      "method": "GET",
+      "migration": "Keep session-bound WebSocket upgrade, framing, and command correlation in the dedicated Tempo BiDi client.",
+      "operation_id": "bidiWebSocketSession",
       "owner": "tempo",
-      "path": "/v1/sessions/{sessionId}/mcp",
+      "path": "/v1/sessions/{sessionId}/bidi",
       "product": "tempo",
-      "rationale": "The route combines MCP protocol semantics with session binding and payment headers that the aggregate dispatcher does not model.",
+      "rationale": "The route upgrades a session-bound connection to a WebSocket and cannot use the aggregate buffered request contract.",
+      "review_after": "2026-10-01"
+    },
+    {
+      "compatibility": "dedicated_bidi_transport",
+      "method": "POST",
+      "migration": "Keep session-bound BiDi command envelopes in the dedicated Tempo transport until a cross-language protocol primitive exists.",
+      "operation_id": "bidiPostSession",
+      "owner": "tempo",
+      "path": "/v1/sessions/{sessionId}/bidi",
+      "product": "tempo",
+      "rationale": "The route carries session-bound BiDi protocol commands rather than an ordinary documented JSON domain request.",
       "review_after": "2026-10-01"
     },
     {
@@ -211,80 +288,14 @@
       "review_after": "2026-10-01"
     },
     {
-      "compatibility": "browser_saml_protocol",
-      "method": "GET",
-      "migration": "Keep browser navigation and redirect handling in the dedicated SAML BFF flow rather than exposing it through the buffered aggregate SDK.",
-      "operation_id": "samlSsoLogin.begin",
-      "owner": "auth-hub",
-      "path": "/v1/sso/saml/login",
-      "product": "controlPlane",
-      "rationale": "The endpoint begins an interactive browser SAML exchange; its declared empty OpenAPI security does not make it a general SDK operation.",
-      "review_after": "2026-10-01"
-    },
-    {
-      "compatibility": "browser_saml_protocol",
-      "method": "GET",
-      "migration": "Keep SAML metadata exchange in the dedicated identity-provider/BFF configuration flow rather than the aggregate SDK.",
-      "operation_id": "samlSsoMetadata.get",
-      "owner": "auth-hub",
-      "path": "/v1/sso/saml/metadata/{configId}",
-      "product": "controlPlane",
-      "rationale": "This is an identity-provider protocol endpoint, not a normal account-authenticated JSON product operation.",
-      "review_after": "2026-10-01"
-    },
-    {
-      "compatibility": "browser_saml_protocol",
+      "compatibility": "dedicated_mcp_transport",
       "method": "POST",
-      "migration": "Keep assertion-consumer processing in the dedicated browser/BFF SAML flow rather than the aggregate SDK.",
-      "operation_id": "samlSsoLogin.complete",
-      "owner": "auth-hub",
-      "path": "/sso/saml/{configId}/callback",
-      "product": "controlPlane",
-      "rationale": "The endpoint receives an identity-provider SAML assertion and is not an outbound generic SDK operation.",
-      "review_after": "2026-10-01"
-    },
-    {
-      "compatibility": "server_only_bff_secret",
-      "method": "POST",
-      "migration": "Keep handoff exchange in the server-side BFF, which supplies the required handoff secret; do not model it as an unauthenticated aggregate SDK call.",
-      "operation_id": "samlSsoHandoffs.exchange",
-      "owner": "auth-hub",
-      "path": "/v1/sso/handoffs:exchange",
-      "product": "controlPlane",
-      "rationale": "The OpenAPI empty security declaration cannot express the runtime-required server-only BFF handoff secret.",
-      "review_after": "2026-10-01"
-    },
-    {
-      "compatibility": "staff_step_up_required",
-      "method": "POST",
-      "migration": "Expose this only through a separately reviewed staff client that models platform-principal verification and fresh passkey step-up.",
-      "operation_id": "samlSsoConfigurations.configure",
-      "owner": "auth-hub",
-      "path": "/v1/sso/config:configure",
-      "product": "controlPlane",
-      "rationale": "A general account bearer cannot truthfully represent the platform-staff and fresh passkey boundary required by this operation.",
-      "review_after": "2026-10-01"
-    },
-    {
-      "compatibility": "staff_step_up_required",
-      "method": "POST",
-      "migration": "Expose this only through a separately reviewed staff client that models platform-principal verification and fresh passkey step-up.",
-      "operation_id": "samlSsoConfigurations.disable",
-      "owner": "auth-hub",
-      "path": "/v1/sso/config:disable",
-      "product": "controlPlane",
-      "rationale": "A general account bearer cannot truthfully represent the platform-staff and fresh passkey boundary required by this operation.",
-      "review_after": "2026-10-01"
-    },
-    {
-      "compatibility": "provider_ingress_hmac_transport",
-      "method": "POST",
-      "migration": "Add a reviewed provider-ingress primitive that verifies the Shopify HMAC header and preserves the raw request body before exposing this route as a product operation.",
-      "operation_id": "receiveShopifyWebhook",
-      "owner": "tempera-dropshipping",
-      "path": "/v1/webhooks/shopify/{installation}",
-      "product": "temperaDropshipping",
-      "rationale": "Shopify invokes this route, authenticated by an HMAC over the raw request body rather than a Tempera bearer, so it has no audience and no scope to declare. It now lives under /v1/ and is declared a protocol route by the producer.",
+      "migration": "Continue routing session-bound JSON-RPC calls through Tempo's dedicated MCP client and payment-aware transport.",
+      "operation_id": "mcpPostSession",
+      "owner": "tempo",
+      "path": "/v1/sessions/{sessionId}/mcp",
+      "product": "tempo",
+      "rationale": "The route combines MCP protocol semantics with session binding and payment headers that the aggregate dispatcher does not model.",
       "review_after": "2026-10-01"
     }
   ]

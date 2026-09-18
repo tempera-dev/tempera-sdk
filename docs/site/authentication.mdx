@@ -263,8 +263,8 @@ is the default when none is specified.
 | `payments:disputes:read` | tempera-payments: `getDispute`, `listDisputes`, `listPaymentIntentDisputes` |
 | `payments:subscriptions:read` | tempera-payments: `getSubscription`, `listSubscriptionPeriods`, `listSubscriptions` |
 | `payments:subscriptions:write` | tempera-payments: `cancelSubscription`, `createSubscription`, `pauseSubscription`, `resumeSubscription` |
-| `orders:read` | tempera-dropshipping: `evaluateOrder`, `getBusinessSummary`, `getBusinessWorkspace`, `getCatalogOffer`, `getOrder`, `getProposal`, `getSaleOrder`, `getStore`, `listCatalogOffers`, `listEvents`, `listInbox`, `listOrderAuditEvents`, `listOrderEventProjections`, `listOrders`, `listSaleOrders`, `listStores` |
-| `orders:commerce:write` | tempera-dropshipping: `createCatalogOffer`, `createSaleOrder` |
+| `orders:read` | tempera-dropshipping: `evaluateOrder`, `getBusinessSummary`, `getBusinessWorkspace`, `getCatalogOffer`, `getOrder`, `getProposal`, `getSaleOrder`, `getSaleOrderPayment`, `getStore`, `listCatalogOffers`, `listEvents`, `listInbox`, `listOrderAuditEvents`, `listOrderEventProjections`, `listOrders`, `listSaleOrders`, `listStores` |
+| `orders:commerce:write` | tempera-dropshipping: `createCatalogOffer`, `createSaleOrder`, `createSaleOrderCheckout` |
 | `voice:read` | tempera-voice: `downloadVoiceArtifact`, `getDefaultVoiceAgent`, `getVoiceAgent`, `getVoiceCapabilities`, `getVoiceSession`, `listVoiceAgents`, `listVoiceSessionActions`, `listVoiceSessionEvents`, `listVoiceSessions` |
 | `voice:write` | tempera-voice: `createVoiceAgent`, `createVoiceSession`, `endVoiceSession`, `resolveVoiceAction`, `updateVoiceAgent`, `uploadVoiceArtifact` |
 | `voice:stream` | No typed SDK operation declares it yet; enforced server-side. |

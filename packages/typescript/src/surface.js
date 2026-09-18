@@ -18200,6 +18200,73 @@ export const TEMPERA_OPERATIONS = Object.freeze(
       "description": "Get Sale Order."
     },
     {
+      "id": "createSaleOrderCheckout",
+      "upstreamOperationId": "createSaleOrderCheckout",
+      "method": "POST",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders/{orderId}:checkout",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "orderId",
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [
+        "expectedRevision",
+        "provider"
+      ],
+      "forbiddenBody": [],
+      "requiredBody": [
+        "provider"
+      ],
+      "bodyDefaults": {},
+      "requestBodyKind": "json",
+      "requestContentType": "application/json",
+      "scope": "orders:commerce:write",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "none",
+      "description": "Create Sale Order Checkout."
+    },
+    {
+      "id": "getSaleOrderPayment",
+      "upstreamOperationId": "getSaleOrderPayment",
+      "method": "GET",
+      "path": "/v1/organizations/{organization}/projects/{project}/environments/{environment}/sites/{site}/sale-orders/{orderId}/payment",
+      "auth": "product",
+      "authAudience": null,
+      "pathParams": [
+        "orderId",
+        "organization",
+        "project",
+        "environment",
+        "site"
+      ],
+      "pathParamTemplates": {},
+      "query": [],
+      "requiredQuery": [],
+      "headers": [],
+      "requiredHeaders": [],
+      "body": [],
+      "forbiddenBody": [],
+      "requiredBody": [],
+      "bodyDefaults": {},
+      "requestBodyKind": "none",
+      "requestContentType": null,
+      "scope": "orders:read",
+      "physicalAction": false,
+      "prepareCommitRequired": false,
+      "safeRetry": "read",
+      "description": "Get Sale Order Payment."
+    },
+    {
       "id": "listEvents",
       "upstreamOperationId": "listEvents",
       "method": "GET",
