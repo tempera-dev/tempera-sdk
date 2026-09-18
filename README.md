@@ -394,8 +394,12 @@ the committed site is always current thanks to the drift gate).
   class, and request/response digests derived from the vendored producer
   contract: every tempera-dropshipping and tempera-business operation, the
   phone-relevant tempera-voice session, pending-action, and agent operations,
-  and one synthetic `WSS` operation, `temperaVoice.streamVoiceSession`, taken
-  from the voice contract's `x-tempera-websocket-contract`. Each producer
+  one synthetic `WSS` operation, `temperaVoice.streamVoiceSession`, taken
+  from the voice contract's `x-tempera-websocket-contract`, and the two
+  tempera-connectors reads (`connectorsList`, `connectionsList`) the
+  Connections screen needs; creating, testing, importing or invoking a
+  connection carries `connection:write` or `connection:invoke` and stays with
+  the assistant and the site. Each producer
   entry records the exact mainline commit its vendored contract is locked to.
   `scripts/check-native-transport.py` regenerates the file (`--write`), fails
   when it is stale, and with `--client PATH` checks a native source file:
@@ -405,9 +409,10 @@ the committed site is always current thanks to the drift gate).
   `WSS` annotation is checked the same way), and every literal that reaches
   into a producer's canonical namespace (`/v1/organizations` for dropshipping;
   `/v1/operatingState`, `/v1/businessProfile`, `/v1/cases` for business;
-  `/v1/sessions`, `/v1/agents`, `/v1/actions` for voice; `/v1/me`,
-  `/v1/billing`, `/v1/usage`, `/v1/team`, `/v1/sessions` for the control
-  plane) must be annotated. A root may be shared by two producers, as
+  `/v1/sessions`, `/v1/agents`, `/v1/actions` for voice; `/v1/workflows` and
+  `/v1/runs` for workflows; `/v1/connectors` and `/v1/connections` for
+  connectors; `/v1/me`, `/v1/billing`, `/v1/usage`, `/v1/team`,
+  `/v1/sessions` for the control plane) must be annotated. A root may be shared by two producers, as
   `/v1/sessions` is by voice and the account plane: an annotated literal is
   resolved by the producer the annotation names rather than by path prefix,
   an annotation may not claim a root its producer does not declare, and an

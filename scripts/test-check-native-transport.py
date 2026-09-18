@@ -46,6 +46,48 @@ class ContractTest(unittest.TestCase):
             VOICE_OPERATIONS | {"streamVoiceSession"},
         )
 
+    def test_connectors_publishes_only_the_two_reads(self) -> None:
+        self.assertEqual(
+            set(self.by_product["temperaConnectors"]),
+            {"connectorsList", "connectionsList"},
+        )
+
+    def test_connectors_reads_carry_the_producer_audience_and_read_scope(self) -> None:
+        for name, entry in self.by_product["temperaConnectors"].items():
+            self.assertEqual(entry["authAudience"], "tempera-connectors", name)
+            self.assertEqual(entry["scope"], "connection:read", name)
+            self.assertEqual(entry["method"], "GET", name)
+            self.assertEqual(entry["safeRetry"], "read", name)
+
+    def test_connector_writes_stay_off_the_device(self) -> None:
+        """connection:write and connection:invoke never reach a phone."""
+        surface = {op["id"]: op for op in self.surface["operations"]["temperaConnectors"]}
+        withheld = {
+            "connectionsCreate",
+            "connectionsTest",
+            "connectionsImportOpenApi",
+            "connectionsInvoke",
+            "connectionsGet",
+        }
+        self.assertTrue(withheld <= set(surface))
+        for name in withheld:
+            self.assertNotIn(name, self.by_product["temperaConnectors"])
+        for name in ("connectionsCreate", "connectionsTest", "connectionsImportOpenApi"):
+            self.assertEqual(surface[name]["scope"], "connection:write", name)
+        self.assertEqual(surface["connectionsInvoke"]["scope"], "connection:invoke")
+
+    def test_connectors_producer_lock_is_the_runtime_repository(self) -> None:
+        producer = next(
+            entry
+            for entry in self.contract["producers"]
+            if entry["product"] == "temperaConnectors"
+        )
+        self.assertEqual(
+            producer["sourceRepo"], "tempera-dev/tempera-connectors-runtime"
+        )
+        self.assertEqual(producer["audience"], "tempera-connectors")
+        self.assertEqual(producer["spec"], "specs/tempera-connectors.openapi.json")
+
     def test_existing_products_still_publish_every_surface_operation(self) -> None:
         for product in ("temperaDropshipping", "temperaBusiness"):
             expected = {op["id"] for op in self.surface["operations"][product]}
@@ -166,6 +208,58 @@ class ClientCheckTest(unittest.TestCase):
             [
                 "VoiceClient.swift:2: temperaVoice.exportVoiceSessions is not an admitted native operation",
                 "VoiceClient.swift:3: undeclared temperaVoice or controlPlane route /v1/sessions:export; add a tempera-transport annotation above the call site",
+            ],
+        )
+
+    def test_annotated_connector_read_call_sites_pass(self) -> None:
+        swift = '''
+            // tempera-transport: temperaConnectors.connectorsList GET /v1/connectors
+            let data = try await BoundedHTTP.data(for: try request("v1/connectors"), limit: 65_536)
+            // tempera-transport: temperaConnectors.connectionsList GET /v1/connections
+            let rows = try await BoundedHTTP.data(for: try request("v1/connections"), limit: 65_536)
+        '''
+        kotlin = """
+            // tempera-transport: temperaConnectors.connectionsList GET /v1/connections
+            suspend fun connections(): Connections = read("/v1/connections")
+        """
+        self.assertEqual(self.check("ConnectionsClient.swift", swift), [])
+        self.assertEqual(self.check("ConnectionsClient.kt", kotlin), [])
+
+    def test_creating_a_connection_is_not_an_admitted_native_operation(self) -> None:
+        source = '''
+            // tempera-transport: temperaConnectors.connectionsCreate POST /v1/connections
+            let data = try request("v1/connections", method: "POST", body: body)
+        '''
+        self.assertEqual(
+            self.check("ConnectionsClient.swift", source),
+            [
+                "ConnectionsClient.swift:2: temperaConnectors.connectionsCreate "
+                "is not an admitted native operation",
+                "ConnectionsClient.swift:3: undeclared temperaConnectors route "
+                "/v1/connections; add a tempera-transport annotation above the "
+                "call site",
+            ],
+        )
+
+    def test_unannotated_connector_routes_are_undeclared(self) -> None:
+        source = '''
+            let a = try request("v1/connectors")
+            let b = try request("v1/connections/\\(connection.id)")
+            let c = try request("v1/connections/\\(connection.id):invoke", method: "POST")
+            let lookalike = try request("v1/connectionsarchive")
+        '''
+        self.assertEqual(
+            self.check("ConnectionsClient.swift", source),
+            [
+                "ConnectionsClient.swift:2: undeclared temperaConnectors route "
+                "/v1/connectors; add a tempera-transport annotation above the "
+                "call site",
+                "ConnectionsClient.swift:3: undeclared temperaConnectors route "
+                "/v1/connections/{}; add a tempera-transport annotation above "
+                "the call site",
+                "ConnectionsClient.swift:4: undeclared temperaConnectors route "
+                "/v1/connections/{}:invoke; add a tempera-transport annotation "
+                "above the call site",
             ],
         )
 
