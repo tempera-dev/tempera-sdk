@@ -13,7 +13,7 @@ scope, and a request and response digest derived from the vendored producer
 contract. This script both writes that file and checks a native client against
 it.
 
-Six producers are admitted. tempera-dropshipping and tempera-business publish
+Seven producers are admitted. tempera-dropshipping and tempera-business publish
 every operation surface.json carries for them. tempera-payments publishes only
 the merchant onboarding seam named in PAYMENTS_NATIVE_OPERATIONS, each entry
 validated against the producer's wire metadata. The control plane publishes only
@@ -31,6 +31,12 @@ tempera-workflows publishes only the four reads named in NATIVE_OPERATIONS
 deliberately absent: runs.create and workflows.call carry the workflow:run
 scope, so a device never holds them, and the assistant harness starts a run
 behind an approval card instead.
+tempera-connectors publishes only the two reads named in NATIVE_OPERATIONS
+(connectorsList, connectionsList), both of which carry connection:read, the
+one connector scope a device holds. Creating a connection is deliberately
+absent: connectionsCreate, connectionsTest and connectionsImportOpenApi carry
+connection:write and connectionsInvoke carries connection:invoke, so the
+assistant and the site keep them.
 
 Usage:
   python3 scripts/check-native-transport.py --write        # regenerate
@@ -51,8 +57,9 @@ that every literal reaching into a producer's canonical namespace
 (NATIVE_NAMESPACES: `/v1/organizations` for dropshipping; `/v1/operatingState`,
 `/v1/businessProfile`, and `/v1/cases` for business; `/v1/merchants` for
 payments; `/v1/sessions`, `/v1/agents`, and `/v1/actions` for voice;
-`/v1/workflows` and `/v1/runs` for workflows; `/v1/me`, `/v1/billing`,
-`/v1/usage`, `/v1/team`, and `/v1/sessions` for the control plane)
+`/v1/workflows` and `/v1/runs` for workflows; `/v1/connectors` and
+`/v1/connections` for connectors; `/v1/me`, `/v1/billing`, `/v1/usage`,
+`/v1/team`, and `/v1/sessions` for the control plane)
 is annotated, so a new hand-written call cannot slip in undeclared.
 
 A route root may be owned by more than one producer: `/v1/sessions` is both
@@ -84,6 +91,7 @@ NATIVE_PRODUCTS = (
     "temperaPayments",
     "temperaVoice",
     "temperaWorkflows",
+    "temperaConnectors",
     "controlPlane",
 )
 PRODUCT_SPECS = {
@@ -92,6 +100,7 @@ PRODUCT_SPECS = {
     "temperaPayments": "tempera-payments.openapi.json",
     "temperaVoice": "tempera-voice.openapi.json",
     "temperaWorkflows": "tempera-workflows.openapi.json",
+    "temperaConnectors": "tempera-connectors.openapi.json",
     "controlPlane": "control-plane.openapi.json",
 }
 # surface.json carries no single audience for the control plane: most of its
@@ -132,6 +141,15 @@ NATIVE_OPERATIONS: dict[str, frozenset[str] | None] = {
             "getRun",
         }
     ),
+    # Reads only. The device holds connection:read; connection:write and
+    # connection:invoke stay with the assistant and the site, so creating,
+    # testing, importing and invoking a connection are all absent.
+    "temperaConnectors": frozenset(
+        {
+            "connectorsList",
+            "connectionsList",
+        }
+    ),
 }
 # Producers whose vendored OpenAPI carries a top-level
 # x-tempera-websocket-contract the phones consume directly. Each is published
@@ -147,6 +165,7 @@ NATIVE_NAMESPACES: dict[str, tuple[str, ...]] = {
     "temperaPayments": ("/v1/merchants",),
     "temperaVoice": ("/v1/sessions", "/v1/agents", "/v1/actions"),
     "temperaWorkflows": ("/v1/workflows", "/v1/runs"),
+    "temperaConnectors": ("/v1/connectors", "/v1/connections"),
     # The account service answers GET /v1/sessions on the same literal the
     # voice product roots its sessions at. Both producers declare the root;
     # an annotated call site is resolved by the producer it names.

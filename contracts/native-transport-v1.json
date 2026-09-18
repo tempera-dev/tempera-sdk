@@ -55,6 +55,16 @@
       "sourceSha256": "e4fd7dcfa86d61c9905c538c9111babd87f83ec71e1e936819ba255bc6562c59"
     },
     {
+      "product": "temperaConnectors",
+      "audience": "tempera-connectors",
+      "envVar": "TEMPERA_CONNECTORS_URL",
+      "spec": "specs/tempera-connectors.openapi.json",
+      "sourceRepo": "tempera-dev/tempera-connectors-runtime",
+      "sourceBranch": "main",
+      "sourceCommit": "4ab08860e59c760834b2481900d55dadd7d4fb7c",
+      "sourceSha256": "87b3c23e7df7161245563b24c2c03cd0b47a4a2debd79ed0c56f37edd33105ee"
+    },
+    {
       "product": "controlPlane",
       "audience": "tempera-account",
       "envVar": "TEMPERA_CONTROL_PLANE_URL",
@@ -419,6 +429,38 @@
       "requiredHeaders": [],
       "requestDigest": "2c1bfba60a2135c9404de5cba0aabe9448fa2a909bbd4afec537aa107cf37e6e",
       "responseDigest": "f52c0cf1a0abbc66689a25a6e9ac2812cccf686e0e1654e9fd38debb7e538e83"
+    },
+    {
+      "operation": "temperaConnectors.connectionsList",
+      "product": "temperaConnectors",
+      "id": "connectionsList",
+      "upstreamOperationId": "connections.list",
+      "method": "GET",
+      "pathTemplate": "/v1/connections",
+      "pathShape": "/v1/connections",
+      "authAudience": "tempera-connectors",
+      "scope": "connection:read",
+      "safeRetry": "read",
+      "headers": [],
+      "requiredHeaders": [],
+      "requestDigest": "9afba78e586a5f0ee80ba269efe1a4986e63606585a62b820cb2f323de003fbc",
+      "responseDigest": "41baec40b2043c79790ffb7c831170b8d693dc281793c1d8033829a921d01021"
+    },
+    {
+      "operation": "temperaConnectors.connectorsList",
+      "product": "temperaConnectors",
+      "id": "connectorsList",
+      "upstreamOperationId": "connectors.list",
+      "method": "GET",
+      "pathTemplate": "/v1/connectors",
+      "pathShape": "/v1/connectors",
+      "authAudience": "tempera-connectors",
+      "scope": "connection:read",
+      "safeRetry": "read",
+      "headers": [],
+      "requiredHeaders": [],
+      "requestDigest": "63820dcedc013dbfdf258ae7cf5ab29c3dd29edc9ceebdf65c743589ff1e9e78",
+      "responseDigest": "52da92a683a1570aabe5328b6ec2e85e7aaf083b2ae992b5b9a66ecc72830213"
     },
     {
       "operation": "temperaDropshipping.approveProposal",
