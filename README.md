@@ -404,8 +404,14 @@ the committed site is always current thanks to the drift gate).
   directly above a call whose string literal has the same route shape (a
   `WSS` annotation is checked the same way), and every literal that reaches
   into a producer's canonical namespace (`/v1/organizations` for dropshipping;
-  `/v1/operating-state`, `/v1/business-profile`, `/v1/cases` for business;
-  `/v1/sessions`, `/v1/agents`, `/v1/actions` for voice) must be annotated.
+  `/v1/operatingState`, `/v1/businessProfile`, `/v1/cases` for business;
+  `/v1/sessions`, `/v1/agents`, `/v1/actions` for voice; `/v1/me`,
+  `/v1/billing`, `/v1/usage`, `/v1/team`, `/v1/sessions` for the control
+  plane) must be annotated. A root may be shared by two producers, as
+  `/v1/sessions` is by voice and the account plane: an annotated literal is
+  resolved by the producer the annotation names rather than by path prefix,
+  an annotation may not claim a root its producer does not declare, and an
+  unannotated literal is still refused with every candidate owner named.
 - The endpoint-change rollout process is documented in
   [`docs/ROLLOUT.md`](./docs/ROLLOUT.md).
 

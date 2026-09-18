@@ -134,7 +134,7 @@ class ClientCheckTest(unittest.TestCase):
         self.assertEqual(
             failures,
             [
-                "Mixed.swift:2: undeclared temperaVoice route /v1/sessions; add a tempera-transport annotation above the call site",
+                "Mixed.swift:2: undeclared temperaVoice or controlPlane route /v1/sessions; add a tempera-transport annotation above the call site",
                 "Mixed.swift:3: undeclared temperaVoice route /v1/agents:default; add a tempera-transport annotation above the call site",
                 "Mixed.swift:4: undeclared temperaVoice route /v1/actions/{}:resolve; add a tempera-transport annotation above the call site",
                 "Mixed.swift:5: undeclared temperaBusiness route /v1/operatingState; add a tempera-transport annotation above the call site",
@@ -165,7 +165,58 @@ class ClientCheckTest(unittest.TestCase):
             failures,
             [
                 "VoiceClient.swift:2: temperaVoice.exportVoiceSessions is not an admitted native operation",
-                "VoiceClient.swift:3: undeclared temperaVoice route /v1/sessions:export; add a tempera-transport annotation above the call site",
+                "VoiceClient.swift:3: undeclared temperaVoice or controlPlane route /v1/sessions:export; add a tempera-transport annotation above the call site",
+            ],
+        )
+
+    def test_shared_sessions_root_resolves_by_the_annotated_producer(self) -> None:
+        """`/v1/sessions` belongs to voice and to the account plane at once."""
+        kotlin = """
+            // tempera-transport: controlPlane.listAccountSessions GET /v1/sessions
+            suspend fun sessions(): AccountSessions = read("/v1/sessions")
+        """
+        swift = """
+            // tempera-transport: temperaVoice.listVoiceSessions GET /v1/sessions
+            let data = try await BoundedHTTP.data(for: try request("v1/sessions"), limit: 65_536)
+        """
+        self.assertEqual(self.check("AccountClient.kt", kotlin), [])
+        self.assertEqual(self.check("VoiceClient.swift", swift), [])
+
+    def test_unannotated_shared_root_names_every_candidate_owner(self) -> None:
+        source = """
+            suspend fun sessions(): AccountSessions = read("/v1/sessions")
+        """
+        self.assertEqual(
+            self.check("AccountClient.kt", source),
+            [
+                "AccountClient.kt:2: undeclared temperaVoice or controlPlane "
+                "route /v1/sessions; add a tempera-transport annotation above "
+                "the call site",
+            ],
+        )
+
+    def test_annotation_cannot_claim_a_namespace_its_producer_does_not_own(
+        self,
+    ) -> None:
+        """Sharing a root is legal only when the producer declares it."""
+        contract = json.loads(json.dumps(self.contract))
+        for entry in contract["operations"]:
+            if entry["operation"] == "controlPlane.listAccountSessions":
+                entry["pathTemplate"] = "/v1/agents/sessions"
+                entry["pathShape"] = "/v1/agents/sessions"
+        source = """
+            // tempera-transport: controlPlane.listAccountSessions GET /v1/agents/sessions
+            suspend fun sessions(): AccountSessions = read("/v1/agents/sessions")
+        """
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "AccountClient.kt"
+            path.write_text(textwrap.dedent(source), encoding="utf-8")
+            failures = module.check_client(path, contract)
+        self.assertEqual(
+            failures,
+            [
+                "AccountClient.kt:2: controlPlane.listAccountSessions claims "
+                "/v1/agents/sessions, which is the temperaVoice namespace",
             ],
         )
 
