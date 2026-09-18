@@ -51,6 +51,8 @@ test("initialize, ping, and tools/list send well-formed JSON-RPC with the bearer
   for (const call of calls) {
     assert.equal(call.options.headers["mcp-protocol-version"], "2026-07-28");
     assert.equal(call.options.headers["mcp-method"], call.request.method);
+    // Both shapes, or a conformant streamable-HTTP gateway answers 406.
+    assert.equal(call.options.headers.accept, "application/json, text/event-stream");
   }
   assert.equal(calls[1].request.method, "ping");
   assert.equal(calls[2].request.method, "tools/list");

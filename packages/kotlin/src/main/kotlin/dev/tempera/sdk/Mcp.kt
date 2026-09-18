@@ -81,13 +81,17 @@ public class TemperaMcpClient(
                 )
             )
 
-        val request =
-            TemperaHttpRequest(
-                method = "POST",
-                url = url,
-                headers =
-                    listOf(
-                        TemperaKeyValue("accept", "application/json"),
+        // SEP-2243 routable headers: a middle box has to route without parsing
+        // the body, so the method carries its subject in `Mcp-Name`. A gateway
+        // that validates them (tempera-mcp does) refuses a request without one.
+        val headers =
+            ArrayList<TemperaKeyValue>(
+                listOf(
+                        // Streamable HTTP requires both shapes on a POST: the
+                        // gateway chooses one JSON body or an SSE stream, and a
+                        // spec-conformant gateway answers 406 to a client that
+                        // offers only one.
+                        TemperaKeyValue("accept", "application/json, text/event-stream"),
                         TemperaKeyValue("content-type", "application/json"),
                         TemperaKeyValue("authorization", "Bearer " + resolveBearer()),
                         TemperaKeyValue(
@@ -95,7 +99,18 @@ public class TemperaMcpClient(
                             TemperaSurface.mcpProtocolVersion,
                         ),
                         TemperaKeyValue("mcp-method", method),
-                    ),
+                )
+            )
+        val name = mcpName(method, requestParams)
+        if (name != null) {
+            headers.add(TemperaKeyValue("mcp-name", name))
+        }
+
+        val request =
+            TemperaHttpRequest(
+                method = "POST",
+                url = url,
+                headers = headers,
                 body = payload.serializedBytes(),
                 timeoutSeconds = configuration.timeoutSeconds,
             )
@@ -189,4 +204,43 @@ public class TemperaMcpClient(
 
     /** Fetch gateway upstream health for every connected product MCP server. */
     public fun status(): TemperaJson = callTool("tempera_status")
+
+    private companion object {
+        /** Which member of `params` the method's `Mcp-Name` is taken from. */
+        val MCP_NAME_SOURCES: Map<String, String> =
+            mapOf(
+                "tools/call" to "name",
+                "prompts/get" to "name",
+                "resources/read" to "uri",
+                "resources/subscribe" to "uri",
+                "resources/unsubscribe" to "uri",
+                "tasks/get" to "taskId",
+                "tasks/update" to "taskId",
+                "tasks/cancel" to "taskId",
+            )
+
+        fun mcpName(method: String, params: List<TemperaJsonMember>): String? {
+            val key = MCP_NAME_SOURCES[method] ?: return null
+            val value = params.firstOrNull { it.key == key }?.value?.asString() ?: return null
+            return headerSafe(value)
+        }
+
+        /**
+         * A header value, Base64-wrapped as `=?base64?...?=` when it could not
+         * survive as one: edge whitespace, anything outside printable ASCII, or
+         * a value that already looks like the sentinel.
+         */
+        fun headerSafe(value: String): String {
+            if (value.isEmpty()) return value
+            val sentinel = value.startsWith("=?base64?") && value.endsWith("?=")
+            val edgeSpace =
+                value.first() == ' ' || value.first() == '\t' ||
+                    value.last() == ' ' || value.last() == '\t'
+            val outsideAscii = value.any { it.code < 0x20 || it.code > 0x7E }
+            if (!(sentinel || edgeSpace || outsideAscii)) return value
+            val encoded =
+                java.util.Base64.getEncoder().encodeToString(value.toByteArray(Charsets.UTF_8))
+            return "=?base64?" + encoded + "?="
+        }
+    }
 }

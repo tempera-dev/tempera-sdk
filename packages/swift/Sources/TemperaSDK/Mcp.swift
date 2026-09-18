@@ -78,17 +78,28 @@ public actor TemperaMcpClient {
             TemperaJSONMember("params", .object(requestParams)),
         ])
 
-        let request = TemperaHTTPRequest(
-            method: "POST",
-            url: url,
-            headers: [
-                TemperaKeyValue(key: "accept", value: "application/json"),
+        // SEP-2243 routable headers: a middle box has to route without parsing
+        // the body, so the method carries its subject in `Mcp-Name`. A gateway
+        // that validates them (tempera-mcp does) refuses a request without one.
+        var headers: [TemperaKeyValue] = [
+                // Streamable HTTP requires both shapes on a POST: the gateway
+                // chooses one JSON body or an SSE stream, and a spec-conformant
+                // gateway answers 406 to a client that offers only one.
+                TemperaKeyValue(key: "accept", value: "application/json, text/event-stream"),
                 TemperaKeyValue(key: "content-type", value: "application/json"),
                 TemperaKeyValue(key: "authorization", value: "Bearer \(try await resolveBearer())"),
                 TemperaKeyValue(
                     key: "mcp-protocol-version", value: TemperaSurface.mcpProtocolVersion),
                 TemperaKeyValue(key: "mcp-method", value: method),
-            ],
+        ]
+        if let name = Self.mcpName(method: method, params: requestParams) {
+            headers.append(TemperaKeyValue(key: "mcp-name", value: name))
+        }
+
+        let request = TemperaHTTPRequest(
+            method: "POST",
+            url: url,
+            headers: headers,
             body: payload.serializedData(),
             timeout: configuration.timeout
         )
@@ -185,5 +196,41 @@ public actor TemperaMcpClient {
     @discardableResult
     public func status() async throws -> TemperaJSON {
         try await callTool("tempera_status")
+    }
+}
+
+extension TemperaMcpClient {
+    /// Which member of `params` the method's `Mcp-Name` is taken from.
+    static let mcpNameSources: [String: String] = [
+        "tools/call": "name",
+        "prompts/get": "name",
+        "resources/read": "uri",
+        "resources/subscribe": "uri",
+        "resources/unsubscribe": "uri",
+        "tasks/get": "taskId",
+        "tasks/update": "taskId",
+        "tasks/cancel": "taskId",
+    ]
+
+    static func mcpName(method: String, params: [TemperaJSONMember]) -> String? {
+        guard let key = mcpNameSources[method] else { return nil }
+        guard let value = params.first(where: { $0.key == key })?.value.stringValue else {
+            return nil
+        }
+        return headerSafe(value)
+    }
+
+    /// A header value, Base64-wrapped as `=?base64?...?=` when it could not
+    /// survive as one: edge whitespace, anything outside printable ASCII, or a
+    /// value that already looks like the sentinel.
+    static func headerSafe(_ value: String) -> String {
+        if value.isEmpty { return value }
+        let sentinel = value.hasPrefix("=?base64?") && value.hasSuffix("?=")
+        let edgeSpace = value.first == " " || value.first == "\t" || value.last == " "
+            || value.last == "\t"
+        let outsideAscii = value.unicodeScalars.contains { $0.value < 0x20 || $0.value > 0x7E }
+        if !(sentinel || edgeSpace || outsideAscii) { return value }
+        let encoded = Data(value.utf8).base64EncodedString()
+        return "=?base64?" + encoded + "?="
     }
 }

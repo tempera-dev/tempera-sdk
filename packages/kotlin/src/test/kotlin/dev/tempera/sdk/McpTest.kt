@@ -46,6 +46,9 @@ class McpTest {
         // The stateless gateway speaks server/discover, not initialize.
         assertEquals("server/discover", request.header("mcp-method"))
         assertEquals(version, request.header("mcp-protocol-version"))
+        // Streamable HTTP lets the gateway answer with one JSON body or an SSE
+        // stream, so the client has to accept both or be answered 406.
+        assertEquals("application/json, text/event-stream", request.header("accept"))
 
         assertEquals(
             """{"jsonrpc":"2.0","id":1,"method":"server/discover","params":{"_meta":{""" +

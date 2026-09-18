@@ -42,6 +42,9 @@ final class McpTests: XCTestCase {
         XCTAssertEqual(request.header("mcp-method"), "server/discover")
         XCTAssertEqual(
             request.header("mcp-protocol-version"), TemperaSurface.mcpProtocolVersion)
+        // Streamable HTTP lets the gateway answer with one JSON body or an SSE
+        // stream, so the client has to accept both or be answered 406.
+        XCTAssertEqual(request.header("accept"), "application/json, text/event-stream")
 
         let body = String(data: try XCTUnwrap(request.body), encoding: .utf8)
         XCTAssertEqual(

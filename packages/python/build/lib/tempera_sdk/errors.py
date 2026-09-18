@@ -1,0 +1,182 @@
+"""Uniform Tempera SDK errors, shared in shape with the TypeScript and Rust
+packages (see surface.json ``errorContract``).
+
+- ``TemperaSdkError``: base class for every error the SDK raises, including
+  configuration and usage mistakes (missing credential, unknown product).
+- ``TemperaApiError``: an HTTP response error, normalized from the canonical
+  AIP-193 envelope and supported compatibility shapes so callers always read
+  the same fields.
+- ``TemperaMcpError``: a JSON-RPC error from an MCP endpoint.
+"""
+
+from __future__ import annotations
+
+from typing import Any, Mapping
+
+
+class TemperaSdkError(RuntimeError):
+    """Base class for every error the Tempera SDK raises."""
+
+
+class TemperaApiError(TemperaSdkError):
+    """An HTTP response error with the uniform Tempera error fields."""
+
+    def __init__(
+        self,
+        *,
+        status: int,
+        code: str | None = None,
+        message: str = "",
+        reason: str | None = None,
+        request_id: str | None = None,
+        product: str | None = None,
+        operation: str | None = None,
+        body: Any = None,
+        status_text: str = "",
+    ):
+        super().__init__(message)
+        self.status = status
+        self.code = code
+        self.message = message
+        # AIP-193 google.rpc.ErrorInfo reason from error.details[]; producers
+        # publish a closed reason vocabulary, so this is the field to branch on.
+        self.reason = reason
+        self.request_id = request_id
+        self.product = product
+        self.operation = operation
+        self.body = body
+        # Kept so the error can be re-labelled with product/operation context
+        # after a transport raises it (see _with_context).
+        self.status_text = status_text
+
+
+class TemperaMcpError(TemperaSdkError):
+    """A JSON-RPC error returned by an MCP endpoint."""
+
+    def __init__(self, message: str, *, code: int, data: Any = None):
+        super().__init__(message)
+        self.message = message
+        self.code = code
+        self.data = data
+
+
+def error_info_reason(error: Any) -> str | None:
+    """Return the AIP-193 google.rpc.ErrorInfo reason from an error's details[].
+
+    The first detail carrying a string ``reason`` wins; ``None`` when none do.
+    """
+    if not isinstance(error, Mapping):
+        return None
+    details = error.get("details")
+    if not isinstance(details, (list, tuple)):
+        return None
+    for detail in details:
+        if isinstance(detail, Mapping) and isinstance(detail.get("reason"), str):
+            return detail["reason"]
+    return None
+
+
+def normalize_error_body(body: Any, status_text: str = "") -> dict[str, Any]:
+    """Normalize any Tempera product error body into {code, message, reason, request_id}.
+
+    Wire shapes handled (see surface.json errorContract.wireShapes):
+    - canonical resource API: ``{"error": {"code": 400, "status":
+      "INVALID_ARGUMENT", "message": "...", "details": []}}``
+    - legacy flat: ``{"error": "<code>", "message": "<text>"}``
+    - legacy message-only: ``{"error": "<human message>"}``
+    - legacy nested: ``{"error": {"code", "message", "request_id"?, ...}}``
+    """
+    if isinstance(body, Mapping):
+        error = body.get("error")
+        if isinstance(error, Mapping):
+            code = error.get("code")
+            status = error.get("status")
+            message = error.get("message")
+            request_id = error.get("requestId", error.get("request_id"))
+            return {
+                "code": (
+                    status
+                    if isinstance(status, str)
+                    else code if isinstance(code, str) else None
+                ),
+                "message": message if isinstance(message, str) else status_text,
+                "reason": error_info_reason(error),
+                "request_id": request_id if isinstance(request_id, str) else None,
+            }
+        if isinstance(error, str):
+            if isinstance(body.get("message"), str):
+                return {
+                    "code": error,
+                    "message": body["message"],
+                    "reason": None,
+                    "request_id": None,
+                }
+            return {"code": None, "message": error, "reason": None, "request_id": None}
+    return {
+        "code": None,
+        "message": status_text or "request failed",
+        "reason": None,
+        "request_id": None,
+    }
+
+
+def _header_get(headers: Any, name: str) -> str | None:
+    if headers is None:
+        return None
+    if isinstance(headers, Mapping):
+        for key, value in headers.items():
+            if isinstance(key, str) and key.lower() == name:
+                return value
+        return None
+    get = getattr(headers, "get", None)
+    if callable(get):
+        # e.g. http.client.HTTPMessage, whose get() is case-insensitive.
+        return get(name)
+    return None
+
+
+def api_error_from_response(
+    status: int,
+    status_text: str = "",
+    headers: Any = None,
+    body: Any = None,
+    product: str | None = None,
+    operation: str | None = None,
+) -> TemperaApiError:
+    """Build a TemperaApiError from a failed HTTP response.
+
+    ``request_id`` falls back to the ``x-request-id`` response header.
+    """
+    normalized = normalize_error_body(body, status_text)
+    header_request_id = _header_get(headers, "x-request-id")
+    label = ".".join(part for part in (product, operation) if part)
+    return TemperaApiError(
+        status=status,
+        code=normalized["code"],
+        message=f"Tempera {label or 'request'} failed ({status}): {normalized['message']}",
+        reason=normalized["reason"],
+        request_id=normalized["request_id"] or header_request_id,
+        product=product,
+        operation=operation,
+        body=body,
+        status_text=status_text,
+    )
+
+
+def _with_context(error: TemperaApiError, product: str | None, operation: str | None) -> TemperaApiError:
+    """Re-label a context-free TemperaApiError (raised by a transport) with the
+    product and operation that made the request."""
+    if error.product or error.operation:
+        return error
+    headers = {"x-request-id": error.request_id} if error.request_id else None
+    return api_error_from_response(error.status, error.status_text, headers, error.body, product, operation)
+
+
+__all__ = [
+    "TemperaApiError",
+    "error_info_reason",
+    "TemperaMcpError",
+    "TemperaSdkError",
+    "api_error_from_response",
+    "normalize_error_body",
+]
