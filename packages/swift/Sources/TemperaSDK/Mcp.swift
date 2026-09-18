@@ -82,7 +82,10 @@ public actor TemperaMcpClient {
             method: "POST",
             url: url,
             headers: [
-                TemperaKeyValue(key: "accept", value: "application/json"),
+                // Streamable HTTP requires both shapes on a POST: the gateway
+                // chooses one JSON body or an SSE stream, and a spec-conformant
+                // gateway answers 406 to a client that offers only one.
+                TemperaKeyValue(key: "accept", value: "application/json, text/event-stream"),
                 TemperaKeyValue(key: "content-type", value: "application/json"),
                 TemperaKeyValue(key: "authorization", value: "Bearer \(try await resolveBearer())"),
                 TemperaKeyValue(

@@ -54,6 +54,12 @@ class McpClientTest(unittest.TestCase):
         for call in transport.calls:
             self.assertEqual(call["headers"]["mcp-protocol-version"], "2026-07-28")
             self.assertEqual(call["headers"]["mcp-method"], call["request"]["method"])
+            # Streamable HTTP lets the gateway answer a POST with one JSON body
+            # or with an SSE stream, so the client has to accept both or a
+            # conformant gateway answers 406 and the caller gets no tools.
+            self.assertEqual(
+                call["headers"]["accept"], "application/json, text/event-stream"
+            )
         self.assertEqual(transport.calls[1]["request"]["method"], "ping")
         self.assertEqual(transport.calls[2]["request"]["method"], "tools/list")
 

@@ -44,7 +44,10 @@ export class TemperaMcpClient {
     const response = await this.fetch(this.url, {
       method: "POST",
       headers: {
-        accept: "application/json",
+        // Streamable HTTP requires the client to accept BOTH shapes on a POST:
+        // the gateway chooses one JSON body or an SSE stream, and a
+        // spec-conformant gateway answers 406 to a client that offers only one.
+        accept: "application/json, text/event-stream",
         "content-type": "application/json",
         authorization: `Bearer ${this.#resolveBearer()}`,
         "mcp-protocol-version": MCP_PROTOCOL_VERSION,

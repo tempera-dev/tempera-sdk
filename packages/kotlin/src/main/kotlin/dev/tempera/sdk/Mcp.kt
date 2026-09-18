@@ -87,7 +87,11 @@ public class TemperaMcpClient(
                 url = url,
                 headers =
                     listOf(
-                        TemperaKeyValue("accept", "application/json"),
+                        // Streamable HTTP requires both shapes on a POST: the
+                        // gateway chooses one JSON body or an SSE stream, and a
+                        // spec-conformant gateway answers 406 to a client that
+                        // offers only one.
+                        TemperaKeyValue("accept", "application/json, text/event-stream"),
                         TemperaKeyValue("content-type", "application/json"),
                         TemperaKeyValue("authorization", "Bearer " + resolveBearer()),
                         TemperaKeyValue(

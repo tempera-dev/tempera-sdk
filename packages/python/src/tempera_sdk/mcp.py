@@ -57,7 +57,12 @@ class TemperaMcpClient:
         request_params["_meta"] = meta
         payload["params"] = request_params
         headers = {
-            "accept": "application/json",
+            # Streamable HTTP requires the client to accept BOTH shapes on a
+            # POST: a gateway may answer one JSON body or an SSE stream, and it
+            # chooses. Offering only application/json is answered 406 by a
+            # spec-conformant gateway (tempera-mcp does), which takes every tool
+            # away from the caller rather than degrading it.
+            "accept": "application/json, text/event-stream",
             "content-type": "application/json",
             "authorization": f"Bearer {self._resolve_bearer()}",
             "mcp-protocol-version": MCP_PROTOCOL_VERSION,
